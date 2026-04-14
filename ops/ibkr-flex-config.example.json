@@ -1,0 +1,5 @@
+{
+  "activity_query_id": "PUT_ACTIVITY_FLEX_QUERY_ID_HERE",
+  "trade_query_id": "OPTIONAL_TRADE_CONFIRMATION_FLEX_QUERY_ID_HERE",
+  "notes": "Token is read from Keychain id ibkr_flex_web_token or env IBKR_FLEX_TOKEN. Do not store token in this file."
+}

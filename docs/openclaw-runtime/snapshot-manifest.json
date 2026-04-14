@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-04-14T23:20:51.245582+00:00",
+  "subsystem": "finance",
+  "openclaw_home": "/Users/leofitz/.openclaw",
+  "finance_repo": "/Users/leofitz/.openclaw/workspace/finance",
+  "snapshot_files": [
+    "docs/openclaw-runtime/finance-cron-jobs.json",
+    "docs/openclaw-runtime/finance-crontab.txt",
+    "docs/openclaw-runtime/finance-model-roles.json",
+    "docs/openclaw-runtime/contracts/finance-openclaw-runtime-contract.md",
+    "docs/openclaw-runtime/contracts/finance-report-contract.md",
+    "docs/openclaw-runtime/contracts/finance-gate-taxonomy.md",
+    "docs/openclaw-runtime/contracts/judgment-contract.md",
+    "docs/openclaw-runtime/contracts/wake-policy.md",
+    "docs/openclaw-runtime/contracts/risk-gates.md"
+  ],
+  "note": "Generated from the local OpenClaw runtime. State files and secrets are intentionally excluded."
+}

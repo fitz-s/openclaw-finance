@@ -1,0 +1,22 @@
+# === Finance Infrastructure (non-LLM, pure Python) ===
+*/5 * * * * /opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/ibkr_tickle.py 2>/dev/null
+# Price fetcher (yfinance) — every 20 min during market hours Mon-Fri
+*/20 8-16 * * 1-5 cd /Users/leofitz/.openclaw/workspace/finance/scripts && /opt/homebrew/bin/python3 price_fetcher.py >> /Users/leofitz/.openclaw/logs/price-fetcher.log 2>&1
+# Native finance market-hours scanner — every 20 min, 5 min after price fetch
+# Disabled 2026-04-13: OpenClaw cron finance-subagent-scanner is the LLM scanner authority
+# 5,25,45 8-16 * * 1-5 cd /Users/leofitz/.openclaw/workspace/finance/scripts && /opt/homebrew/bin/python3 native_scanner_market_hours.py >> /Users/leofitz/.openclaw/logs/native-scanner-market-hours.log 2>&1
+# Native finance offhours scanner — aligned to legacy offhours cadence
+# Disabled 2026-04-13: OpenClaw cron finance-subagent-scanner-offhours is the LLM scanner authority
+# 0 0,4,7,17,20 * * 1-5 cd /Users/leofitz/.openclaw/workspace/finance/scripts && /opt/homebrew/bin/python3 native_scanner_offhours.py >> /Users/leofitz/.openclaw/logs/native-scanner-offhours.log 2>&1
+# Native finance premarket brief — daily 08:00 America/Chicago via direct Discord send
+# Disabled 2026-04-13: OpenClaw cron finance-premarket-brief owns user-visible delivery
+# 0 8 * * 1-5 cd /Users/leofitz/.openclaw/workspace/finance/scripts && /opt/homebrew/bin/python3 native_premarket_brief_live.py --deliver >> /Users/leofitz/.openclaw/logs/native-premarket-brief.log 2>&1
+50 7 * * 1-5 cd /Users/leofitz/.openclaw/workspace/finance/scripts && /opt/homebrew/bin/python3 portfolio_flex_fetcher.py >> /Users/leofitz/.openclaw/logs/portfolio-flex-fetcher.log 2>&1; /opt/homebrew/bin/python3 portfolio_flex_enricher.py >> /Users/leofitz/.openclaw/logs/portfolio-flex-enricher.log 2>&1; /opt/homebrew/bin/python3 portfolio_cash_nav_enricher.py >> /Users/leofitz/.openclaw/logs/portfolio-cash-nav-enricher.log 2>&1; /opt/homebrew/bin/python3 portfolio_option_risk.py >> /Users/leofitz/.openclaw/logs/portfolio-option-risk.log 2>&1; /opt/homebrew/bin/python3 portfolio_resolver.py >> /Users/leofitz/.openclaw/logs/portfolio-resolver.log 2>&1
+0 16 * * 1-5 cd /Users/leofitz/.openclaw/workspace/finance/scripts && /opt/homebrew/bin/python3 portfolio_flex_fetcher.py >> /Users/leofitz/.openclaw/logs/portfolio-flex-fetcher.log 2>&1; /opt/homebrew/bin/python3 portfolio_flex_enricher.py >> /Users/leofitz/.openclaw/logs/portfolio-flex-enricher.log 2>&1; /opt/homebrew/bin/python3 portfolio_cash_nav_enricher.py >> /Users/leofitz/.openclaw/logs/portfolio-cash-nav-enricher.log 2>&1; /opt/homebrew/bin/python3 portfolio_option_risk.py >> /Users/leofitz/.openclaw/logs/portfolio-option-risk.log 2>&1; /opt/homebrew/bin/python3 portfolio_resolver.py >> /Users/leofitz/.openclaw/logs/portfolio-resolver.log 2>&1
+5 8,16 * * 1-5 cd /Users/leofitz/.openclaw/workspace/finance/scripts && /opt/homebrew/bin/python3 portfolio_alerts.py >> /Users/leofitz/.openclaw/logs/portfolio-alerts.log 2>&1
+55 7,16 * * 1-5 cd /Users/leofitz/.openclaw/workspace/finance/scripts && /opt/homebrew/bin/python3 watchlist_sync.py >> /Users/leofitz/.openclaw/logs/watchlist-sync.log 2>&1
+0 22 * * 0 cd /Users/leofitz/.openclaw/workspace/finance/scripts && /opt/homebrew/bin/python3 calibration_loop.py >> /Users/leofitz/.openclaw/logs/calibration-loop.log 2>&1
+0 21 * * 0 cd /Users/leofitz/.openclaw/workspace/finance && /opt/homebrew/bin/python3 scripts/signal_learner.py >> /Users/leofitz/.openclaw/logs/signal-learner.log 2>&1
+0 16 * * 1-5 cd /Users/leofitz/.openclaw/workspace/finance && /opt/homebrew/bin/python3 scripts/hypothesis_tracker.py extract >> /Users/leofitz/.openclaw/logs/hypothesis-tracker.log 2>&1
+55 7 * * 1-5 cd /Users/leofitz/.openclaw/workspace/finance && /opt/homebrew/bin/python3 scripts/hypothesis_tracker.py verify >> /Users/leofitz/.openclaw/logs/hypothesis-tracker.log 2>&1
+0 * * * 1-5 cd /Users/leofitz/.openclaw/workspace/finance && /opt/homebrew/bin/python3 scripts/event_watcher.py tick >> /Users/leofitz/.openclaw/logs/event-watcher.log 2>&1

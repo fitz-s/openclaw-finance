@@ -1,0 +1,21 @@
+.DS_Store
+.claude/
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# Live runtime state and market artifacts. Export sanitized snapshots via tools/export_openclaw_runtime_snapshot.py.
+state/*
+!state/README.md
+buffer/*
+brief-output/*
+memory/*
+reports/v0-archive/*
+*.tmp
+*.redacted.xml
+
+# Local secrets/config overrides.
+*.local
+*.secret
+*.token
+ibkr-flex-config.json

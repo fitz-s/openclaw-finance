@@ -1,0 +1,196 @@
+{
+  "generated_at": "2026-04-14T23:20:51.237301+00:00",
+  "source": "/Users/leofitz/.openclaw/cron/jobs.json",
+  "jobs": [
+    {
+      "id": "b2c3d4e5-f6a7-8901-bcde-f01234567890",
+      "name": "finance-premarket-brief",
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "10 8 * * 1-5",
+        "tz": "America/Chicago"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "delivery": {
+        "mode": "announce",
+        "channel": "discord",
+        "to": "channel:1479790104490016808"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "model": "google-gemini-cli/gemini-3-flash",
+        "timeoutSeconds": 600,
+        "lightContext": true,
+        "message": "【OpenClaw-native finance report orchestrator】\n你是 Mars 的 finance report orchestrator。当前 active report path 必须是 typed decision path：ContextPacket -> JudgmentEnvelope -> product report -> decision log -> safety gate。禁止回到旧 report-template/selected-envelope 路径。\n\n执行流程：\n1. 读取可选 orchestration input：\n   - /Users/leofitz/.openclaw/workspace/finance/state/report-orchestrator-input.json\n   如果存在且新鲜：\n   - report_class=event_wake：事件触发报告；标题不得使用“盘前/开盘”。\n   - report_class=ops_escalation：系统健康/运行时升级；禁止输出市场建议。\n   如果不存在：本次是 scheduled_context_report。\n\n2. JudgmentEnvelope adjudication gate：\n   - 读取 typed packet：优先通过 market-intel MCP/tool evidence_packet_get；如果当前运行环境未暴露 MCP，则读取 /Users/leofitz/.openclaw/workspace/services/market-ingest/state/latest-context-packet.json。\n   - 读取 /Users/leofitz/.openclaw/workspace/finance/state/latest-wake-decision.json。\n   - 如果 report_class=scheduled_context_report 且 wake_class 不是 ISOLATED_JUDGMENT_WAKE，可以基于 typed packet 产出 bounded JSON JudgmentEnvelope，写入 /Users/leofitz/.openclaw/workspace/finance/state/judgment-envelope-candidate.json；只允许 thesis_state=no_trade|watch，actionability=none|review。\n   - 如果 wake_class 是 ISOLATED_JUDGMENT_WAKE，基于 typed packet 产出严格 JSON JudgmentEnvelope，写入 /Users/leofitz/.openclaw/workspace/finance/state/judgment-envelope-candidate.json；可使用完整 thesis_state，但仍禁止 execution。\n   - 如果 report_class=ops_escalation，不输出市场判断；最多生成 no_trade/none。\n   - JudgmentEnvelope 必须只引用 packet.evidence_refs 中且 allowed_for_judgment_support=true 的 evidence；禁止使用 quarantined / not-support evidence 作为 why_now 支持；禁止新增事实、数字或 source。\n   - scheduled_context_report 是 bounded adjudication，不是交易信号；validator 会拒绝 lean_long/lean_short/reduce/exit/high。\n   - 运行：cd /Users/leofitz/.openclaw/workspace/finance/scripts && /opt/homebrew/bin/python3 judgment_envelope_gate.py --allow-fallback --adjudication-mode scheduled_context --model-id google-gemini-cli/gemini-3-flash\n   - 如果 finance/state/judgment-envelope-gate-report.json 和 finance/state/judgment-validation.json status=blocked，最终只输出中文系统故障说明，不输出市场报告。\n\n3. Product report gate：\n   - 运行：cd /Users/leofitz/.openclaw/workspace/finance/scripts && /opt/homebrew/bin/python3 finance_decision_report_render.py && /opt/homebrew/bin/python3 finance_report_product_validator.py\n   - 读取 finance/state/finance-decision-report-envelope.json 和 finance/state/finance-report-product-validation.json。\n   - 如果 product validation status != pass，最终只输出中文系统故障说明，不输出市场报告。\n\n4. Decision log closure：\n   - 运行：cd /Users/leofitz/.openclaw/workspace/finance/scripts && /opt/homebrew/bin/python3 finance_decision_log_compiler.py\n   - 读取 finance/state/finance-decision-log-report.json。\n   - 如果 decision log report status != pass，最终只输出中文系统故障说明，不输出市场报告。\n\n5. Delivery safety gate：\n   - 运行：cd /Users/leofitz/.openclaw/workspace/finance/scripts && /opt/homebrew/bin/python3 finance_report_delivery_safety.py --out /Users/leofitz/.openclaw/workspace/finance/state/report-delivery-safety-check.json --health-markdown > /Users/leofitz/.openclaw/workspace/finance/state/report-delivery-health-only.md\n   - 读取 finance/state/report-delivery-safety-check.json。\n   - 如果 safety status != pass：最终回复必须只包含 report-delivery-health-only.md 原文。不要输出市场判断、watchlist、持仓影响、ticker 涨跌、新闻结论或交易建议。\n\n6. Final output：\n   - 只有 safety status=pass 时，读取 /Users/leofitz/.openclaw/workspace/finance/state/finance-decision-report-envelope.json。\n   - 最终回复必须只包含该 envelope 的 markdown 原文。\n   - 不要加前言、不要说“校验通过”、不要总结、不要删减章节。\n\n硬规则：禁止使用旧 report template；禁止输出 thresholds not met、Native Shadow、raw ISO timestamp、raw Flex XML、accountId/acctAlias、内部 gate reason；禁止交易执行指令；禁止读取旧 LLM fallback envelope path 作为最终报告。"
+      },
+      "state": {
+        "consecutiveErrors": 0,
+        "lastDeliveryStatus": "delivered",
+        "lastRunAtMs": 1776205129992,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 55415,
+        "lastDelivered": true,
+        "nextRunAtMs": 1776258600000
+      }
+    },
+    {
+      "id": "c3d4e5f6-a7b8-9012-cdef-finance-renderer",
+      "name": "finance-report-renderer",
+      "enabled": false,
+      "schedule": {
+        "kind": "manual"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "delivery": {
+        "mode": "none",
+        "channel": "discord",
+        "to": "channel:1479790104490016808"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "model": null,
+        "timeoutSeconds": null,
+        "lightContext": null,
+        "message": "[DEPRECATED/MANUAL-ONLY] Old finance judgment-shadow renderer. This job must never deliver user-visible messages. Do not enable unless migrated to systems/finance-openclaw-runtime-contract.md and the finance-report-envelope validator path. Active user-visible delivery is the report orchestrator job b2c3d4e5-f6a7-8901-bcde-f01234567890."
+      },
+      "state": {
+        "lastRunAtMs": 1776110104845,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 38268,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": false
+      }
+    },
+    {
+      "id": "c031f32c-0392-45bb-ae1a-ad7e7aec6938",
+      "name": "finance-subagent-scanner",
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "*/20 8-16 * * 1-5",
+        "tz": "America/Chicago"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "delivery": {
+        "mode": "none",
+        "channel": "last"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "model": "google-gemini-cli/gemini-3-flash",
+        "timeoutSeconds": 420,
+        "lightContext": true,
+        "message": "【finance market-hours scanner｜strict paths】\n你是 finance market-hours scanner。不要发用户消息。\n\n只读这些文件：\n- /Users/leofitz/.openclaw/workspace/finance/AGENTS.md\n- /Users/leofitz/.openclaw/workspace/finance/state/watchlist-resolved.json\n- /Users/leofitz/.openclaw/workspace/finance/state/prices.json\n- /Users/leofitz/.openclaw/workspace/finance/state/intraday-open-scan-state.json\n- /Users/leofitz/.openclaw/workspace/finance/state/held-tickers-resolved.json\n- /Users/leofitz/.openclaw/workspace/finance/state/portfolio-source-status.json\n- /Users/leofitz/.openclaw/workspace/finance/state/portfolio-option-risk.json\n- /Users/leofitz/.openclaw/workspace/finance/state/event-watchers.json\n\n规则：\n- 最多 3 轮 web_search：宏观/指数；watchlist；non-watchlist discovery。\n- 只保留最多 4 条新增 observations。\n- non-watchlist discovery 最多 2 条，必须有 sources，并写 candidate_type=unknown_discovery、discovery_scope=non_watchlist；不得把已在 watchlist-resolved/held-tickers 的标的伪装成 unknown。\n- 每轮至少 1 条 observation 应尝试覆盖期权/非持仓/板块或宏观机会拓展；没有合格候选时写明 reason，不要用持仓风险填充。\n- 不要读取不存在的目录名或省略后缀路径。\n- 不要输出 prose 计划，不要长解释。\n\n写入：\n- finance/buffer/{YYYY-MM-DD}-scan-{HHMM}.json\n\n然后只用绝对路径直接运行：\n- python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_worker.py\n- python3 /Users/leofitz/.openclaw/workspace/finance/scripts/gate_evaluator.py\n\n最终回复为空字符串，或一行机器摘要：scan=ok|obs=N|gate=TYPE"
+      },
+      "state": {
+        "lastRunAtMs": 1776202800017,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 144559,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776258000000,
+        "lastDelivered": false
+      }
+    },
+    {
+      "id": "f57c165f-7683-4816-ab2c-10abda099b9f",
+      "name": "finance-subagent-scanner-offhours",
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 0,4,7,17,20 * * 1-5",
+        "tz": "America/Chicago"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "delivery": {
+        "mode": "none",
+        "channel": "last"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "model": "google-gemini-cli/gemini-3-flash",
+        "timeoutSeconds": 420,
+        "lightContext": true,
+        "message": "【finance offhours scanner｜strict paths】\n你是 finance offhours scanner。不要发用户消息。\n\n只读这些文件：\n- /Users/leofitz/.openclaw/workspace/finance/AGENTS.md\n- /Users/leofitz/.openclaw/workspace/finance/state/watchlist-resolved.json\n- /Users/leofitz/.openclaw/workspace/finance/state/prices.json\n- /Users/leofitz/.openclaw/workspace/finance/state/intraday-open-scan-state.json\n- /Users/leofitz/.openclaw/workspace/finance/state/held-tickers-resolved.json\n- /Users/leofitz/.openclaw/workspace/finance/state/portfolio-source-status.json\n- /Users/leofitz/.openclaw/workspace/finance/state/portfolio-option-risk.json\n- /Users/leofitz/.openclaw/workspace/finance/state/event-watchers.json\n\n规则：\n- 最多 2 轮 web_search：隔夜宏观/地缘；non-watchlist discovery。\n- 只保留最多 3 条 observations，且 urgency >= 6 或 importance >= 7。\n- non-watchlist discovery 必须写 candidate_type=unknown_discovery、discovery_scope=non_watchlist；不得把已在 watchlist-resolved/held-tickers 的标的伪装成 unknown。\n- 优先寻找期权/非持仓/板块或宏观机会拓展；不要用持仓风险填充 unknown discovery。\n- 不要读取不存在的目录名或省略后缀路径。\n- 不要输出 prose 计划，不要长解释。\n\n写入：\n- finance/buffer/{YYYY-MM-DD}-scan-{HHMM}.json\n\n然后只用绝对路径直接运行：\n- python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_worker.py\n- python3 /Users/leofitz/.openclaw/workspace/finance/scripts/gate_evaluator.py\n\n最终回复为空字符串，或一行机器摘要：scan=ok|obs=N|gate=TYPE"
+      },
+      "state": {
+        "lastRunAtMs": 1776204000031,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 180647,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0,
+        "lastDelivered": false,
+        "nextRunAtMs": 1776214800000
+      }
+    },
+    {
+      "id": "c4d5e6f7-a8b9-0123-cdef-watcher-renderer",
+      "name": "finance-watcher-update",
+      "enabled": false,
+      "schedule": {
+        "kind": "manual"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "delivery": {
+        "mode": "announce",
+        "channel": "discord",
+        "to": "channel:1479790104490016808"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "model": null,
+        "timeoutSeconds": null,
+        "lightContext": null,
+        "message": "[MANUAL-ONLY] Finance watcher update helper. Not part of primary scanner/report pipeline. Keep disabled unless a human explicitly requests watcher review. Must not bypass finance report packet/envelope/validator delivery path."
+      },
+      "state": {
+        "scheduleErrorCount": 3,
+        "lastRunAtMs": 1775495208949,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 23399,
+        "lastDelivered": true,
+        "lastDeliveryStatus": "delivered",
+        "consecutiveErrors": 0
+      }
+    },
+    {
+      "id": "18c6ef32-719f-47cf-a4be-c9b72f4674e5",
+      "name": "finance-weekly-learning-review",
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "20 22 * * 0",
+        "tz": "America/Chicago"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "delivery": {
+        "mode": "announce",
+        "channel": "discord",
+        "to": "channel:1479790104490016808"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "model": "google-gemini-cli/gemini-3-flash",
+        "timeoutSeconds": 900,
+        "lightContext": true,
+        "message": "【OpenClaw-native finance weekly learning review】\n\n你是 Mars 的 finance learning reviewer。你的任务不是扫描市场，也不是发交易建议；你负责每周复盘 finance pipeline 的学习/优化状态。\n\n执行：\n1. 运行 deterministic learning/audit packet：\n   - cd /Users/leofitz/.openclaw/workspace/finance && /opt/homebrew/bin/python3 scripts/signal_learner.py\n   - cd /Users/leofitz/.openclaw/workspace/finance/scripts && /opt/homebrew/bin/python3 calibration_loop.py\n   - cd /Users/leofitz/.openclaw/workspace && /opt/homebrew/bin/python3 ops/scripts/finance_report_delivery_audit.py\n   - cd /Users/leofitz/.openclaw/workspace && /opt/homebrew/bin/python3 replay/live_replay.py --export /Users/leofitz/.openclaw/workspace/replay/state/live-finance-replay-case.json --report /Users/leofitz/.openclaw/workspace/replay/state/live-finance-replay-report.json\n   - cd /Users/leofitz/.openclaw/workspace/finance/scripts && /opt/homebrew/bin/python3 finance_learning_review_packet.py\n   - cd /Users/leofitz/.openclaw/workspace/finance/scripts && /opt/homebrew/bin/python3 finance_learning_review_packet_audit.py --markdown > /Users/leofitz/.openclaw/workspace/finance/state/finance-learning-review-packet-audit.md\n2. 读取 `finance/state/finance-learning-review-packet.json` 和 `finance/state/finance-learning-review-packet-audit.json`。audit 必须 pass，且 packet 必须包含 live_replay、decision_log_report、product_validation、judgment_validation。\n3. 输出中文周度学习复盘，必须分为：\n   - Fact\n   - Interpretation\n   - Recommendation\n4. Recommendation 只能指向 policy / schema / tests / prompt / model_routing。禁止自动改 thresholds，禁止交易执行。\n5. 完整 JSON 复盘写入 `/Users/leofitz/.openclaw/workspace/finance/state/finance-weekly-learning-review.json`，字段至少包含 generated_at, status, facts[], interpretations[], recommendations[], source_packet_path。\n6. Discord 输出必须基于 `finance-learning-review-packet-audit.md` 和 packet 中的 Fact / Interpretation / Recommendation；不得输出市场建议，不得自动调阈值。\n\n硬规则：不写 MEMORY，不读取 raw Flex XML，不输出 account identifiers。"
+      },
+      "state": {
+        "nextRunAtMs": 1776655200000
+      }
+    }
+  ]
+}

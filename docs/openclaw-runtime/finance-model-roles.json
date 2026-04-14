@@ -1,0 +1,29 @@
+{
+  "source": "/Users/leofitz/.openclaw/workspace/ops/model-roles.json",
+  "job_assignments": {
+    "finance-open-shortreports-v2": "primary-sonnet",
+    "finance-core-report-v2": "primary-sonnet",
+    "finance-premarket-brief": "primary",
+    "finance-immediate-alert": "primary-sonnet",
+    "finance-subagent-scanner": "finance-scanner",
+    "finance-subagent-scanner-offhours": "finance-scanner",
+    "finance-weekly-learning-review": "primary"
+  },
+  "roles": {
+    "finance-scanner": {
+      "description": "Finance market-hours and off-hours scanner; strict-path OpenClaw cron lane",
+      "model": "google-gemini-cli/gemini-3-flash",
+      "cost_tier": "free_unlimited"
+    },
+    "primary": {
+      "description": "High-quality output: reports, analysis, creative writing",
+      "model": "google-gemini-cli/gemini-3-flash",
+      "cost_tier": "free_unlimited"
+    },
+    "primary-sonnet": {
+      "description": "Once-daily high quality: morning briefs, weekly reviews, one-off reports",
+      "model": "google-gemini-cli/gemini-3-flash",
+      "cost_tier": "max_subscription"
+    }
+  }
+}

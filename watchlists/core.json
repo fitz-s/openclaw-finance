@@ -1,0 +1,97 @@
+{
+  "version": 1,
+  "description": "Core watchlist template (v0).",
+  "tickers": [
+    {
+      "symbol": "AAPL",
+      "market": "US",
+      "sector": "Tech",
+      "notes": ""
+    },
+    {
+      "symbol": "MSFT",
+      "market": "US",
+      "sector": "Tech",
+      "notes": ""
+    },
+    {
+      "symbol": "NVDA",
+      "market": "US",
+      "sector": "Tech",
+      "notes": ""
+    },
+    {
+      "symbol": "TSLA",
+      "market": "US",
+      "sector": "Auto",
+      "notes": ""
+    },
+    {
+      "symbol": "GOOG",
+      "market": "US",
+      "sector": "",
+      "notes": "auto-added from IBKR 2026-03-27"
+    },
+    {
+      "symbol": "HIMS",
+      "market": "US",
+      "sector": "",
+      "notes": "auto-added from IBKR 2026-03-27"
+    },
+    {
+      "symbol": "IAU",
+      "market": "US",
+      "sector": "",
+      "notes": "auto-added from IBKR 2026-03-27"
+    },
+    {
+      "symbol": "MSTR",
+      "market": "US",
+      "sector": "",
+      "notes": "auto-added from IBKR 2026-03-27"
+    },
+    {
+      "symbol": "NFLX",
+      "market": "US",
+      "sector": "",
+      "notes": "auto-added from IBKR 2026-03-27"
+    },
+    {
+      "symbol": "ORCL",
+      "market": "US",
+      "sector": "",
+      "notes": "auto-added from IBKR 2026-03-27"
+    },
+    {
+      "symbol": "SMR",
+      "market": "US",
+      "sector": "",
+      "notes": "auto-added from IBKR 2026-03-27"
+    },
+    {
+      "symbol": "INTC",
+      "market": "US",
+      "sector": "Semiconductors",
+      "notes": "user-confirmed core watchlist 2026-04-14"
+    }
+  ],
+  "indexes": [
+    {
+      "symbol": "SPY",
+      "market": "US",
+      "notes": ""
+    },
+    {
+      "symbol": "QQQ",
+      "market": "US",
+      "notes": ""
+    }
+  ],
+  "fx": [],
+  "crypto": [
+    {
+      "symbol": "BTC/USD",
+      "notes": ""
+    }
+  ]
+}

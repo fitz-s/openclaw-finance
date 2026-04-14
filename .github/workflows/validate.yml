@@ -1,0 +1,22 @@
+name: Validate Finance Subsystem
+
+on:
+  pull_request:
+  push:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Validate JSON snapshots
+        run: |
+          python -m json.tool docs/openclaw-runtime/finance-cron-jobs.json >/dev/null
+          python -m json.tool docs/openclaw-runtime/finance-model-roles.json >/dev/null
+          python -m json.tool docs/openclaw-runtime/snapshot-manifest.json >/dev/null
+      - name: Compile Python sources
+        run: |
+          python -m compileall -q scripts tools

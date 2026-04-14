@@ -1,0 +1,26 @@
+{
+  "version": 1,
+  "description": "Event-driven watchlist template (v0).",
+  "event_types": [
+    "earningsq",
+    "guidance",
+    "m&a",
+    "8-k",
+    "10-q",
+    "10-k",
+    "form-4",
+    "13d",
+    "13g",
+    "424b",
+    "s-3"
+  ],
+  "events": [
+    {
+      "type": "earningsq",
+      "symbol": "AAPL",
+      "date": "YYYY-MM-DD",
+      "market": "US",
+      "notes": ""
+    }
+  ]
+}
