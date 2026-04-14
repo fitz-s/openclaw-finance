@@ -20,3 +20,5 @@
 0 16 * * 1-5 cd /Users/leofitz/.openclaw/workspace/finance && /opt/homebrew/bin/python3 scripts/hypothesis_tracker.py extract >> /Users/leofitz/.openclaw/logs/hypothesis-tracker.log 2>&1
 55 7 * * 1-5 cd /Users/leofitz/.openclaw/workspace/finance && /opt/homebrew/bin/python3 scripts/hypothesis_tracker.py verify >> /Users/leofitz/.openclaw/logs/hypothesis-tracker.log 2>&1
 0 * * * 1-5 cd /Users/leofitz/.openclaw/workspace/finance && /opt/homebrew/bin/python3 scripts/event_watcher.py tick >> /Users/leofitz/.openclaw/logs/event-watcher.log 2>&1
+# Finance GitHub reviewer snapshot sync — exports OpenClaw runtime surfaces for GitHub review
+15 8,16 * * 1-5 cd /Users/leofitz/.openclaw/workspace/finance && /bin/bash tools/sync_reviewer_snapshot.sh >> /Users/leofitz/.openclaw/logs/finance-github-snapshot-sync.log 2>&1
