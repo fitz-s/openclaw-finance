@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-04-15T13:38:29.784591+00:00",
+  "generated_at": "2026-04-15T21:15:02.062996+00:00",
   "status": "pass",
   "latest": {
     "attribution": "packet_update_only",
-    "gate_evaluated_at": "2026-04-15T13:24:33.390893+00:00",
+    "gate_evaluated_at": "2026-04-15T21:05:54.766831+00:00",
     "gate_should_send": false,
     "gate_recommended_report_type": "hold",
     "wake_class": "PACKET_UPDATE_ONLY",
