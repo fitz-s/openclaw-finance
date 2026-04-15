@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-15T03:04:38.367630+00:00",
+  "generated_at": "2026-04-15T03:05:47.086032+00:00",
   "status": "pass",
   "dependency_boundary": "parent_openclaw_workspace",
   "finance_repo_policy": "These files are load-bearing runtime dependencies but are not owned by the finance repository. Reviewers must inspect this inventory when packet/wake/judgment behavior changes.",
