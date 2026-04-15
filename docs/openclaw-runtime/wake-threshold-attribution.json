@@ -1,0 +1,18 @@
+{
+  "generated_at": "2026-04-15T03:04:38.445411+00:00",
+  "status": "pass",
+  "latest": {
+    "attribution": "packet_update_only",
+    "gate_evaluated_at": "2026-04-15T01:02:35.325292+00:00",
+    "gate_should_send": false,
+    "gate_recommended_report_type": "hold",
+    "wake_class": "PACKET_UPDATE_ONLY",
+    "wake_dispatch_action": "persist_only",
+    "wake_dispatched": false,
+    "legacy_threshold_bridge_present": false,
+    "legacy_threshold_bridge_status": null,
+    "legacy_threshold_bridge_action": null,
+    "legacy_threshold_bridge_dispatched": null,
+    "report_class": null
+  }
+}

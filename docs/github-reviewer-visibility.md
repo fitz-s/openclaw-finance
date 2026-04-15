@@ -6,8 +6,13 @@ The mechanism in this repository is:
 
 1. `tools/export_openclaw_runtime_snapshot.py` exports sanitized runtime facts into `docs/openclaw-runtime/`.
 2. `tools/export_parent_dependency_inventory.py` exports the parent market-ingest dependency hash inventory.
-3. `tools/review_runtime_gaps.py` exports current unresolved runtime gaps: watchlist freshness, recent report usefulness, wake/threshold bridge status, and benchmark boundary status.
-4. `tools/sync_reviewer_snapshot.sh` refreshes these snapshots, commits changed snapshot files, and pushes when a remote is configured.
+3. `tools/export_wake_threshold_attribution.py` exports the latest wake-vs-threshold attribution.
+4. `tools/score_report_usefulness.py` exports report usefulness/noise scoring.
+5. `tools/drill_ibkr_watchlist_freshness.py` exports the IBKR watchlist freshness drill result.
+6. `tools/audit_parent_dependency_drift.py` compares parent dependency hashes against the committed snapshot.
+7. `tools/audit_benchmark_boundary.py` verifies benchmark ideas remain bounded to OpenClaw-compatible patterns.
+8. `tools/review_runtime_gaps.py` exports the roll-up unresolved gap register.
+9. `tools/sync_reviewer_snapshot.sh` refreshes these snapshots, commits changed snapshot files, and pushes when a remote is configured.
 3. GitHub reviewers inspect ordinary diffs to see changes in cron jobs, model roles, OpenClaw contracts, and crontab wiring.
 
 Recommended local OpenClaw/system cron after the GitHub remote is configured:

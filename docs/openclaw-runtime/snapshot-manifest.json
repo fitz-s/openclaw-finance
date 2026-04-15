@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-15T02:54:07.529087+00:00",
+  "generated_at": "2026-04-15T03:04:38.333757+00:00",
   "subsystem": "finance",
   "openclaw_home": "/Users/leofitz/.openclaw",
   "finance_repo": "/Users/leofitz/.openclaw/workspace/finance",
@@ -9,6 +9,11 @@
     "docs/openclaw-runtime/finance-model-roles.json",
     "docs/openclaw-runtime/operating-model-audit.json",
     "docs/openclaw-runtime/parent-dependency-inventory.json",
+    "docs/openclaw-runtime/parent-dependency-drift.json",
+    "docs/openclaw-runtime/wake-threshold-attribution.json",
+    "docs/openclaw-runtime/report-usefulness-score.json",
+    "docs/openclaw-runtime/ibkr-watchlist-freshness-drill.json",
+    "docs/openclaw-runtime/benchmark-boundary-audit.json",
     "docs/openclaw-runtime/runtime-gap-review.json",
     "docs/openclaw-runtime/contracts/finance-openclaw-runtime-contract.md",
     "docs/openclaw-runtime/contracts/finance-report-contract.md",

@@ -28,6 +28,10 @@ PRODUCT_REPORT = FINANCE / 'state' / 'finance-decision-report-envelope.json'
 PRODUCT_VALIDATION = FINANCE / 'state' / 'finance-report-product-validation.json'
 DELIVERY_SAFETY = FINANCE / 'state' / 'report-delivery-safety-check.json'
 LIVE_REPORT = OPS_STATE / 'finance-native-premarket-brief-live-report.json'
+GATE_STATE = FINANCE / 'state' / 'report-gate-state.json'
+WAKE_DECISION = FINANCE / 'state' / 'latest-wake-decision.json'
+WAKE_DISPATCH = FINANCE / 'state' / 'wake-dispatch-state.json'
+ORCHESTRATOR_INPUT = FINANCE / 'state' / 'report-orchestrator-input.json'
 
 
 def load_module(path: Path, name: str):
@@ -67,6 +71,48 @@ def operator_action(decision: str, live: dict[str, Any], safety: dict[str, Any])
     return 'blocked'
 
 
+def wake_threshold_attribution(
+    *,
+    gate: dict[str, Any],
+    wake: dict[str, Any],
+    dispatch: dict[str, Any],
+    orchestrator_input: dict[str, Any],
+) -> dict[str, Any]:
+    bridge = gate.get('legacyThresholdDispatch') if isinstance(gate.get('legacyThresholdDispatch'), dict) else {}
+    bridge_present = bool(bridge)
+    wake_class = wake.get('wake_class') or dispatch.get('wake_class')
+    dispatch_action = dispatch.get('action')
+    report_class = orchestrator_input.get('report_class') if isinstance(orchestrator_input, dict) else None
+    if dispatch.get('dispatched') is True and wake_class == 'ISOLATED_JUDGMENT_WAKE':
+        attribution = 'canonical_wake_dispatch'
+    elif bridge_present and bridge.get('dispatched') is True:
+        attribution = 'legacy_threshold_bridge'
+    elif report_class == 'ops_escalation':
+        attribution = 'ops_escalation'
+    elif report_class == 'scheduled_context':
+        attribution = 'scheduled_context'
+    elif wake_class == 'PACKET_UPDATE_ONLY':
+        attribution = 'packet_update_only'
+    elif gate.get('shouldSend') is False:
+        attribution = 'hold_no_send'
+    else:
+        attribution = 'blocked_or_failed'
+    return {
+        'attribution': attribution,
+        'gate_evaluated_at': gate.get('evaluatedAt'),
+        'gate_should_send': gate.get('shouldSend'),
+        'gate_recommended_report_type': gate.get('recommendedReportType'),
+        'wake_class': wake_class,
+        'wake_dispatch_action': dispatch_action,
+        'wake_dispatched': dispatch.get('dispatched'),
+        'legacy_threshold_bridge_present': bridge_present,
+        'legacy_threshold_bridge_status': bridge.get('status') if bridge_present else None,
+        'legacy_threshold_bridge_action': bridge.get('action') if bridge_present else None,
+        'legacy_threshold_bridge_dispatched': bridge.get('dispatched') if bridge_present else None,
+        'report_class': report_class,
+    }
+
+
 def compile_entry(
     *,
     packet: dict[str, Any],
@@ -76,6 +122,10 @@ def compile_entry(
     product_validation: dict[str, Any],
     safety: dict[str, Any],
     live: dict[str, Any],
+    gate: dict[str, Any] | None = None,
+    wake: dict[str, Any] | None = None,
+    dispatch: dict[str, Any] | None = None,
+    orchestrator_input: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     decision = execution_decision(judgment, validation, product_validation, safety)
     return {
@@ -89,6 +139,12 @@ def compile_entry(
         'operator_action': operator_action(decision, live, safety),
         'policy_version': judgment.get('policy_version') or packet.get('policy_version'),
         'session_ref': live.get('sessionKey') or live.get('session_ref') or 'finance-openclaw-runtime',
+        'wake_threshold_attribution': wake_threshold_attribution(
+            gate=gate or {},
+            wake=wake or {},
+            dispatch=dispatch or {},
+            orchestrator_input=orchestrator_input or {},
+        ),
     }
 
 
@@ -100,6 +156,10 @@ def build_report(log_path: Path) -> dict[str, Any]:
     product_validation = load_json_safe(PRODUCT_VALIDATION, {}) or {}
     safety = load_json_safe(DELIVERY_SAFETY, {}) or {}
     live = load_json_safe(LIVE_REPORT, {}) or {}
+    gate = load_json_safe(GATE_STATE, {}) or {}
+    wake = load_json_safe(WAKE_DECISION, {}) or {}
+    dispatch = load_json_safe(WAKE_DISPATCH, {}) or {}
+    orchestrator_input = load_json_safe(ORCHESTRATOR_INPUT, {}) or {}
     entry = compile_entry(
         packet=packet,
         judgment=judgment,
@@ -108,6 +168,10 @@ def build_report(log_path: Path) -> dict[str, Any]:
         product_validation=product_validation,
         safety=safety,
         live=live,
+        gate=gate,
+        wake=wake,
+        dispatch=dispatch,
+        orchestrator_input=orchestrator_input,
     )
     decision_log = load_module(DECISION_LOG_MODULE, 'finance_decision_log_writer')
     if not decision_log.safe_log_path(log_path):
@@ -127,6 +191,10 @@ def build_report(log_path: Path) -> dict[str, Any]:
             'product_validation': str(PRODUCT_VALIDATION),
             'delivery_safety': str(DELIVERY_SAFETY),
             'live_report': str(LIVE_REPORT),
+            'gate_state': str(GATE_STATE),
+            'wake_decision': str(WAKE_DECISION),
+            'wake_dispatch': str(WAKE_DISPATCH),
+            'orchestrator_input': str(ORCHESTRATOR_INPUT),
             'decision_log': str(log_path),
         },
     }

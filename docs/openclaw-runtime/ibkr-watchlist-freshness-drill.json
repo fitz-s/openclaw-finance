@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-04-15T03:04:38.503358+00:00",
+  "status": "needs_login_or_cached_fallback",
+  "ibkr_watchlist_data_status": "unavailable",
+  "ibkr_watchlist_fresh": false,
+  "resolved_data_status": "fresh",
+  "portfolio_fresh": true,
+  "resolved_symbol_count": 18,
+  "blocking_reasons": [
+    "client_portal_not_authenticated"
+  ],
+  "operator_drill": [
+    "Log into IBKR Client Portal / local gateway.",
+    "Run: cd /Users/leofitz/.openclaw/workspace/finance/scripts && /opt/homebrew/bin/python3 watchlist_sync.py",
+    "Confirm ibkr_watchlist_fresh=true in state/watchlist-resolved.json."
+  ]
+}

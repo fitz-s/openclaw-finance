@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-15T02:54:07.654812+00:00",
+  "generated_at": "2026-04-15T03:04:38.558002+00:00",
   "status": "reviewed",
   "unresolved_gaps": [
     "ibkr_client_portal_watchlist_sync_not_fresh",
@@ -120,11 +120,11 @@
       }
     ],
     "latest_product_report": {
-      "generated_at": "2026-04-15T00:47:29.977418Z",
-      "report_hash": "sha256:3903ddd07848a120335ba9629d09a784907aaa55bd598f39f00733e5c72556be",
+      "generated_at": "2026-04-15T02:54:21.615871Z",
+      "report_hash": "sha256:681a434b2c5bbb5671034a82e0698901f267e507749c0bbab43ea679bd663cc9",
       "quality": {
         "line_count": 57,
-        "char_count": 2230,
+        "char_count": 2393,
         "has_opportunity_first_contract": true,
         "has_unknown_discovery_section": true,
         "has_holding_section": true,

@@ -8,9 +8,15 @@ python3 -m json.tool docs/openclaw-runtime/finance-model-roles.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/snapshot-manifest.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/operating-model-audit.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/parent-dependency-inventory.json >/dev/null
+python3 -m json.tool docs/openclaw-runtime/parent-dependency-drift.json >/dev/null
+python3 -m json.tool docs/openclaw-runtime/wake-threshold-attribution.json >/dev/null
+python3 -m json.tool docs/openclaw-runtime/report-usefulness-score.json >/dev/null
+python3 -m json.tool docs/openclaw-runtime/ibkr-watchlist-freshness-drill.json >/dev/null
+python3 -m json.tool docs/openclaw-runtime/benchmark-boundary-audit.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/runtime-gap-review.json >/dev/null
 python3 -m compileall -q scripts tools
 python3 tools/audit_operating_model.py
+python3 tools/audit_benchmark_boundary.py
 ```
 
 Runtime integration verification from the parent OpenClaw workspace:

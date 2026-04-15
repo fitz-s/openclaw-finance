@@ -1,0 +1,118 @@
+{
+  "generated_at": "2026-04-15T03:04:38.475614+00:00",
+  "status": "pass",
+  "latest_product_report": {
+    "generated_at": "2026-04-15T02:54:21.615871Z",
+    "report_hash": "sha256:681a434b2c5bbb5671034a82e0698901f267e507749c0bbab43ea679bd663cc9",
+    "quality": {
+      "score": 100,
+      "noise_tokens": [],
+      "line_count": 57,
+      "char_count": 2393,
+      "has_opportunity_first_contract": true,
+      "has_next_step": true,
+      "has_holding_section": true
+    }
+  },
+  "recent_delivered_reports": [
+    {
+      "runAtMs": 1776186452591,
+      "durationMs": 78972,
+      "deliveryStatus": "delivered",
+      "quality": {
+        "score": 10,
+        "noise_tokens": [
+          "confidence: 0.0",
+          "thesis_state:",
+          "actionability:",
+          "Portfolio source status unavailable",
+          "Option risk source status stale_source",
+          "metadata_only"
+        ],
+        "line_count": 32,
+        "char_count": 2001,
+        "has_opportunity_first_contract": false,
+        "has_next_step": false,
+        "has_holding_section": false
+      }
+    },
+    {
+      "runAtMs": 1776191025682,
+      "durationMs": 78173,
+      "deliveryStatus": "delivered",
+      "quality": {
+        "score": 10,
+        "noise_tokens": [
+          "confidence: 0.0",
+          "thesis_state:",
+          "actionability:",
+          "Portfolio source status unavailable",
+          "Option risk source status stale_source",
+          "metadata_only"
+        ],
+        "line_count": 31,
+        "char_count": 2001,
+        "has_opportunity_first_contract": false,
+        "has_next_step": false,
+        "has_holding_section": false
+      }
+    },
+    {
+      "runAtMs": 1776195845394,
+      "durationMs": 44884,
+      "deliveryStatus": "delivered",
+      "quality": {
+        "score": 10,
+        "noise_tokens": [
+          "confidence: 0.0",
+          "thesis_state:",
+          "actionability:",
+          "Portfolio source status unavailable",
+          "Option risk source status stale_source",
+          "metadata_only"
+        ],
+        "line_count": 32,
+        "char_count": 2001,
+        "has_opportunity_first_contract": false,
+        "has_next_step": false,
+        "has_holding_section": false
+      }
+    },
+    {
+      "runAtMs": 1776201285632,
+      "durationMs": 61693,
+      "deliveryStatus": "delivered",
+      "quality": {
+        "score": 10,
+        "noise_tokens": [
+          "confidence: 0.0",
+          "thesis_state:",
+          "actionability:",
+          "Portfolio source status unavailable",
+          "Option risk source status stale_source",
+          "metadata_only"
+        ],
+        "line_count": 32,
+        "char_count": 2001,
+        "has_opportunity_first_contract": false,
+        "has_next_step": false,
+        "has_holding_section": false
+      }
+    },
+    {
+      "runAtMs": 1776205129992,
+      "durationMs": 55415,
+      "deliveryStatus": "delivered",
+      "quality": {
+        "score": 100,
+        "noise_tokens": [],
+        "line_count": 45,
+        "char_count": 2001,
+        "has_opportunity_first_contract": true,
+        "has_next_step": true,
+        "has_holding_section": true
+      }
+    }
+  ],
+  "interpretation": "Historical delivered reports may include pre-fix noise; latest product report is the current contract sample."
+}

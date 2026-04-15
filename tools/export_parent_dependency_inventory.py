@@ -15,6 +15,8 @@ SERVICE = WORKSPACE / 'services' / 'market-ingest'
 OUT = FINANCE / 'docs' / 'openclaw-runtime' / 'parent-dependency-inventory.json'
 
 DEPENDENCIES = {
+    'decision_log_writer': WORKSPACE / 'decisions' / 'decision_log.py',
+    'decision_log_schema': WORKSPACE / 'schemas' / 'decision-log.schema.json',
     'source_registry': SERVICE / 'config' / 'source-registry.json',
     'live_finance_adapter': SERVICE / 'adapters' / 'live_finance_adapter.py',
     'source_promotion': SERVICE / 'normalizer' / 'source_promotion.py',

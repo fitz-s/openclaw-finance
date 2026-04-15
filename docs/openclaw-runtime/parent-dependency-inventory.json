@@ -1,9 +1,21 @@
 {
-  "generated_at": "2026-04-15T02:54:07.617486+00:00",
+  "generated_at": "2026-04-15T03:04:38.367630+00:00",
   "status": "pass",
   "dependency_boundary": "parent_openclaw_workspace",
   "finance_repo_policy": "These files are load-bearing runtime dependencies but are not owned by the finance repository. Reviewers must inspect this inventory when packet/wake/judgment behavior changes.",
   "files": [
+    {
+      "role": "decision_log_writer",
+      "path": "/Users/leofitz/.openclaw/workspace/decisions/decision_log.py",
+      "exists": true,
+      "sha256": "sha256:2c8b6f2da406e99e05bfab561a381a7cfe78bb2538cb4dad64d37e862136d1ef"
+    },
+    {
+      "role": "decision_log_schema",
+      "path": "/Users/leofitz/.openclaw/workspace/schemas/decision-log.schema.json",
+      "exists": true,
+      "sha256": "sha256:15d67a3ed0bd493fdc17f4db7034c7ba3c7aa2164c4a3b41a6c0268696bf6c2f"
+    },
     {
       "role": "source_registry",
       "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/config/source-registry.json",
