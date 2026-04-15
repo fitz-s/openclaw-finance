@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-15T08:23:43.739689+00:00",
+  "generated_at": "2026-04-15T13:15:02.268406+00:00",
   "status": "reviewed",
   "unresolved_gaps": [
     "ibkr_client_portal_watchlist_sync_not_fresh",
@@ -9,11 +9,12 @@
   "watchlist": {
     "ibkr_watchlist_data_status": "unavailable",
     "ibkr_watchlist_fresh": false,
-    "portfolio_fresh": true,
-    "resolved_data_status": "fresh",
-    "resolved_symbol_count": 18,
+    "portfolio_fresh": false,
+    "resolved_data_status": "degraded",
+    "resolved_symbol_count": 15,
     "blocking_reasons": [
-      "client_portal_not_authenticated"
+      "client_portal_not_authenticated",
+      "client_portal_unavailable_or_stale; flex_unavailable_or_stale"
     ],
     "review": "IBKR Client Portal watchlist sync is best-effort and currently depends on local Client Portal authentication. Flex holdings and local pinned symbols keep the universe usable when IBKR watchlist fetch is unavailable."
   },
@@ -120,11 +121,11 @@
       }
     ],
     "latest_product_report": {
-      "generated_at": "2026-04-15T08:23:25.009484Z",
-      "report_hash": "sha256:adaa0d19a7b91534a596f13efc17616a414217cb18c7c3fd1f50fe5489c54bec",
+      "generated_at": "2026-04-15T13:11:52.405169Z",
+      "report_hash": "sha256:1652f64af05578c236f631f6f7e7eb88207da96dac5735ae870fd1de51a4c03f",
       "quality": {
         "line_count": 54,
-        "char_count": 2061,
+        "char_count": 2163,
         "has_opportunity_first_contract": true,
         "has_unknown_discovery_section": true,
         "has_holding_section": true,
@@ -135,8 +136,8 @@
   },
   "wake_threshold_bridge": {
     "current_gate": {
-      "evaluatedAt": "2026-04-15T05:01:59.898676+00:00",
-      "window": "overnight",
+      "evaluatedAt": "2026-04-15T13:10:19.352183+00:00",
+      "window": "pre",
       "shouldSend": false,
       "recommendedReportType": "hold",
       "decisionReason_sanitized": "present"
