@@ -52,6 +52,8 @@ def build_packet(
         'selected_theses': selected_theses,
         'selected_opportunities': opportunities[:opportunity_limit],
         'selected_invalidators': invalidators[:10],
+        'capital_agenda_items': [],
+        'displacement_cases': [],
         'forbidden_actions': [
             'no_user_delivery',
             'no_execution',

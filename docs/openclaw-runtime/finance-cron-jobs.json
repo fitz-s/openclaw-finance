@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-15T13:15:01.251160+00:00",
+  "generated_at": "2026-04-15T13:38:29.712006+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "jobs": [
     {
@@ -28,13 +28,12 @@
       "state": {
         "consecutiveErrors": 0,
         "lastDeliveryStatus": "delivered",
-        "lastRunAtMs": 1776205129992,
+        "lastRunAtMs": 1776258600022,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 55415,
+        "lastDurationMs": 160529,
         "lastDelivered": true,
-        "nextRunAtMs": 1776258600000,
-        "runningAtMs": 1776258600019
+        "nextRunAtMs": 1776345000000
       }
     },
     {
@@ -91,13 +90,13 @@
         "message": "【finance market-hours scanner｜context-pack-first】\n你是 finance scanner。不要发用户消息。你的任务是找 object-linked evidence candidates，不是写报告。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 读取 /Users/leofitz/.openclaw/workspace/finance/state/llm-job-context/scanner.json。\n- context pack 是 view cache，必须有 pack_is_not_authority=true；不要把它当 canonical state。\n\n搜索顺序和预算：\n1. invalidator_check：检查 active thesis 的反证是否有新证据。\n2. opportunity_followup：跟进 OpportunityQueue candidate。\n3. unknown_discovery：至少尝试 unknown_discovery_minimum_attempts 次；不得把已在 watchlist/held 的标的当作 unknown_discovery。\n\nObservation 必须写入 finance/buffer/{YYYY-MM-DD}-scan-{HHMM}.json，schema:\n{\n  \"scan_time\": \"...\",\n  \"window\": \"...\",\n  \"observations\": [\n    {\n      \"id\": \"...\",\n      \"ts\": \"...\",\n      \"theme\": \"...\",\n      \"summary\": \"...\",\n      \"urgency\": 1,\n      \"importance\": 1,\n      \"novelty\": 1,\n      \"cumulative_value\": 1,\n      \"candidate_type\": \"unknown_discovery|thesis_update|invalidator_check|scenario_update\",\n      \"discovery_scope\": \"non_watchlist|watchlist|portfolio|macro\",\n      \"tickers\": [],\n      \"object_links\": {\"thesis_refs\": [], \"scenario_refs\": [], \"opportunity_candidate_refs\": [], \"invalidator_refs\": []},\n      \"supports\": [],\n      \"conflicts_with\": [],\n      \"confirmation_needed\": [],\n      \"sources\": []\n    }\n  ],\n  \"unknown_discovery_exhausted_reason\": \"如果没有合格 unknown_discovery，必须写这里\"\n}\n\n规则：\n- 每轮最多 4 条 observations；non-watchlist discovery 最多 2 条。\n- 每条 observation 必须有 sources。\n- unknown_discovery 不能用 held/watchlist ticker 填充。\n- 不要输出 prose 计划，不要长解释。\n\nClosure:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_worker.py\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/gate_evaluator.py\n\nFinal output: 空字符串，或一行机器摘要：scan=ok|obs=N|gate=TYPE"
       },
       "state": {
-        "lastRunAtMs": 1776258395736,
+        "lastRunAtMs": 1776259200017,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 140072,
+        "lastDurationMs": 366815,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
-        "nextRunAtMs": 1776259200000,
+        "nextRunAtMs": 1776260400000,
         "lastDelivered": false
       }
     },

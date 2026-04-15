@@ -1,166 +1,175 @@
-# OpenClaw Finance Subsystem - Agent Instructions
+# OpenClaw Finance Subsystem — Agent Instructions
 
-This repository is an **OpenClaw-embedded finance subsystem**.
+OpenClaw-embedded finance subsystem. Review-only capital governance — never executes trades.
 
-It is not a standalone trading bot, not a generic Python report runner, and not a terminal/dashboard product. It runs as one finance lane inside the local OpenClaw runtime at:
+## Workspace Map
 
-- `/Users/leofitz/.openclaw`
-- parent workspace: `/Users/leofitz/.openclaw/workspace`
-- finance repo: `/Users/leofitz/.openclaw/workspace/finance`
-
-The GitHub repository mirrors the finance subsystem code and sanitized runtime snapshots. GitHub reviewers cannot see live local state, secrets, raw Flex XML, or the real OpenClaw cron database unless those facts are exported into `docs/openclaw-runtime/`.
-
-## First Read
-
-For a zero-context agent, read these files before changing code:
-
-1. `docs/mainline-closeout.md`
-2. `docs/openclaw-subsystem.md`
-3. `docs/operating-model.md`
-4. `docs/job-cognition-surface-plan.md`
-5. `docs/verification.md`
-6. `docs/openclaw-runtime/finance-cron-jobs.json`
-7. `docs/openclaw-runtime/finance-job-prompt-contract.json`
-8. `docs/openclaw-runtime/snapshot-manifest.json`
-
-If you are changing packet/wake/judgment semantics, also read:
-
-- `docs/openclaw-runtime/contracts/finance-openclaw-runtime-contract.md`
-- `docs/openclaw-runtime/contracts/finance-report-contract.md`
-- `docs/openclaw-runtime/contracts/thesis-spine-contract.md`
-- `docs/openclaw-runtime/contracts/judgment-contract.md`
-- `docs/openclaw-runtime/contracts/wake-policy.md`
-- `docs/openclaw-runtime/contracts/risk-gates.md`
-
-## Authority Order
-
-For active runtime behavior, use this order:
-
-1. Live OpenClaw runtime config outside this repo, especially `/Users/leofitz/.openclaw/cron/jobs.json`
-2. Canonical parent workspace contracts and schemas under `/Users/leofitz/.openclaw/workspace/systems` and `/Users/leofitz/.openclaw/workspace/schemas`
-3. Deterministic scripts in this repo and parent `services/market-ingest`
-4. Sanitized snapshots in `docs/openclaw-runtime/`
-5. Explanatory docs in this repo
-
-Do not treat `legacy/report-v1/REPORT_TEMPLATE.md`, old direct renderers, old selected-envelope paths, or compatibility packet prose as active authority.
-
-## Active User-Visible Path
-
-The active user-visible finance path is:
-
-```text
-OpenClaw cron finance-premarket-brief
--> scripts/finance_llm_context_pack.py
--> JudgmentEnvelope candidate or deterministic no-trade fallback
--> scripts/judgment_envelope_gate.py
--> scripts/finance_decision_report_render.py
--> scripts/finance_report_product_validator.py
--> scripts/finance_decision_log_compiler.py
--> scripts/finance_report_delivery_safety.py
--> Discord announce only if safety passes
+```
+finance/
+├── scripts/                         # Deterministic runtime scripts
+│   ├── atomic_io.py                 # Shared IO helpers
+│   ├── thesis_spine_util.py         # Shared spine helpers
+│   │
+│   ├── # ── Data Ingestion ──
+│   ├── price_fetcher.py
+│   ├── watchlist_resolver.py
+│   ├── portfolio_fetcher.py / portfolio_resolver.py / portfolio_flex_*.py
+│   ├── broad_market_proxy_fetcher.py
+│   ├── options_flow_proxy_fetcher.py
+│   ├── sec_discovery_fetcher.py / sec_filing_semantics.py
+│   │
+│   ├── # ── Thesis Spine Compilers ──
+│   ├── watch_intent_compiler.py          → state/watch-intent.json
+│   ├── thesis_registry_compiler.py       → state/thesis-registry.json
+│   ├── scenario_card_builder.py          → state/scenario-cards.json
+│   ├── opportunity_queue_builder.py      → state/opportunity-queue.json
+│   ├── invalidator_ledger_compiler.py    → state/invalidator-ledger.json
+│   │
+│   ├── # ── Capital Competition Engine ──
+│   ├── capital_graph_compiler.py         → state/capital-graph.json
+│   ├── scenario_exposure_compiler.py     → state/scenario-exposure-matrix.json
+│   ├── displacement_case_builder.py      → state/displacement-cases.json
+│   ├── capital_agenda_compiler.py        → state/capital-agenda.json
+│   ├── capital_committee_packet.py       → state/capital-committee-packet.json
+│   ├── capital_committee_sidecar.py      → state/committee-memos/*.json
+│   ├── committee_memo_merge.py           → state/capital-agenda-annotated.json
+│   │
+│   ├── # ── Report Pipeline ──
+│   ├── finance_llm_context_pack.py       → state/llm-job-context/*.json
+│   ├── finance_report_packet.py          → state/report-input-packet.json
+│   ├── judgment_envelope_gate.py         → state/judgment-envelope.json
+│   ├── finance_decision_report_render.py → state/finance-decision-report-envelope.json
+│   ├── finance_report_product_validator.py
+│   ├── finance_decision_log_compiler.py
+│   ├── finance_report_delivery_safety.py
+│   │
+│   ├── # ── Scanner / Worker ──
+│   ├── finance_worker.py
+│   ├── gate_evaluator.py
+│   ├── native_scanner_market_hours.py / native_scanner_offhours.py
+│   │
+│   └── # ── Research Sidecar ──
+│       ├── thesis_research_packet.py / thesis_research_sidecar.py
+│       └── custom_metric_compiler.py
+│
+├── state/                           # Runtime state (not committed)
+│   ├── capital-bucket-config.json   # 5-bucket attention budget
+│   ├── capital-graph.json           # Deterministic exposure graph
+│   ├── capital-agenda.json          # Ranked review-only agenda
+│   ├── committee-memos/             # Role-decomposed assessments
+│   └── llm-job-context/             # Non-authoritative view cache
+│
+├── tests/                           # pytest suite (52 tests)
+├── tools/                           # Audit & snapshot export tools
+├── docs/
+│   ├── openclaw-runtime/contracts/  # 16 runtime contracts
+│   ├── verification.md
+│   └── operating-model.md
+├── buffer/                          # Scanner observation buffer
+├── watchlists/                      # Watchlist source files
+└── AGENTS.md                        # ← you are here
 ```
 
-The final report must come from `finance-decision-report-envelope.json` after product validation, decision log, and delivery safety. Do not hand-write user-visible market reports.
+## Active Report Path
+
+```
+cron finance-premarket-brief
+→ finance_llm_context_pack.py
+→ JudgmentEnvelope candidate or deterministic fallback
+→ judgment_envelope_gate.py
+→ finance_decision_report_render.py  (--report-mode thesis_delta | capital_delta)
+→ finance_report_product_validator.py
+→ finance_decision_log_compiler.py
+→ finance_report_delivery_safety.py
+→ Discord announce only if safety passes
+```
+
+**`thesis_delta`** (default): opportunity-expansion-first report.  
+**`capital_delta`**: capital-competition-first report. Requires valid `capital-graph.json`; falls back to `thesis_delta` if absent.
+
+## Capital Competition Engine
+
+Evaluates which theses/opportunities deserve scarce attention slots. Strictly review-only.
+
+**Pipeline:**
+```
+watch_intent_compiler  (capital_bucket_hint)
+→ thesis_registry_compiler  (capital_bucket_ref, competes_with)
+→ scenario_card_builder  (exposure_refs, crowding_risk)
+→ capital_graph_compiler  (nodes, edges, hedge coverage, utilization)
+→ scenario_exposure_compiler  (scenario × bucket matrix)
+→ displacement_case_builder  (selective: only genuine overlap/crowding)
+→ capital_agenda_compiler  (ranked, capped at 8, max 3 per type)
+```
+
+**Rules:**
+- All capital objects carry `no_execution=True`
+- Compilers are deterministic: same inputs → same `graph_hash`
+- Displacement cases are selective — only on genuine overlap, crowding, or hedge gap
+- Agenda diversity: max 3 items per `agenda_type`
+- Capital pipeline layers on top of Thesis Spine; does not replace it
 
 ## Review-Only Boundary
 
-Finance is review-only.
+**Allowed:** scan, compile, judge, render, log, produce sidecar artifacts, compile capital graph/agenda, produce committee memos.
 
-Allowed:
-
-- scan evidence candidates
-- compile typed packets and wake decisions
-- produce `JudgmentEnvelope` review artifacts
-- render product reports after validation
-- write decision logs and replay/telemetry
-- produce sidecar research artifacts
-
-Forbidden:
-
-- place trades
-- call broker execution APIs
-- set `live_authority=true`
-- bypass delivery safety
-- mutate thresholds automatically from LLM output
-- store raw feeds/news/latest market state in standing memory surfaces
-- expose account identifiers, raw Flex XML, secrets, or raw local credentials
-
-## Thesis Spine
-
-The subsystem now works around persistent Thesis Spine objects:
-
-- `WatchIntent`
-- `ThesisCard`
-- `ScenarioCard`
-- `OpportunityQueue`
-- `InvalidatorLedger`
-
-These objects live in `finance/state/` during runtime and are described by contracts/schemas in `docs/openclaw-runtime/`.
-
-Important rule:
-
-`state/llm-job-context/*.json` is a **non-authoritative view cache**. It helps LLM jobs reason over compact context, but it is not canonical state. Canonical state remains typed packets, wake decisions, judgment envelopes, Thesis Spine state, validators, decision logs, and safety gates.
+**Forbidden:** trade, call broker APIs, set `live_authority=true`, bypass delivery safety, mutate thresholds from LLM output, expose account IDs / Flex XML / secrets.
 
 ## OpenClaw Jobs
 
-Current finance jobs:
+| Job | Status | Delivery |
+|-----|--------|----------|
+| `finance-premarket-brief` | enabled | Discord |
+| `finance-subagent-scanner` | enabled | none |
+| `finance-subagent-scanner-offhours` | enabled | none |
+| `finance-weekly-learning-review` | enabled | Discord |
+| `finance-thesis-sidecar` | disabled/manual | none |
 
-- `finance-premarket-brief`: enabled, user-visible report orchestrator, Discord announce
-- `finance-subagent-scanner`: enabled, market-hours scanner, no delivery
-- `finance-subagent-scanner-offhours`: enabled, off-hours scanner, no delivery
-- `finance-weekly-learning-review`: enabled, weekly system review, Discord announce
-- `finance-thesis-sidecar`: disabled/manual, artifact-only, delivery none
+## Job Rules
 
-Do not edit `/Users/leofitz/.openclaw/cron/jobs.json` without running the Mars cron gate from the parent workspace:
+**Scanner** (`finance-subagent-scanner*`): No user messages. Read `scanner.json` first. Write to `buffer/*.json`. Run only `finance_worker.py` and `gate_evaluator.py`. Don't treat held/watchlist symbols as `unknown_discovery`.
+
+**Report Orchestrator** (`finance-premarket-brief`): Run `finance_llm_context_pack.py`. LLM writes only `judgment-envelope-candidate.json`. Context pack includes `capital_agenda_items`, `displacement_cases`, `capital_graph_summary`. Do not bypass the deterministic renderer.
+
+**Sidecar** (`finance-thesis-sidecar`): Stays disabled unless user requests. May run thesis spine compilers, capital compilers, and committee sidecar. Committee memos carry `no_execution`, `no_user_delivery`, `no_threshold_mutation`, `no_live_authority_change`. No Discord delivery.
+
+## First Read
+
+For zero-context: `docs/mainline-closeout.md` → `docs/operating-model.md` → `docs/verification.md` → `docs/openclaw-runtime/snapshot-manifest.json`.
+
+For packet/wake/judgment changes, also read contracts: `finance-openclaw-runtime-contract.md`, `finance-report-contract.md`, `thesis-spine-contract.md`, `judgment-contract.md`, `wake-policy.md`, `risk-gates.md`.
+
+For capital competition changes, also read: `capital-graph-contract.md`, `capital-bucket-contract.md`, `displacement-case-contract.md`, `capital-agenda-contract.md`, `committee-memo-contract.md`.
+
+## Canonical State
+
+`state/llm-job-context/*.json` is a **non-authoritative view cache**. Canonical state = typed packets, wake decisions, judgment envelopes, Thesis Spine objects, capital competition objects, validators, decision logs, safety gates.
+
+## Verification
 
 ```bash
-cd /Users/leofitz/.openclaw/workspace-neptune
-.venv/bin/python -m harness.cli gate quick --agent mars modify_cron_jobs
+# Minimum
+python3 -m pytest -q tests
+python3 -m compileall -q scripts tools tests
+python3 tools/audit_operating_model.py
+python3 tools/audit_benchmark_boundary.py
+
+# Report path
+python3 scripts/finance_llm_context_pack.py
+python3 scripts/judgment_envelope_gate.py --allow-fallback --adjudication-mode scheduled_context --context-pack state/llm-job-context/report-orchestrator.json
+python3 scripts/finance_decision_report_render.py
+python3 scripts/finance_report_product_validator.py
+python3 scripts/finance_decision_log_compiler.py
+python3 scripts/finance_report_delivery_safety.py
+
+# Capital competition
+python3 scripts/capital_graph_compiler.py
+python3 scripts/scenario_exposure_compiler.py
+python3 scripts/displacement_case_builder.py
+python3 scripts/capital_agenda_compiler.py
 ```
 
-If the gate does not return `ALLOW`, stop and report the blocker.
-
-## Scanner Job Rules
-
-Only when acting as `finance-subagent-scanner` or `finance-subagent-scanner-offhours`:
-
-- Do not send user messages.
-- Read `state/llm-job-context/scanner.json` first.
-- Write scanner observations to `finance/buffer/*.json`.
-- Run only deterministic closure scripts:
-  - `/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_worker.py`
-  - `/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/gate_evaluator.py`
-- Do not treat held/watchlist symbols as `unknown_discovery`.
-- Preserve `object_links`, `supports`, `conflicts_with`, `confirmation_needed`, and `unknown_discovery_exhausted_reason`.
-
-## Report Orchestrator Rules
-
-Only when acting as `finance-premarket-brief`:
-
-- Run `finance_llm_context_pack.py`.
-- Read `state/llm-job-context/report-orchestrator.json`.
-- The LLM may write only `state/judgment-envelope-candidate.json`.
-- Candidate `evidence_refs` must be a subset of context-pack `allowed_evidence_refs`; `judgment_envelope_gate.py --context-pack ...` enforces this.
-- Do not write final prose yourself.
-- Output only the validated product markdown if `finance_report_delivery_safety.py` passes.
-- If safety fails, output only the health-only markdown.
-
-## Sidecar Rules
-
-`finance-thesis-sidecar` must remain disabled/manual unless the user explicitly requests enabling it.
-
-It may run existing artifact scripts:
-
-- `scripts/thesis_research_packet.py`
-- `scripts/custom_metric_compiler.py`
-- `scripts/scenario_card_builder.py`
-- `scripts/thesis_research_sidecar.py`
-
-It must not send Discord messages, mutate thresholds, execute trades, or produce final market recommendations.
-
-## Reviewer Visibility
-
-After runtime-facing changes, refresh sanitized snapshots:
+After runtime changes, refresh snapshots:
 
 ```bash
 python3 tools/export_openclaw_runtime_snapshot.py
@@ -171,37 +180,3 @@ python3 tools/export_wake_threshold_attribution.py
 python3 tools/score_report_usefulness.py
 python3 tools/review_runtime_gaps.py
 ```
-
-Commit updated `docs/openclaw-runtime/` snapshots so GitHub reviewers can see:
-
-- cron job prompt hashes
-- prompt contract booleans
-- parent dependency hashes
-- runtime contracts and schemas
-- telemetry summaries
-
-## Verification
-
-Before claiming completion, run the relevant subset from `docs/verification.md`.
-
-For most changes, run at minimum:
-
-```bash
-python3 -m pytest -q tests
-python3 -m compileall -q scripts tools tests
-python3 tools/audit_operating_model.py
-python3 tools/audit_benchmark_boundary.py
-```
-
-For report-path changes, also run:
-
-```bash
-python3 scripts/finance_llm_context_pack.py
-python3 scripts/judgment_envelope_gate.py --allow-fallback --adjudication-mode scheduled_context --context-pack state/llm-job-context/report-orchestrator.json
-python3 scripts/finance_decision_report_render.py
-python3 scripts/finance_report_product_validator.py
-python3 scripts/finance_decision_log_compiler.py
-python3 scripts/finance_report_delivery_safety.py
-```
-
-Do not trigger a Discord-delivering cron job as a "test" unless the user explicitly asks for a live delivery.

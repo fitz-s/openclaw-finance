@@ -63,6 +63,10 @@ def compile_registry(watch_intent: dict, existing: dict | None = None) -> tuple[
             'last_meaningful_change_at': existing_card.get('last_meaningful_change_at') or watch_intent.get('generated_at'),
             'promotion_reason': existing_card.get('promotion_reason') or 'compiled_from_watch_intent',
             'retirement_reason': existing_card.get('retirement_reason'),
+            'capital_bucket_ref': existing_card.get('capital_bucket_ref') or intent.get('capital_bucket_hint'),
+            'competes_with': existing_card.get('competes_with') if isinstance(existing_card.get('competes_with'), list) else [],
+            'hedge_role': existing_card.get('hedge_role'),
+            'exposure_refs': existing_card.get('exposure_refs') if isinstance(existing_card.get('exposure_refs'), list) else [],
         })
     registry = {'generated_at': now_iso(), 'policy_version': POLICY_VERSION, 'theses': theses}
     active = {

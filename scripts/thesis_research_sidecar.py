@@ -21,6 +21,10 @@ STEPS = [
     'thesis_research_packet.py',
     'custom_metric_compiler.py',
     'scenario_card_builder.py',
+    'capital_graph_compiler.py',
+    'scenario_exposure_compiler.py',
+    'displacement_case_builder.py',
+    'capital_agenda_compiler.py',
 ]
 
 

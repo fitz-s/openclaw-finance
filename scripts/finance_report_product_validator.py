@@ -20,21 +20,31 @@ JUDGMENT = FINANCE / 'state' / 'judgment-envelope.json'
 VALIDATION = FINANCE / 'state' / 'judgment-validation.json'
 OUT = FINANCE / 'state' / 'finance-report-product-validation.json'
 
-REQUIRED_SECTIONS = [
+REQUIRED_SECTIONS_BASE = [
     '## 结论',
+    '## 期权与风险雷达',
+    '## 分层证据',
+    '## 矛盾与裁决',
+    '## 反证 / Invalidators',
+    '## 下一步观察',
+    '## 数据质量',
+    '## 来源',
+]
+REQUIRED_SECTIONS_THESIS_DELTA = REQUIRED_SECTIONS_BASE + [
     '## 今日看点',
     '## 为什么现在',
     '## 市场机会雷达（Watchlist / Flow）',
     '## 未知探索（非持仓 / 非Watchlist）',
     '## 潜在机会 / 风险候选',
-    '## 期权与风险雷达',
-    '## 分层证据',
-    '## 矛盾与裁决',
     '## 持仓影响',
-    '## 反证 / Invalidators',
-    '## 下一步观察',
-    '## 数据质量',
-    '## 来源',
+]
+REQUIRED_SECTIONS_CAPITAL_DELTA = REQUIRED_SECTIONS_BASE + [
+    '## 资本议程',
+    '## 替代分析',
+    '## 护城河缺口',
+    '## Thesis 焦点',
+    '## 场景敏感面',
+    '## 市场机会雷达',
 ]
 BANNED = {
     'thresholds_not_met': re.compile(r'thresholds not met', re.I),
@@ -59,7 +69,10 @@ def validate(report: dict[str, Any], packet: dict[str, Any], judgment: dict[str,
     errors: list[dict[str, str]] = []
     warnings: list[dict[str, str]] = []
     markdown = str(report.get('markdown') or '')
-    for section in REQUIRED_SECTIONS:
+    renderer_id = str(report.get('renderer_id') or '')
+    is_capital_delta = 'capital-delta' in renderer_id
+    required_sections = REQUIRED_SECTIONS_CAPITAL_DELTA if is_capital_delta else REQUIRED_SECTIONS_THESIS_DELTA
+    for section in required_sections:
         if section not in markdown:
             errors.append(error('missing_section', section))
     for code, pattern in BANNED.items():
@@ -86,14 +99,27 @@ def validate(report: dict[str, Any], packet: dict[str, Any], judgment: dict[str,
         errors.append(error('missing_layer_digest', 'layer digest must mention L0-L4'))
     if len(markdown.strip()) < 600:
         warnings.append(error('short_report', 'decision report is unusually short'))
-    if len(markdown.splitlines()) > 70:
-        errors.append(error('report_too_long_lines', 'scheduled decision report must stay within 70 lines'))
-    if len(markdown) > 5200:
-        errors.append(error('report_too_long_chars', 'scheduled decision report must stay within 5200 characters'))
+    max_lines = 85 if is_capital_delta else 70
+    max_chars = 6500 if is_capital_delta else 5200
+    if len(markdown.splitlines()) > max_lines:
+        errors.append(error('report_too_long_lines', f'decision report must stay within {max_lines} lines'))
+    if len(markdown) > max_chars:
+        errors.append(error('report_too_long_chars', f'decision report must stay within {max_chars} characters'))
     if len(re.findall(r'`ev:[^`]+`', markdown)) > 12:
         errors.append(error('too_many_evidence_refs', 'user report is exposing too many machine evidence refs'))
-    if '报告主轴：先找非持仓/非 watchlist' not in markdown:
-        errors.append(error('missing_opportunity_first_contract', 'report must state opportunity expansion is primary'))
+    # Mode-specific validations
+    if is_capital_delta:
+        if '## 资本议程' not in markdown:
+            errors.append(error('missing_capital_agenda_section', 'capital_delta report must have agenda section'))
+        if '报告主轴：资本竞争优先' not in markdown:
+            errors.append(error('missing_capital_competition_contract', 'capital_delta must state capital competition axis'))
+        if '## 替代分析' not in markdown:
+            warnings.append(error('missing_displacement_analysis', 'capital_delta should show displacement reasoning'))
+        if not report.get('capital_agenda_refs') and not report.get('capital_graph_hash'):
+            warnings.append(error('missing_capital_refs', 'capital_delta should bind agenda/displacement refs'))
+    else:
+        if '报告主轴：先找非持仓/非 watchlist' not in markdown:
+            errors.append(error('missing_opportunity_first_contract', 'report must state opportunity expansion is primary'))
     return errors, warnings
 
 

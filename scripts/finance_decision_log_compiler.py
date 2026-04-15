@@ -143,6 +143,9 @@ def compile_entry(
         'scenario_refs': judgment.get('scenario_refs') or packet.get('scenario_refs', []),
         'opportunity_candidate_refs': judgment.get('opportunity_candidate_refs') or packet.get('opportunity_candidate_refs', []),
         'invalidator_refs': judgment.get('invalidator_refs') or packet.get('invalidator_refs', []),
+        'capital_agenda_refs': product_report.get('capital_agenda_refs') or [],
+        'displacement_case_refs': product_report.get('displacement_case_refs') or [],
+        'capital_graph_hash': product_report.get('capital_graph_hash'),
         'wake_threshold_attribution': wake_threshold_attribution(
             gate=gate or {},
             wake=wake or {},

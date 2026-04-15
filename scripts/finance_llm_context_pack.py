@@ -34,6 +34,10 @@ DELIVERY_SAFETY = STATE / 'report-delivery-safety-check.json'
 DISPATCH_ATTRIBUTION = STATE / 'dispatch-attribution.jsonl'
 THESIS_OUTCOMES = STATE / 'thesis-outcomes.jsonl'
 REPORT_USEFULNESS = STATE / 'report-usefulness-history.jsonl'
+CAPITAL_GRAPH = STATE / 'capital-graph.json'
+CAPITAL_AGENDA = STATE / 'capital-agenda.json'
+DISPLACEMENT_CASES = STATE / 'displacement-cases.json'
+SCENARIO_EXPOSURE = STATE / 'scenario-exposure-matrix.json'
 
 CANONICAL_AUTHORITY = 'ContextPacket/WakeDecision/JudgmentEnvelope/Thesis Spine state'
 MAX_PACK_CHARS = 30000
@@ -261,6 +265,10 @@ def build_packs() -> dict[str, dict[str, Any]]:
     opportunity_rows = top_opportunities(opportunities)
     invalidator_rows = top_invalidators(invalidators)
     known_symbols = watch_symbols(watchlist, portfolio)
+    capital_graph = load_json_safe(CAPITAL_GRAPH, {}) or {}
+    capital_agenda = load_json_safe(CAPITAL_AGENDA, {}) or {}
+    displacement_cases_data = load_json_safe(DISPLACEMENT_CASES, {}) or {}
+    scenario_exposure = load_json_safe(SCENARIO_EXPOSURE, {}) or {}
 
     report_sources = [artifact(PACKET, required=True), artifact(WAKE, required=True), artifact(THESIS_REGISTRY), artifact(OPPORTUNITY_QUEUE), artifact(INVALIDATOR_LEDGER)]
     report = base_pack(
@@ -294,6 +302,35 @@ def build_packs() -> dict[str, dict[str, Any]]:
             '/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_report_delivery_safety.py',
         ],
         'final_output_rule': 'Only output finance-decision-report-envelope.markdown after delivery safety status=pass; otherwise health-only markdown.',
+        'capital_agenda_items': [
+            {
+                'agenda_id': item.get('agenda_id'),
+                'agenda_type': item.get('agenda_type'),
+                'priority_score': item.get('priority_score'),
+                'attention_justification': item.get('attention_justification'),
+                'linked_thesis_ids': item.get('linked_thesis_ids', [])[:5],
+                'displacement_case_refs': item.get('displacement_case_refs', [])[:3],
+                'required_questions': item.get('required_questions', [])[:3],
+            }
+            for item in (capital_agenda.get('agenda_items', []) if isinstance(capital_agenda.get('agenda_items'), list) else [])[:5]
+        ],
+        'displacement_cases': [
+            {
+                'case_id': c.get('case_id'),
+                'candidate_instrument': c.get('candidate_instrument'),
+                'displaced_instrument': c.get('displaced_instrument'),
+                'overlap_type': c.get('overlap_type'),
+                'justification': c.get('justification'),
+            }
+            for c in (displacement_cases_data.get('cases', []) if isinstance(displacement_cases_data.get('cases'), list) else [])[:5]
+        ],
+        'capital_graph_summary': {
+            'graph_hash': capital_graph.get('graph_hash'),
+            'node_count': capital_graph.get('node_count', 0),
+            'edge_count': capital_graph.get('edge_count', 0),
+            'hedge_coverage': capital_graph.get('hedge_coverage', {}),
+            'bucket_utilization': capital_graph.get('bucket_utilization', {}),
+        } if capital_graph.get('graph_hash') else None,
     })
 
     scanner_sources = [artifact(WATCHLIST), artifact(PORTFOLIO), artifact(THESIS_REGISTRY), artifact(OPPORTUNITY_QUEUE), artifact(INVALIDATOR_LEDGER)]

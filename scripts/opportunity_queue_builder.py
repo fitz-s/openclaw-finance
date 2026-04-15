@@ -62,6 +62,7 @@ def build_queue(scan_state: dict[str, Any], watchlist: dict[str, Any], existing:
             'first_seen_at': previous.get('first_seen_at') or seen_at,
             'last_seen_at': seen_at or previous.get('last_seen_at'),
             'score': score(item),
+            'displacement_case_ref': previous.get('displacement_case_ref'),
         })
     candidates.sort(key=lambda item: item['score'], reverse=True)
     return {'generated_at': now_iso(), 'policy_version': POLICY_VERSION, 'candidates': candidates[:20]}

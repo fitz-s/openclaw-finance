@@ -14,6 +14,9 @@ PORTFOLIO = FINANCE / 'state' / 'portfolio-resolved.json'
 OUT = FINANCE / 'state' / 'watch-intent.json'
 
 
+CYCLICAL_SYMBOLS = {'USO', 'XLE', 'XLF', 'XLB', 'XLI', 'XLP', 'XLU', 'XLY', 'LUMN', 'RGTI'}
+
+
 def roles_for(symbol: str, row: dict[str, Any], portfolio_symbols: set[str], option_symbols: set[str]) -> list[str]:
     roles = set()
     sources = set(row.get('sources', [])) if isinstance(row.get('sources'), list) else set()
@@ -28,6 +31,18 @@ def roles_for(symbol: str, row: dict[str, Any], portfolio_symbols: set[str], opt
     return sorted(roles)
 
 
+def bucket_hint_for(symbol: str, roles: list[str]) -> str:
+    """Deterministic capital bucket hint from roles."""
+    role_set = set(roles)
+    if 'hedge' in role_set or 'macro_proxy' in role_set:
+        return 'macro_hedges'
+    if 'held_core' in role_set:
+        return 'cyclical_beta' if symbol in CYCLICAL_SYMBOLS else 'core_compounders'
+    if 'event_sensitive' in role_set:
+        return 'event_driven'
+    return 'speculative_optionality'
+
+
 def compile_intents(watchlist: dict[str, Any], portfolio: dict[str, Any]) -> dict[str, Any]:
     portfolio_symbols = {clean_symbol(item.get('symbol')) for item in portfolio.get('stocks', []) if isinstance(item, dict)}
     option_symbols = {clean_symbol(item.get('underlying') or item.get('symbol')) for item in portfolio.get('options', []) if isinstance(item, dict)}
@@ -40,10 +55,12 @@ def compile_intents(watchlist: dict[str, Any], portfolio: dict[str, Any]) -> dic
         symbol = clean_symbol(row.get('symbol'))
         if not symbol:
             continue
+        computed_roles = roles_for(symbol, row, set(portfolio_symbols), set(option_symbols))
         intents.append({
             'intent_id': stable_id('watch-intent', symbol),
             'symbol': symbol,
-            'roles': roles_for(symbol, row, set(portfolio_symbols), set(option_symbols)),
+            'roles': computed_roles,
+            'capital_bucket_hint': bucket_hint_for(symbol, computed_roles),
             'source_refs': source_refs(WATCHLIST, PORTFOLIO),
             'notes': row.get('notes', []) if isinstance(row.get('notes'), list) else ([row.get('notes')] if row.get('notes') else []),
         })

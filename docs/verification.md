@@ -33,6 +33,17 @@ python3 scripts/finance_report_delivery_safety.py
 pytest -q tests/test_llm_context_pack.py tests/test_finance_job_prompt_contract.py tests/test_prompt_snapshot_contract.py tests/test_judgment_context_pack_gate.py
 ```
 
+Capital competition verification:
+
+```bash
+python3 scripts/capital_graph_compiler.py
+python3 scripts/scenario_exposure_compiler.py
+python3 scripts/displacement_case_builder.py
+python3 scripts/capital_agenda_compiler.py
+python3 scripts/finance_decision_report_render.py --report-mode capital_delta
+pytest -q tests/test_capital_graph_compiler.py tests/test_displacement_case_builder.py tests/test_capital_agenda_compiler.py tests/test_capital_delta_report_render.py
+```
+
 Runtime integration verification from the parent OpenClaw workspace:
 
 ```bash

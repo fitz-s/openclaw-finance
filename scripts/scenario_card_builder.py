@@ -54,6 +54,10 @@ def build_scenarios(opportunity_queue: dict[str, Any], invalidator_ledger: dict[
             },
             'invalidators': previous.get('invalidators') if isinstance(previous.get('invalidators'), list) else [],
             'last_meaningful_change_at': previous.get('last_meaningful_change_at') or item.get('last_seen_at') or now,
+            'exposure_refs': previous.get('exposure_refs') if isinstance(previous.get('exposure_refs'), list) else [],
+            'bucket_sensitivity': previous.get('bucket_sensitivity') if isinstance(previous.get('bucket_sensitivity'), dict) else {},
+            'hedge_gap_refs': previous.get('hedge_gap_refs') if isinstance(previous.get('hedge_gap_refs'), list) else [],
+            'crowding_risk': previous.get('crowding_risk'),
         })
 
     invalidators = [

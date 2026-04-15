@@ -36,6 +36,9 @@ OPPORTUNITY_QUEUE = FINANCE / 'state' / 'opportunity-queue.json'
 INVALIDATOR_LEDGER = FINANCE / 'state' / 'invalidator-ledger.json'
 SHADOW_DELTA_OUT = FINANCE / 'state' / 'finance-thesis-delta-report.shadow.json'
 SHADOW_DELTA_MARKDOWN = FINANCE / 'state' / 'finance-thesis-delta-report.shadow.md'
+CAPITAL_AGENDA = FINANCE / 'state' / 'capital-agenda.json'
+CAPITAL_GRAPH = FINANCE / 'state' / 'capital-graph.json'
+DISPLACEMENT_CASES_PATH = FINANCE / 'state' / 'displacement-cases.json'
 POLICY_VERSION = 'finance-decision-report-v1'
 SYMBOL_STOPWORDS = {
     'AI', 'API', 'CEO', 'CFO', 'CIO', 'COO', 'CPI', 'ETF', 'ET',
@@ -789,6 +792,137 @@ def render_delta_markdown(
     return '\n'.join(lines) + '\n'
 
 
+def capital_agenda_section(capital_agenda: dict[str, Any], limit: int = 5) -> list[str]:
+    items = [item for item in capital_agenda.get('agenda_items', []) if isinstance(item, dict)][:limit]
+    if not items:
+        return ['- 资本议程暂无项目。']
+    type_labels = {
+        'new_opportunity': '新机会',
+        'existing_thesis_review': 'Thesis 审查',
+        'hedge_gap_alert': '对冲缺口',
+        'invalidator_escalation': '反证升级',
+        'exposure_crowding_warning': '暴露拥挤',
+    }
+    lines = []
+    for i, item in enumerate(items, 1):
+        atype = type_labels.get(item.get('agenda_type', ''), item.get('agenda_type', 'unknown'))
+        justification = short(item.get('attention_justification', ''), 120)
+        lines.append(
+            f"- {i}. [{atype}] {justification}；"
+            f"priority={item.get('priority_score')}；"
+            f"thesis_refs={len(item.get('linked_thesis_ids', []))}；"
+            f"displacement_refs={len(item.get('displacement_case_refs', []))}"
+        )
+    return lines
+
+
+def displacement_section(displacement_cases: dict[str, Any], limit: int = 3) -> list[str]:
+    cases = [c for c in displacement_cases.get('cases', []) if isinstance(c, dict)][:limit]
+    if not cases:
+        return ['- 无候选与现有暴露产生资本竞争；所有候选为增量关注。']
+    lines = []
+    for c in cases:
+        lines.append(
+            f"- {c.get('candidate_instrument', 'unknown')} vs "
+            f"{c.get('displaced_instrument', 'existing')}："
+            f"{c.get('overlap_type', 'unknown')}；{short(c.get('justification', ''), 100)}"
+        )
+    return lines
+
+
+def hedge_gap_section(capital_graph: dict[str, Any]) -> list[str]:
+    coverage = capital_graph.get('hedge_coverage') if isinstance(capital_graph.get('hedge_coverage'), dict) else {}
+    gaps = [(bucket, status) for bucket, status in sorted(coverage.items()) if status in {'uncovered', 'partial'}]
+    if not gaps:
+        return ['- 所有活跃 bucket 对冲覆盖正常。']
+    lines = []
+    for bucket, status in gaps:
+        util = capital_graph.get('bucket_utilization', {}).get(bucket, 0)
+        lines.append(f"- {bucket}：覆盖状态={public_status(status)}；利用率={util:.0%}")
+    return lines
+
+
+def render_capital_delta_markdown(
+    packet: dict[str, Any],
+    judgment: dict[str, Any],
+    validation: dict[str, Any],
+    *,
+    prices: dict[str, Any],
+    watchlist: dict[str, Any],
+    scan_state: dict[str, Any],
+    broad_market: dict[str, Any],
+    options_flow: dict[str, Any],
+    portfolio: dict[str, Any],
+    option_risk: dict[str, Any],
+    watch_intent: dict[str, Any],
+    thesis_registry: dict[str, Any],
+    opportunity_queue: dict[str, Any],
+    invalidator_ledger: dict[str, Any],
+    capital_agenda: dict[str, Any],
+    capital_graph: dict[str, Any],
+    displacement_cases: dict[str, Any],
+) -> str:
+    digest = packet.get('layer_digest') if isinstance(packet.get('layer_digest'), dict) else {}
+    layer_counts = ', '.join(f'{layer}={len(digest.get(layer, []))}' for layer in ['L0', 'L1', 'L2', 'L3', 'L4'])
+    portfolio_status = portfolio.get('data_status') if isinstance(portfolio, dict) else None
+    confirmations = judgment.get('required_confirmations', []) or ['等待 wake-eligible evidence', '确认 source freshness']
+    graph_hash_short = (capital_graph.get('graph_hash') or 'unavailable')[:20]
+    lines = [
+        'Finance｜资本议程报告',
+        '',
+        '## 结论',
+        f"- 当前状态：`{judgment.get('thesis_state')}`；`{judgment.get('actionability')}`；review-only，不下单。",
+        f'- 报告主轴：资本竞争优先——每个 agenda item 必须回答「为什么它值得占用 attention/capital slot」。',
+        thesis_delta_summary(thesis_registry, opportunity_queue, invalidator_ledger),
+        f"- 资本图谱：{capital_graph.get('node_count', 0)} nodes / {capital_graph.get('edge_count', 0)} edges / hash={graph_hash_short}…",
+        '',
+        '## 资本议程',
+        *capital_agenda_section(capital_agenda, limit=5),
+        '',
+        '## 替代分析',
+        *displacement_section(displacement_cases, limit=3),
+        '',
+        '## 护城河缺口',
+        *hedge_gap_section(capital_graph),
+        '',
+        '## Thesis 焦点',
+        *thesis_focus_lines(thesis_registry, watch_intent, limit=2),
+        '',
+        '## 场景敏感面',
+        *invalidator_delta_lines(invalidator_ledger, limit=2),
+        '',
+        '## 市场机会雷达',
+        *watchlist_lines(prices, watchlist, limit=1),
+        *flow_proxy_lines(packet, limit=1),
+        '',
+        '## 期权与风险雷达',
+        *option_risk_lines(option_risk)[:2],
+        *options_flow_lines(options_flow, limit=1),
+        '',
+        '## 分层证据',
+        f"- 证据分布：{layer_counts}；本 capital delta report 只渲染资本竞争面，不展开证据流水。",
+        '',
+        '## 矛盾与裁决',
+        *contradiction_lines(packet)[:2],
+        '',
+        '## 反证 / Invalidators',
+        *invalidator_delta_lines(invalidator_ledger, limit=2),
+        '',
+        '## 下一步观察',
+        '- ' + public_confirmations(confirmations),
+        '',
+        '## 数据质量',
+        f"- validator={validation.get('outcome')}；thesis_refs={len(packet.get('thesis_refs') or [])}；"
+        f"agenda_items={len(capital_agenda.get('agenda_items', []))}；"
+        f"displacement_cases={len(displacement_cases.get('cases', []))}；"
+        f"portfolio={portfolio_status or 'unknown'}。",
+        '',
+        '## 来源',
+        '- 完整 packet / JudgmentEnvelope / thesis objects / capital graph 已写入 decision log；用户可见输出仍经过 product validation 与 delivery safety。',
+    ]
+    return '\n'.join(lines) + '\n'
+
+
 def render_markdown(
     packet: dict[str, Any],
     judgment: dict[str, Any],
@@ -907,8 +1041,19 @@ def build_report(
     invalidator_ledger: dict[str, Any] | None = None,
     shadow_delta: bool = False,
     report_mode: str = 'packet_first',
+    capital_agenda: dict[str, Any] | None = None,
+    capital_graph: dict[str, Any] | None = None,
+    displacement_cases: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
-    effective_mode = 'thesis_delta_shadow' if shadow_delta else report_mode
+    has_valid_capital_graph = bool(capital_graph and capital_graph.get('graph_hash'))
+    if report_mode == 'capital_delta' and has_valid_capital_graph:
+        effective_mode = 'capital_delta'
+    elif report_mode == 'capital_delta':
+        effective_mode = 'thesis_delta'  # deterministic fallback
+    elif shadow_delta:
+        effective_mode = 'thesis_delta_shadow'
+    else:
+        effective_mode = report_mode
     envelope = {
         'report_policy_version': POLICY_VERSION,
         'renderer_id': 'decision-report-deterministic-v1',
@@ -932,7 +1077,31 @@ def build_report(
         'markdown': '',
         'report_hash': '',
     }
-    if effective_mode in {'thesis_delta', 'thesis_delta_shadow'}:
+    if effective_mode == 'capital_delta':
+        envelope['renderer_id'] = 'capital-delta-deterministic-v1'
+        envelope['capital_agenda_refs'] = [item.get('agenda_id') for item in (capital_agenda or {}).get('agenda_items', [])[:5] if isinstance(item, dict)]
+        envelope['displacement_case_refs'] = [c.get('case_id') for c in (displacement_cases or {}).get('cases', [])[:5] if isinstance(c, dict)]
+        envelope['capital_graph_hash'] = (capital_graph or {}).get('graph_hash')
+        envelope['markdown'] = render_capital_delta_markdown(
+            packet,
+            judgment,
+            validation,
+            prices=prices or {},
+            watchlist=watchlist or {},
+            scan_state=scan_state or {},
+            broad_market=broad_market or {},
+            options_flow=options_flow or {},
+            portfolio=portfolio or {},
+            option_risk=option_risk or {},
+            watch_intent=watch_intent or {},
+            thesis_registry=thesis_registry or {},
+            opportunity_queue=opportunity_queue or {},
+            invalidator_ledger=invalidator_ledger or {},
+            capital_agenda=capital_agenda or {},
+            capital_graph=capital_graph or {},
+            displacement_cases=displacement_cases or {},
+        )
+    elif effective_mode in {'thesis_delta', 'thesis_delta_shadow'}:
         envelope['renderer_id'] = 'thesis-delta-shadow-deterministic-v1' if effective_mode == 'thesis_delta_shadow' else 'thesis-delta-deterministic-v1'
         envelope['markdown'] = render_delta_markdown(
             packet,
@@ -986,7 +1155,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--option-risk', default=str(OPTION_RISK))
     parser.add_argument('--out', default=str(OUT))
     parser.add_argument('--shadow-thesis-delta', action='store_true')
-    parser.add_argument('--report-mode', choices=['thesis_delta', 'packet_first'], default='thesis_delta')
+    parser.add_argument('--report-mode', choices=['thesis_delta', 'packet_first', 'capital_delta'], default='thesis_delta')
     parser.add_argument('--watch-intent', default=str(WATCH_INTENT))
     parser.add_argument('--thesis-registry', default=str(THESIS_REGISTRY))
     parser.add_argument('--opportunity-queue', default=str(OPPORTUNITY_QUEUE))
@@ -1020,6 +1189,9 @@ def main(argv: list[str] | None = None) -> int:
         invalidator_ledger=load_json_safe(Path(args.invalidator_ledger), {}) or {},
         shadow_delta=args.shadow_thesis_delta,
         report_mode=args.report_mode,
+        capital_agenda=load_json_safe(CAPITAL_AGENDA, {}) or {},
+        capital_graph=load_json_safe(CAPITAL_GRAPH, {}) or {},
+        displacement_cases=load_json_safe(DISPLACEMENT_CASES_PATH, {}) or {},
     )
     atomic_write_json(out_path, report)
     if markdown_out:
