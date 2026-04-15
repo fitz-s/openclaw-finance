@@ -6,6 +6,9 @@ Local OpenClaw workspace verification used for this export:
 python3 -m json.tool docs/openclaw-runtime/finance-cron-jobs.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/finance-model-roles.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/snapshot-manifest.json >/dev/null
+python3 -m json.tool docs/openclaw-runtime/operating-model-audit.json >/dev/null
+python3 -m json.tool docs/openclaw-runtime/parent-dependency-inventory.json >/dev/null
+python3 -m json.tool docs/openclaw-runtime/runtime-gap-review.json >/dev/null
 python3 -m compileall -q scripts tools
 python3 tools/audit_operating_model.py
 ```

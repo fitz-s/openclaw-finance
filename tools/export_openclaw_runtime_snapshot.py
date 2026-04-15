@@ -143,6 +143,8 @@ def main() -> int:
             'docs/openclaw-runtime/finance-crontab.txt',
             'docs/openclaw-runtime/finance-model-roles.json',
             'docs/openclaw-runtime/operating-model-audit.json',
+            'docs/openclaw-runtime/parent-dependency-inventory.json',
+            'docs/openclaw-runtime/runtime-gap-review.json',
             *contracts,
         ],
         'note': 'Generated from the local OpenClaw runtime. State files and secrets are intentionally excluded.',

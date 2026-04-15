@@ -1,0 +1,178 @@
+{
+  "generated_at": "2026-04-15T02:54:07.654812+00:00",
+  "status": "reviewed",
+  "unresolved_gaps": [
+    "ibkr_client_portal_watchlist_sync_not_fresh",
+    "parent_market_ingest_dependency_external_to_repo",
+    "recent_delivered_reports_include_pre-fix_noise"
+  ],
+  "watchlist": {
+    "ibkr_watchlist_data_status": "unavailable",
+    "ibkr_watchlist_fresh": false,
+    "portfolio_fresh": true,
+    "resolved_data_status": "fresh",
+    "resolved_symbol_count": 18,
+    "blocking_reasons": [
+      "client_portal_not_authenticated"
+    ],
+    "review": "IBKR Client Portal watchlist sync is best-effort and currently depends on local Client Portal authentication. Flex holdings and local pinned symbols keep the universe usable when IBKR watchlist fetch is unavailable."
+  },
+  "report_usefulness": {
+    "delivered_count_in_recent_window": 10,
+    "reviewed_recent_delivered_runs": [
+      {
+        "runAtMs": 1776186452591,
+        "status": "ok",
+        "deliveryStatus": "delivered",
+        "durationMs": 78972,
+        "quality": {
+          "line_count": 32,
+          "char_count": 2001,
+          "has_opportunity_first_contract": false,
+          "has_unknown_discovery_section": true,
+          "has_holding_section": false,
+          "noise_tokens": [
+            "confidence: 0.0",
+            "thesis_state:",
+            "actionability:",
+            "Portfolio source status unavailable",
+            "Option risk source status stale_source",
+            "metadata_only"
+          ]
+        }
+      },
+      {
+        "runAtMs": 1776191025682,
+        "status": "ok",
+        "deliveryStatus": "delivered",
+        "durationMs": 78173,
+        "quality": {
+          "line_count": 31,
+          "char_count": 2001,
+          "has_opportunity_first_contract": false,
+          "has_unknown_discovery_section": true,
+          "has_holding_section": false,
+          "noise_tokens": [
+            "confidence: 0.0",
+            "thesis_state:",
+            "actionability:",
+            "Portfolio source status unavailable",
+            "Option risk source status stale_source",
+            "metadata_only"
+          ]
+        }
+      },
+      {
+        "runAtMs": 1776195845394,
+        "status": "ok",
+        "deliveryStatus": "delivered",
+        "durationMs": 44884,
+        "quality": {
+          "line_count": 32,
+          "char_count": 2001,
+          "has_opportunity_first_contract": false,
+          "has_unknown_discovery_section": true,
+          "has_holding_section": false,
+          "noise_tokens": [
+            "confidence: 0.0",
+            "thesis_state:",
+            "actionability:",
+            "Portfolio source status unavailable",
+            "Option risk source status stale_source",
+            "metadata_only"
+          ]
+        }
+      },
+      {
+        "runAtMs": 1776201285632,
+        "status": "ok",
+        "deliveryStatus": "delivered",
+        "durationMs": 61693,
+        "quality": {
+          "line_count": 32,
+          "char_count": 2001,
+          "has_opportunity_first_contract": false,
+          "has_unknown_discovery_section": true,
+          "has_holding_section": false,
+          "noise_tokens": [
+            "confidence: 0.0",
+            "thesis_state:",
+            "actionability:",
+            "Portfolio source status unavailable",
+            "Option risk source status stale_source",
+            "metadata_only"
+          ]
+        }
+      },
+      {
+        "runAtMs": 1776205129992,
+        "status": "ok",
+        "deliveryStatus": "delivered",
+        "durationMs": 55415,
+        "quality": {
+          "line_count": 45,
+          "char_count": 2001,
+          "has_opportunity_first_contract": true,
+          "has_unknown_discovery_section": true,
+          "has_holding_section": true,
+          "noise_tokens": []
+        }
+      }
+    ],
+    "latest_product_report": {
+      "generated_at": "2026-04-15T00:47:29.977418Z",
+      "report_hash": "sha256:3903ddd07848a120335ba9629d09a784907aaa55bd598f39f00733e5c72556be",
+      "quality": {
+        "line_count": 57,
+        "char_count": 2230,
+        "has_opportunity_first_contract": true,
+        "has_unknown_discovery_section": true,
+        "has_holding_section": true,
+        "noise_tokens": []
+      }
+    },
+    "interpretation": "Recent historical delivered runs still show old-noise patterns until the next delivery. The latest regenerated product report is the current contract sample."
+  },
+  "wake_threshold_bridge": {
+    "current_gate": {
+      "evaluatedAt": "2026-04-15T01:02:35.325292+00:00",
+      "window": "overnight",
+      "shouldSend": false,
+      "recommendedReportType": "hold",
+      "decisionReason_sanitized": "present"
+    },
+    "current_wake": {
+      "wake_class": "PACKET_UPDATE_ONLY",
+      "wake_reason": "context-only evidence updated packet"
+    },
+    "current_dispatch": {
+      "action": "persist_only",
+      "dispatched": false,
+      "status": "pass"
+    },
+    "legacy_threshold_bridge_current": {
+      "present": false,
+      "status": null,
+      "action": null,
+      "dispatched": null
+    },
+    "measurement_gap": "Historical bridge-vs-canonical wake attribution is not fully persisted per report yet. Future hardening should add per-dispatch telemetry to decision log entries."
+  },
+  "benchmark_absorption": {
+    "status": "bounded_patterns_only",
+    "accepted_pattern_families": [
+      "watchlist/portfolio personalization",
+      "bounded research sidecar outside hot path",
+      "reviewer-visible runtime snapshots",
+      "notification discipline and rate limits",
+      "replay/eval before model or policy changes"
+    ],
+    "rejected_wholesale_templates": [
+      "linked-account trading/advisory app",
+      "standalone financial terminal",
+      "multi-agent hot-path trading swarm",
+      "chat/code-execution app as active runtime"
+    ],
+    "next_package_candidate": "telemetry for wake-vs-threshold attribution and report usefulness scoring"
+  }
+}

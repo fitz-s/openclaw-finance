@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-15T00:48:05.531779+00:00",
+  "generated_at": "2026-04-15T02:54:07.509938+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "jobs": [
     {
@@ -123,14 +123,14 @@
         "message": "【finance offhours scanner｜strict paths】\n你是 finance offhours scanner。不要发用户消息。\n\n只读这些文件：\n- /Users/leofitz/.openclaw/workspace/finance/AGENTS.md\n- /Users/leofitz/.openclaw/workspace/finance/state/watchlist-resolved.json\n- /Users/leofitz/.openclaw/workspace/finance/state/prices.json\n- /Users/leofitz/.openclaw/workspace/finance/state/intraday-open-scan-state.json\n- /Users/leofitz/.openclaw/workspace/finance/state/held-tickers-resolved.json\n- /Users/leofitz/.openclaw/workspace/finance/state/portfolio-source-status.json\n- /Users/leofitz/.openclaw/workspace/finance/state/portfolio-option-risk.json\n- /Users/leofitz/.openclaw/workspace/finance/state/event-watchers.json\n\n规则：\n- 最多 2 轮 web_search：隔夜宏观/地缘；non-watchlist discovery。\n- 只保留最多 3 条 observations，且 urgency >= 6 或 importance >= 7。\n- non-watchlist discovery 必须写 candidate_type=unknown_discovery、discovery_scope=non_watchlist；不得把已在 watchlist-resolved/held-tickers 的标的伪装成 unknown。\n- 优先寻找期权/非持仓/板块或宏观机会拓展；不要用持仓风险填充 unknown discovery。\n- 不要读取不存在的目录名或省略后缀路径。\n- 不要输出 prose 计划，不要长解释。\n\n写入：\n- finance/buffer/{YYYY-MM-DD}-scan-{HHMM}.json\n\n然后只用绝对路径直接运行：\n- python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_worker.py\n- python3 /Users/leofitz/.openclaw/workspace/finance/scripts/gate_evaluator.py\n\n最终回复为空字符串，或一行机器摘要：scan=ok|obs=N|gate=TYPE"
       },
       "state": {
-        "lastRunAtMs": 1776204000031,
+        "lastRunAtMs": 1776214800022,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 180647,
+        "lastDurationMs": 279576,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
         "lastDelivered": false,
-        "nextRunAtMs": 1776214800000
+        "nextRunAtMs": 1776229200000
       }
     },
     {

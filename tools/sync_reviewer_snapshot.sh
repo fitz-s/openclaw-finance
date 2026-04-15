@@ -5,6 +5,8 @@ cd "$(dirname "$0")/.."
 
 python3 tools/export_openclaw_runtime_snapshot.py
 python3 tools/audit_operating_model.py
+python3 tools/export_parent_dependency_inventory.py
+python3 tools/review_runtime_gaps.py
 
 git add docs/openclaw-runtime
 

@@ -17,6 +17,9 @@ jobs:
           python -m json.tool docs/openclaw-runtime/finance-cron-jobs.json >/dev/null
           python -m json.tool docs/openclaw-runtime/finance-model-roles.json >/dev/null
           python -m json.tool docs/openclaw-runtime/snapshot-manifest.json >/dev/null
+          python -m json.tool docs/openclaw-runtime/operating-model-audit.json >/dev/null
+          python -m json.tool docs/openclaw-runtime/parent-dependency-inventory.json >/dev/null
+          python -m json.tool docs/openclaw-runtime/runtime-gap-review.json >/dev/null
       - name: Compile Python sources
         run: |
           python -m compileall -q scripts tools

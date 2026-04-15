@@ -1,0 +1,56 @@
+{
+  "generated_at": "2026-04-15T02:54:07.617486+00:00",
+  "status": "pass",
+  "dependency_boundary": "parent_openclaw_workspace",
+  "finance_repo_policy": "These files are load-bearing runtime dependencies but are not owned by the finance repository. Reviewers must inspect this inventory when packet/wake/judgment behavior changes.",
+  "files": [
+    {
+      "role": "source_registry",
+      "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/config/source-registry.json",
+      "exists": true,
+      "sha256": "sha256:7ca18942e6b2bb46931c51af79a99ccc4741023cd1f2c677ceb71bffb98275f5"
+    },
+    {
+      "role": "live_finance_adapter",
+      "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/adapters/live_finance_adapter.py",
+      "exists": true,
+      "sha256": "sha256:a4588dc81ee5e0628e3651318938414bfa6790dd87dc2ac7741eec1e11cfe573"
+    },
+    {
+      "role": "source_promotion",
+      "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/normalizer/source_promotion.py",
+      "exists": true,
+      "sha256": "sha256:d4376057df0bd6644a591a362da0448de62685b663ae1e67822829cfda0730bd"
+    },
+    {
+      "role": "semantic_normalizer",
+      "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/normalizer/semantic_normalizer.py",
+      "exists": true,
+      "sha256": "sha256:635ff5ce00d015d0a9d84db7ae82ed4036f552a39921c7dada9026f8b98ca361"
+    },
+    {
+      "role": "temporal_alignment",
+      "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/temporal_alignment/alignment.py",
+      "exists": true,
+      "sha256": "sha256:6ebf0afdccb600a54db68825c70183dab8dca0a777bdaa33aa75a0b38eee4ba4"
+    },
+    {
+      "role": "packet_compiler",
+      "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/packet_compiler/compiler.py",
+      "exists": true,
+      "sha256": "sha256:5682eabe24a04f477b86401ef81bca3036076a9e8ca6fa34c7ccd91898c9c0b1"
+    },
+    {
+      "role": "wake_policy",
+      "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/wake_policy/policy.py",
+      "exists": true,
+      "sha256": "sha256:0a7d7d3c56e111f08ff936ced51acdfecf99ad7826400ae7563555df893c8da4"
+    },
+    {
+      "role": "judgment_validator",
+      "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/validator/judgment_validator.py",
+      "exists": true,
+      "sha256": "sha256:881de3c60dac5f9055abe2c1bddcc298ed351a68cf347b6fddf8a4cdc39e2b2e"
+    }
+  ]
+}
