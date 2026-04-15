@@ -1,19 +1,38 @@
 {
-  "generated_at": "2026-04-15T03:04:38.475614+00:00",
+  "generated_at": "2026-04-15T08:23:43.717018+00:00",
   "status": "pass",
   "latest_product_report": {
-    "generated_at": "2026-04-15T02:54:21.615871Z",
-    "report_hash": "sha256:681a434b2c5bbb5671034a82e0698901f267e507749c0bbab43ea679bd663cc9",
+    "generated_at": "2026-04-15T08:23:25.009484Z",
+    "report_hash": "sha256:adaa0d19a7b91534a596f13efc17616a414217cb18c7c3fd1f50fe5489c54bec",
     "quality": {
       "score": 100,
       "noise_tokens": [],
-      "line_count": 57,
-      "char_count": 2393,
+      "line_count": 54,
+      "char_count": 2061,
       "has_opportunity_first_contract": true,
       "has_next_step": true,
       "has_holding_section": true
     }
   },
+  "usefulness_history_recent": [
+    {
+      "event_id": "report-usefulness:d3956592c5406959",
+      "logged_at": "2026-04-15T04:28:45.894394Z",
+      "report_hash": "sha256:54a36b3d28acedfa75886a136d1513a5e908bd244aa7311b3006b44e521afdf4",
+      "report_renderer": "thesis-delta-deterministic-v1",
+      "product_status": "pass",
+      "delivery_safety_status": "pass",
+      "delivery_blocking_reasons": [],
+      "usefulness_score": 100,
+      "noise_tokens": [],
+      "line_count": 54,
+      "char_count": 2036,
+      "delta_density": 0.36,
+      "thesis_ref_count": 15,
+      "opportunity_ref_count": 2,
+      "invalidator_ref_count": 13
+    }
+  ],
   "recent_delivered_reports": [
     {
       "runAtMs": 1776186452591,

@@ -10,6 +10,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / 'docs' / 'openclaw-runtime' / 'operating-model-audit.json'
+PROMPT_CONTRACT = ROOT / 'docs' / 'openclaw-runtime' / 'finance-job-prompt-contract.json'
 
 MUST_CONTAIN = {
     ROOT / 'docs' / 'openclaw-runtime' / 'contracts' / 'finance-openclaw-runtime-contract.md': [
@@ -39,6 +40,14 @@ MUST_CONTAIN = {
         'Authority Order',
         'Benchmark Boundary',
         'Review-Only Safety',
+    ],
+    ROOT / 'docs' / 'openclaw-runtime' / 'contracts' / 'thesis-spine-contract.md': [
+        'Thesis Spine',
+        'WatchIntent',
+        'ThesisCard',
+        'ScenarioCard',
+        'OpportunityQueue',
+        'InvalidatorLedger',
     ],
 }
 
@@ -85,6 +94,34 @@ def build_report() -> dict:
             checks[key] = ok
             if not ok:
                 errors.append({'code': key, 'message': f'banned active-claim pattern {pattern!r} in {path}'})
+    prompt_contract = {}
+    try:
+        prompt_contract = json.loads(PROMPT_CONTRACT.read_text(encoding='utf-8'))
+    except Exception:
+        prompt_contract = {}
+    jobs = prompt_contract.get('jobs') if isinstance(prompt_contract.get('jobs'), dict) else {}
+    prompt_expectations = {
+        'finance-premarket-brief': ['contains_context_pack', 'contains_non_authority_boundary', 'contains_candidate_path'],
+        'finance-subagent-scanner': ['contains_context_pack', 'contains_non_authority_boundary', 'contains_unknown_discovery_contract'],
+        'finance-subagent-scanner-offhours': ['contains_context_pack', 'contains_non_authority_boundary', 'contains_unknown_discovery_contract'],
+        'finance-weekly-learning-review': ['contains_context_pack', 'contains_non_authority_boundary', 'contains_threshold_mutation_ban'],
+        'finance-thesis-sidecar': ['contains_context_pack', 'contains_non_authority_boundary', 'contains_threshold_mutation_ban'],
+    }
+    for job_name, fields in prompt_expectations.items():
+        job = jobs.get(job_name) if isinstance(jobs.get(job_name), dict) else {}
+        for field in fields:
+            key = f'prompt:{job_name}:{field}'
+            ok = job.get(field) is True
+            checks[key] = ok
+            if not ok:
+                errors.append({'code': key, 'message': f'prompt contract missing {field} for {job_name}'})
+    sidecar = jobs.get('finance-thesis-sidecar') if isinstance(jobs.get('finance-thesis-sidecar'), dict) else {}
+    sidecar_delivery = sidecar.get('delivery') if isinstance(sidecar.get('delivery'), dict) else {}
+    key = 'prompt:finance-thesis-sidecar:delivery-none-disabled'
+    ok = sidecar.get('enabled') is False and sidecar_delivery.get('mode') == 'none'
+    checks[key] = ok
+    if not ok:
+        errors.append({'code': key, 'message': 'finance-thesis-sidecar must remain disabled/manual and delivery none'})
     return {
         'generated_at': datetime.now(timezone.utc).isoformat(),
         'status': 'pass' if not errors else 'fail',

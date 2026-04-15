@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workspace/schemas/wake-decision.schema.json",
+  "title": "WakeDecision",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["wake_id", "packet_id", "packet_hash", "evaluated_at", "wake_class", "wake_reason", "score_inputs", "evidence_refs", "policy_version"],
+  "properties": {
+    "wake_id": { "type": "string" },
+    "semantic_wake_id": { "type": "string" },
+    "packet_id": { "type": "string" },
+    "packet_hash": { "type": "string", "pattern": "^sha256:" },
+    "evaluated_at": { "type": "string", "format": "date-time" },
+    "wake_class": { "type": "string", "enum": ["NO_WAKE", "PACKET_UPDATE_ONLY", "ISOLATED_JUDGMENT_WAKE", "OPS_ESCALATION"] },
+    "wake_reason": { "type": "string" },
+    "score_inputs": { "type": "object" },
+    "evidence_refs": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "quarantine_refs": { "type": "array", "items": { "type": "string" } },
+    "policy_version": { "type": "string" },
+    "thesis_refs": { "type": "array", "items": { "type": "string" } },
+    "scenario_refs": { "type": "array", "items": { "type": "string" } },
+    "opportunity_candidate_refs": { "type": "array", "items": { "type": "string" } },
+    "invalidator_refs": { "type": "array", "items": { "type": "string" } }
+  }
+}

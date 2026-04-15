@@ -139,6 +139,10 @@ def compile_entry(
         'operator_action': operator_action(decision, live, safety),
         'policy_version': judgment.get('policy_version') or packet.get('policy_version'),
         'session_ref': live.get('sessionKey') or live.get('session_ref') or 'finance-openclaw-runtime',
+        'thesis_refs': judgment.get('thesis_refs') or packet.get('thesis_refs', []),
+        'scenario_refs': judgment.get('scenario_refs') or packet.get('scenario_refs', []),
+        'opportunity_candidate_refs': judgment.get('opportunity_candidate_refs') or packet.get('opportunity_candidate_refs', []),
+        'invalidator_refs': judgment.get('invalidator_refs') or packet.get('invalidator_refs', []),
         'wake_threshold_attribution': wake_threshold_attribution(
             gate=gate or {},
             wake=wake or {},

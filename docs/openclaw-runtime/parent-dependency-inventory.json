@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-15T03:05:47.086032+00:00",
+  "generated_at": "2026-04-15T08:23:43.628523+00:00",
   "status": "pass",
   "dependency_boundary": "parent_openclaw_workspace",
   "finance_repo_policy": "These files are load-bearing runtime dependencies but are not owned by the finance repository. Reviewers must inspect this inventory when packet/wake/judgment behavior changes.",
@@ -14,7 +14,55 @@
       "role": "decision_log_schema",
       "path": "/Users/leofitz/.openclaw/workspace/schemas/decision-log.schema.json",
       "exists": true,
-      "sha256": "sha256:15d67a3ed0bd493fdc17f4db7034c7ba3c7aa2164c4a3b41a6c0268696bf6c2f"
+      "sha256": "sha256:996b974cfaf512ce36648ef78b8f4c4bbdf2e5f2cabd5feb13e7f7f1749dc9cc"
+    },
+    {
+      "role": "packet_schema",
+      "path": "/Users/leofitz/.openclaw/workspace/schemas/packet.schema.json",
+      "exists": true,
+      "sha256": "sha256:938769140a16d0557c907bb3c5b49da351e9c4de709f35abcce025c3a1e109b1"
+    },
+    {
+      "role": "wake_decision_schema",
+      "path": "/Users/leofitz/.openclaw/workspace/schemas/wake-decision.schema.json",
+      "exists": true,
+      "sha256": "sha256:1ab88d23b0363de45dee605517fab793b9f45d06f1d356c86b2323aa737e63cb"
+    },
+    {
+      "role": "judgment_envelope_schema",
+      "path": "/Users/leofitz/.openclaw/workspace/schemas/judgment-envelope.schema.json",
+      "exists": true,
+      "sha256": "sha256:ba71c58b242630943eff82efaeabd1b8902d26817355282e2d8c231357caf7f6"
+    },
+    {
+      "role": "watch_intent_schema",
+      "path": "/Users/leofitz/.openclaw/workspace/schemas/watch-intent.schema.json",
+      "exists": true,
+      "sha256": "sha256:6050cb03ad8900955aed637335d91683587383405449ee1262dfff22f92c4400"
+    },
+    {
+      "role": "thesis_card_schema",
+      "path": "/Users/leofitz/.openclaw/workspace/schemas/thesis-card.schema.json",
+      "exists": true,
+      "sha256": "sha256:8383001483cbe9f688707105693300e0fa79cafcd88fbb783cc4c058020f0757"
+    },
+    {
+      "role": "scenario_card_schema",
+      "path": "/Users/leofitz/.openclaw/workspace/schemas/scenario-card.schema.json",
+      "exists": true,
+      "sha256": "sha256:52d95da3781398391b3087bcd98e62ad219add2339c087c55b69a0986b984429"
+    },
+    {
+      "role": "opportunity_queue_schema",
+      "path": "/Users/leofitz/.openclaw/workspace/schemas/opportunity-queue.schema.json",
+      "exists": true,
+      "sha256": "sha256:de0e621fd7d7379436d192d19ffb55d36b579abc218cb537e284955064111c83"
+    },
+    {
+      "role": "invalidator_ledger_schema",
+      "path": "/Users/leofitz/.openclaw/workspace/schemas/invalidator-ledger.schema.json",
+      "exists": true,
+      "sha256": "sha256:2d524f7ae87b638a2a6a7df01797f5191fcf57b32ecb9ef8526881e0cfc3a1aa"
     },
     {
       "role": "source_registry",
@@ -50,13 +98,13 @@
       "role": "packet_compiler",
       "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/packet_compiler/compiler.py",
       "exists": true,
-      "sha256": "sha256:5682eabe24a04f477b86401ef81bca3036076a9e8ca6fa34c7ccd91898c9c0b1"
+      "sha256": "sha256:b9edd03d31365718a9a503541e7aba6f585368d6ed619c00298cc0b4b37340a0"
     },
     {
       "role": "wake_policy",
       "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/wake_policy/policy.py",
       "exists": true,
-      "sha256": "sha256:0a7d7d3c56e111f08ff936ced51acdfecf99ad7826400ae7563555df893c8da4"
+      "sha256": "sha256:ed279fac5da76e4c88ec0352a47e36905f60c83d30947b5bff823afed5d0ace6"
     },
     {
       "role": "judgment_validator",

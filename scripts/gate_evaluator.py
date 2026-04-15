@@ -41,6 +41,7 @@ ALIGNMENT_SCRIPT = WORKSPACE / 'services' / 'market-ingest' / 'temporal_alignmen
 PACKET_COMPILER_SCRIPT = WORKSPACE / 'services' / 'market-ingest' / 'packet_compiler' / 'compiler.py'
 WAKE_POLICY_SCRIPT = WORKSPACE / 'services' / 'market-ingest' / 'wake_policy' / 'policy.py'
 WAKE_DISPATCHER_SCRIPT = FINANCE / 'scripts' / 'wake_dispatcher.py'
+THESIS_STATE_REDUCER_SCRIPT = FINANCE / 'scripts' / 'thesis_state_reducer.py'
 SEC_DISCOVERY_SCRIPT = FINANCE / 'scripts' / 'sec_discovery_fetcher.py'
 SEC_SEMANTICS_SCRIPT = FINANCE / 'scripts' / 'sec_filing_semantics.py'
 BROAD_MARKET_SCRIPT = FINANCE / 'scripts' / 'broad_market_proxy_fetcher.py'
@@ -241,6 +242,15 @@ def run_json_step(args: list[str], timeout: int = 90) -> dict:
 
 def run_wake_pipeline() -> dict:
     steps = [
+        (
+            'thesis_state_reducer',
+            [
+                sys.executable,
+                str(THESIS_STATE_REDUCER_SCRIPT),
+            ],
+            True,
+            60,
+        ),
         (
             'sec_discovery_fetcher',
             [

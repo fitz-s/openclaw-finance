@@ -12,6 +12,7 @@ FINANCE = Path(__file__).resolve().parents[1]
 OPENCLAW_HOME = FINANCE.parents[1]
 STATE = FINANCE / 'state'
 OUT = FINANCE / 'docs' / 'openclaw-runtime' / 'report-usefulness-score.json'
+HISTORY = STATE / 'report-usefulness-history.jsonl'
 REPORT_JOB_ID = 'b2c3d4e5-f6a7-8901-bcde-f01234567890'
 
 NOISE_TOKENS = [
@@ -47,6 +48,20 @@ def runs(limit: int = 12) -> list[dict[str, Any]]:
         except Exception:
             continue
     return out
+
+
+def tail_jsonl(path: Path, limit: int = 5) -> list[dict[str, Any]]:
+    if not path.exists():
+        return []
+    rows = []
+    for line in path.read_text(encoding='utf-8', errors='replace').splitlines()[-limit * 2:]:
+        try:
+            payload = json.loads(line)
+        except Exception:
+            continue
+        if isinstance(payload, dict):
+            rows.append(payload)
+    return rows[-limit:]
 
 
 def score_text(text: str) -> dict[str, Any]:
@@ -92,6 +107,7 @@ def main() -> int:
             'report_hash': latest.get('report_hash'),
             'quality': latest_quality,
         },
+        'usefulness_history_recent': tail_jsonl(HISTORY, limit=5),
         'recent_delivered_reports': recent,
         'interpretation': 'Historical delivered reports may include pre-fix noise; latest product report is the current contract sample.',
     }

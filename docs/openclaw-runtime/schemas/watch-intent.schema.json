@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workspace/schemas/watch-intent.schema.json",
+  "title": "WatchIntentRegistry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generated_at", "policy_version", "intents"],
+  "properties": {
+    "generated_at": { "type": "string", "format": "date-time" },
+    "policy_version": { "type": "string" },
+    "intents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["intent_id", "symbol", "roles", "source_refs"],
+        "properties": {
+          "intent_id": { "type": "string" },
+          "symbol": { "type": "string" },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["held_core", "hedge", "macro_proxy", "event_sensitive", "curiosity", "unknown_discovery_candidate", "do_not_trade"]
+            },
+            "minItems": 1
+          },
+          "source_refs": { "type": "array", "items": { "type": "string" } },
+          "notes": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

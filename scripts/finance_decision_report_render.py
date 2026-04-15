@@ -30,6 +30,12 @@ PORTFOLIO = FINANCE / 'state' / 'portfolio-resolved.json'
 OPTION_RISK = FINANCE / 'state' / 'portfolio-option-risk.json'
 BROAD_MARKET = FINANCE / 'state' / 'broad-market-proxy.json'
 OPTIONS_FLOW = FINANCE / 'state' / 'options-flow-proxy.json'
+WATCH_INTENT = FINANCE / 'state' / 'watch-intent.json'
+THESIS_REGISTRY = FINANCE / 'state' / 'thesis-registry.json'
+OPPORTUNITY_QUEUE = FINANCE / 'state' / 'opportunity-queue.json'
+INVALIDATOR_LEDGER = FINANCE / 'state' / 'invalidator-ledger.json'
+SHADOW_DELTA_OUT = FINANCE / 'state' / 'finance-thesis-delta-report.shadow.json'
+SHADOW_DELTA_MARKDOWN = FINANCE / 'state' / 'finance-thesis-delta-report.shadow.md'
 POLICY_VERSION = 'finance-decision-report-v1'
 SYMBOL_STOPWORDS = {
     'AI', 'API', 'CEO', 'CFO', 'CIO', 'COO', 'CPI', 'ETF', 'ET',
@@ -120,6 +126,62 @@ def public_text(value: Any) -> str:
         .replace('metadata_only', 'metadata context')
         .replace('ordinary_form4_support_only', 'ordinary Form 4 context')
     )
+
+
+def public_status(value: Any) -> str:
+    return {
+        'candidate': '候选',
+        'promoted': '已晋升',
+        'suppressed': '已压制',
+        'retired': '已退休',
+        'active': '活跃',
+        'watch': '观察',
+        'seed': '初始',
+        'developing': '发展中',
+        'validated': '已验证',
+        'invalidated': '已失效',
+        'open': '开放',
+        'hit': '命中',
+        'resolved': '已解决',
+    }.get(str(value), str(value or 'unknown'))
+
+
+def public_roles(values: Any) -> str:
+    labels = {
+        'held_core': '持仓核心',
+        'hedge': '对冲',
+        'macro_proxy': '宏观代理',
+        'event_sensitive': '事件敏感',
+        'curiosity': '观察兴趣',
+        'unknown_discovery_candidate': '未知探索',
+        'do_not_trade': '禁止交易',
+    }
+    if not isinstance(values, list) or not values:
+        return '未标注'
+    return '、'.join(labels.get(str(item), str(item)) for item in values[:3])
+
+
+def public_reason(value: Any) -> str:
+    text = str(value or '')
+    return {
+        'scanner_unknown_discovery': 'scanner 未知探索',
+        'compiled_from_watch_intent': '来自 WatchIntent',
+    }.get(text, text.replace('_', ' '))
+
+
+def public_confirmation(value: Any) -> str:
+    text = str(value or '')
+    return {
+        'wake-eligible evidence': '等待可唤醒证据',
+        'price/flow continuation': '价格/成交量继续确认',
+        'wait for promoted evidence': '等待证据晋升',
+    }.get(text, text.replace('_', ' '))
+
+
+def public_confirmations(values: Any, limit: int = 2) -> str:
+    if not isinstance(values, list) or not values:
+        return '等待可唤醒证据'
+    return '；'.join(public_confirmation(item) for item in values[:limit])
 
 
 def watchlist_symbols(watchlist: dict[str, Any]) -> list[str]:
@@ -577,6 +639,156 @@ def why_now_lines(packet: dict[str, Any], judgment: dict[str, Any]) -> list[str]
     return lines or ['- 有 wake-eligible 证据进入 JudgmentEnvelope。']
 
 
+def thesis_delta_summary(thesis_registry: dict[str, Any], opportunity_queue: dict[str, Any], invalidator_ledger: dict[str, Any]) -> str:
+    theses = [item for item in thesis_registry.get('theses', []) if isinstance(item, dict)]
+    active = [item for item in theses if item.get('status') in {'active', 'watch', 'candidate'}]
+    opportunities = [item for item in opportunity_queue.get('candidates', []) if isinstance(item, dict) and item.get('status') in {'candidate', 'promoted'}]
+    invalidators = [item for item in invalidator_ledger.get('invalidators', []) if isinstance(item, dict) and item.get('status') in {'open', 'hit'}]
+    return (
+        f"- 结构变化：活跃/观察 thesis={len(active)}；未知候选={len(opportunities)}；"
+        f"开放/命中反证={len(invalidators)}。"
+    )
+
+
+def thesis_focus_lines(thesis_registry: dict[str, Any], watch_intent: dict[str, Any], limit: int = 2) -> list[str]:
+    intents = {
+        item.get('intent_id'): item
+        for item in watch_intent.get('intents', [])
+        if isinstance(item, dict) and item.get('intent_id')
+    }
+    theses = [item for item in thesis_registry.get('theses', []) if isinstance(item, dict)]
+    ranked = sorted(
+        theses,
+        key=lambda item: (
+            2 if item.get('status') == 'active' else 1 if item.get('status') == 'watch' else 0,
+            str(item.get('instrument') or ''),
+        ),
+        reverse=True,
+    )
+    lines = []
+    for thesis in ranked[:limit]:
+        intent = intents.get(thesis.get('linked_watch_intent'), {})
+        lines.append(
+            f"- {thesis.get('instrument')}: 状态={public_status(thesis.get('status'))} / 成熟度={public_status(thesis.get('maturity'))}；角色={public_roles(intent.get('roles'))}；"
+            f"等待确认：{public_confirmations(thesis.get('required_confirmations'))}"
+        )
+    return lines or ['- 暂无 active thesis object；本轮只保留 packet/log。']
+
+
+def opportunity_queue_lines(opportunity_queue: dict[str, Any], limit: int = 2) -> list[str]:
+    candidates = [
+        item for item in opportunity_queue.get('candidates', [])
+        if isinstance(item, dict) and item.get('status') in {'candidate', 'promoted'}
+    ]
+    candidates.sort(key=lambda item: float(item.get('score') or 0), reverse=True)
+    lines = []
+    for item in candidates[:limit]:
+        instrument = item.get('instrument') or 'macro/theme'
+        lines.append(
+            f"- {instrument}: {short(item.get('theme'), 90)}；状态={public_status(item.get('status'))}；"
+            f"评分={item.get('score')}；依据={short(public_reason(item.get('promotion_reason')), 80)}"
+        )
+    return lines or ['- OpportunityQueue 暂无候选；scanner 下一轮继续做非持仓/非 watchlist 探索。']
+
+
+def invalidator_delta_lines(invalidator_ledger: dict[str, Any], limit: int = 2) -> list[str]:
+    rows = [
+        item for item in invalidator_ledger.get('invalidators', [])
+        if isinstance(item, dict) and item.get('status') in {'open', 'hit'}
+    ]
+    rows.sort(key=lambda item: (int(item.get('hit_count') or 0), str(item.get('last_seen_at') or '')), reverse=True)
+    lines = []
+    for item in rows[:limit]:
+        lines.append(
+            f"- {short(item.get('description'), 100)}；状态={public_status(item.get('status'))}；命中次数={item.get('hit_count')}。"
+        )
+    return lines or ['- InvalidatorLedger 暂无 open/hit 项。']
+
+
+def render_delta_markdown(
+    packet: dict[str, Any],
+    judgment: dict[str, Any],
+    validation: dict[str, Any],
+    *,
+    prices: dict[str, Any],
+    watchlist: dict[str, Any],
+    scan_state: dict[str, Any],
+    broad_market: dict[str, Any],
+    options_flow: dict[str, Any],
+    portfolio: dict[str, Any],
+    option_risk: dict[str, Any],
+    watch_intent: dict[str, Any],
+    thesis_registry: dict[str, Any],
+    opportunity_queue: dict[str, Any],
+    invalidator_ledger: dict[str, Any],
+    shadow: bool = False,
+) -> str:
+    digest = packet.get('layer_digest') if isinstance(packet.get('layer_digest'), dict) else {}
+    layer_counts = ', '.join(f'{layer}={len(digest.get(layer, []))}' for layer in ['L0', 'L1', 'L2', 'L3', 'L4'])
+    portfolio_status = portfolio.get('data_status') if isinstance(portfolio, dict) else None
+    confirmations = judgment.get('required_confirmations', []) or ['等待 wake-eligible evidence', '确认 source freshness']
+    invalidator_lines = invalidator_delta_lines(invalidator_ledger, limit=2)
+    title = 'Finance｜Thesis Delta Shadow' if shadow else 'Finance｜决策报告'
+    source_line = (
+        '- 完整 packet / JudgmentEnvelope / thesis objects 已写入本地 state；本文件为 shadow，不触发 delivery。'
+        if shadow
+        else '- 完整 packet / JudgmentEnvelope / thesis objects 已写入 decision log；用户可见输出仍经过 product validation 与 delivery safety。'
+    )
+    lines = [
+        title,
+        '',
+        '## 结论',
+        f"- 当前状态：`{judgment.get('thesis_state')}`；`{judgment.get('actionability')}`；review-only，不下单。",
+        '- 报告主轴：先找非持仓/非 watchlist 的机会拓展，其次确认 watchlist/flow，最后才看持仓影响。',
+        thesis_delta_summary(thesis_registry, opportunity_queue, invalidator_ledger),
+        '',
+        '## 今日看点',
+        f"- 1. 机会队列：{strip_bullet(opportunity_queue_lines(opportunity_queue, limit=1)[0])}",
+        f"- 2. Thesis焦点：{strip_bullet(thesis_focus_lines(thesis_registry, watch_intent, limit=1)[0])}",
+        f"- 3. 反证变化：{strip_bullet(invalidator_lines[0])}",
+        '',
+        '## 为什么现在',
+        *why_now_lines(packet, judgment),
+        '',
+        '## 市场机会雷达（Watchlist / Flow）',
+        *watchlist_lines(prices, watchlist, limit=1),
+        *flow_proxy_lines(packet, limit=1),
+        *broad_market_lines(broad_market, limit=1),
+        '',
+        '## 未知探索（非持仓 / 非Watchlist）',
+        *opportunity_queue_lines(opportunity_queue, limit=2),
+        '',
+        '## 潜在机会 / 风险候选',
+        *opportunity_queue_lines(opportunity_queue, limit=1),
+        '',
+        '## 期权与风险雷达',
+        *option_risk_lines(option_risk)[:2],
+        *options_flow_lines(options_flow, limit=1),
+        '',
+        '## 分层证据',
+        f"- 证据分布：{layer_counts}；本 shadow report 只渲染 thesis delta，不展开证据流水。",
+        '',
+        '## 矛盾与裁决',
+        *contradiction_lines(packet)[:2],
+        '',
+        '## 持仓影响',
+        f"- portfolio={portfolio_status or 'unknown'}；持仓只作为影响面，不作为本报告主轴。",
+        '',
+        '## 反证 / Invalidators',
+        *invalidator_lines,
+        '',
+        '## 下一步观察',
+        '- ' + public_confirmations(confirmations),
+        '',
+        '## 数据质量',
+        f"- validator={validation.get('outcome')}；thesis_refs={len(packet.get('thesis_refs') or [])}；opportunity_refs={len(packet.get('opportunity_candidate_refs') or [])}；invalidator_refs={len(packet.get('invalidator_refs') or [])}。",
+        '',
+        '## 来源',
+        source_line,
+    ]
+    return '\n'.join(lines) + '\n'
+
+
 def render_markdown(
     packet: dict[str, Any],
     judgment: dict[str, Any],
@@ -689,7 +901,14 @@ def build_report(
     options_flow: dict[str, Any] | None = None,
     portfolio: dict[str, Any] | None = None,
     option_risk: dict[str, Any] | None = None,
+    watch_intent: dict[str, Any] | None = None,
+    thesis_registry: dict[str, Any] | None = None,
+    opportunity_queue: dict[str, Any] | None = None,
+    invalidator_ledger: dict[str, Any] | None = None,
+    shadow_delta: bool = False,
+    report_mode: str = 'packet_first',
 ) -> dict[str, Any]:
+    effective_mode = 'thesis_delta_shadow' if shadow_delta else report_mode
     envelope = {
         'report_policy_version': POLICY_VERSION,
         'renderer_id': 'decision-report-deterministic-v1',
@@ -705,24 +924,48 @@ def build_report(
         'actionability': judgment.get('actionability'),
         'confidence': judgment.get('confidence'),
         'evidence_refs': judgment.get('evidence_refs', []),
+        'thesis_refs': judgment.get('thesis_refs') or packet.get('thesis_refs', []),
+        'scenario_refs': judgment.get('scenario_refs') or packet.get('scenario_refs', []),
+        'opportunity_candidate_refs': judgment.get('opportunity_candidate_refs') or packet.get('opportunity_candidate_refs', []),
+        'invalidator_refs': judgment.get('invalidator_refs') or packet.get('invalidator_refs', []),
         'source_quality_summary': packet.get('source_quality_summary', {}),
         'markdown': '',
         'report_hash': '',
     }
-    envelope['markdown'] = render_markdown(
-        packet,
-        judgment,
-        validation,
-        prices=prices,
-        watchlist=watchlist,
-        scan_state=scan_state,
-        sec_discovery=sec_discovery,
-        sec_semantics=sec_semantics,
-        broad_market=broad_market,
-        options_flow=options_flow,
-        portfolio=portfolio,
-        option_risk=option_risk,
-    )
+    if effective_mode in {'thesis_delta', 'thesis_delta_shadow'}:
+        envelope['renderer_id'] = 'thesis-delta-shadow-deterministic-v1' if effective_mode == 'thesis_delta_shadow' else 'thesis-delta-deterministic-v1'
+        envelope['markdown'] = render_delta_markdown(
+            packet,
+            judgment,
+            validation,
+            prices=prices or {},
+            watchlist=watchlist or {},
+            scan_state=scan_state or {},
+            broad_market=broad_market or {},
+            options_flow=options_flow or {},
+            portfolio=portfolio or {},
+            option_risk=option_risk or {},
+            watch_intent=watch_intent or {},
+            thesis_registry=thesis_registry or {},
+            opportunity_queue=opportunity_queue or {},
+            invalidator_ledger=invalidator_ledger or {},
+            shadow=effective_mode == 'thesis_delta_shadow',
+        )
+    else:
+        envelope['markdown'] = render_markdown(
+            packet,
+            judgment,
+            validation,
+            prices=prices,
+            watchlist=watchlist,
+            scan_state=scan_state,
+            sec_discovery=sec_discovery,
+            sec_semantics=sec_semantics,
+            broad_market=broad_market,
+            options_flow=options_flow,
+            portfolio=portfolio,
+            option_risk=option_risk,
+        )
     envelope['report_hash'] = hash_payload(envelope)
     return envelope
 
@@ -742,7 +985,19 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--portfolio', default=str(PORTFOLIO))
     parser.add_argument('--option-risk', default=str(OPTION_RISK))
     parser.add_argument('--out', default=str(OUT))
+    parser.add_argument('--shadow-thesis-delta', action='store_true')
+    parser.add_argument('--report-mode', choices=['thesis_delta', 'packet_first'], default='thesis_delta')
+    parser.add_argument('--watch-intent', default=str(WATCH_INTENT))
+    parser.add_argument('--thesis-registry', default=str(THESIS_REGISTRY))
+    parser.add_argument('--opportunity-queue', default=str(OPPORTUNITY_QUEUE))
+    parser.add_argument('--invalidator-ledger', default=str(INVALIDATOR_LEDGER))
+    parser.add_argument('--markdown-out', default=None)
     args = parser.parse_args(argv)
+    out_path = Path(args.out)
+    markdown_out = Path(args.markdown_out) if args.markdown_out else None
+    if args.shadow_thesis_delta and args.out == str(OUT):
+        out_path = SHADOW_DELTA_OUT
+        markdown_out = markdown_out or SHADOW_DELTA_MARKDOWN
     packet = load_json_safe(Path(args.packet), {}) or {}
     judgment = load_json_safe(Path(args.judgment), {}) or {}
     validation = load_json_safe(Path(args.judgment_validation), {}) or {}
@@ -759,9 +1014,18 @@ def main(argv: list[str] | None = None) -> int:
         options_flow=load_json_safe(Path(args.options_flow), {}) or {},
         portfolio=load_json_safe(Path(args.portfolio), {}) or {},
         option_risk=load_json_safe(Path(args.option_risk), {}) or {},
+        watch_intent=load_json_safe(Path(args.watch_intent), {}) or {},
+        thesis_registry=load_json_safe(Path(args.thesis_registry), {}) or {},
+        opportunity_queue=load_json_safe(Path(args.opportunity_queue), {}) or {},
+        invalidator_ledger=load_json_safe(Path(args.invalidator_ledger), {}) or {},
+        shadow_delta=args.shadow_thesis_delta,
+        report_mode=args.report_mode,
     )
-    atomic_write_json(Path(args.out), report)
-    print(json.dumps({'status': 'pass', 'report_hash': report['report_hash'], 'out': str(args.out)}, ensure_ascii=False))
+    atomic_write_json(out_path, report)
+    if markdown_out:
+        markdown_out.parent.mkdir(parents=True, exist_ok=True)
+        markdown_out.write_text(report['markdown'], encoding='utf-8')
+    print(json.dumps({'status': 'pass', 'report_hash': report['report_hash'], 'out': str(out_path), 'markdown_out': str(markdown_out) if markdown_out else None}, ensure_ascii=False))
     return 0
 
 

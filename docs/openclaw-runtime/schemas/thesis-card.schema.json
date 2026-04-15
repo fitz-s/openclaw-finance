@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workspace/schemas/thesis-card.schema.json",
+  "title": "ThesisRegistry",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generated_at", "policy_version", "theses"],
+  "properties": {
+    "generated_at": { "type": "string", "format": "date-time" },
+    "policy_version": { "type": "string" },
+    "theses": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["thesis_id", "instrument", "linked_watch_intent", "status", "maturity", "bull_case", "bear_case", "invalidators", "required_confirmations", "evidence_refs", "scenario_refs", "last_meaningful_change_at"],
+        "properties": {
+          "thesis_id": { "type": "string" },
+          "instrument": { "type": "string" },
+          "linked_position": { "type": ["string", "null"] },
+          "linked_watch_intent": { "type": ["string", "null"] },
+          "status": { "type": "string", "enum": ["candidate", "active", "watch", "suppressed", "retired"] },
+          "maturity": { "type": "string", "enum": ["seed", "developing", "validated", "invalidated"] },
+          "bull_case": { "type": "array", "items": { "type": "string" } },
+          "bear_case": { "type": "array", "items": { "type": "string" } },
+          "invalidators": { "type": "array", "items": { "type": "string" } },
+          "required_confirmations": { "type": "array", "items": { "type": "string" } },
+          "evidence_refs": { "type": "array", "items": { "type": "string" } },
+          "scenario_refs": { "type": "array", "items": { "type": "string" } },
+          "last_meaningful_change_at": { "type": ["string", "null"], "format": "date-time" },
+          "promotion_reason": { "type": ["string", "null"] },
+          "retirement_reason": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}

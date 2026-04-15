@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workspace/schemas/packet.schema.json",
+  "title": "ContextPacket",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "packet_id",
+    "instrument",
+    "as_of",
+    "packet_hash",
+    "position_state",
+    "market_state",
+    "layer_digest",
+    "contradictions",
+    "what_changed_since_last_judgment",
+    "candidate_invalidators",
+    "evidence_refs",
+    "policy_version",
+    "source_manifest"
+  ],
+  "properties": {
+    "packet_id": { "type": "string" },
+    "instrument": { "type": "string" },
+    "as_of": { "type": "string", "format": "date-time" },
+    "packet_hash": { "type": "string", "pattern": "^sha256:" },
+    "position_state": { "type": "object" },
+    "market_state": { "type": "object" },
+    "layer_digest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["L0", "L1", "L2", "L3", "L4"],
+      "properties": {
+        "L0": { "type": "array", "items": { "type": "string" } },
+        "L1": { "type": "array", "items": { "type": "string" } },
+        "L2": { "type": "array", "items": { "type": "string" } },
+        "L3": { "type": "array", "items": { "type": "string" } },
+        "L4": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "contradictions": { "type": "array", "items": { "type": "object" } },
+    "what_changed_since_last_judgment": { "type": "array", "items": { "type": "string" } },
+    "candidate_invalidators": { "type": "array", "items": { "type": "string" } },
+    "evidence_refs": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "policy_version": { "type": "string" },
+    "source_manifest": { "type": "object" }
+    ,
+    "authority": { "type": "string" },
+    "authoritative": { "type": "boolean" },
+    "as_of_bucket": { "type": "string" },
+    "instrument_scope": { "type": "array", "items": { "type": "string" } },
+    "accepted_evidence_refs": { "type": "array", "items": { "type": "string" } },
+    "quarantine_summary": { "type": "object" },
+    "source_quality_summary": { "type": "object" },
+    "source_refs": { "type": "object" },
+    "accepted_evidence_records": { "type": "array", "items": { "type": "object" } },
+    "quarantine_records": { "type": "array", "items": { "type": "object" } },
+    "thesis_refs": { "type": "array", "items": { "type": "string" } },
+    "scenario_refs": { "type": "array", "items": { "type": "string" } },
+    "opportunity_candidate_refs": { "type": "array", "items": { "type": "string" } },
+    "invalidator_refs": { "type": "array", "items": { "type": "string" } }
+  }
+}

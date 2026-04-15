@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workspace/schemas/judgment-envelope.schema.json",
+  "title": "JudgmentEnvelope",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["judgment_id", "packet_id", "packet_hash", "instrument", "thesis_state", "actionability", "confidence", "why_now", "why_not", "invalidators", "required_confirmations", "evidence_refs", "policy_version", "model_id"],
+  "properties": {
+    "judgment_id": { "type": "string" },
+    "packet_id": { "type": "string" },
+    "packet_hash": { "type": "string", "pattern": "^sha256:" },
+    "instrument": { "type": "string" },
+    "thesis_state": { "type": "string", "enum": ["watch", "lean_long", "lean_short", "no_trade", "reduce", "exit"] },
+    "actionability": { "type": "string", "enum": ["none", "review", "high"] },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "why_now": { "type": "array", "items": { "type": "string" } },
+    "why_not": { "type": "array", "items": { "type": "string" } },
+    "invalidators": { "type": "array", "items": { "type": "string" } },
+    "required_confirmations": { "type": "array", "items": { "type": "string" } },
+    "evidence_refs": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "policy_version": { "type": "string" },
+    "model_id": { "type": "string" },
+    "thesis_refs": { "type": "array", "items": { "type": "string" } },
+    "scenario_refs": { "type": "array", "items": { "type": "string" } },
+    "opportunity_candidate_refs": { "type": "array", "items": { "type": "string" } },
+    "invalidator_refs": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-15T03:04:38.558002+00:00",
+  "generated_at": "2026-04-15T08:23:43.739689+00:00",
   "status": "reviewed",
   "unresolved_gaps": [
     "ibkr_client_portal_watchlist_sync_not_fresh",
@@ -120,11 +120,11 @@
       }
     ],
     "latest_product_report": {
-      "generated_at": "2026-04-15T02:54:21.615871Z",
-      "report_hash": "sha256:681a434b2c5bbb5671034a82e0698901f267e507749c0bbab43ea679bd663cc9",
+      "generated_at": "2026-04-15T08:23:25.009484Z",
+      "report_hash": "sha256:adaa0d19a7b91534a596f13efc17616a414217cb18c7c3fd1f50fe5489c54bec",
       "quality": {
-        "line_count": 57,
-        "char_count": 2393,
+        "line_count": 54,
+        "char_count": 2061,
         "has_opportunity_first_contract": true,
         "has_unknown_discovery_section": true,
         "has_holding_section": true,
@@ -135,7 +135,7 @@
   },
   "wake_threshold_bridge": {
     "current_gate": {
-      "evaluatedAt": "2026-04-15T01:02:35.325292+00:00",
+      "evaluatedAt": "2026-04-15T05:01:59.898676+00:00",
       "window": "overnight",
       "shouldSend": false,
       "recommendedReportType": "hold",
@@ -156,7 +156,12 @@
       "action": null,
       "dispatched": null
     },
-    "measurement_gap": "Historical bridge-vs-canonical wake attribution is not fully persisted per report yet. Future hardening should add per-dispatch telemetry to decision log entries."
+    "telemetry_files": {
+      "dispatch_attribution_exists": true,
+      "thesis_outcomes_exists": true,
+      "report_usefulness_history_exists": true
+    },
+    "measurement_gap": "Telemetry is now persisted locally when the Package 7 writers run. Historical records before these writers were introduced remain incomplete."
   },
   "benchmark_absorption": {
     "status": "bounded_patterns_only",
@@ -173,6 +178,6 @@
       "multi-agent hot-path trading swarm",
       "chat/code-execution app as active runtime"
     ],
-    "next_package_candidate": "telemetry for wake-vs-threshold attribution and report usefulness scoring"
+    "next_package_candidate": "use telemetry to tune report delta density and wake usefulness review, without automatic threshold mutation"
   }
 }

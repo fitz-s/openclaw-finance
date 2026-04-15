@@ -5,18 +5,32 @@ Local OpenClaw workspace verification used for this export:
 ```bash
 python3 -m json.tool docs/openclaw-runtime/finance-cron-jobs.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/finance-model-roles.json >/dev/null
+python3 -m json.tool docs/openclaw-runtime/finance-job-prompt-contract.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/snapshot-manifest.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/operating-model-audit.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/parent-dependency-inventory.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/parent-dependency-drift.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/wake-threshold-attribution.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/report-usefulness-score.json >/dev/null
+python3 -m json.tool docs/openclaw-runtime/thesis-spine-telemetry-summary.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/ibkr-watchlist-freshness-drill.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/benchmark-boundary-audit.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/runtime-gap-review.json >/dev/null
 python3 -m compileall -q scripts tools
 python3 tools/audit_operating_model.py
 python3 tools/audit_benchmark_boundary.py
+```
+
+Package 9 local runtime verification:
+
+```bash
+python3 scripts/finance_llm_context_pack.py
+python3 scripts/judgment_envelope_gate.py --allow-fallback --adjudication-mode scheduled_context --context-pack state/llm-job-context/report-orchestrator.json
+python3 scripts/finance_decision_report_render.py
+python3 scripts/finance_report_product_validator.py
+python3 scripts/finance_decision_log_compiler.py
+python3 scripts/finance_report_delivery_safety.py
+pytest -q tests/test_llm_context_pack.py tests/test_finance_job_prompt_contract.py tests/test_prompt_snapshot_contract.py tests/test_judgment_context_pack_gate.py
 ```
 
 Runtime integration verification from the parent OpenClaw workspace:

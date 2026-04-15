@@ -1,0 +1,100 @@
+{
+  "generated_at": "2026-04-15T08:23:43.570950+00:00",
+  "state_boundary": "sanitized_summary_only",
+  "note": "Full finance/state JSONL files remain local runtime state. This summary exposes counts and bounded latest rows for GitHub review.",
+  "files": {
+    "dispatch_attribution": {
+      "path": "/Users/leofitz/.openclaw/workspace/finance/state/dispatch-attribution.jsonl",
+      "exists": true,
+      "row_count": 1,
+      "latest": [
+        {
+          "event_id": "wake-attribution:ea834fde5f6d2005",
+          "logged_at": "2026-04-15T04:28:45.776684Z",
+          "threshold_should_send": false,
+          "threshold_report_type": "hold",
+          "wake_class": "PACKET_UPDATE_ONLY",
+          "execution_decision": "none",
+          "operator_action": "logged_no_trade"
+        }
+      ]
+    },
+    "thesis_outcomes": {
+      "path": "/Users/leofitz/.openclaw/workspace/finance/state/thesis-outcomes.jsonl",
+      "exists": true,
+      "row_count": 15,
+      "latest": [
+        {
+          "event_id": "thesis-outcome:63a57f989a088787",
+          "logged_at": "2026-04-15T04:28:45.831290Z",
+          "thesis_id": "thesis:12b34f4ae0dd3d17",
+          "instrument": "ORCL",
+          "thesis_status": "active",
+          "execution_decision": "none",
+          "operator_action": "logged_no_trade",
+          "product_validation_status": "pass"
+        },
+        {
+          "event_id": "thesis-outcome:87419748740d0287",
+          "logged_at": "2026-04-15T04:28:45.831293Z",
+          "thesis_id": "thesis:5ebda6ba2aeb8fd0",
+          "instrument": "RGTI",
+          "thesis_status": "active",
+          "execution_decision": "none",
+          "operator_action": "logged_no_trade",
+          "product_validation_status": "pass"
+        },
+        {
+          "event_id": "thesis-outcome:4166c219d12d6727",
+          "logged_at": "2026-04-15T04:28:45.831295Z",
+          "thesis_id": "thesis:7689397304dbfa21",
+          "instrument": "SMR",
+          "thesis_status": "active",
+          "execution_decision": "none",
+          "operator_action": "logged_no_trade",
+          "product_validation_status": "pass"
+        },
+        {
+          "event_id": "thesis-outcome:729e7695a74f1853",
+          "logged_at": "2026-04-15T04:28:45.831297Z",
+          "thesis_id": "thesis:ebccc602be8e4557",
+          "instrument": "TSLA",
+          "thesis_status": "active",
+          "execution_decision": "none",
+          "operator_action": "logged_no_trade",
+          "product_validation_status": "pass"
+        },
+        {
+          "event_id": "thesis-outcome:4bf206e5019c3acc",
+          "logged_at": "2026-04-15T04:28:45.831299Z",
+          "thesis_id": "thesis:51820f5e25c74342",
+          "instrument": "TSLL",
+          "thesis_status": "active",
+          "execution_decision": "none",
+          "operator_action": "logged_no_trade",
+          "product_validation_status": "pass"
+        }
+      ]
+    },
+    "report_usefulness_history": {
+      "path": "/Users/leofitz/.openclaw/workspace/finance/state/report-usefulness-history.jsonl",
+      "exists": true,
+      "row_count": 1,
+      "latest": [
+        {
+          "event_id": "report-usefulness:d3956592c5406959",
+          "logged_at": "2026-04-15T04:28:45.894394Z",
+          "report_renderer": "thesis-delta-deterministic-v1",
+          "product_status": "pass",
+          "delivery_safety_status": "pass",
+          "usefulness_score": 100,
+          "noise_tokens": [],
+          "delta_density": 0.36,
+          "thesis_ref_count": 15,
+          "opportunity_ref_count": 2,
+          "invalidator_ref_count": 13
+        }
+      ]
+    }
+  }
+}

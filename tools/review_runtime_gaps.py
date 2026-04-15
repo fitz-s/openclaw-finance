@@ -120,6 +120,9 @@ def wake_bridge_review() -> dict[str, Any]:
     wake = load_json(STATE / 'latest-wake-decision.json', {})
     dispatch = load_json(STATE / 'wake-dispatch-state.json', {})
     bridge = gate.get('legacyThresholdDispatch') if isinstance(gate.get('legacyThresholdDispatch'), dict) else None
+    dispatch_history = STATE / 'dispatch-attribution.jsonl'
+    thesis_history = STATE / 'thesis-outcomes.jsonl'
+    usefulness_history = STATE / 'report-usefulness-history.jsonl'
     return {
         'current_gate': {
             'evaluatedAt': gate.get('evaluatedAt'),
@@ -143,9 +146,14 @@ def wake_bridge_review() -> dict[str, Any]:
             'action': bridge.get('action') if bridge else None,
             'dispatched': bridge.get('dispatched') if bridge else None,
         },
+        'telemetry_files': {
+            'dispatch_attribution_exists': dispatch_history.exists(),
+            'thesis_outcomes_exists': thesis_history.exists(),
+            'report_usefulness_history_exists': usefulness_history.exists(),
+        },
         'measurement_gap': (
-            'Historical bridge-vs-canonical wake attribution is not fully persisted per report yet. '
-            'Future hardening should add per-dispatch telemetry to decision log entries.'
+            'Telemetry is now persisted locally when the Package 7 writers run. '
+            'Historical records before these writers were introduced remain incomplete.'
         ),
     }
 
@@ -166,7 +174,7 @@ def benchmark_decision() -> dict[str, Any]:
             'multi-agent hot-path trading swarm',
             'chat/code-execution app as active runtime',
         ],
-        'next_package_candidate': 'telemetry for wake-vs-threshold attribution and report usefulness scoring',
+        'next_package_candidate': 'use telemetry to tune report delta density and wake usefulness review, without automatic threshold mutation',
     }
 
 

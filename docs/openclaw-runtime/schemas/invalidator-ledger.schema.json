@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workspace/schemas/invalidator-ledger.schema.json",
+  "title": "InvalidatorLedger",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generated_at", "policy_version", "invalidators"],
+  "properties": {
+    "generated_at": { "type": "string", "format": "date-time" },
+    "policy_version": { "type": "string" },
+    "invalidators": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["invalidator_id", "target_type", "target_id", "status", "description", "evidence_refs", "first_seen_at", "last_seen_at", "hit_count"],
+        "properties": {
+          "invalidator_id": { "type": "string" },
+          "target_type": { "type": "string", "enum": ["thesis", "scenario", "opportunity", "packet"] },
+          "target_id": { "type": "string" },
+          "status": { "type": "string", "enum": ["open", "hit", "resolved", "retired"] },
+          "description": { "type": "string" },
+          "evidence_refs": { "type": "array", "items": { "type": "string" } },
+          "first_seen_at": { "type": ["string", "null"] },
+          "last_seen_at": { "type": ["string", "null"] },
+          "hit_count": { "type": "integer", "minimum": 0 },
+          "resolution": { "type": ["string", "null"] }
+        }
+      }
+    }
+  }
+}

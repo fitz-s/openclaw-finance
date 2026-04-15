@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workspace/schemas/scenario-card.schema.json",
+  "title": "ScenarioCards",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generated_at", "policy_version", "scenarios"],
+  "properties": {
+    "generated_at": { "type": "string", "format": "date-time" },
+    "policy_version": { "type": "string" },
+    "scenarios": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["scenario_id", "title", "status", "scenario_type", "linked_thesis_ids", "evidence_refs", "activation_zone", "invalidators", "last_meaningful_change_at"],
+        "properties": {
+          "scenario_id": { "type": "string" },
+          "title": { "type": "string" },
+          "status": { "type": "string", "enum": ["candidate", "active", "dormant", "retired"] },
+          "scenario_type": { "type": "string" },
+          "linked_thesis_ids": { "type": "array", "items": { "type": "string" } },
+          "evidence_refs": { "type": "array", "items": { "type": "string" } },
+          "activation_zone": { "type": "object" },
+          "invalidators": { "type": "array", "items": { "type": "string" } },
+          "last_meaningful_change_at": { "type": ["string", "null"], "format": "date-time" }
+        }
+      }
+    }
+  }
+}

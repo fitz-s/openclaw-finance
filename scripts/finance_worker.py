@@ -211,6 +211,7 @@ def main():
     accumulated = state.get('accumulated', [])
 
     new_observations_count = 0
+    unknown_discovery_exhausted_reasons: list[dict[str, str]] = []
 
     recovered_files = recover_valid_invalid_buffers(now_utc)
 
@@ -246,6 +247,12 @@ def main():
 
         if isinstance(data.get('scan_time'), str):
             successful_scan_times.append(data['scan_time'])
+        if data.get('unknown_discovery_exhausted_reason'):
+            unknown_discovery_exhausted_reasons.append({
+                'file': bf.name,
+                'reason': str(data.get('unknown_discovery_exhausted_reason'))[:500],
+                'scan_time': str(data.get('scan_time') or ''),
+            })
 
         obs = data.get('observations', [])
         if not obs and 'theme' in data: # Handle single observation format
@@ -272,7 +279,18 @@ def main():
                     "summary": o.get('summary') or o.get('description', ''),
                     "sources": o.get('sources', [o.get('source', 'unknown')])
                 }
-                for optional_key in ['candidate_type', 'discovery_scope', 'exploration_lane', 'tickers', 'non_watchlist_reason']:
+                for optional_key in [
+                    'candidate_type',
+                    'discovery_scope',
+                    'exploration_lane',
+                    'tickers',
+                    'non_watchlist_reason',
+                    'object_links',
+                    'supports',
+                    'conflicts_with',
+                    'confirmation_needed',
+                    'unknown_discovery_exhausted_reason',
+                ]:
                     if optional_key in o:
                         normalized[optional_key] = o.get(optional_key)
                 # Semantic dedup: skip if theme is near-identical to an existing item
@@ -329,6 +347,11 @@ def main():
     state['invalid_buffer_files'] = invalid_files[-20:]
     state['recovered_invalid_buffer_files'] = recovered_files[-20:]
     state['stale_accumulated_pruned_count'] = pruned_count
+    if unknown_discovery_exhausted_reasons:
+        state['unknown_discovery_exhausted_reasons'] = (
+            state.get('unknown_discovery_exhausted_reasons', [])[-20:]
+            + unknown_discovery_exhausted_reasons
+        )[-20:]
 
     latest_signal_ts = newest_observation_ts(accumulated)
     if latest_signal_ts:

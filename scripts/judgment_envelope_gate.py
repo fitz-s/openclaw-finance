@@ -22,6 +22,7 @@ CANDIDATE = FINANCE / 'state' / 'judgment-envelope-candidate.json'
 SELECTED = FINANCE / 'state' / 'judgment-envelope.json'
 VALIDATION = FINANCE / 'state' / 'judgment-validation.json'
 REPORT = FINANCE / 'state' / 'judgment-envelope-gate-report.json'
+REPORT_CONTEXT_PACK = FINANCE / 'state' / 'llm-job-context' / 'report-orchestrator.json'
 POLICY_VERSION = 'finance-semantic-v1'
 ADJUDICATION_MODES = {'scheduled_context', 'event_wake', 'ops_escalation', 'auto'}
 
@@ -48,7 +49,7 @@ def safe_finance_state_path(path: Path) -> bool:
         return False
 
 
-def deterministic_no_trade_judgment(packet: dict[str, Any], model_id: str) -> dict[str, Any]:
+def deterministic_no_trade_judgment(packet: dict[str, Any], model_id: str, allowed_evidence_refs: set[str] | None = None) -> dict[str, Any]:
     support_records = []
     for record in packet.get('accepted_evidence_records', []):
         if (
@@ -76,9 +77,18 @@ def deterministic_no_trade_judgment(packet: dict[str, Any], model_id: str) -> di
             return (2, pct_abs(record), str(record.get('evidence_id')))
         return (1, float(record.get('source_reliability') or 0), str(record.get('evidence_id')))
 
+    if allowed_evidence_refs is not None:
+        support_records = [
+            record for record in support_records
+            if str(record.get('evidence_id')) in allowed_evidence_refs
+        ]
     support_records = sorted(support_records, key=support_rank, reverse=True)
     support_refs = [str(record['evidence_id']) for record in support_records]
-    evidence_refs = support_refs[:5] or [ref for ref in packet.get('evidence_refs', []) if ref != 'none'][:1] or ['none']
+    packet_fallback_refs = [
+        ref for ref in packet.get('evidence_refs', [])
+        if ref != 'none' and (allowed_evidence_refs is None or ref in allowed_evidence_refs)
+    ]
+    evidence_refs = support_refs[:5] or packet_fallback_refs[:1] or ['none']
     if support_records:
         why_now = ['本轮有可信本地证据更新 packet，但没有触发 isolated judgment wake。']
         why_not = ['当前没有 wake-eligible 证据；support-only 证据只能约束上下文，不能单独支持交易 thesis。']
@@ -100,9 +110,39 @@ def deterministic_no_trade_judgment(packet: dict[str, Any], model_id: str) -> di
         'invalidators': packet.get('candidate_invalidators', []),
         'required_confirmations': required_confirmations,
         'evidence_refs': evidence_refs,
+        'thesis_refs': packet.get('thesis_refs', []),
+        'scenario_refs': packet.get('scenario_refs', []),
+        'opportunity_candidate_refs': packet.get('opportunity_candidate_refs', []),
+        'invalidator_refs': packet.get('invalidator_refs', []),
         'policy_version': packet.get('policy_version') or POLICY_VERSION,
         'model_id': model_id,
     }
+
+
+def allowed_refs_from_context_pack(path: Path | None) -> tuple[set[str], bool]:
+    if path is None:
+        return set(), False
+    pack = load_json_safe(path, None)
+    if not isinstance(pack, dict):
+        return set(), False
+    refs = set()
+    for item in pack.get('allowed_evidence_refs', []) if isinstance(pack.get('allowed_evidence_refs'), list) else []:
+        if isinstance(item, dict) and item.get('evidence_id'):
+            refs.add(str(item['evidence_id']))
+        elif isinstance(item, str):
+            refs.add(item)
+    return refs, True
+
+
+def context_pack_evidence_errors(judgment: dict[str, Any], context_pack_path: Path, allowed: set[str] | None = None, enforced: bool | None = None) -> list[str]:
+    if allowed is None or enforced is None:
+        allowed, enforced = allowed_refs_from_context_pack(context_pack_path)
+    if not enforced:
+        return []
+    refs = {str(ref) for ref in judgment.get('evidence_refs', []) if ref != 'none'}
+    if refs - allowed:
+        return ['evidence_ref_not_in_llm_context_pack']
+    return []
 
 
 def risk_state_for_mode(mode: str) -> dict[str, Any]:
@@ -131,6 +171,7 @@ def gate_candidate(
     candidate_path: Path = CANDIDATE,
     selected_path: Path = SELECTED,
     validation_path: Path = VALIDATION,
+    context_pack_path: Path | None = None,
     allow_fallback: bool = False,
     model_id: str = 'openclaw-adjudicator',
     adjudication_mode: str = 'scheduled_context',
@@ -141,11 +182,16 @@ def gate_candidate(
     blocking_reasons: list[str] = []
     selected = None
     selected_source = None
+    context_allowed_refs, context_pack_enforced = allowed_refs_from_context_pack(context_pack_path)
 
     if not candidate:
         blocking_reasons.append('candidate_judgment_missing')
     else:
         result = validator.validate(candidate, packet, risk_state_for_mode(adjudication_mode))
+        if not result['errors']:
+            result['errors'].extend(context_pack_evidence_errors(candidate, context_pack_path, context_allowed_refs, context_pack_enforced))
+            if result['errors']:
+                result['outcome'] = 'rejected_missing_refs'
         atomic_write_json(validation_path, result)
         if result['errors']:
             blocking_reasons.extend(result['errors'])
@@ -154,8 +200,16 @@ def gate_candidate(
             selected_source = 'candidate'
 
     if selected is None and allow_fallback:
-        fallback = deterministic_no_trade_judgment(packet, model_id='deterministic-no-trade-fallback')
+        fallback = deterministic_no_trade_judgment(
+            packet,
+            model_id='deterministic-no-trade-fallback',
+            allowed_evidence_refs=context_allowed_refs if context_pack_enforced else None,
+        )
         result = validator.validate(fallback, packet, risk_state_for_mode(adjudication_mode))
+        if not result['errors']:
+            result['errors'].extend(context_pack_evidence_errors(fallback, context_pack_path, context_allowed_refs, context_pack_enforced))
+            if result['errors']:
+                result['outcome'] = 'rejected_missing_refs'
         atomic_write_json(validation_path, result)
         if not result['errors']:
             selected = fallback
@@ -188,6 +242,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--selected', default=str(SELECTED))
     parser.add_argument('--validation', default=str(VALIDATION))
     parser.add_argument('--out', default=str(REPORT))
+    parser.add_argument('--context-pack', default=None)
     parser.add_argument('--allow-fallback', action='store_true')
     parser.add_argument('--model-id', default='openclaw-adjudicator')
     parser.add_argument('--adjudication-mode', default='scheduled_context', choices=sorted(ADJUDICATION_MODES))
@@ -201,6 +256,7 @@ def main(argv: list[str] | None = None) -> int:
         candidate_path=Path(args.candidate),
         selected_path=Path(args.selected),
         validation_path=Path(args.validation),
+        context_pack_path=Path(args.context_pack) if args.context_pack else None,
         allow_fallback=args.allow_fallback,
         model_id=args.model_id,
         adjudication_mode=args.adjudication_mode if args.adjudication_mode != 'auto' else 'scheduled_context',

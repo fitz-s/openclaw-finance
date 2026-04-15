@@ -1,0 +1,138 @@
+{
+  "generated_at": "2026-04-15T08:23:43.570747+00:00",
+  "source": "/Users/leofitz/.openclaw/cron/jobs.json",
+  "note": "Prompt hashes let GitHub reviewers see live OpenClaw job prompt drift without exposing secrets.",
+  "jobs": {
+    "finance-premarket-brief": {
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "10 8 * * 1-5",
+        "tz": "America/Chicago"
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "discord",
+        "to": "channel:1479790104490016808"
+      },
+      "prompt_sha256": "sha256:b2722ec580561b4154c5b1a2c66caa3a803e701f7b5e440c09226353c5eb859e",
+      "contains_context_pack": true,
+      "contains_non_authority_boundary": true,
+      "contains_candidate_path": true,
+      "contains_unknown_discovery_contract": false,
+      "contains_threshold_mutation_ban": true,
+      "message_preview": "【OpenClaw Finance Report Orchestrator｜context-pack-first】\n你是 finance report adjudicator，不是 renderer，不是 scanner，不是 risk engine。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 只把 /Users"
+    },
+    "finance-report-renderer": {
+      "enabled": false,
+      "schedule": {
+        "kind": "manual"
+      },
+      "delivery": {
+        "mode": "none",
+        "channel": "discord",
+        "to": "channel:1479790104490016808"
+      },
+      "prompt_sha256": "sha256:868fd39708b39b91379c0735cbb13278b6559bc94f89ce8c1d199e4ee71d65ea",
+      "contains_context_pack": false,
+      "contains_non_authority_boundary": false,
+      "contains_candidate_path": false,
+      "contains_unknown_discovery_contract": false,
+      "contains_threshold_mutation_ban": false,
+      "message_preview": "[DEPRECATED/MANUAL-ONLY] Old finance judgment-shadow renderer. This job must never deliver user-visible messages. Do not enable unless migrated to systems/finance-openclaw-runtime-contract.md and the finance-report-envelope validator path. Active user-visible "
+    },
+    "finance-subagent-scanner": {
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "*/20 8-16 * * 1-5",
+        "tz": "America/Chicago"
+      },
+      "delivery": {
+        "mode": "none",
+        "channel": "last"
+      },
+      "prompt_sha256": "sha256:b4004765c563876859c140a12980e576af63d1a4cb6a76a3ca44641eb7a7272c",
+      "contains_context_pack": true,
+      "contains_non_authority_boundary": true,
+      "contains_candidate_path": false,
+      "contains_unknown_discovery_contract": true,
+      "contains_threshold_mutation_ban": false,
+      "message_preview": "【finance market-hours scanner｜context-pack-first】\n你是 finance scanner。不要发用户消息。你的任务是找 object-linked evidence candidates，不是写报告。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 读取 /Users/l"
+    },
+    "finance-subagent-scanner-offhours": {
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 0,4,7,17,20 * * 1-5",
+        "tz": "America/Chicago"
+      },
+      "delivery": {
+        "mode": "none",
+        "channel": "last"
+      },
+      "prompt_sha256": "sha256:a4d765a1cbeb541ab1dfe9a8dd64e2b634f6fe03ff529f78da39d54eac5c6c61",
+      "contains_context_pack": true,
+      "contains_non_authority_boundary": true,
+      "contains_candidate_path": false,
+      "contains_unknown_discovery_contract": true,
+      "contains_threshold_mutation_ban": false,
+      "message_preview": "【finance offhours scanner｜context-pack-first】\n你是 finance scanner。不要发用户消息。你的任务是找 object-linked evidence candidates，不是写报告。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 读取 /Users/leofi"
+    },
+    "finance-thesis-sidecar": {
+      "enabled": false,
+      "schedule": {
+        "kind": "manual"
+      },
+      "delivery": {
+        "mode": "none",
+        "channel": "last"
+      },
+      "prompt_sha256": "sha256:f98665017dbc44f6f234a330621b5505827ec40c7fae02e333f6154297d750cf",
+      "contains_context_pack": true,
+      "contains_non_authority_boundary": true,
+      "contains_candidate_path": false,
+      "contains_unknown_discovery_contract": false,
+      "contains_threshold_mutation_ban": true,
+      "message_preview": "【OpenClaw Finance Thesis Sidecar｜manual artifact-only】\n你是 finance thesis sidecar。这个 job 是 manual/disabled artifact wrapper，不是报告 job。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 读取 "
+    },
+    "finance-watcher-update": {
+      "enabled": false,
+      "schedule": {
+        "kind": "manual"
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "discord",
+        "to": "channel:1479790104490016808"
+      },
+      "prompt_sha256": "sha256:4e597a83008dc223fedec1d95d845a09aaeca96bb632bf1be29882eaf4eecca1",
+      "contains_context_pack": false,
+      "contains_non_authority_boundary": false,
+      "contains_candidate_path": false,
+      "contains_unknown_discovery_contract": false,
+      "contains_threshold_mutation_ban": false,
+      "message_preview": "[MANUAL-ONLY] Finance watcher update helper. Not part of primary scanner/report pipeline. Keep disabled unless a human explicitly requests watcher review. Must not bypass finance report packet/envelope/validator delivery path."
+    },
+    "finance-weekly-learning-review": {
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "20 22 * * 0",
+        "tz": "America/Chicago"
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "discord",
+        "to": "channel:1479790104490016808"
+      },
+      "prompt_sha256": "sha256:26b0f0dc2e0f7d020ddc0d3d4cfaec40ac404fb0f3e6877992099b2910edf251",
+      "contains_context_pack": true,
+      "contains_non_authority_boundary": true,
+      "contains_candidate_path": false,
+      "contains_unknown_discovery_contract": false,
+      "contains_threshold_mutation_ban": true,
+      "message_preview": "【OpenClaw Finance Weekly Learning Review｜context-pack-first】\n你是 finance learning reviewer。你不是 scanner，不输出市场建议，不改阈值。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 读取 /Users/leofitz/.o"
+    }
+  }
+}

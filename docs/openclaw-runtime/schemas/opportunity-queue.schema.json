@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workspace/schemas/opportunity-queue.schema.json",
+  "title": "OpportunityQueue",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generated_at", "policy_version", "candidates"],
+  "properties": {
+    "generated_at": { "type": "string", "format": "date-time" },
+    "policy_version": { "type": "string" },
+    "candidates": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["candidate_id", "status", "instrument", "theme", "source_refs", "first_seen_at", "last_seen_at", "score"],
+        "properties": {
+          "candidate_id": { "type": "string" },
+          "status": { "type": "string", "enum": ["candidate", "promoted", "suppressed", "retired"] },
+          "instrument": { "type": ["string", "null"] },
+          "theme": { "type": "string" },
+          "source_refs": { "type": "array", "items": { "type": "string" } },
+          "promotion_reason": { "type": ["string", "null"] },
+          "suppression_reason": { "type": ["string", "null"] },
+          "linked_thesis_id": { "type": ["string", "null"] },
+          "first_seen_at": { "type": ["string", "null"] },
+          "last_seen_at": { "type": ["string", "null"] },
+          "score": { "type": "number" }
+        }
+      }
+    }
+  }
+}

@@ -16,12 +16,14 @@ jobs:
         run: |
           python -m json.tool docs/openclaw-runtime/finance-cron-jobs.json >/dev/null
           python -m json.tool docs/openclaw-runtime/finance-model-roles.json >/dev/null
+          python -m json.tool docs/openclaw-runtime/finance-job-prompt-contract.json >/dev/null
           python -m json.tool docs/openclaw-runtime/snapshot-manifest.json >/dev/null
           python -m json.tool docs/openclaw-runtime/operating-model-audit.json >/dev/null
           python -m json.tool docs/openclaw-runtime/parent-dependency-inventory.json >/dev/null
           python -m json.tool docs/openclaw-runtime/parent-dependency-drift.json >/dev/null
           python -m json.tool docs/openclaw-runtime/wake-threshold-attribution.json >/dev/null
           python -m json.tool docs/openclaw-runtime/report-usefulness-score.json >/dev/null
+          python -m json.tool docs/openclaw-runtime/thesis-spine-telemetry-summary.json >/dev/null
           python -m json.tool docs/openclaw-runtime/ibkr-watchlist-freshness-drill.json >/dev/null
           python -m json.tool docs/openclaw-runtime/benchmark-boundary-audit.json >/dev/null
           python -m json.tool docs/openclaw-runtime/runtime-gap-review.json >/dev/null

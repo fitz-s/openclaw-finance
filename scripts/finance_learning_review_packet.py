@@ -24,6 +24,9 @@ LIVE_REPLAY = WORKSPACE / 'replay' / 'state' / 'live-finance-replay-report.json'
 DECISION_LOG_REPORT = FINANCE / 'state' / 'finance-decision-log-report.json'
 PRODUCT_VALIDATION = FINANCE / 'state' / 'finance-report-product-validation.json'
 JUDGMENT_VALIDATION = FINANCE / 'state' / 'judgment-validation.json'
+DISPATCH_ATTRIBUTION = FINANCE / 'state' / 'dispatch-attribution.jsonl'
+THESIS_OUTCOMES = FINANCE / 'state' / 'thesis-outcomes.jsonl'
+REPORT_USEFULNESS_HISTORY = FINANCE / 'state' / 'report-usefulness-history.jsonl'
 LEARNING_PACKET = FINANCE / 'state' / 'finance-learning-review-packet.json'
 RUNS_DIR = OPENCLAW / 'cron' / 'runs'
 
@@ -67,6 +70,37 @@ def compact_runs(limit: int) -> dict[str, list[dict[str, Any]]]:
     return out
 
 
+def compact_jsonl(path: Path, limit: int) -> list[dict[str, Any]]:
+    rows = []
+    for row in tail_jsonl(path, limit):
+        rows.append({
+            key: value for key, value in row.items()
+            if key in {
+                'event_id',
+                'logged_at',
+                'wake_class',
+                'threshold_should_send',
+                'threshold_report_type',
+                'execution_decision',
+                'operator_action',
+                'thesis_id',
+                'instrument',
+                'thesis_status',
+                'product_validation_status',
+                'report_renderer',
+                'product_status',
+                'delivery_safety_status',
+                'usefulness_score',
+                'noise_tokens',
+                'delta_density',
+                'thesis_ref_count',
+                'opportunity_ref_count',
+                'invalidator_ref_count',
+            }
+        })
+    return rows
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description='Compile finance learning review packet.')
     parser.add_argument('--out', default=str(LEARNING_PACKET))
@@ -90,6 +124,9 @@ def main(argv: list[str] | None = None) -> int:
             'judgment_validation': load_json_safe(JUDGMENT_VALIDATION, {}) or {},
             'product_validation': load_json_safe(PRODUCT_VALIDATION, {}) or {},
             'decision_log_report': load_json_safe(DECISION_LOG_REPORT, {}) or {},
+            'dispatch_attribution_recent': compact_jsonl(DISPATCH_ATTRIBUTION, args.run_limit),
+            'thesis_outcomes_recent': compact_jsonl(THESIS_OUTCOMES, args.run_limit),
+            'report_usefulness_recent': compact_jsonl(REPORT_USEFULNESS_HISTORY, args.run_limit),
             'live_replay': load_json_safe(LIVE_REPLAY, {}) or {},
             'cron_runs': compact_runs(args.run_limit),
         },

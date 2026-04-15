@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workspace/schemas/decision-log.schema.json",
+  "title": "DecisionLog",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["decision_id", "created_at", "packet_id", "packet_hash", "judgment_id", "validator_result_id", "execution_decision", "operator_action", "policy_version", "session_ref"],
+  "properties": {
+    "decision_id": { "type": "string" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "packet_id": { "type": "string" },
+    "packet_hash": { "type": "string", "pattern": "^sha256:" },
+    "judgment_id": { "type": "string" },
+    "validator_result_id": { "type": "string" },
+    "execution_decision": { "type": "string", "enum": ["none", "review_only", "blocked", "approved_for_future_gate"] },
+    "operator_action": { "type": "string" },
+    "policy_version": { "type": "string" },
+    "session_ref": { "type": "string" },
+    "wake_threshold_attribution": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "attribution",
+        "gate_should_send",
+        "gate_recommended_report_type",
+        "wake_class",
+        "wake_dispatch_action",
+        "wake_dispatched",
+        "legacy_threshold_bridge_present"
+      ],
+      "properties": {
+        "attribution": {
+          "type": "string",
+          "enum": [
+            "canonical_wake_dispatch",
+            "legacy_threshold_bridge",
+            "scheduled_context",
+            "packet_update_only",
+            "ops_escalation",
+            "hold_no_send",
+            "blocked_or_failed"
+          ]
+        },
+        "gate_evaluated_at": { "type": ["string", "null"] },
+        "gate_should_send": { "type": ["boolean", "null"] },
+        "gate_recommended_report_type": { "type": ["string", "null"] },
+        "wake_class": { "type": ["string", "null"] },
+        "wake_dispatch_action": { "type": ["string", "null"] },
+        "wake_dispatched": { "type": ["boolean", "null"] },
+        "legacy_threshold_bridge_present": { "type": "boolean" },
+        "legacy_threshold_bridge_status": { "type": ["string", "null"] },
+        "legacy_threshold_bridge_action": { "type": ["string", "null"] },
+        "legacy_threshold_bridge_dispatched": { "type": ["boolean", "null"] },
+        "report_class": { "type": ["string", "null"] }
+      }
+    },
+    "thesis_refs": { "type": "array", "items": { "type": "string" } },
+    "scenario_refs": { "type": "array", "items": { "type": "string" } },
+    "opportunity_candidate_refs": { "type": "array", "items": { "type": "string" } },
+    "invalidator_refs": { "type": "array", "items": { "type": "string" } }
+  }
+}

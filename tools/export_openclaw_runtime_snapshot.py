@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import shutil
 import subprocess
+import hashlib
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -17,12 +18,14 @@ OUT = FINANCE / 'docs' / 'openclaw-runtime'
 CONTRACTS_OUT = OUT / 'contracts'
 CRON_JOBS = OPENCLAW_HOME / 'cron' / 'jobs.json'
 MODEL_ROLES = WORKSPACE / 'ops' / 'model-roles.json'
+STATE = FINANCE / 'state'
 
 FINANCE_JOB_NAMES = {
     'finance-subagent-scanner',
     'finance-subagent-scanner-offhours',
     'finance-premarket-brief',
     'finance-weekly-learning-review',
+    'finance-thesis-sidecar',
     'finance-report-renderer',
     'finance-watcher-update',
 }
@@ -31,9 +34,26 @@ CONTRACT_DOCS = [
     WORKSPACE / 'systems' / 'finance-openclaw-runtime-contract.md',
     WORKSPACE / 'systems' / 'finance-report-contract.md',
     WORKSPACE / 'systems' / 'finance-gate-taxonomy.md',
+    WORKSPACE / 'systems' / 'thesis-spine-contract.md',
+    WORKSPACE / 'systems' / 'thesis-card-contract.md',
+    WORKSPACE / 'systems' / 'scenario-card-contract.md',
+    WORKSPACE / 'systems' / 'opportunity-queue-contract.md',
+    WORKSPACE / 'systems' / 'invalidator-ledger-contract.md',
     WORKSPACE / 'systems' / 'judgment-contract.md',
     WORKSPACE / 'systems' / 'wake-policy.md',
     WORKSPACE / 'systems' / 'risk-gates.md',
+]
+
+SCHEMA_DOCS = [
+    WORKSPACE / 'schemas' / 'watch-intent.schema.json',
+    WORKSPACE / 'schemas' / 'thesis-card.schema.json',
+    WORKSPACE / 'schemas' / 'scenario-card.schema.json',
+    WORKSPACE / 'schemas' / 'opportunity-queue.schema.json',
+    WORKSPACE / 'schemas' / 'invalidator-ledger.schema.json',
+    WORKSPACE / 'schemas' / 'packet.schema.json',
+    WORKSPACE / 'schemas' / 'wake-decision.schema.json',
+    WORKSPACE / 'schemas' / 'judgment-envelope.schema.json',
+    WORKSPACE / 'schemas' / 'decision-log.schema.json',
 ]
 
 
@@ -80,6 +100,35 @@ def finance_jobs() -> list[dict[str, Any]]:
     return sorted(out, key=lambda item: item.get('name') or '')
 
 
+def finance_job_prompt_contract(jobs: list[dict[str, Any]]) -> dict[str, Any]:
+    contract = {
+        'generated_at': now_iso(),
+        'source': str(CRON_JOBS),
+        'note': 'Prompt hashes let GitHub reviewers see live OpenClaw job prompt drift without exposing secrets.',
+        'jobs': {},
+    }
+    for job in jobs:
+        payload = job.get('payload') if isinstance(job.get('payload'), dict) else {}
+        message = str(payload.get('message') or '')
+        contract['jobs'][job.get('name')] = {
+            'enabled': job.get('enabled'),
+            'schedule': job.get('schedule'),
+            'delivery': job.get('delivery'),
+            'prompt_sha256': 'sha256:' + hashlib.sha256(message.encode('utf-8')).hexdigest(),
+            'contains_context_pack': 'llm-job-context' in message,
+            'contains_non_authority_boundary': (
+                'pack_is_not_authority' in message
+                or ('view cache' in message and 'canonical state' in message)
+                or ('view cache' in message and 'canonical authority' in message)
+            ),
+            'contains_candidate_path': 'judgment-envelope-candidate.json' in message,
+            'contains_unknown_discovery_contract': 'unknown_discovery_exhausted_reason' in message,
+            'contains_threshold_mutation_ban': '禁止自动改 thresholds' in message,
+            'message_preview': message[:260],
+        }
+    return contract
+
+
 def finance_model_roles() -> dict[str, Any]:
     roles = load_json(MODEL_ROLES, {})
     assignments = roles.get('job_assignments', {}) if isinstance(roles.get('job_assignments'), dict) else {}
@@ -111,6 +160,74 @@ def finance_crontab_lines() -> list[str]:
     ]
 
 
+def tail_jsonl(path: Path, limit: int = 5) -> tuple[int, list[dict[str, Any]]]:
+    if not path.exists():
+        return 0, []
+    rows = []
+    total = 0
+    for line in path.read_text(encoding='utf-8', errors='replace').splitlines():
+        if not line.strip():
+            continue
+        try:
+            payload = json.loads(line)
+        except Exception:
+            continue
+        if isinstance(payload, dict):
+            total += 1
+            rows.append(payload)
+    return total, rows[-limit:]
+
+
+def telemetry_summary() -> dict[str, Any]:
+    files = {
+        'dispatch_attribution': STATE / 'dispatch-attribution.jsonl',
+        'thesis_outcomes': STATE / 'thesis-outcomes.jsonl',
+        'report_usefulness_history': STATE / 'report-usefulness-history.jsonl',
+    }
+    summary: dict[str, Any] = {
+        'generated_at': now_iso(),
+        'state_boundary': 'sanitized_summary_only',
+        'note': 'Full finance/state JSONL files remain local runtime state. This summary exposes counts and bounded latest rows for GitHub review.',
+        'files': {},
+    }
+    for name, path in files.items():
+        total, rows = tail_jsonl(path)
+        sanitized_rows = []
+        for row in rows:
+            sanitized_rows.append({
+                key: value for key, value in row.items()
+                if key in {
+                    'event_id',
+                    'logged_at',
+                    'wake_class',
+                    'threshold_should_send',
+                    'threshold_report_type',
+                    'execution_decision',
+                    'operator_action',
+                    'thesis_id',
+                    'instrument',
+                    'thesis_status',
+                    'product_validation_status',
+                    'report_renderer',
+                    'product_status',
+                    'delivery_safety_status',
+                    'usefulness_score',
+                    'noise_tokens',
+                    'delta_density',
+                    'thesis_ref_count',
+                    'opportunity_ref_count',
+                    'invalidator_ref_count',
+                }
+            })
+        summary['files'][name] = {
+            'path': str(path),
+            'exists': path.exists(),
+            'row_count': total,
+            'latest': sanitized_rows,
+        }
+    return summary
+
+
 def copy_contracts() -> list[str]:
     CONTRACTS_OUT.mkdir(parents=True, exist_ok=True)
     copied: list[str] = []
@@ -123,14 +240,31 @@ def copy_contracts() -> list[str]:
     return copied
 
 
+def copy_schemas() -> list[str]:
+    schema_out = OUT / 'schemas'
+    schema_out.mkdir(parents=True, exist_ok=True)
+    copied: list[str] = []
+    for path in SCHEMA_DOCS:
+        if not path.exists():
+            continue
+        target = schema_out / path.name
+        shutil.copy2(path, target)
+        copied.append(str(target.relative_to(FINANCE)))
+    return copied
+
+
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     contracts = copy_contracts()
+    schemas = copy_schemas()
+    jobs = finance_jobs()
     write_json(OUT / 'finance-cron-jobs.json', {
         'generated_at': now_iso(),
         'source': str(CRON_JOBS),
-        'jobs': finance_jobs(),
+        'jobs': jobs,
     })
+    write_json(OUT / 'finance-job-prompt-contract.json', finance_job_prompt_contract(jobs))
+    write_json(OUT / 'thesis-spine-telemetry-summary.json', telemetry_summary())
     (OUT / 'finance-crontab.txt').write_text('\n'.join(finance_crontab_lines()) + '\n', encoding='utf-8')
     write_json(OUT / 'finance-model-roles.json', finance_model_roles())
     write_json(OUT / 'snapshot-manifest.json', {
@@ -142,15 +276,18 @@ def main() -> int:
             'docs/openclaw-runtime/finance-cron-jobs.json',
             'docs/openclaw-runtime/finance-crontab.txt',
             'docs/openclaw-runtime/finance-model-roles.json',
+            'docs/openclaw-runtime/finance-job-prompt-contract.json',
             'docs/openclaw-runtime/operating-model-audit.json',
             'docs/openclaw-runtime/parent-dependency-inventory.json',
             'docs/openclaw-runtime/parent-dependency-drift.json',
             'docs/openclaw-runtime/wake-threshold-attribution.json',
             'docs/openclaw-runtime/report-usefulness-score.json',
+            'docs/openclaw-runtime/thesis-spine-telemetry-summary.json',
             'docs/openclaw-runtime/ibkr-watchlist-freshness-drill.json',
             'docs/openclaw-runtime/benchmark-boundary-audit.json',
             'docs/openclaw-runtime/runtime-gap-review.json',
             *contracts,
+            *schemas,
         ],
         'note': 'Generated from the local OpenClaw runtime. State files and secrets are intentionally excluded.',
     })
