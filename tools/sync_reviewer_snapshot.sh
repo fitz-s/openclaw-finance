@@ -4,6 +4,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 python3 tools/export_openclaw_runtime_snapshot.py
+python3 tools/audit_operating_model.py
 
 git add docs/openclaw-runtime
 

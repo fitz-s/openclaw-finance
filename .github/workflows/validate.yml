@@ -20,3 +20,6 @@ jobs:
       - name: Compile Python sources
         run: |
           python -m compileall -q scripts tools
+      - name: Audit operating model contracts
+        run: |
+          python tools/audit_operating_model.py

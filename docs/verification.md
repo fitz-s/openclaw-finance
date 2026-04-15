@@ -7,6 +7,7 @@ python3 -m json.tool docs/openclaw-runtime/finance-cron-jobs.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/finance-model-roles.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/snapshot-manifest.json >/dev/null
 python3 -m compileall -q scripts tools
+python3 tools/audit_operating_model.py
 ```
 
 Runtime integration verification from the parent OpenClaw workspace:
