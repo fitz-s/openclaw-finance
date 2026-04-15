@@ -42,7 +42,7 @@ For active runtime behavior, use this order:
 4. Sanitized snapshots in `docs/openclaw-runtime/`
 5. Explanatory docs in this repo
 
-Do not treat `REPORT_TEMPLATE.md`, old direct renderers, old selected-envelope paths, or compatibility packet prose as active authority.
+Do not treat `legacy/report-v1/REPORT_TEMPLATE.md`, old direct renderers, old selected-envelope paths, or compatibility packet prose as active authority.
 
 ## Active User-Visible Path
 

@@ -25,7 +25,7 @@
 
 ## 格式约束
 
-- 标题和章节: 按 `systems/finance-report-contract.md` 与当前 `finance-report-envelope` contract；`REPORT_TEMPLATE.md` 已 deprecated。
+- 标题和章节: 按 `systems/finance-report-contract.md` 与当前 `finance-report-envelope` contract；旧 `REPORT_TEMPLATE.md` 已移入 `legacy/report-v1/`，不得作为 active template。
 - Watchlist 表格: 只列**有变动**的 ticker, 不要全列
 - 长度上限:
   - Short: ≤ 300 字

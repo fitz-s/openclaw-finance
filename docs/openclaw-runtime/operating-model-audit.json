@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-04-15T08:23:43.603073+00:00",
+  "generated_at": "2026-04-15T09:23:43.713800+00:00",
   "status": "pass",
-  "check_count": 53,
+  "check_count": 61,
   "error_count": 0,
   "checks": {
     "finance-openclaw-runtime-contract.md:exists": true,
@@ -56,7 +56,15 @@
     "prompt:finance-thesis-sidecar:contains_context_pack": true,
     "prompt:finance-thesis-sidecar:contains_non_authority_boundary": true,
     "prompt:finance-thesis-sidecar:contains_threshold_mutation_ban": true,
-    "prompt:finance-thesis-sidecar:delivery-none-disabled": true
+    "prompt:finance-thesis-sidecar:delivery-none-disabled": true,
+    "legacy-report-v1:REPORT_TEMPLATE.md:quarantined": true,
+    "legacy-report-v1:report-renderer.md:quarantined": true,
+    "legacy-report-v1:finance_deterministic_report_render.py:quarantined": true,
+    "legacy-report-v1:finance_report_validator.py:quarantined": true,
+    "legacy-report-v1:quality_gate.py:quarantined": true,
+    "legacy-report-v1:native_premarket_brief.py:quarantined": true,
+    "legacy-report-v1:native_premarket_brief_live.py:quarantined": true,
+    "legacy-report-v1:finance_llm_report_render.py:quarantined": true
   },
   "errors": []
 }

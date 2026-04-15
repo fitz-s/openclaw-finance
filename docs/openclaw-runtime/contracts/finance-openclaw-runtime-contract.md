@@ -105,10 +105,10 @@ The compatibility view is allowed to exist only if:
 
 ## Deprecated Surfaces
 
-- `finance/REPORT_TEMPLATE.md` is not the active renderer contract.
+- `finance/legacy/report-v1/REPORT_TEMPLATE.md` is not the active renderer contract.
 - `finance-report-renderer` is disabled/manual-only and must not deliver user-visible reports.
 - Direct `native_premarket_brief_live.py --deliver` from system crontab is deprecated.
-- `finance_deterministic_report_render.py`, `finance_report_validator.py`, and `quality_gate.py` are compatibility/legacy surfaces, not active product gates.
+- `legacy/report-v1/scripts/finance_deterministic_report_render.py`, `legacy/report-v1/scripts/finance_report_validator.py`, and `legacy/report-v1/scripts/quality_gate.py` are compatibility/legacy surfaces, not active product gates.
 
 ## Review-Only Boundary
 

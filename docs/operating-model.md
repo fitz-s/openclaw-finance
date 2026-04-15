@@ -58,11 +58,11 @@ OpenClaw finance scanner cron
 Deprecated/manual-only surfaces include:
 
 - `finance-report-renderer`
-- `REPORT_TEMPLATE.md` as active template
-- `native_premarket_brief_live.py --deliver`
-- `finance_deterministic_report_render.py`
-- `finance_report_validator.py`
-- `quality_gate.py`
+- `legacy/report-v1/REPORT_TEMPLATE.md` as active template
+- `legacy/report-v1/scripts/native_premarket_brief_live.py --deliver`
+- `legacy/report-v1/scripts/finance_deterministic_report_render.py`
+- `legacy/report-v1/scripts/finance_report_validator.py`
+- `legacy/report-v1/scripts/quality_gate.py`
 
 They may exist for evidence, regression, or migration reference. They must not own active delivery.
 

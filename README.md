@@ -41,7 +41,14 @@ The active machine truth surfaces are:
 
 `finance-report-renderer` is disabled/manual-only. It must not deliver user-visible reports.
 
-`native_premarket_brief_live.py --deliver`, `finance_deterministic_report_render.py`, `finance_report_validator.py`, and `quality_gate.py` are deprecated direct-renderer surfaces. They may exist for regression evidence, but they are not the active delivery chain.
+Legacy Report v1 surfaces have been quarantined under `legacy/report-v1/`. They may exist for historical/regression evidence, but they are not the active delivery chain:
+
+- `legacy/report-v1/REPORT_TEMPLATE.md`
+- `legacy/report-v1/prompts/report-renderer.md`
+- `legacy/report-v1/scripts/native_premarket_brief_live.py`
+- `legacy/report-v1/scripts/finance_deterministic_report_render.py`
+- `legacy/report-v1/scripts/finance_report_validator.py`
+- `legacy/report-v1/scripts/quality_gate.py`
 
 ## Current Job Split
 

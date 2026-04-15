@@ -1,63 +1,7 @@
 {
-  "generated_at": "2026-04-15T08:23:43.668571+00:00",
-  "status": "drift_detected",
-  "changed_count": 11,
-  "changed": [
-    {
-      "role": "decision_log_schema",
-      "baseline_sha256": "sha256:15d67a3ed0bd493fdc17f4db7034c7ba3c7aa2164c4a3b41a6c0268696bf6c2f",
-      "current_sha256": "sha256:996b974cfaf512ce36648ef78b8f4c4bbdf2e5f2cabd5feb13e7f7f1749dc9cc"
-    },
-    {
-      "role": "invalidator_ledger_schema",
-      "baseline_sha256": null,
-      "current_sha256": "sha256:2d524f7ae87b638a2a6a7df01797f5191fcf57b32ecb9ef8526881e0cfc3a1aa"
-    },
-    {
-      "role": "judgment_envelope_schema",
-      "baseline_sha256": null,
-      "current_sha256": "sha256:ba71c58b242630943eff82efaeabd1b8902d26817355282e2d8c231357caf7f6"
-    },
-    {
-      "role": "opportunity_queue_schema",
-      "baseline_sha256": null,
-      "current_sha256": "sha256:de0e621fd7d7379436d192d19ffb55d36b579abc218cb537e284955064111c83"
-    },
-    {
-      "role": "packet_compiler",
-      "baseline_sha256": "sha256:5682eabe24a04f477b86401ef81bca3036076a9e8ca6fa34c7ccd91898c9c0b1",
-      "current_sha256": "sha256:b9edd03d31365718a9a503541e7aba6f585368d6ed619c00298cc0b4b37340a0"
-    },
-    {
-      "role": "packet_schema",
-      "baseline_sha256": null,
-      "current_sha256": "sha256:938769140a16d0557c907bb3c5b49da351e9c4de709f35abcce025c3a1e109b1"
-    },
-    {
-      "role": "scenario_card_schema",
-      "baseline_sha256": null,
-      "current_sha256": "sha256:52d95da3781398391b3087bcd98e62ad219add2339c087c55b69a0986b984429"
-    },
-    {
-      "role": "thesis_card_schema",
-      "baseline_sha256": null,
-      "current_sha256": "sha256:8383001483cbe9f688707105693300e0fa79cafcd88fbb783cc4c058020f0757"
-    },
-    {
-      "role": "wake_decision_schema",
-      "baseline_sha256": null,
-      "current_sha256": "sha256:1ab88d23b0363de45dee605517fab793b9f45d06f1d356c86b2323aa737e63cb"
-    },
-    {
-      "role": "wake_policy",
-      "baseline_sha256": "sha256:0a7d7d3c56e111f08ff936ced51acdfecf99ad7826400ae7563555df893c8da4",
-      "current_sha256": "sha256:ed279fac5da76e4c88ec0352a47e36905f60c83d30947b5bff823afed5d0ace6"
-    },
-    {
-      "role": "watch_intent_schema",
-      "baseline_sha256": null,
-      "current_sha256": "sha256:6050cb03ad8900955aed637335d91683587383405449ee1262dfff22f92c4400"
-    }
-  ],
+  "generated_at": "2026-04-15T09:23:43.775216+00:00",
+  "status": "pass",
+  "changed_count": 0,
+  "changed": [],
   "note": "Drift is informational for reviewer visibility; commit the refreshed snapshot after intentional parent dependency changes."
 }

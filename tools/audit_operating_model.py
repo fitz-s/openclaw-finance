@@ -11,6 +11,16 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 REPORT = ROOT / 'docs' / 'openclaw-runtime' / 'operating-model-audit.json'
 PROMPT_CONTRACT = ROOT / 'docs' / 'openclaw-runtime' / 'finance-job-prompt-contract.json'
+LEGACY_REPORT_V1_FILES = [
+    ('REPORT_TEMPLATE.md', ROOT / 'legacy' / 'report-v1' / 'REPORT_TEMPLATE.md', ROOT / 'REPORT_TEMPLATE.md'),
+    ('report-renderer.md', ROOT / 'legacy' / 'report-v1' / 'prompts' / 'report-renderer.md', ROOT / 'prompts' / 'report-renderer.md'),
+    ('finance_deterministic_report_render.py', ROOT / 'legacy' / 'report-v1' / 'scripts' / 'finance_deterministic_report_render.py', ROOT / 'scripts' / 'finance_deterministic_report_render.py'),
+    ('finance_report_validator.py', ROOT / 'legacy' / 'report-v1' / 'scripts' / 'finance_report_validator.py', ROOT / 'scripts' / 'finance_report_validator.py'),
+    ('quality_gate.py', ROOT / 'legacy' / 'report-v1' / 'scripts' / 'quality_gate.py', ROOT / 'scripts' / 'quality_gate.py'),
+    ('native_premarket_brief.py', ROOT / 'legacy' / 'report-v1' / 'scripts' / 'native_premarket_brief.py', ROOT / 'scripts' / 'native_premarket_brief.py'),
+    ('native_premarket_brief_live.py', ROOT / 'legacy' / 'report-v1' / 'scripts' / 'native_premarket_brief_live.py', ROOT / 'scripts' / 'native_premarket_brief_live.py'),
+    ('finance_llm_report_render.py', ROOT / 'legacy' / 'report-v1' / 'scripts' / 'finance_llm_report_render.py', ROOT / 'scripts' / 'finance_llm_report_render.py'),
+]
 
 MUST_CONTAIN = {
     ROOT / 'docs' / 'openclaw-runtime' / 'contracts' / 'finance-openclaw-runtime-contract.md': [
@@ -122,6 +132,15 @@ def build_report() -> dict:
     checks[key] = ok
     if not ok:
         errors.append({'code': key, 'message': 'finance-thesis-sidecar must remain disabled/manual and delivery none'})
+    for label, legacy_path, root_path in LEGACY_REPORT_V1_FILES:
+        key = f'legacy-report-v1:{label}:quarantined'
+        ok = legacy_path.exists() and not root_path.exists()
+        checks[key] = ok
+        if not ok:
+            errors.append({
+                'code': key,
+                'message': f'{label} must live under legacy/report-v1 and must not exist at {root_path}',
+            })
     return {
         'generated_at': datetime.now(timezone.utc).isoformat(),
         'status': 'pass' if not errors else 'fail',

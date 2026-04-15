@@ -81,9 +81,9 @@ Purpose:
 
 Deprecated replacements:
 
-- `finance/scripts/finance_report_validator.py`
-- `finance/scripts/finance_deterministic_report_render.py`
-- `finance/scripts/quality_gate.py`
+- `finance/legacy/report-v1/scripts/finance_report_validator.py`
+- `finance/legacy/report-v1/scripts/finance_deterministic_report_render.py`
+- `finance/legacy/report-v1/scripts/quality_gate.py`
 
 These are compatibility/legacy surfaces and do not define active delivery eligibility.
 
