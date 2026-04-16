@@ -359,6 +359,94 @@ def broad_market_lines(broad_market: dict[str, Any], limit: int = 2) -> list[str
     return lines
 
 
+def _quote_lookup(prices: dict[str, Any], broad_market: dict[str, Any], *symbols: str) -> tuple[str | None, dict[str, Any] | None]:
+    price_quotes = prices.get('quotes') if isinstance(prices.get('quotes'), dict) else {}
+    broad_quotes = broad_market.get('quotes') if isinstance(broad_market.get('quotes'), dict) else {}
+    for symbol in symbols:
+        quote = price_quotes.get(symbol) or broad_quotes.get(symbol)
+        if isinstance(quote, dict):
+            return symbol, quote
+    return None, None
+
+
+def _direction_label(pct: Any) -> str:
+    try:
+        value = float(pct)
+    except (TypeError, ValueError):
+        return 'unknown'
+    if value >= 0.35:
+        return 'risk-on/up'
+    if value <= -0.35:
+        return 'down/risk-off'
+    return 'flat'
+
+
+def macro_triad_snapshot(prices: dict[str, Any], broad_market: dict[str, Any]) -> list[dict[str, Any]]:
+    specs = [
+        ('Gold', ('GLD', 'IAU'), '避险/real-rate proxy'),
+        ('Bitcoin', ('BTC-USD', 'BTC/USD', 'BTC'), 'crypto liquidity/risk appetite proxy'),
+        ('SPX', ('SPY', '^GSPC'), 'US equity beta proxy via SPY'),
+    ]
+    out: list[dict[str, Any]] = []
+    for label, symbols, role in specs:
+        symbol, quote = _quote_lookup(prices, broad_market, *symbols)
+        if not quote or quote.get('status') != 'ok':
+            out.append({
+                'label': label,
+                'symbol': symbol or symbols[0],
+                'status': 'unavailable',
+                'direction': 'unknown',
+                'role': role,
+            })
+            continue
+        pct = quote.get('pct_change') if quote.get('pct_change') is not None else quote.get('change_pct')
+        out.append({
+            'label': label,
+            'symbol': symbol or symbols[0],
+            'status': 'ok',
+            'price': quote.get('price') or quote.get('close'),
+            'pct_change': pct,
+            'direction': _direction_label(pct),
+            'as_of': quote.get('as_of'),
+            'role': role,
+        })
+    return out
+
+
+def macro_triad_lines(prices: dict[str, Any], broad_market: dict[str, Any]) -> list[str]:
+    rows = macro_triad_snapshot(prices, broad_market)
+    lines = ['- Core macro triad:']
+    for row in rows:
+        if row['status'] != 'ok':
+            lines.append(f"  - {row['label']} ({row['symbol']}): unavailable; direction unknown; {row['role']}。")
+            continue
+        lines.append(
+            f"  - {row['label']} ({row['symbol']}): {fmt_pct(row.get('pct_change'))}, "
+            f"direction={row.get('direction')}, price {fmt_money(row.get('price'))}; {row['role']}。"
+        )
+    return lines
+
+
+def macro_triad_operator_line(prices: dict[str, Any], broad_market: dict[str, Any]) -> str:
+    parts: list[str] = []
+    for row in macro_triad_snapshot(prices, broad_market):
+        if row['status'] == 'ok':
+            parts.append(f"{row['label']} {fmt_pct(row.get('pct_change'))}({row.get('direction')})")
+        else:
+            parts.append(f"{row['label']} unavailable")
+    return '- Macro triad：' + ' / '.join(parts) + '。'
+
+
+def append_macro_triad_to_board(board: Any, prices: dict[str, Any], broad_market: dict[str, Any]) -> str:
+    text = str(board or '').strip()
+    macro = macro_triad_operator_line(prices, broad_market).lstrip('- ').strip()
+    if not text:
+        return ''
+    if 'Macro triad' in text:
+        return text + '\n'
+    return f'{text}\n\n{macro}\n'
+
+
 def opportunity_lines(scan: dict[str, Any], watchlist: dict[str, Any] | None = None, portfolio: dict[str, Any] | None = None, limit: int = 1) -> list[str]:
     candidates = [item for item in scan.get('accumulated', []) if isinstance(item, dict)]
     if not candidates:
@@ -839,6 +927,7 @@ def render_delta_markdown(
         *watchlist_lines(prices, watchlist, limit=1),
         *flow_proxy_lines(packet, limit=1),
         *broad_market_lines(broad_market, limit=1),
+        *macro_triad_lines(prices, broad_market),
         '',
         '## 未知探索（非持仓 / 非Watchlist）',
         *opportunity_queue_lines(opportunity_queue, limit=2),
@@ -976,6 +1065,8 @@ def render_capital_delta_markdown(
         '## 市场机会雷达',
         *watchlist_lines(prices, watchlist, limit=1),
         *flow_proxy_lines(packet, limit=1),
+        *broad_market_lines(broad_market, limit=1),
+        *macro_triad_lines(prices, broad_market),
         '',
         '## 期权与风险雷达',
         *option_risk_lines(option_risk)[:2],
@@ -1059,6 +1150,7 @@ def render_markdown(
     lines.extend(watchlist_lines(prices, watchlist, limit=2))
     lines.extend(flow_proxy_lines(packet, limit=2))
     lines.extend(broad_market_lines(broad_market, limit=1))
+    lines.extend(macro_triad_lines(prices, broad_market))
     lines.extend(['', '## 未知探索（非持仓 / 非Watchlist）'])
     lines.extend(unknown_discovery_lines(scan_state, watchlist, portfolio, limit=1))
     sec_lines = sec_discovery_lines(sec_discovery, sec_semantics, watchlist)
@@ -1325,8 +1417,12 @@ def build_operator_markdown(
     opportunity_queue: dict[str, Any],
     invalidator_ledger: dict[str, Any],
     capital_agenda: dict[str, Any],
+    prices: dict[str, Any] | None = None,
+    broad_market: dict[str, Any] | None = None,
 ) -> tuple[str, str, dict[str, str], list[str]]:
     """Build Discord primary and thread seed surfaces without polluting artifact markdown."""
+    prices = prices or {}
+    broad_market = broad_market or {}
     object_alias_map, thread_cards = build_object_surfaces(
         judgment=judgment,
         option_risk=option_risk,
@@ -1366,9 +1462,12 @@ def build_operator_markdown(
     if invalidators:
         top_inv = invalidators[0]
         fact_lines.append(f"- I1 {humanize_invalidator_desc(top_inv.get('description'))}；命中 {top_inv.get('hit_count')} 次。")
+    macro_line = macro_triad_operator_line(prices, broad_market)
+    if macro_line not in fact_lines:
+        fact_lines.insert(min(2, len(fact_lines)), macro_line)
     if option_risk.get('data_status') in {'stale_source', 'unavailable', 'portfolio_unavailable'}:
         fact_lines.append(f"- 持仓/期权源当前是 `{option_risk.get('data_status')}`；结论置信度受限。")
-    fact_lines = fact_lines[:3] or ['- 当前没有新的强信号；本轮仍是 review-only。']
+    fact_lines = fact_lines[:4] or ['- 当前没有新的强信号；本轮仍是 review-only。']
 
     interpretation_lines = ['- 这是 attention allocation 问题，不是执行问题。']
     if focus_handle == 'A1':
@@ -1560,13 +1659,15 @@ def build_report(
         opportunity_queue=opportunity_queue or {},
         invalidator_ledger=invalidator_ledger or {},
         capital_agenda=capital_agenda or {},
+        prices=prices or {},
+        broad_market=broad_market or {},
     )
     envelope['report_id'] = report_id
     envelope['discord_primary_markdown'] = primary_markdown
     if isinstance(campaign_board, dict) and campaign_board.get('status') == 'pass':
-        envelope['discord_live_board_markdown'] = str(campaign_board.get('discord_live_board_markdown') or '')
-        envelope['discord_scout_board_markdown'] = str(campaign_board.get('discord_scout_board_markdown') or '')
-        envelope['discord_risk_board_markdown'] = str(campaign_board.get('discord_risk_board_markdown') or '')
+        envelope['discord_live_board_markdown'] = append_macro_triad_to_board(campaign_board.get('discord_live_board_markdown'), prices or {}, broad_market or {})
+        envelope['discord_scout_board_markdown'] = append_macro_triad_to_board(campaign_board.get('discord_scout_board_markdown'), prices or {}, broad_market or {})
+        envelope['discord_risk_board_markdown'] = append_macro_triad_to_board(campaign_board.get('discord_risk_board_markdown'), prices or {}, broad_market or {})
         envelope['campaign_board_ref'] = str(CAMPAIGN_BOARD)
         envelope['campaign_count'] = len(campaign_board.get('campaigns', []) if isinstance(campaign_board.get('campaigns'), list) else [])
     envelope['discord_thread_seed_markdown'] = thread_seed_markdown

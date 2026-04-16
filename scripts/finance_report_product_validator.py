@@ -90,6 +90,8 @@ def _validate_artifact_markdown(report: dict[str, Any], packet: dict[str, Any], 
     for section in required_sections:
         if section not in markdown:
             errors.append(error('missing_section', section))
+    if 'Core macro triad' not in markdown:
+        errors.append(error('missing_core_macro_triad', 'artifact markdown must analyze Gold / Bitcoin / SPX direction'))
     for code, pattern in BANNED.items():
         if pattern.search(markdown):
             errors.append(error(code, f'banned text matched: {code}'))
@@ -153,6 +155,10 @@ def _validate_operator_primary(report: dict[str, Any]) -> tuple[list[dict[str, s
         for section in ['Fact', 'Interpretation', 'To Verify', '对象']:
             if section not in primary:
                 errors.append(error('primary_missing_section', section))
+        macro_tokens = ['Macro triad', 'Gold', 'Bitcoin', 'SPX']
+        for token in macro_tokens:
+            if token not in primary:
+                errors.append(error('primary_missing_macro_triad', f'primary must include {token} direction'))
         if not isinstance(report.get('object_alias_map'), dict) or not report.get('object_alias_map'):
             errors.append(error('missing_object_alias_map', 'primary surface requires translated object aliases'))
         if not any(prefix in primary for prefix in ['A1 ', 'T1 ', 'O1 ', 'I1 ']):
@@ -202,6 +208,10 @@ def _validate_campaign_boards(report: dict[str, Any]) -> tuple[list[dict[str, st
         text = str(report.get(field) or '')
         if not text.startswith('Finance｜'):
             errors.append(error('campaign_board_bad_title', f'{field} must start with Finance｜'))
+        if field == 'discord_live_board_markdown':
+            for token in ['Macro triad', 'Gold', 'Bitcoin', 'SPX']:
+                if token not in text:
+                    errors.append(error('campaign_board_missing_macro_triad', f'{field} must include {token} direction'))
         for code, pattern in BOARD_BANNED.items():
             if pattern.search(text):
                 errors.append(error(code, f'{field} matched banned pattern: {code}'))

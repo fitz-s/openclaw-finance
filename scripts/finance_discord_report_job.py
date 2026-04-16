@@ -65,6 +65,10 @@ def has_report_since_today(hour: int, minute: int) -> bool:
 
 
 def run_chain() -> str:
+    # Core reports must refresh the macro triad before rendering so Gold / Bitcoin / SPX
+    # direction is present or explicitly unavailable in the operator surface.
+    run([str(PYTHON), 'scripts/price_fetcher.py'])
+    run([str(PYTHON), 'scripts/broad_market_proxy_fetcher.py'])
     run([str(PYTHON), 'scripts/finance_llm_context_pack.py'])
     run([
         str(PYTHON), 'scripts/judgment_envelope_gate.py',

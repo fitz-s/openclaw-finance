@@ -23,6 +23,7 @@ PRICES_STATE = FINANCE / 'state' / 'prices.json'
 TZ_CHI = ZoneInfo('America/Chicago')
 TZ_ET = ZoneInfo('America/New_York')
 QUOTE_GRANULARITY = 'provider_quote_snapshot'
+CORE_MACRO_TICKERS = ['SPY', 'GLD', 'IAU', 'BTC-USD']
 FRESHNESS_SEMANTICS = (
     'yfinance fast_info snapshot; not tick-real-time; provider data may be delayed, '
     'frozen, or unavailable depending on symbol/session/subscription'
@@ -42,7 +43,10 @@ def load_tickers() -> list[str]:
         sym = item['symbol']
         # yfinance uses BTC-USD format
         tickers.append(sym.replace('/', '-'))
-    return tickers
+    # Core reports must always collect Gold / Bitcoin / SPX direction.
+    # SPY is the SPX proxy; GLD/IAU are gold proxies; BTC-USD is Bitcoin.
+    tickers.extend(CORE_MACRO_TICKERS)
+    return sorted(set(tickers))
 
 
 def fetch_quotes(tickers: list[str]) -> dict:

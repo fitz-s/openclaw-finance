@@ -43,6 +43,7 @@ Any prompt, job, or script that treats `report-input-packet.json` as the only ac
 
 The product report must:
 
+- always collect and analyze the core macro triad: Gold, Bitcoin, and SPX/SPY direction; unavailable data must be explicit, not silently omitted
 - present a clear decision context without execution language
 - prioritize opportunity expansion and watchlist/flow context before holdings narration
 - suppress raw internal phrases such as `thresholds not met`
