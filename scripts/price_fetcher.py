@@ -30,33 +30,50 @@ FRESHNESS_SEMANTICS = (
 )
 
 
-def load_tickers() -> list[str]:
+def _instrument(symbol: str, provider_symbol: str | None = None) -> dict:
+    display = str(symbol).strip().upper().replace('/', '-')
+    provider = str(provider_symbol or symbol).strip().upper().replace('/', '-')
+    return {'symbol': display, 'provider_symbol': provider}
+
+
+def load_tickers() -> list[dict]:
     wl = load_json_safe(WATCHLIST, {})
     if not wl:
         wl = load_json_safe(FALLBACK_WATCHLIST, {})
-    tickers = []
-    for item in wl.get('tickers', []):
-        tickers.append(item['symbol'])
-    for item in wl.get('indexes', []):
-        tickers.append(item['symbol'])
-    for item in wl.get('crypto', []):
-        sym = item['symbol']
-        # yfinance uses BTC-USD format
-        tickers.append(sym.replace('/', '-'))
+    tickers: list[dict] = []
+    for key in ['tickers', 'indexes', 'crypto']:
+        for item in wl.get(key, []) if isinstance(wl.get(key), list) else []:
+            if not isinstance(item, dict) or not item.get('symbol'):
+                continue
+            symbol = str(item['symbol']).replace('/', '-')
+            provider = str(item.get('provider_symbol') or symbol).replace('/', '-')
+            tickers.append(_instrument(symbol, provider))
     # Core reports must always collect Gold / Bitcoin / SPX direction.
     # SPY is the SPX proxy; GLD/IAU are gold proxies; BTC-USD is Bitcoin.
-    tickers.extend(CORE_MACRO_TICKERS)
-    return sorted(set(tickers))
+    tickers.extend(_instrument(symbol) for symbol in CORE_MACRO_TICKERS)
+    by_symbol = {item['symbol']: item for item in tickers if item.get('symbol')}
+    return [by_symbol[key] for key in sorted(by_symbol)]
 
 
-def fetch_quotes(tickers: list[str]) -> dict:
+def fetch_quotes(tickers: list) -> dict:
     """Fetch provider quote snapshots for all tickers.
 
     The previous implementation used a 1d/1d batch bar and labeled it as a
     current quote. Use yfinance fast_info instead so the schema reflects quote
     semantics, while still making clear this is not a streaming/tick feed.
     """
-    return {t: _fetch_single(t) for t in tickers}
+    quotes = {}
+    for item in tickers:
+        if isinstance(item, dict):
+            symbol = item.get('symbol')
+            provider = item.get('provider_symbol') or symbol
+        else:
+            symbol = provider = str(item)
+        quote = _fetch_single(str(provider))
+        if isinstance(item, dict) and provider != symbol:
+            quote['provider_symbol'] = provider
+        quotes[str(symbol)] = quote
+    return quotes
 
 
 def _fast_info_value(info, *names, default=None):

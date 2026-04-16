@@ -385,7 +385,7 @@ def macro_triad_snapshot(prices: dict[str, Any], broad_market: dict[str, Any]) -
     specs = [
         ('Gold', ('GLD', 'IAU'), '避险/real-rate proxy'),
         ('Bitcoin', ('BTC-USD', 'BTC/USD', 'BTC'), 'crypto liquidity/risk appetite proxy'),
-        ('SPX', ('SPY', '^GSPC'), 'US equity beta proxy via SPY'),
+        ('SPX', ('SPX', 'SPY', '^GSPC'), 'US equity beta proxy via SPY'),
     ]
     out: list[dict[str, Any]] = []
     for label, symbols, role in specs:
