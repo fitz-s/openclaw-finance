@@ -25,6 +25,8 @@ CAPITAL_GRAPH = STATE / 'capital-graph.json'
 DISPLACEMENT_CASES = STATE / 'displacement-cases.json'
 PRICES = STATE / 'prices.json'
 PORTFOLIO = STATE / 'portfolio-resolved.json'
+CAMPAIGN_BOARD = STATE / 'campaign-board.json'
+CAMPAIGN_CACHE = STATE / 'campaign-cache.json'
 DOSSIER_DIR = STATE / 'thesis-dossiers'
 CUSTOM_METRICS_DIR = STATE / 'custom-metrics'
 OUT_DIR = STATE / 'report-reader'
@@ -605,6 +607,8 @@ def compile_bundle(
     displacement_cases: dict[str, Any],
     prices: dict[str, Any],
     portfolio: dict[str, Any],
+    campaign_board: dict[str, Any] | None = None,
+    campaign_cache: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Compile self-contained reader bundle."""
     decision_id = decision_log_entry.get('decision_id') or report.get('report_hash')
@@ -653,6 +657,10 @@ def compile_bundle(
         'starter_questions': starter_questions,
         'starter_queries': starter_queries,
         'object_alias_map': object_alias_map,
+        'campaign_board_ref': str(CAMPAIGN_BOARD),
+        'campaign_cache_ref': str(CAMPAIGN_CACHE),
+        'campaigns': (campaign_board or {}).get('campaigns', []) if isinstance((campaign_board or {}).get('campaigns', []), list) else [],
+        'campaign_alias_map': {c.get('campaign_id'): c.get('human_title') for c in ((campaign_board or {}).get('campaigns', []) if isinstance((campaign_board or {}).get('campaigns', []), list) else []) if isinstance(c, dict) and c.get('campaign_id')},
         'followup_digest': build_followup_digest(all_cards, report_handle),
         'portfolio_attachment': build_portfolio_attachment(watch_intent, portfolio),
         'capital_summary': build_capital_summary(capital_graph, capital_agenda, displacement_cases),
@@ -678,11 +686,13 @@ def main(argv: list[str] | None = None) -> int:
     displacement_cases = load_json_safe(DISPLACEMENT_CASES, {}) or {}
     prices = load_json_safe(PRICES, {}) or {}
     portfolio = load_json_safe(PORTFOLIO, {}) or {}
+    campaign_board = load_json_safe(CAMPAIGN_BOARD, {}) or {}
+    campaign_cache = load_json_safe(CAMPAIGN_CACHE, {}) or {}
 
     bundle = compile_bundle(
         report, entry, thesis_registry, watch_intent, scenario_cards_data,
         opportunity_queue, invalidator_ledger, capital_agenda, capital_graph,
-        displacement_cases, prices, portfolio,
+        displacement_cases, prices, portfolio, campaign_board, campaign_cache,
     )
 
     out_dir = Path(args.out_dir)

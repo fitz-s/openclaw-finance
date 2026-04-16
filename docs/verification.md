@@ -26,6 +26,9 @@ Package 9 local runtime verification:
 ```bash
 python3 scripts/finance_llm_context_pack.py
 python3 scripts/judgment_envelope_gate.py --allow-fallback --adjudication-mode scheduled_context --context-pack state/llm-job-context/report-orchestrator.json
+python3 scripts/undercurrent_compiler.py
+python3 scripts/campaign_projection_compiler.py
+python3 scripts/finance_campaign_cache_builder.py
 python3 scripts/finance_decision_report_render.py
 python3 scripts/finance_report_product_validator.py
 python3 scripts/finance_decision_log_compiler.py
@@ -48,9 +51,12 @@ Output surfaces verification:
 
 ```bash
 python3 scripts/announce_card_compiler.py
+python3 scripts/undercurrent_compiler.py
+python3 scripts/campaign_projection_compiler.py
 python3 scripts/finance_report_reader_bundle.py
+python3 scripts/finance_campaign_cache_builder.py
 pytest -q tests/test_announce_card_compiler.py tests/test_report_reader_bundle.py tests/test_followup_answer_guard.py
-pytest -q tests/test_discord_operator_surfaces.py
+pytest -q tests/test_discord_operator_surfaces.py tests/test_campaign_projection.py
 ```
 
 Runtime integration verification from the parent OpenClaw workspace:

@@ -72,6 +72,8 @@ def run_chain() -> str:
         '--adjudication-mode', 'scheduled_context',
         '--context-pack', str(CONTEXT_PACK),
     ])
+    run([str(PYTHON), 'scripts/undercurrent_compiler.py'])
+    run([str(PYTHON), 'scripts/campaign_projection_compiler.py'])
     run([str(PYTHON), 'scripts/finance_decision_report_render.py'])
     run([str(PYTHON), 'scripts/finance_report_product_validator.py'])
     run([str(PYTHON), 'scripts/finance_decision_log_compiler.py'])
@@ -80,8 +82,9 @@ def run_chain() -> str:
     if safety.get('status') != 'pass':
         return HEALTH_MD.read_text(encoding='utf-8').strip() + '\n'
     run([str(PYTHON), 'scripts/finance_report_reader_bundle.py'])
+    run([str(PYTHON), 'scripts/finance_campaign_cache_builder.py'])
     envelope = json.loads(ENVELOPE.read_text(encoding='utf-8'))
-    primary = str(envelope.get('discord_primary_markdown') or envelope.get('markdown') or '').strip()
+    primary = str(envelope.get('discord_live_board_markdown') or envelope.get('discord_primary_markdown') or envelope.get('markdown') or '').strip()
     if not primary:
         return 'Finance｜health-only\n\nReport generated but primary markdown was empty. Check finance-decision-report-envelope.json.\n'
     return primary + '\n'

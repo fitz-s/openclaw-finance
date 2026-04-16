@@ -288,6 +288,8 @@ def main() -> int:
             'docs/openclaw-runtime/ibkr-watchlist-freshness-drill.json',
             'docs/openclaw-runtime/benchmark-boundary-audit.json',
             'docs/openclaw-runtime/runtime-gap-review.json',
+            'docs/openclaw-runtime/contracts/campaign-projection-contract.md',
+            'docs/openclaw-runtime/contracts/undercurrent-card-contract.md',
             *contracts,
             *schemas,
         ],

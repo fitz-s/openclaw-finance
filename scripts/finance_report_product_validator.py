@@ -70,6 +70,12 @@ PRIMARY_BANNED = {
 THREAD_REQUIRED_TOKENS = ['对象卡', '可直接追问']
 
 
+BOARD_BANNED = {
+    'machine_hashes': re.compile(r'packet_hash|graph_hash|report_hash|judgment_id|model_id', re.I),
+    'raw_evidence_refs': re.compile(r'`?ev:[^`\s]+`?', re.I),
+}
+
+
 def error(code: str, message: str) -> dict[str, str]:
     return {'code': code, 'message': message}
 
@@ -181,12 +187,34 @@ def _validate_thread_seed(report: dict[str, Any]) -> tuple[list[dict[str, str]],
     return errors, warnings
 
 
+def _validate_campaign_boards(report: dict[str, Any]) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
+    errors: list[dict[str, str]] = []
+    warnings: list[dict[str, str]] = []
+    board_fields = [
+        'discord_live_board_markdown',
+        'discord_scout_board_markdown',
+        'discord_risk_board_markdown',
+    ]
+    present = [field for field in board_fields if str(report.get(field) or '').strip()]
+    if not present:
+        return errors, warnings
+    for field in present:
+        text = str(report.get(field) or '')
+        if not text.startswith('Finance｜'):
+            errors.append(error('campaign_board_bad_title', f'{field} must start with Finance｜'))
+        for code, pattern in BOARD_BANNED.items():
+            if pattern.search(text):
+                errors.append(error(code, f'{field} matched banned pattern: {code}'))
+    return errors, warnings
+
+
 def validate_report(report: dict[str, Any], packet: dict[str, Any], judgment: dict[str, Any], judgment_validation: dict[str, Any]) -> dict[str, Any]:
     artifact_errors, artifact_warnings = _validate_artifact_markdown(report, packet, judgment, judgment_validation)
     primary_errors, primary_warnings, primary_text = _validate_operator_primary(report)
     thread_errors, thread_warnings = _validate_thread_seed(report)
-    errors = artifact_errors + primary_errors
-    warnings = artifact_warnings + primary_warnings + thread_errors + thread_warnings
+    board_errors, board_warnings = _validate_campaign_boards(report)
+    errors = artifact_errors + primary_errors + board_errors
+    warnings = artifact_warnings + primary_warnings + thread_errors + thread_warnings + board_warnings
     return {
         'errors': errors,
         'warnings': warnings,
@@ -196,8 +224,11 @@ def validate_report(report: dict[str, Any], packet: dict[str, Any], judgment: di
         'operator_warnings': primary_warnings,
         'thread_errors': thread_errors,
         'thread_warnings': thread_warnings,
+        'campaign_board_errors': board_errors,
+        'campaign_board_warnings': board_warnings,
         'discord_primary_ok': not primary_errors,
         'thread_followup_ok': not thread_errors,
+        'campaign_boards_ok': not board_errors,
         'primary_markdown': primary_text,
     }
 
@@ -232,8 +263,11 @@ def main(argv: list[str] | None = None) -> int:
         'operator_warnings': result['operator_warnings'],
         'thread_errors': result['thread_errors'],
         'thread_warnings': result['thread_warnings'],
+        'campaign_board_errors': result['campaign_board_errors'],
+        'campaign_board_warnings': result['campaign_board_warnings'],
         'discord_primary_ok': result['discord_primary_ok'],
         'thread_followup_ok': result['thread_followup_ok'],
+        'campaign_boards_ok': result['campaign_boards_ok'],
         'report_path': str(args.report),
         'packet_hash': packet.get('packet_hash'),
         'judgment_id': judgment.get('judgment_id'),

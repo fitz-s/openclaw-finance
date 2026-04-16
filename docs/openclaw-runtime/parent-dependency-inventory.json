@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-16T19:39:08.571878+00:00",
+  "generated_at": "2026-04-16T20:30:26.940568+00:00",
   "status": "pass",
   "dependency_boundary": "parent_openclaw_workspace",
   "finance_repo_policy": "These files are load-bearing runtime dependencies but are not owned by the finance repository. Reviewers must inspect this inventory when packet/wake/judgment behavior changes.",
@@ -14,7 +14,7 @@
       "role": "decision_log_schema",
       "path": "/Users/leofitz/.openclaw/workspace/schemas/decision-log.schema.json",
       "exists": true,
-      "sha256": "sha256:417f43e7fa5186247ddaa8c849dfd94a78bd3b32c9e2fdbbdebb0028c2c4e196"
+      "sha256": "sha256:a1dbbb2d89c97f76f375946b48aa1de24e036f05f4ce2125d8a6c858a7f60fc0"
     },
     {
       "role": "packet_schema",

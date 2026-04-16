@@ -140,6 +140,8 @@ def evaluate(
         blockers.append('discord_primary_not_validated')
     if product.get('thread_followup_ok') is not True:
         warnings.append('thread_followup_not_ready')
+    if product.get('campaign_boards_ok') is not True:
+        warnings.append('campaign_boards_not_ready')
     if not decision_log_ok:
         blockers.append('decision_log_not_pass')
 
@@ -161,6 +163,7 @@ def evaluate(
         'product_quality_validation_ok': product_ok,
         'discord_primary_ok': product.get('discord_primary_ok') is True and bool((report_envelope.get('discord_primary_markdown') or '').strip()),
         'thread_followup_ok': product.get('thread_followup_ok') is True,
+        'campaign_boards_ok': product.get('campaign_boards_ok') is True,
         'decision_log_ok': decision_log_ok,
     }
     return report

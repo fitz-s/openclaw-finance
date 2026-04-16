@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-16T19:39:08.527181+00:00",
+  "generated_at": "2026-04-16T20:30:26.890611+00:00",
   "subsystem": "finance",
   "openclaw_home": "/Users/leofitz/.openclaw",
   "finance_repo": "/Users/leofitz/.openclaw/workspace/finance",
@@ -17,6 +17,8 @@
     "docs/openclaw-runtime/ibkr-watchlist-freshness-drill.json",
     "docs/openclaw-runtime/benchmark-boundary-audit.json",
     "docs/openclaw-runtime/runtime-gap-review.json",
+    "docs/openclaw-runtime/contracts/campaign-projection-contract.md",
+    "docs/openclaw-runtime/contracts/undercurrent-card-contract.md",
     "docs/openclaw-runtime/contracts/finance-openclaw-runtime-contract.md",
     "docs/openclaw-runtime/contracts/finance-report-contract.md",
     "docs/openclaw-runtime/contracts/finance-gate-taxonomy.md",

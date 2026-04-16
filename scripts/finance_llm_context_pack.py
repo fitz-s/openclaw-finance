@@ -47,6 +47,8 @@ SIDECAR_PACK = OUT_DIR / 'thesis-sidecar.json'
 WEEKLY_PACK = OUT_DIR / 'weekly-learning.json'
 FOLLOWUP_PACK = OUT_DIR / 'report-followup.json'
 READER_BUNDLE_DIR = STATE / 'report-reader'
+CAMPAIGN_BOARD = STATE / 'campaign-board.json'
+CAMPAIGN_CACHE = STATE / 'campaign-cache.json'
 
 
 def now_iso() -> str:
@@ -440,6 +442,8 @@ def build_packs() -> dict[str, dict[str, Any]]:
             'report_handle': latest_bundle.get('report_handle'),
             'handles': first_handles,
             'object_alias_map': latest_bundle.get('object_alias_map', {}),
+            'campaign_alias_map': latest_bundle.get('campaign_alias_map', {}),
+            'followup_digest': latest_bundle.get('followup_digest', []),
             'starter_queries': latest_bundle.get('starter_queries', []),
         }
     followup_sources = [artifact(READER_BUNDLE_DIR / 'latest.json')]
@@ -453,6 +457,8 @@ def build_packs() -> dict[str, dict[str, Any]]:
     followup.update({
         'reader_bundle_summary': bundle_summary,
         'followup_bundle_path': str(READER_BUNDLE_DIR / 'latest.json'),
+        'campaign_board_path': str(CAMPAIGN_BOARD),
+        'campaign_cache_path': str(CAMPAIGN_CACHE),
         'answer_format': {
             'required_sections': ['Fact', 'Interpretation', 'Unknown / To Verify', 'What Would Change My Mind'],
             'interrogation_verbs': ['why', 'challenge', 'compare', 'scenario', 'sources', 'expand'],

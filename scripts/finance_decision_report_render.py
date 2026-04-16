@@ -41,6 +41,7 @@ SHADOW_DELTA_MARKDOWN = FINANCE / 'state' / 'finance-thesis-delta-report.shadow.
 CAPITAL_AGENDA = FINANCE / 'state' / 'capital-agenda.json'
 CAPITAL_GRAPH = FINANCE / 'state' / 'capital-graph.json'
 DISPLACEMENT_CASES_PATH = FINANCE / 'state' / 'displacement-cases.json'
+CAMPAIGN_BOARD = FINANCE / 'state' / 'campaign-board.json'
 POLICY_VERSION = 'finance-decision-report-v1'
 SYMBOL_STOPWORDS = {
     'AI', 'API', 'CEO', 'CFO', 'CIO', 'COO', 'CPI', 'ETF', 'ET',
@@ -1457,6 +1458,7 @@ def build_report(
     capital_agenda: dict[str, Any] | None = None,
     capital_graph: dict[str, Any] | None = None,
     displacement_cases: dict[str, Any] | None = None,
+    campaign_board: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     has_valid_capital_graph = bool(capital_graph and capital_graph.get('graph_hash'))
     if report_mode == 'capital_delta' and has_valid_capital_graph:
@@ -1561,6 +1563,12 @@ def build_report(
     )
     envelope['report_id'] = report_id
     envelope['discord_primary_markdown'] = primary_markdown
+    if isinstance(campaign_board, dict) and campaign_board.get('status') == 'pass':
+        envelope['discord_live_board_markdown'] = str(campaign_board.get('discord_live_board_markdown') or '')
+        envelope['discord_scout_board_markdown'] = str(campaign_board.get('discord_scout_board_markdown') or '')
+        envelope['discord_risk_board_markdown'] = str(campaign_board.get('discord_risk_board_markdown') or '')
+        envelope['campaign_board_ref'] = str(CAMPAIGN_BOARD)
+        envelope['campaign_count'] = len(campaign_board.get('campaigns', []) if isinstance(campaign_board.get('campaigns'), list) else [])
     envelope['discord_thread_seed_markdown'] = thread_seed_markdown
     envelope['object_alias_map'] = object_alias_map
     envelope['starter_queries'] = starter_queries
@@ -1590,6 +1598,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--thesis-registry', default=str(THESIS_REGISTRY))
     parser.add_argument('--opportunity-queue', default=str(OPPORTUNITY_QUEUE))
     parser.add_argument('--invalidator-ledger', default=str(INVALIDATOR_LEDGER))
+    parser.add_argument('--campaign-board', default=str(CAMPAIGN_BOARD))
     parser.add_argument('--markdown-out', default=None)
     args = parser.parse_args(argv)
     out_path = Path(args.out)
@@ -1622,6 +1631,7 @@ def main(argv: list[str] | None = None) -> int:
         capital_agenda=load_json_safe(CAPITAL_AGENDA, {}) or {},
         capital_graph=load_json_safe(CAPITAL_GRAPH, {}) or {},
         displacement_cases=load_json_safe(DISPLACEMENT_CASES_PATH, {}) or {},
+        campaign_board=load_json_safe(Path(args.campaign_board), {}) or {},
     )
     atomic_write_json(out_path, report)
     if markdown_out:
