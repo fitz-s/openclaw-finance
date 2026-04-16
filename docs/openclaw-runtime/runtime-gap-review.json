@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-15T21:15:02.449665+00:00",
+  "generated_at": "2026-04-16T13:15:01.617511+00:00",
   "status": "reviewed",
   "unresolved_gaps": [
     "ibkr_client_portal_watchlist_sync_not_fresh",
@@ -92,11 +92,11 @@
       }
     ],
     "latest_product_report": {
-      "generated_at": "2026-04-15T20:26:17.254546Z",
-      "report_hash": "sha256:3c75ff940e09ab8c94bbc9378dd6a6cef1c3b78b23d9062e843c495ce171bb38",
+      "generated_at": "2026-04-16T13:12:16.474018Z",
+      "report_hash": "sha256:918fa5c22f861a1d3e97b5f95754b76c821630ce070f65a31d907c932cb54333",
       "quality": {
-        "line_count": 54,
-        "char_count": 2287,
+        "line_count": 53,
+        "char_count": 2260,
         "has_opportunity_first_contract": true,
         "has_unknown_discovery_section": true,
         "has_holding_section": true,
@@ -107,8 +107,8 @@
   },
   "wake_threshold_bridge": {
     "current_gate": {
-      "evaluatedAt": "2026-04-15T21:05:54.766831+00:00",
-      "window": "post",
+      "evaluatedAt": "2026-04-16T13:09:02.329351+00:00",
+      "window": "pre",
       "shouldSend": false,
       "recommendedReportType": "hold",
       "decisionReason_sanitized": "present"

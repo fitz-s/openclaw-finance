@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-15T21:15:01.439589+00:00",
+  "generated_at": "2026-04-16T13:15:00.905777+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "note": "Prompt hashes let GitHub reviewers see live OpenClaw job prompt drift without exposing secrets.",
   "jobs": {
@@ -15,7 +15,7 @@
         "channel": "discord",
         "to": "channel:1479790104490016808"
       },
-      "prompt_sha256": "sha256:b2722ec580561b4154c5b1a2c66caa3a803e701f7b5e440c09226353c5eb859e",
+      "prompt_sha256": "sha256:584aba8d6b950be4c317a9c842b434ae12619873377ae9e73d1de4a8d2ce0583",
       "contains_context_pack": true,
       "contains_non_authority_boundary": true,
       "contains_candidate_path": true,
