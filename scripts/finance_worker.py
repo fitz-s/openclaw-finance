@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 import json
 import os
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -196,6 +197,22 @@ def prune_stale_accumulated(accumulated: list, now_utc: datetime):
         kept.append(item)
     return kept, pruned
 
+
+def write_shadow_source_atoms(state: dict, generated_at: str) -> None:
+    """Best-effort shadow write; never block scanner/gate behavior."""
+    try:
+        from source_atom_compiler import SOURCE_ATOMS_LATEST, compile_atoms, load_source_registry, write_atoms_jsonl
+
+        report = compile_atoms(
+            state,
+            registry=load_source_registry(),
+            generated_at=generated_at,
+            scan_file=str(STATE_FILE),
+        )
+        write_atoms_jsonl(SOURCE_ATOMS_LATEST, report['atoms'])
+    except Exception as exc:
+        print(f"⚠️ source atom shadow write skipped: {exc}", file=sys.stderr)
+
 def main():
     now_utc = datetime.now(timezone.utc)
     now_chi = now_utc.astimezone(TZ_CHI)
@@ -366,6 +383,7 @@ def main():
         state.setdefault('last_scan_time', None)
 
     atomic_write_json(STATE_FILE, state)
+    write_shadow_source_atoms(state, now_utc.isoformat().replace('+00:00', 'Z'))
     print(
         f"✅ Processed {len(buffer_files)} files. Added {new_observations_count} new observations. "
         f"Recovered invalid files: {len(recovered_files)}. Invalid files quarantined: {len(invalid_files)}."
