@@ -1,0 +1,169 @@
+{
+  "version": "information-dominance-stack-phase-map-v1",
+  "generated_for": "OpenClaw Finance Information Dominance Stack",
+  "subtitle": "Source-to-Campaign Intelligence Fabric",
+  "current_phase": "phase_0",
+  "phase_0_status": "prepared",
+  "active_runtime_cutover": false,
+  "review_only": true,
+  "no_execution_authority_change": true,
+  "authority_chain": [
+    "SourceCandidate/EvidenceRecord",
+    "ContextPacket",
+    "WakeDecision",
+    "JudgmentEnvelope",
+    "finance-decision-report-envelope.json",
+    "finance_report_product_validator.py",
+    "finance_decision_log_compiler.py",
+    "finance_report_delivery_safety.py",
+    "OpenClaw Discord delivery"
+  ],
+  "projection_chain_shadow": [
+    "EvidenceAtom",
+    "ClaimAtom/ClaimGraph",
+    "ContextGap",
+    "UndercurrentCard",
+    "CampaignProjection",
+    "Discord Campaign Board",
+    "Verb-specific Follow-up Context"
+  ],
+  "runtime_switch_defaults": {
+    "SOURCE_ATOM_SHADOW_ENABLED": true,
+    "SOURCE_ATOM_ACTIVE_MODE": false,
+    "CLAIM_GRAPH_SHADOW_ENABLED": true,
+    "CLAIM_GRAPH_ACTIVE_MODE": false,
+    "CONTEXT_GAP_SHADOW_ENABLED": true,
+    "CONTEXT_GAP_ACTIVE_MODE": false,
+    "UNDERCURRENT_BOARD_ENABLED": false,
+    "CAMPAIGN_BOARD_ENABLED": false,
+    "DISCORD_BOARDS_ENABLED": false,
+    "DISCORD_THREADS_ENABLED": false,
+    "FOLLOWUP_ROUTER_ENABLED": false,
+    "SOURCE_ROI_LEARNING_ENABLED": false
+  },
+  "ralplan_gate": {
+    "required_after_phase_0": true,
+    "record_path_pattern": "docs/openclaw-runtime/ralplan/phase-<n>-<slug>-ralplan.md",
+    "required_sections": [
+      "Task statement",
+      "Current facts from local exploration",
+      "Principles",
+      "Decision drivers",
+      "Viable options",
+      "Rejected options",
+      "Selected plan",
+      "Authority boundary impact",
+      "Files likely touched",
+      "Data migration or shadow-mode posture",
+      "Test plan",
+      "Rollback plan",
+      "Acceptance criteria",
+      "Residual risks",
+      "Explicit go/no-go for implementation"
+    ]
+  },
+  "phases": [
+    {
+      "id": "phase_0",
+      "name": "Boundary Freeze, Map, Baseline",
+      "status": "prepared",
+      "ralplan_required_before_start": false,
+      "allowed_change_classes": ["docs", "machine_readable_maps", "tests", "snapshot_manifest"],
+      "forbidden_change_classes": ["cron", "gateway", "discord_delivery", "wake_thresholds", "source_promotion_behavior", "execution_authority"],
+      "acceptance_tests": ["tests/test_information_dominance_phase0.py"]
+    },
+    {
+      "id": "phase_1",
+      "name": "Source Registry 2.0 + Source Health",
+      "status": "blocked_until_ralplan",
+      "ralplan_required_before_start": true,
+      "shadow_mode_default": true,
+      "active_mode_default": false,
+      "authority_boundary": "parent_market_ingest_shadow_first",
+      "primary_outputs": ["source-health.json", "source registry v2 metadata"]
+    },
+    {
+      "id": "phase_2",
+      "name": "EvidenceAtom / ClaimGraph / ContextGap Shadow Substrate",
+      "status": "blocked_until_ralplan",
+      "ralplan_required_before_start": true,
+      "shadow_mode_default": true,
+      "active_mode_default": false,
+      "authority_boundary": "parallel_write_only",
+      "primary_outputs": ["source-atoms/*.jsonl", "claim-graph.json", "context-gaps.json"]
+    },
+    {
+      "id": "phase_3",
+      "name": "Undercurrent Engine",
+      "status": "blocked_until_ralplan",
+      "ralplan_required_before_start": true,
+      "shadow_mode_default": true,
+      "active_mode_default": false,
+      "authority_boundary": "packet_update_only_board_mutation_without_alert_spam",
+      "primary_outputs": ["undercurrents.json", "campaign-board.json shadow mutations"]
+    },
+    {
+      "id": "phase_4",
+      "name": "CampaignProjection 2.0",
+      "status": "blocked_until_ralplan",
+      "ralplan_required_before_start": true,
+      "shadow_mode_default": true,
+      "active_mode_default": false,
+      "authority_boundary": "operator_projection_not_authority",
+      "primary_outputs": ["campaign-board.json", "campaign-stage-history.jsonl", "campaign-threads.json"]
+    },
+    {
+      "id": "phase_5",
+      "name": "Discord Campaign Boards",
+      "status": "blocked_until_ralplan",
+      "ralplan_required_before_start": true,
+      "shadow_mode_default": true,
+      "active_mode_default": false,
+      "authority_boundary": "parent_discord_adapter_requires_gate_check",
+      "primary_outputs": ["live board", "peacetime board", "risk board", "thread registry"]
+    },
+    {
+      "id": "phase_6",
+      "name": "Verb-Specific Follow-up Engine",
+      "status": "blocked_until_ralplan",
+      "ralplan_required_before_start": true,
+      "shadow_mode_default": true,
+      "active_mode_default": false,
+      "authority_boundary": "explain_only_no_new_judgment",
+      "primary_outputs": ["followup context route", "deep-dive cache", "answer guard validation"]
+    },
+    {
+      "id": "phase_7",
+      "name": "Source ROI / Campaign Learning",
+      "status": "blocked_until_ralplan",
+      "ralplan_required_before_start": true,
+      "shadow_mode_default": true,
+      "active_mode_default": false,
+      "authority_boundary": "learning_recommendations_only_no_threshold_mutation",
+      "primary_outputs": ["source-roi-history.jsonl", "campaign-outcomes.jsonl", "context coverage audit"]
+    },
+    {
+      "id": "phase_8",
+      "name": "Active Cutover",
+      "status": "blocked_until_deliberate_ralplan",
+      "ralplan_required_before_start": true,
+      "deliberate_ralplan_required": true,
+      "shadow_mode_default": false,
+      "active_mode_default": false,
+      "authority_boundary": "production_operator_surface_cutover_requires_parent_runtime_gate",
+      "primary_outputs": ["active Discord board delivery", "active thread follow-up", "tested rollback"]
+    }
+  ],
+  "rollback_floor": {
+    "disable_switches": [
+      "DISCORD_BOARDS_ENABLED",
+      "DISCORD_THREADS_ENABLED",
+      "FOLLOWUP_ROUTER_ENABLED",
+      "SOURCE_ATOM_ACTIVE_MODE",
+      "CLAIM_GRAPH_ACTIVE_MODE",
+      "CONTEXT_GAP_ACTIVE_MODE"
+    ],
+    "fallback_primary": "discord_primary_markdown_or_full_markdown",
+    "forbidden_fallback": "route_card_only_primary"
+  }
+}

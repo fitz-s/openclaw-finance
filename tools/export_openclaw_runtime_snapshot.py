@@ -275,6 +275,8 @@ def main() -> int:
         'openclaw_home': str(OPENCLAW_HOME),
         'finance_repo': str(FINANCE),
         'snapshot_files': [
+            'docs/openclaw-runtime/information-dominance-stack-plan.md',
+            'docs/openclaw-runtime/information-dominance-stack-map.json',
             'docs/openclaw-runtime/finance-cron-jobs.json',
             'docs/openclaw-runtime/finance-crontab.txt',
             'docs/openclaw-runtime/finance-model-roles.json',

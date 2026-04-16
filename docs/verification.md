@@ -16,9 +16,17 @@ python3 -m json.tool docs/openclaw-runtime/thesis-spine-telemetry-summary.json >
 python3 -m json.tool docs/openclaw-runtime/ibkr-watchlist-freshness-drill.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/benchmark-boundary-audit.json >/dev/null
 python3 -m json.tool docs/openclaw-runtime/runtime-gap-review.json >/dev/null
+python3 -m json.tool docs/openclaw-runtime/information-dominance-stack-map.json >/dev/null
 python3 -m compileall -q scripts tools
 python3 tools/audit_operating_model.py
 python3 tools/audit_benchmark_boundary.py
+```
+
+Information Dominance Phase 0 verification:
+
+```bash
+python3 -m json.tool docs/openclaw-runtime/information-dominance-stack-map.json >/dev/null
+python3 -m pytest -q tests/test_information_dominance_phase0.py
 ```
 
 Package 9 local runtime verification:

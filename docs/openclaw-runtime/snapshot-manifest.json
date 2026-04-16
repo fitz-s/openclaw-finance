@@ -4,6 +4,8 @@
   "openclaw_home": "/Users/leofitz/.openclaw",
   "finance_repo": "/Users/leofitz/.openclaw/workspace/finance",
   "snapshot_files": [
+    "docs/openclaw-runtime/information-dominance-stack-plan.md",
+    "docs/openclaw-runtime/information-dominance-stack-map.json",
     "docs/openclaw-runtime/finance-cron-jobs.json",
     "docs/openclaw-runtime/finance-crontab.txt",
     "docs/openclaw-runtime/finance-model-roles.json",
