@@ -1,13 +1,7 @@
 {
-  "generated_at": "2026-04-16T20:30:26.983292+00:00",
-  "status": "drift_detected",
-  "changed_count": 1,
-  "changed": [
-    {
-      "role": "decision_log_schema",
-      "baseline_sha256": "sha256:417f43e7fa5186247ddaa8c849dfd94a78bd3b32c9e2fdbbdebb0028c2c4e196",
-      "current_sha256": "sha256:a1dbbb2d89c97f76f375946b48aa1de24e036f05f4ce2125d8a6c858a7f60fc0"
-    }
-  ],
+  "generated_at": "2026-04-16T21:15:01.322021+00:00",
+  "status": "pass",
+  "changed_count": 0,
+  "changed": [],
   "note": "Drift is informational for reviewer visibility; commit the refreshed snapshot after intentional parent dependency changes."
 }

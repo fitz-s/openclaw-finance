@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-16T20:30:26.881711+00:00",
+  "generated_at": "2026-04-16T21:15:00.713230+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "note": "Prompt hashes let GitHub reviewers see live OpenClaw job prompt drift without exposing secrets.",
   "jobs": {

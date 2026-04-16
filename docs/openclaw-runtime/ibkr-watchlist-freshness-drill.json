@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-04-16T20:30:27.055315+00:00",
+  "generated_at": "2026-04-16T21:15:01.801213+00:00",
   "status": "needs_login_or_cached_fallback",
   "ibkr_watchlist_data_status": "unavailable",
   "ibkr_watchlist_fresh": false,
   "resolved_data_status": "degraded",
   "portfolio_fresh": false,
-  "resolved_symbol_count": 15,
+  "resolved_symbol_count": 55,
   "blocking_reasons": [
     "client_portal_not_authenticated",
     "client_portal_unavailable_or_stale; flex_unavailable_or_stale"
