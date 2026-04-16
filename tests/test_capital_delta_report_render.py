@@ -83,6 +83,9 @@ def test_capital_delta_mode_with_graph():
     assert report['renderer_id'] == 'capital-delta-deterministic-v1'
     assert '## 资本议程' in report['markdown']
     assert report.get('capital_graph_hash') == 'sha256:test123'
+    assert report['discord_primary_markdown'].startswith('Finance｜资本议程')
+    assert 'A1' in report['object_alias_map']
+    assert report['discord_thread_seed_markdown'].startswith(report['report_id'])
 
 
 def test_capital_delta_fallback_without_graph():

@@ -27,6 +27,10 @@
 
 - 标题和章节: 按 `systems/finance-report-contract.md` 与当前 `finance-report-envelope` contract；旧 `REPORT_TEMPLATE.md` 已移入 `legacy/report-v1/`，不得作为 active template。
 - Watchlist 表格: 只列**有变动**的 ticker, 不要全列
+- Surface 分层:
+  - `Discord Primary`: 主频道主消息；必须单独可读；必须有 `Fact / Interpretation / To Verify / 对象`
+  - `Discord Thread`: thread 首帖；负责对象卡 + 可直接追问；不代替主频道报告
+  - `Artifact Record`: 完整 `markdown` / envelope / decision log；供 validator / audit / replay
 - 长度上限:
   - Short: ≤ 300 字
   - Core: ≤ 800 字

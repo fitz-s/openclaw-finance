@@ -44,6 +44,15 @@ python3 scripts/finance_decision_report_render.py --report-mode capital_delta
 pytest -q tests/test_capital_graph_compiler.py tests/test_displacement_case_builder.py tests/test_capital_agenda_compiler.py tests/test_capital_delta_report_render.py
 ```
 
+Output surfaces verification:
+
+```bash
+python3 scripts/announce_card_compiler.py
+python3 scripts/finance_report_reader_bundle.py
+pytest -q tests/test_announce_card_compiler.py tests/test_report_reader_bundle.py tests/test_followup_answer_guard.py
+pytest -q tests/test_discord_operator_surfaces.py
+```
+
 Runtime integration verification from the parent OpenClaw workspace:
 
 ```bash

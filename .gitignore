@@ -20,3 +20,4 @@ reports/v0-archive/*
 *.secret
 *.token
 ibkr-flex-config.json
+.omx/

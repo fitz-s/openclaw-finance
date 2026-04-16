@@ -1,12 +1,12 @@
 # Announce Card Contract
 
-The announce card is a deterministic **notification surface** compiled from the completed report envelope. It replaces the full report markdown as the Discord/cron channel delivery artifact.
+The announce card is a deterministic **routing surface** compiled from the completed report envelope. It no longer replaces the main-channel operator report; it is retained for thread/router compatibility only.
 
 ## Purpose
 
 Answer one question: *"Is this worth my attention right now?"*
 
-The announce card is NOT the official record (that's the core report envelope). It is NOT the exploration surface (that's the reader bundle). It is an **attention router**.
+The announce card is NOT the official record (that's the core report envelope). It is NOT the primary operator surface (that's `discord_primary_markdown`). It is NOT the exploration surface (that's the reader bundle). It is a compatibility **attention router**.
 
 ## Schema
 
@@ -28,6 +28,7 @@ The announce card is NOT the official record (that's the core report envelope). 
   "why_now": "one-liner string, ≤80 chars",
   "next_decision": "what the user should decide right now, ≤80 chars",
   "handles": ["R42", "T1", "O1", "I1"],
+  "display_handles": ["T1=TSLA", "O1=SMR", "I1=TSLA反证"],
 
   "announce_markdown": "≤200 chars, the Discord message",
   "no_execution": true
@@ -60,10 +61,12 @@ Finance｜{attention_class_label}
 值得看：{dominant_object_summary}
 为什么现在：{why_now}
 你只要决定：{next_decision}
-入口：{handles joined by /}
+对象：{display_handles joined by /}
 ```
 
 Total ≤ 200 characters. Chinese primary, English proper nouns per STYLE_GUIDE.md.
+
+`handles` remain the machine-stable navigation keys for downstream rehydration. `display_handles` are the user-facing Discord labels and must not require the operator to open a terminal just to decode `T1` / `O1`.
 
 ## Compatibility
 

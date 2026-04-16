@@ -45,6 +45,8 @@ REPORT_PACK = OUT_DIR / 'report-orchestrator.json'
 SCANNER_PACK = OUT_DIR / 'scanner.json'
 SIDECAR_PACK = OUT_DIR / 'thesis-sidecar.json'
 WEEKLY_PACK = OUT_DIR / 'weekly-learning.json'
+FOLLOWUP_PACK = OUT_DIR / 'report-followup.json'
+READER_BUNDLE_DIR = STATE / 'report-reader'
 
 
 def now_iso() -> str:
@@ -423,11 +425,49 @@ def build_packs() -> dict[str, dict[str, Any]]:
         'final_output_rule': 'Output weekly learning review only; no market advice or automatic threshold mutation.',
     })
 
+    # report_followup: rehydration pack for review room deep-dive
+    latest_bundle = None
+    if READER_BUNDLE_DIR.is_dir():
+        bundles = sorted(READER_BUNDLE_DIR.glob('*.json'), key=lambda p: p.stat().st_mtime, reverse=True)
+        if bundles:
+            latest_bundle = load_json_safe(bundles[0], {}) or {}
+    bundle_summary = {}
+    if isinstance(latest_bundle, dict) and latest_bundle:
+        handles = latest_bundle.get('handles', {}) if isinstance(latest_bundle.get('handles'), dict) else {}
+        first_handles = dict(list(handles.items())[:12])
+        bundle_summary = {
+            'bundle_id': latest_bundle.get('bundle_id'),
+            'report_handle': latest_bundle.get('report_handle'),
+            'handles': first_handles,
+            'object_alias_map': latest_bundle.get('object_alias_map', {}),
+            'starter_queries': latest_bundle.get('starter_queries', []),
+        }
+    followup_sources = [artifact(READER_BUNDLE_DIR / 'latest.json')]
+    followup = base_pack(
+        'report_followup',
+        followup_sources,
+        job_goal='Answer follow-up questions about a specific object from the latest finance report. Rehydrate from the reader bundle, not from thread history.',
+        allowed_outputs=['structured_answer_only'],
+        forbidden_actions=['execution', 'threshold_mutation', 'new_unsourced_market_call', 'raw_state_dump', 'thread_history_as_context', 'autonomous_judgment'],
+    )
+    followup.update({
+        'reader_bundle_summary': bundle_summary,
+        'followup_bundle_path': str(READER_BUNDLE_DIR / 'latest.json'),
+        'answer_format': {
+            'required_sections': ['Fact', 'Interpretation', 'Unknown / To Verify', 'What Would Change My Mind'],
+            'interrogation_verbs': ['why', 'challenge', 'compare', 'scenario', 'sources', 'expand'],
+        },
+        'starter_queries': latest_bundle.get('starter_queries', []) if isinstance(latest_bundle, dict) else [],
+        'rehydration_rule': 'Always reconstruct context from the immutable bundle + selected handle. Thread history is UI, bundle is memory.',
+        'final_output_rule': 'Structured answer only. No new report, no new judgment, no Discord delivery.',
+    })
+
     packs = {
         'report-orchestrator': report,
         'scanner': scanner,
         'thesis-sidecar': sidecar,
         'weekly-learning': weekly,
+        'report-followup': followup,
     }
     for pack in packs.values():
         validate_size(pack)
@@ -441,6 +481,7 @@ def write_packs(packs: dict[str, dict[str, Any]], out_dir: Path = OUT_DIR) -> di
         'scanner': out_dir / 'scanner.json',
         'thesis-sidecar': out_dir / 'thesis-sidecar.json',
         'weekly-learning': out_dir / 'weekly-learning.json',
+        'report-followup': out_dir / 'report-followup.json',
     }
     for name, pack in packs.items():
         atomic_write_json(paths[name], pack)

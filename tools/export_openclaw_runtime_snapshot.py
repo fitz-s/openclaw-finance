@@ -24,6 +24,8 @@ FINANCE_JOB_NAMES = {
     'finance-subagent-scanner',
     'finance-subagent-scanner-offhours',
     'finance-premarket-brief',
+    'finance-premarket-delivery-watchdog',
+    'finance-midday-operator-review',
     'finance-weekly-learning-review',
     'finance-thesis-sidecar',
     'finance-report-renderer',

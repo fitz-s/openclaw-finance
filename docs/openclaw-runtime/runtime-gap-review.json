@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-16T13:15:01.617511+00:00",
+  "generated_at": "2026-04-16T19:39:08.720609+00:00",
   "status": "reviewed",
   "unresolved_gaps": [
     "ibkr_client_portal_watchlist_sync_not_fresh",
@@ -20,48 +20,6 @@
   "report_usefulness": {
     "delivered_count_in_recent_window": 12,
     "reviewed_recent_delivered_runs": [
-      {
-        "runAtMs": 1776260856070,
-        "status": "ok",
-        "deliveryStatus": "delivered",
-        "durationMs": 130540,
-        "quality": {
-          "line_count": 53,
-          "char_count": 2001,
-          "has_opportunity_first_contract": true,
-          "has_unknown_discovery_section": true,
-          "has_holding_section": true,
-          "noise_tokens": []
-        }
-      },
-      {
-        "runAtMs": 1776265562025,
-        "status": "ok",
-        "deliveryStatus": "delivered",
-        "durationMs": 161367,
-        "quality": {
-          "line_count": 49,
-          "char_count": 2001,
-          "has_opportunity_first_contract": true,
-          "has_unknown_discovery_section": true,
-          "has_holding_section": true,
-          "noise_tokens": []
-        }
-      },
-      {
-        "runAtMs": 1776269261568,
-        "status": "ok",
-        "deliveryStatus": "delivered",
-        "durationMs": 104163,
-        "quality": {
-          "line_count": 48,
-          "char_count": 2001,
-          "has_opportunity_first_contract": true,
-          "has_unknown_discovery_section": true,
-          "has_holding_section": true,
-          "noise_tokens": []
-        }
-      },
       {
         "runAtMs": 1776273805863,
         "status": "ok",
@@ -89,14 +47,56 @@
           "has_holding_section": true,
           "noise_tokens": []
         }
+      },
+      {
+        "runAtMs": 1776345025592,
+        "status": "ok",
+        "deliveryStatus": "delivered",
+        "durationMs": 147815,
+        "quality": {
+          "line_count": 5,
+          "char_count": 176,
+          "has_opportunity_first_contract": false,
+          "has_unknown_discovery_section": false,
+          "has_holding_section": false,
+          "noise_tokens": []
+        }
+      },
+      {
+        "runAtMs": 1776346988364,
+        "status": "ok",
+        "deliveryStatus": "delivered",
+        "durationMs": 123479,
+        "quality": {
+          "line_count": 5,
+          "char_count": 153,
+          "has_opportunity_first_contract": false,
+          "has_unknown_discovery_section": false,
+          "has_holding_section": false,
+          "noise_tokens": []
+        }
+      },
+      {
+        "runAtMs": 1776356593565,
+        "status": "ok",
+        "deliveryStatus": "delivered",
+        "durationMs": 101109,
+        "quality": {
+          "line_count": 25,
+          "char_count": 505,
+          "has_opportunity_first_contract": false,
+          "has_unknown_discovery_section": false,
+          "has_holding_section": false,
+          "noise_tokens": []
+        }
       }
     ],
     "latest_product_report": {
-      "generated_at": "2026-04-16T13:12:16.474018Z",
-      "report_hash": "sha256:918fa5c22f861a1d3e97b5f95754b76c821630ce070f65a31d907c932cb54333",
+      "generated_at": "2026-04-16T18:25:09.972769Z",
+      "report_hash": "sha256:ef4fc3a2613414f87d6e0f1e6a485306d4fb9927340d36a612e43e97ed57bb66",
       "quality": {
         "line_count": 53,
-        "char_count": 2260,
+        "char_count": 2185,
         "has_opportunity_first_contract": true,
         "has_unknown_discovery_section": true,
         "has_holding_section": true,
@@ -107,8 +107,8 @@
   },
   "wake_threshold_bridge": {
     "current_gate": {
-      "evaluatedAt": "2026-04-16T13:09:02.329351+00:00",
-      "window": "pre",
+      "evaluatedAt": "2026-04-16T19:21:37.702534+00:00",
+      "window": "late",
       "shouldSend": false,
       "recommendedReportType": "hold",
       "decisionReason_sanitized": "present"

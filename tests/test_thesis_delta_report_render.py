@@ -99,5 +99,10 @@ def test_shadow_delta_report_passes_product_validator() -> None:
     assert report['renderer_id'] == 'thesis-delta-shadow-deterministic-v1'
     assert 'ABC: new demand inflection' in report['markdown']
     assert 'shadow' in report['markdown'].lower()
+    assert 'discord_primary_markdown' in report
+    assert 'discord_thread_seed_markdown' in report
+    assert report['object_alias_map']['T1'].startswith('现有 Thesis')
+    assert report['starter_queries']
+    assert report['followup_bundle_path'].endswith('.json')
     assert not errors
     assert not warnings

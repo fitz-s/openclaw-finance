@@ -6,10 +6,12 @@ Defines the rules for follow-up analysis answers produced in the review room. Fo
 
 | Verb | Semantics | Required Output Shape |
 |------|-----------|-----------------------|
-| `trace` | Evidence chain for a handle | Evidence refs → direction → confidence → source |
+| `why` | Why this handle matters now | Current evidence chain → why now → constraint |
 | `challenge` | Countercase analysis | Invalidators + required confirmations + missing evidence |
 | `compare` | Overlap/opportunity cost | Instrument overlap + bucket competition + portfolio relevance |
 | `scenario` | Scenario impact analysis | Trigger → transmission path → impacted objects → what changes |
+| `sources` | Source trace | Source list → freshness → caveats |
+| `expand` | Expand the current report lens | Report summary → dominant objects → follow-up paths |
 
 ## Answer Format (mandatory)
 

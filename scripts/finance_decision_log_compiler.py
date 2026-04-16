@@ -51,6 +51,13 @@ def stable_id(*parts: Any) -> str:
     return 'decision:' + hashlib.sha1(material.encode('utf-8')).hexdigest()[:20]
 
 
+def hash_text(text: Any) -> str | None:
+    value = str(text or '')
+    if not value:
+        return None
+    return 'sha256:' + hashlib.sha256(value.encode('utf-8')).hexdigest()
+
+
 def execution_decision(judgment: dict[str, Any], validation: dict[str, Any], product_validation: dict[str, Any], safety: dict[str, Any]) -> str:
     if validation.get('errors') or product_validation.get('status') != 'pass':
         return 'blocked'
@@ -146,6 +153,12 @@ def compile_entry(
         'capital_agenda_refs': product_report.get('capital_agenda_refs') or [],
         'displacement_case_refs': product_report.get('displacement_case_refs') or [],
         'capital_graph_hash': product_report.get('capital_graph_hash'),
+        'report_id': product_report.get('report_id'),
+        'discord_primary_hash': hash_text(product_report.get('discord_primary_markdown')),
+        'thread_seed_hash': hash_text(product_report.get('discord_thread_seed_markdown')),
+        'followup_bundle_path': product_report.get('followup_bundle_path'),
+        'starter_queries': product_report.get('starter_queries') or [],
+        'object_alias_map': product_report.get('object_alias_map') or {},
         'wake_threshold_attribution': wake_threshold_attribution(
             gate=gate or {},
             wake=wake or {},

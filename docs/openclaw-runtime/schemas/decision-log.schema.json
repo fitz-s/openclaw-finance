@@ -57,6 +57,18 @@
     "thesis_refs": { "type": "array", "items": { "type": "string" } },
     "scenario_refs": { "type": "array", "items": { "type": "string" } },
     "opportunity_candidate_refs": { "type": "array", "items": { "type": "string" } },
-    "invalidator_refs": { "type": "array", "items": { "type": "string" } }
+    "invalidator_refs": { "type": "array", "items": { "type": "string" } },
+    "capital_agenda_refs": { "type": "array", "items": { "type": "string" } },
+    "displacement_case_refs": { "type": "array", "items": { "type": "string" } },
+    "capital_graph_hash": { "type": ["string", "null"] },
+    "report_id": { "type": ["string", "null"] },
+    "discord_primary_hash": { "type": ["string", "null"], "pattern": "^sha256:" },
+    "thread_seed_hash": { "type": ["string", "null"], "pattern": "^sha256:" },
+    "followup_bundle_path": { "type": ["string", "null"] },
+    "starter_queries": { "type": "array", "items": { "type": "string" } },
+    "object_alias_map": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    }
   }
 }

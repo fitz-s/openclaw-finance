@@ -36,6 +36,9 @@ def test_report_orchestrator_prompt_is_context_pack_first() -> None:
     assert 'allowed_evidence_refs' in text
     assert 'delivery safety' in text or 'Delivery safety' in text
     assert 'finance-decision-report-envelope.json' in text
+    assert 'discord_primary_markdown' in text
+    assert 'discord_thread_seed_markdown' in text
+    assert 'route card 只能去 thread' in text or 'route card' in text
 
 
 def test_scanner_prompts_have_object_link_and_unknown_discovery_contract() -> None:

@@ -21,6 +21,11 @@ LEGACY_REPORT_V1_FILES = [
     ('native_premarket_brief_live.py', ROOT / 'legacy' / 'report-v1' / 'scripts' / 'native_premarket_brief_live.py', ROOT / 'scripts' / 'native_premarket_brief_live.py'),
     ('finance_llm_report_render.py', ROOT / 'legacy' / 'report-v1' / 'scripts' / 'finance_llm_report_render.py', ROOT / 'scripts' / 'finance_llm_report_render.py'),
 ]
+COMPAT_TEMPLATE_MARKERS = [
+    'Compatibility Stub',
+    'Active finance reporting no longer uses this template',
+    'legacy/report-v1/REPORT_TEMPLATE.md',
+]
 
 MUST_CONTAIN = {
     ROOT / 'docs' / 'openclaw-runtime' / 'contracts' / 'finance-openclaw-runtime-contract.md': [
@@ -134,12 +139,16 @@ def build_report() -> dict:
         errors.append({'code': key, 'message': 'finance-thesis-sidecar must remain disabled/manual and delivery none'})
     for label, legacy_path, root_path in LEGACY_REPORT_V1_FILES:
         key = f'legacy-report-v1:{label}:quarantined'
-        ok = legacy_path.exists() and not root_path.exists()
+        root_compat_ok = False
+        if label == 'REPORT_TEMPLATE.md' and root_path.exists():
+            root_text = root_path.read_text(encoding='utf-8', errors='replace')
+            root_compat_ok = all(marker in root_text for marker in COMPAT_TEMPLATE_MARKERS)
+        ok = legacy_path.exists() and (not root_path.exists() or root_compat_ok)
         checks[key] = ok
         if not ok:
             errors.append({
                 'code': key,
-                'message': f'{label} must live under legacy/report-v1 and must not exist at {root_path}',
+                'message': f'{label} must live under legacy/report-v1; root path may only contain a compatibility stub',
             })
     return {
         'generated_at': datetime.now(timezone.utc).isoformat(),

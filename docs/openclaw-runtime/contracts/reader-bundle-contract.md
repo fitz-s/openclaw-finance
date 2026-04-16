@@ -17,6 +17,7 @@ Convert the internal object graph into navigable handles with starter questions.
 
   "handles": {
     "R42": {"type": "report", "ref": "..."},
+    "A1":  {"type": "agenda", "ref": "agenda:0", "label": "新机会｜铀服务链"},
     "T1":  {"type": "thesis", "ref": "thesis:TSLA", "instrument": "TSLA"},
     "O1":  {"type": "opportunity", "ref": "opp:SMR", "instrument": "SMR"},
     "I1":  {"type": "invalidator", "ref": "inv:0", "description": "..."},
@@ -25,6 +26,8 @@ Convert the internal object graph into navigable handles with starter questions.
 
   "object_cards": [...],
   "starter_questions": [...],
+  "starter_queries": ["why A1", "compare A1 T1", "challenge A1"],
+  "object_alias_map": {"A1": "新机会｜铀服务链", "T1": "现有 Thesis｜能源 beta"},
   "portfolio_attachment": {...},
   "capital_summary": {...}
 }
@@ -33,6 +36,7 @@ Convert the internal object graph into navigable handles with starter questions.
 ## Handle Assignment (deterministic)
 
 - `R<n>`: report decision_id short hash (stable per report)
+- `A<n>`: capital agenda items sorted by priority_score descending, 1-indexed
 - `T<n>`: theses sorted by (status=active first, then instrument alphabetical), 1-indexed
 - `O<n>`: opportunities sorted by score descending, 1-indexed
 - `I<n>`: invalidators sorted by hit_count descending, 1-indexed

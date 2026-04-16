@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-04-16T13:15:01.408099+00:00",
+  "generated_at": "2026-04-16T19:39:08.657970+00:00",
   "status": "pass",
   "latest_product_report": {
-    "generated_at": "2026-04-16T13:12:16.474018Z",
-    "report_hash": "sha256:918fa5c22f861a1d3e97b5f95754b76c821630ce070f65a31d907c932cb54333",
+    "generated_at": "2026-04-16T18:25:09.972769Z",
+    "report_hash": "sha256:ef4fc3a2613414f87d6e0f1e6a485306d4fb9927340d36a612e43e97ed57bb66",
     "quality": {
       "score": 100,
       "noise_tokens": [],
       "line_count": 53,
-      "char_count": 2260,
+      "char_count": 2185,
       "has_opportunity_first_contract": true,
       "has_next_step": true,
       "has_holding_section": true
@@ -35,48 +35,6 @@
   ],
   "recent_delivered_reports": [
     {
-      "runAtMs": 1776260856070,
-      "durationMs": 130540,
-      "deliveryStatus": "delivered",
-      "quality": {
-        "score": 100,
-        "noise_tokens": [],
-        "line_count": 53,
-        "char_count": 2001,
-        "has_opportunity_first_contract": true,
-        "has_next_step": true,
-        "has_holding_section": true
-      }
-    },
-    {
-      "runAtMs": 1776265562025,
-      "durationMs": 161367,
-      "deliveryStatus": "delivered",
-      "quality": {
-        "score": 100,
-        "noise_tokens": [],
-        "line_count": 49,
-        "char_count": 2001,
-        "has_opportunity_first_contract": true,
-        "has_next_step": true,
-        "has_holding_section": true
-      }
-    },
-    {
-      "runAtMs": 1776269261568,
-      "durationMs": 104163,
-      "deliveryStatus": "delivered",
-      "quality": {
-        "score": 100,
-        "noise_tokens": [],
-        "line_count": 48,
-        "char_count": 2001,
-        "has_opportunity_first_contract": true,
-        "has_next_step": true,
-        "has_holding_section": true
-      }
-    },
-    {
       "runAtMs": 1776273805863,
       "durationMs": 105861,
       "deliveryStatus": "delivered",
@@ -102,6 +60,48 @@
         "has_opportunity_first_contract": true,
         "has_next_step": true,
         "has_holding_section": true
+      }
+    },
+    {
+      "runAtMs": 1776345025592,
+      "durationMs": 147815,
+      "deliveryStatus": "delivered",
+      "quality": {
+        "score": 70,
+        "noise_tokens": [],
+        "line_count": 5,
+        "char_count": 176,
+        "has_opportunity_first_contract": false,
+        "has_next_step": false,
+        "has_holding_section": false
+      }
+    },
+    {
+      "runAtMs": 1776346988364,
+      "durationMs": 123479,
+      "deliveryStatus": "delivered",
+      "quality": {
+        "score": 70,
+        "noise_tokens": [],
+        "line_count": 5,
+        "char_count": 153,
+        "has_opportunity_first_contract": false,
+        "has_next_step": false,
+        "has_holding_section": false
+      }
+    },
+    {
+      "runAtMs": 1776356593565,
+      "durationMs": 101109,
+      "deliveryStatus": "delivered",
+      "quality": {
+        "score": 70,
+        "noise_tokens": [],
+        "line_count": 25,
+        "char_count": 505,
+        "has_opportunity_first_contract": false,
+        "has_next_step": false,
+        "has_holding_section": false
       }
     }
   ],

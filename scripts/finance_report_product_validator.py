@@ -60,12 +60,21 @@ BANNED = {
     'raw_provenance_footer': re.compile(r'packet_hash|judgment_id|model_id', re.I),
 }
 
+PRIMARY_BANNED = {
+    'machine_hashes': re.compile(r'packet_hash|graph_hash|report_hash|judgment_id|model_id', re.I),
+    'raw_ref_counts': re.compile(r'\b(?:thesis_refs|scenario_refs|invalidator_refs|opportunity_candidate_refs)\s*=\s*\d+', re.I),
+    'raw_evidence_refs': re.compile(r'`?ev:[^`\s]+`?', re.I),
+    'route_card_only': re.compile(r'^\s*Finance｜[^\n]+\n值得看：', re.M),
+}
+
+THREAD_REQUIRED_TOKENS = ['对象卡', '可直接追问']
+
 
 def error(code: str, message: str) -> dict[str, str]:
     return {'code': code, 'message': message}
 
 
-def validate(report: dict[str, Any], packet: dict[str, Any], judgment: dict[str, Any], judgment_validation: dict[str, Any]) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
+def _validate_artifact_markdown(report: dict[str, Any], packet: dict[str, Any], judgment: dict[str, Any], judgment_validation: dict[str, Any]) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
     errors: list[dict[str, str]] = []
     warnings: list[dict[str, str]] = []
     markdown = str(report.get('markdown') or '')
@@ -123,6 +132,81 @@ def validate(report: dict[str, Any], packet: dict[str, Any], judgment: dict[str,
     return errors, warnings
 
 
+def _validate_operator_primary(report: dict[str, Any]) -> tuple[list[dict[str, str]], list[dict[str, str]], str]:
+    errors: list[dict[str, str]] = []
+    warnings: list[dict[str, str]] = []
+    primary = str(report.get('discord_primary_markdown') or '')
+    primary_missing = not primary
+    if not primary:
+        primary = str(report.get('markdown') or '')
+        warnings.append(error('discord_primary_markdown_missing', 'fallback to artifact markdown'))
+    if not primary:
+        errors.append(error('primary_missing', 'no primary or fallback markdown available'))
+        return errors, warnings, primary
+    if not primary_missing:
+        for section in ['Fact', 'Interpretation', 'To Verify', '对象']:
+            if section not in primary:
+                errors.append(error('primary_missing_section', section))
+        if not isinstance(report.get('object_alias_map'), dict) or not report.get('object_alias_map'):
+            errors.append(error('missing_object_alias_map', 'primary surface requires translated object aliases'))
+        if not any(prefix in primary for prefix in ['A1 ', 'T1 ', 'O1 ', 'I1 ']):
+            errors.append(error('missing_object_translation', 'primary surface must translate at least one handle into an object line'))
+    banned_items = PRIMARY_BANNED.items() if not primary_missing else [('route_card_only', PRIMARY_BANNED['route_card_only'])]
+    for code, pattern in banned_items:
+        if pattern.search(primary):
+            errors.append(error(code, f'primary surface matched banned pattern: {code}'))
+    if len(primary) > 800:
+        warnings.append(error('primary_too_long', 'discord primary markdown exceeds Core guidance'))
+    if len(primary.strip().splitlines()) <= 5:
+        errors.append(error('primary_too_shallow', 'primary surface cannot degrade to a route card'))
+    return errors, warnings, primary
+
+
+def _validate_thread_seed(report: dict[str, Any]) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
+    errors: list[dict[str, str]] = []
+    warnings: list[dict[str, str]] = []
+    thread_seed = str(report.get('discord_thread_seed_markdown') or '')
+    if not thread_seed:
+        warnings.append(error('discord_thread_seed_missing', 'thread seed markdown missing'))
+        return errors, warnings
+    for token in THREAD_REQUIRED_TOKENS:
+        if token not in thread_seed:
+            errors.append(error('thread_seed_missing_token', token))
+    starter_queries = report.get('starter_queries')
+    if not isinstance(starter_queries, list) or not starter_queries:
+        errors.append(error('thread_seed_missing_queries', 'starter_queries required for follow-up thread'))
+    bundle_path = str(report.get('followup_bundle_path') or '')
+    if not bundle_path.endswith('.json'):
+        errors.append(error('thread_seed_missing_bundle_path', 'followup bundle path must point to json bundle'))
+    return errors, warnings
+
+
+def validate_report(report: dict[str, Any], packet: dict[str, Any], judgment: dict[str, Any], judgment_validation: dict[str, Any]) -> dict[str, Any]:
+    artifact_errors, artifact_warnings = _validate_artifact_markdown(report, packet, judgment, judgment_validation)
+    primary_errors, primary_warnings, primary_text = _validate_operator_primary(report)
+    thread_errors, thread_warnings = _validate_thread_seed(report)
+    errors = artifact_errors + primary_errors
+    warnings = artifact_warnings + primary_warnings + thread_errors + thread_warnings
+    return {
+        'errors': errors,
+        'warnings': warnings,
+        'artifact_errors': artifact_errors,
+        'artifact_warnings': artifact_warnings,
+        'operator_errors': primary_errors,
+        'operator_warnings': primary_warnings,
+        'thread_errors': thread_errors,
+        'thread_warnings': thread_warnings,
+        'discord_primary_ok': not primary_errors,
+        'thread_followup_ok': not thread_errors,
+        'primary_markdown': primary_text,
+    }
+
+
+def validate(report: dict[str, Any], packet: dict[str, Any], judgment: dict[str, Any], judgment_validation: dict[str, Any]) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
+    result = validate_report(report, packet, judgment, judgment_validation)
+    return result['errors'], result['warnings']
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('--report', default=str(REPORT))
@@ -135,13 +219,21 @@ def main(argv: list[str] | None = None) -> int:
     packet = load_json_safe(Path(args.packet), {}) or {}
     judgment = load_json_safe(Path(args.judgment), {}) or {}
     validation = load_json_safe(Path(args.judgment_validation), {}) or {}
-    errors, warnings = validate(report, packet, judgment, validation)
+    result = validate_report(report, packet, judgment, validation)
     payload = {
-        'status': 'pass' if not errors else 'fail',
-        'error_count': len(errors),
-        'warning_count': len(warnings),
-        'errors': errors,
-        'warnings': warnings,
+        'status': 'pass' if not result['errors'] else 'fail',
+        'error_count': len(result['errors']),
+        'warning_count': len(result['warnings']),
+        'errors': result['errors'],
+        'warnings': result['warnings'],
+        'artifact_errors': result['artifact_errors'],
+        'artifact_warnings': result['artifact_warnings'],
+        'operator_errors': result['operator_errors'],
+        'operator_warnings': result['operator_warnings'],
+        'thread_errors': result['thread_errors'],
+        'thread_warnings': result['thread_warnings'],
+        'discord_primary_ok': result['discord_primary_ok'],
+        'thread_followup_ok': result['thread_followup_ok'],
         'report_path': str(args.report),
         'packet_hash': packet.get('packet_hash'),
         'judgment_id': judgment.get('judgment_id'),
@@ -149,7 +241,7 @@ def main(argv: list[str] | None = None) -> int:
     }
     atomic_write_json(Path(args.out), payload)
     print(json.dumps({'status': payload['status'], 'error_count': payload['error_count'], 'out': str(args.out)}, ensure_ascii=False))
-    return 0 if not errors else 1
+    return 0 if not result['errors'] else 1
 
 
 if __name__ == '__main__':

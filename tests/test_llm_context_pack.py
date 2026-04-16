@@ -15,7 +15,7 @@ from finance_worker import compact_seen_ids
 def test_llm_context_packs_are_non_authoritative_and_provenance_bearing() -> None:
     packs = build_packs()
 
-    assert set(packs) == {'report-orchestrator', 'scanner', 'thesis-sidecar', 'weekly-learning'}
+    assert set(packs) == {'report-orchestrator', 'scanner', 'thesis-sidecar', 'weekly-learning', 'report-followup'}
     for pack in packs.values():
         encoded = json.dumps(pack, ensure_ascii=False, sort_keys=True)
         assert len(encoded) <= MAX_PACK_CHARS
@@ -59,6 +59,14 @@ def test_sidecar_and_weekly_packs_cannot_deliver_or_mutate_thresholds() -> None:
     assert 'threshold_mutation' in sidecar['forbidden_actions']
     assert 'automatic_threshold_mutation' in weekly['forbidden_actions']
     assert 'model_routing' in weekly['recommendation_targets_allowed']
+
+
+def test_followup_pack_prefers_bundle_rehydration() -> None:
+    followup = build_packs()['report-followup']
+
+    assert followup['followup_bundle_path'].endswith('latest.json')
+    assert 'bundle is memory' in followup['rehydration_rule']
+    assert {'why', 'challenge', 'compare', 'scenario', 'sources', 'expand'} <= set(followup['answer_format']['interrogation_verbs'])
 
 
 def test_finance_worker_seen_id_helper_remains_deterministic() -> None:

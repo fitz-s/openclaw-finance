@@ -5,10 +5,12 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from urllib.parse import urlparse
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
+from zoneinfo import ZoneInfo
 
 from atomic_io import atomic_write_json, load_json_safe
 
@@ -46,6 +48,25 @@ SYMBOL_STOPWORDS = {
     'SEC', 'TVA', 'USD', 'VLCC', 'WTI', 'YOY',
 }
 
+AGENDA_TYPE_LABELS = {
+    'new_opportunity': '新机会',
+    'existing_thesis_review': '现有 Thesis',
+    'hedge_gap_alert': '对冲缺口',
+    'invalidator_escalation': '反证升级',
+    'exposure_crowding_warning': '拥挤预警',
+}
+
+THEME_LABELS = {
+    'unknown_discovery': '未知发现',
+    'broad_market': '大盘',
+    'sector': '板块',
+    'commodity': '商品',
+    'commodity_pressure_proxy': '商品压力',
+    'options_unusual_activity_proxy': '期权异动',
+    'options_chain_context': '期权链',
+    'sector_rotation_proxy': '板块轮动',
+}
+
 
 def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
@@ -56,6 +77,66 @@ def hash_payload(payload: dict[str, Any]) -> str:
     clone.pop('report_hash', None)
     raw = json.dumps(clone, ensure_ascii=False, sort_keys=True, separators=(',', ':')).encode('utf-8')
     return 'sha256:' + hashlib.sha256(raw).hexdigest()
+
+
+def hash_text(text: str) -> str:
+    return 'sha256:' + hashlib.sha256(text.encode('utf-8')).hexdigest()
+
+
+def report_short_id(report_hash: Any, judgment_id: Any) -> str:
+    value = str(report_hash or '')
+    if value.startswith('sha256:'):
+        return 'R' + value.replace('sha256:', '')[:4].upper()
+    value = str(judgment_id or '')
+    if value:
+        return 'R' + hashlib.sha1(value.encode('utf-8')).hexdigest()[:4].upper()
+    return 'R0000'
+
+
+def et_time_label(timestamp: Any) -> str:
+    text = str(timestamp or '')
+    if not text:
+        return '00:00 ET'
+    try:
+        dt = datetime.fromisoformat(text.replace('Z', '+00:00'))
+    except ValueError:
+        return '00:00 ET'
+    return dt.astimezone(ZoneInfo('America/New_York')).strftime('%H:%M ET')
+
+
+def humanize_invalidator_desc(value: Any) -> str:
+    text = str(value or '').strip()
+    if not text:
+        return '反证'
+    if text.startswith('price_vs_negative_upstream:'):
+        return f"{text.split(':', 1)[1].upper()} 负面上游反证"
+    if text.startswith('direction_conflict:theme:'):
+        theme_key = text.split(':')[-1]
+        theme = THEME_LABELS.get(theme_key, theme_key.replace('_', ' '))
+        return f'{theme}方向冲突'
+    if text.startswith('options_flow:'):
+        return f"{text.split(':', 1)[1].upper()} 期权流"
+    return text.replace('_', ' ')
+
+
+def humanize_agenda_justification(item: dict[str, Any]) -> str:
+    justification = str(item.get('attention_justification') or '').strip()
+    if justification.startswith('invalidator ') and ' has hit ' in justification:
+        body, _, hits = justification.partition(' has hit ')
+        return f"{humanize_invalidator_desc(body.replace('invalidator ', '', 1))}（{hits.replace(' times', '次')}）"
+    if ' utilization' in justification:
+        return justification.replace('_', ' ').replace(' utilization', ' 利用率')
+    if ' hedge coverage' in justification:
+        return justification.replace('_', ' ').replace(' hedge coverage', ' 对冲覆盖')
+    return short(justification.replace('_', ' '), 80)
+
+
+def humanize_required_question(value: Any) -> str:
+    text = str(value or '').strip()
+    hit_match = re.match(r'is thesis (.+) still valid after (\d+) invalidator hits\??', text)
+    if hit_match:
+        return f'当前 thesis 在 {hit_match.group(2)} 次反证后是否仍成立'
+    return short(text.replace('_', ' '), 100)
 
 
 def evidence_by_id(packet: dict[str, Any]) -> dict[str, dict[str, Any]]:
@@ -1021,6 +1102,338 @@ def render_markdown(
     return '\n'.join(lines) + '\n'
 
 
+def sorted_theses(thesis_registry: dict[str, Any]) -> list[dict[str, Any]]:
+    theses = [
+        item for item in (thesis_registry.get('theses', []) if isinstance(thesis_registry.get('theses'), list) else [])
+        if isinstance(item, dict) and item.get('thesis_id') and item.get('status') in {'active', 'watch', 'candidate'}
+    ]
+    theses.sort(key=lambda item: (item.get('status') == 'active', str(item.get('instrument') or '')), reverse=True)
+    return theses
+
+
+def sorted_opportunities(opportunity_queue: dict[str, Any]) -> list[dict[str, Any]]:
+    rows = [
+        item for item in (opportunity_queue.get('candidates', []) if isinstance(opportunity_queue.get('candidates'), list) else [])
+        if isinstance(item, dict) and item.get('candidate_id') and item.get('status') in {'candidate', 'promoted'}
+    ]
+    rows.sort(key=lambda item: float(item.get('score') or 0), reverse=True)
+    return rows
+
+
+def sorted_invalidators(invalidator_ledger: dict[str, Any]) -> list[dict[str, Any]]:
+    rows = [
+        item for item in (invalidator_ledger.get('invalidators', []) if isinstance(invalidator_ledger.get('invalidators'), list) else [])
+        if isinstance(item, dict) and item.get('invalidator_id') and item.get('status') in {'open', 'hit'}
+    ]
+    rows.sort(key=lambda item: (int(item.get('hit_count') or 0), str(item.get('last_seen_at') or '')), reverse=True)
+    return rows
+
+
+def unique_top_opportunities(opportunity_queue: dict[str, Any], limit: int = 3) -> list[dict[str, Any]]:
+    """Return top opportunities with repeated instruments collapsed for operator readability."""
+    out: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    for item in sorted_opportunities(opportunity_queue):
+        instrument = str(item.get('instrument') or short(item.get('theme'), 24)).upper()
+        key = instrument or str(item.get('candidate_id') or '')
+        if key in seen:
+            continue
+        seen.add(key)
+        out.append(item)
+        if len(out) >= limit:
+            break
+    return out
+
+
+def opportunity_operator_label(item: dict[str, Any]) -> str:
+    instrument = str(item.get('instrument') or '').strip()
+    theme = short(item.get('theme'), 82)
+    score = item.get('score')
+    score_text = f"score {score}" if score is not None else "score n/a"
+    raw_theme = str(item.get('theme') or '').lower()
+    if instrument == 'BNO':
+        theme = '霍尔木兹/原油供给双向风险'
+    elif instrument == 'XLB':
+        theme = '油价成本压力下材料相对消费走弱'
+    elif instrument == 'RGTI' and ('iv' in raw_theme or 'volatility' in raw_theme):
+        theme = '非 watchlist IV 异动'
+    return f"{instrument}｜{theme}（{score_text}）" if instrument else f"{theme}（{score_text}）"
+
+
+def agenda_is_unknown_discovery(item: dict[str, Any]) -> bool:
+    text = f"{item.get('attention_justification') or ''} {' '.join(str(q) for q in item.get('required_questions', []) if q)}"
+    return 'unknown_discovery' in text
+
+
+def agenda_operator_label(item: dict[str, Any], opportunity_queue: dict[str, Any]) -> str:
+    """Translate agenda internals into an operator-readable object label."""
+    if agenda_is_unknown_discovery(item):
+        symbols = [str(opp.get('instrument') or '').strip() for opp in unique_top_opportunities(opportunity_queue, limit=3)]
+        symbols = [symbol for symbol in symbols if symbol]
+        suffix = f"：{'/'.join(symbols)}" if symbols else ""
+        return short(f"未知发现改道{suffix}（{humanize_agenda_justification(item)}）", 64)
+    return humanize_agenda_justification(item)
+
+
+def unknown_discovery_focus_line(item: dict[str, Any], opportunity_queue: dict[str, Any]) -> str:
+    opps = unique_top_opportunities(opportunity_queue, limit=3)
+    if not opps:
+        return f"- A1 {agenda_operator_label(item, opportunity_queue)}，先判断值不值得进入深挖；不是下单建议。"
+    objects = '；'.join(opportunity_operator_label(opp) for opp in opps)
+    return f"- A1 实际指向 {objects}。要决定的是是否把本周注意力从 TSLA 单线挪出一部分；不是下单建议。"
+
+
+def unknown_discovery_positive_for(opportunity_queue: dict[str, Any]) -> str:
+    opps = unique_top_opportunities(opportunity_queue, limit=3)
+    if not opps:
+        return '未知发现候选'
+    labels = []
+    for opp in opps:
+        instrument = str(opp.get('instrument') or '').strip()
+        theme = str(opp.get('theme') or '')
+        if instrument == 'BNO':
+            labels.append('BNO/油价/霍尔木兹供给风险')
+        elif instrument == 'XLB':
+            labels.append('XLB/材料板块相对消费的成本压力观察')
+        elif instrument == 'RGTI':
+            labels.append('RGTI/非 watchlist IV 异动观察')
+        elif instrument:
+            labels.append(f'{instrument} 深挖')
+        elif theme:
+            labels.append(short(theme, 40))
+    return '；'.join(labels[:3])
+
+
+def sorted_agenda(capital_agenda: dict[str, Any]) -> list[dict[str, Any]]:
+    rows = [
+        item for item in (capital_agenda.get('agenda_items', []) if isinstance(capital_agenda.get('agenda_items'), list) else [])
+        if isinstance(item, dict) and item.get('agenda_id')
+    ]
+    rows.sort(key=lambda item: float(item.get('priority_score') or 0), reverse=True)
+    return rows
+
+
+def primary_surface_label(capital_agenda: dict[str, Any], opportunity_queue: dict[str, Any], invalidator_ledger: dict[str, Any]) -> str:
+    if sorted_agenda(capital_agenda):
+        return '资本议程'
+    if sorted_opportunities(opportunity_queue):
+        return '新机会'
+    if sorted_invalidators(invalidator_ledger):
+        return '反证'
+    return 'Review'
+
+
+def build_object_surfaces(
+    *,
+    judgment: dict[str, Any],
+    option_risk: dict[str, Any],
+    thesis_registry: dict[str, Any],
+    opportunity_queue: dict[str, Any],
+    invalidator_ledger: dict[str, Any],
+    capital_agenda: dict[str, Any],
+) -> tuple[dict[str, str], list[dict[str, str]]]:
+    """Build operator-facing aliases and thread object cards."""
+    aliases: dict[str, str] = {}
+    cards: list[dict[str, str]] = []
+    theses = sorted_theses(thesis_registry)
+    opportunities = sorted_opportunities(opportunity_queue)
+    invalidators = sorted_invalidators(invalidator_ledger)
+    agenda_items = sorted_agenda(capital_agenda)
+    thesis_by_id = {str(item.get('thesis_id')): item for item in theses if item.get('thesis_id')}
+
+    if agenda_items:
+        item = agenda_items[0]
+        linked = [str(thesis_by_id.get(ref, {}).get('instrument') or '') for ref in item.get('linked_thesis_ids', [])[:2]]
+        linked = [value for value in linked if value]
+        label_detail = ' / '.join(linked) if linked else agenda_operator_label(item, opportunity_queue)
+        label = f"{AGENDA_TYPE_LABELS.get(str(item.get('agenda_type') or ''), '议程')}｜{label_detail}"
+        aliases['A1'] = short(label, 48)
+        cards.append({
+            'handle': 'A1',
+            'label': aliases['A1'],
+            'role': (
+                f"判断是否把 attention 分给 {unknown_discovery_positive_for(opportunity_queue)}"
+                if agenda_is_unknown_discovery(item)
+                else '本周需要判断是否值得占用 attention slot'
+            ),
+        })
+
+    if theses:
+        thesis = theses[0]
+        aliases['T1'] = short(f"现有 Thesis｜{thesis.get('instrument')}", 48)
+        cards.append({
+            'handle': 'T1',
+            'label': aliases['T1'],
+            'role': f"当前主轴；状态={public_status(thesis.get('status'))}",
+        })
+
+    if invalidators:
+        inv = invalidators[0]
+        aliases['I1'] = short(f"反证｜{humanize_invalidator_desc(inv.get('description'))}", 48)
+        cards.append({
+            'handle': 'I1',
+            'label': aliases['I1'],
+            'role': f"削弱当前证据强度；hit_count={inv.get('hit_count')}",
+        })
+
+    for idx, opp in enumerate(unique_top_opportunities(opportunity_queue, limit=3), start=1):
+        handle = f'O{idx}'
+        aliases[handle] = short(f"机会｜{opportunity_operator_label(opp)}", 72)
+        cards.append({
+            'handle': handle,
+            'label': aliases[handle],
+            'role': '非持仓候选，用于比较本周 attention allocation',
+        })
+
+    if option_risk.get('data_status') in {'stale_source', 'unavailable', 'portfolio_unavailable'}:
+        aliases.setdefault('I2', '反证｜期权/持仓数据不新鲜')
+        cards.append({
+            'handle': 'I2',
+            'label': aliases['I2'],
+            'role': '限制当前结论置信度',
+        })
+
+    return aliases, cards[:4]
+
+
+def build_starter_queries(object_alias_map: dict[str, str], report_id: str) -> list[str]:
+    queries: list[str] = []
+    if 'A1' in object_alias_map:
+        queries.extend(['why A1'])
+        if 'T1' in object_alias_map:
+            queries.append('compare A1 T1')
+        queries.extend(['challenge A1', 'sources A1'])
+    elif 'O1' in object_alias_map:
+        queries.extend(['why O1'])
+        if 'T1' in object_alias_map:
+            queries.append('compare O1 T1')
+        queries.extend(['challenge O1', 'sources O1'])
+    elif 'T1' in object_alias_map:
+        queries.extend(['why T1', 'challenge T1', 'sources T1'])
+    queries.append(f'expand {report_id}')
+    return queries[:6]
+
+
+def build_operator_markdown(
+    *,
+    report_id: str,
+    generated_at: str,
+    judgment: dict[str, Any],
+    option_risk: dict[str, Any],
+    thesis_registry: dict[str, Any],
+    opportunity_queue: dict[str, Any],
+    invalidator_ledger: dict[str, Any],
+    capital_agenda: dict[str, Any],
+) -> tuple[str, str, dict[str, str], list[str]]:
+    """Build Discord primary and thread seed surfaces without polluting artifact markdown."""
+    object_alias_map, thread_cards = build_object_surfaces(
+        judgment=judgment,
+        option_risk=option_risk,
+        thesis_registry=thesis_registry,
+        opportunity_queue=opportunity_queue,
+        invalidator_ledger=invalidator_ledger,
+        capital_agenda=capital_agenda,
+    )
+    starter_queries = build_starter_queries(object_alias_map, report_id)
+    surface_label = primary_surface_label(capital_agenda, opportunity_queue, invalidator_ledger)
+    agenda_items = sorted_agenda(capital_agenda)
+    invalidators = sorted_invalidators(invalidator_ledger)
+    theses = sorted_theses(thesis_registry)
+
+    focus_handle = 'A1' if 'A1' in object_alias_map else 'O1' if 'O1' in object_alias_map else 'T1' if 'T1' in object_alias_map else 'I1'
+    focus_label = object_alias_map.get(focus_handle, '本轮对象')
+    top_agenda = agenda_items[0] if agenda_items else {}
+    if focus_handle == 'A1' and agenda_is_unknown_discovery(top_agenda):
+        focus_line = unknown_discovery_focus_line(top_agenda, opportunity_queue)
+    else:
+        focus_line = f'- {focus_handle} {focus_label}，先判断值不值得进入深挖；不是下单建议。'
+
+    fact_lines: list[str] = []
+    if agenda_items:
+        top = agenda_items[0]
+        if agenda_is_unknown_discovery(top):
+            fact_lines.append(f"- A1 排第一的真实对象是：{unknown_discovery_positive_for(opportunity_queue)}。")
+            fact_lines.append(f"- 触发方式是 {humanize_agenda_justification(top)}；这是 discovery lane 和当前主线打架，不是单票买卖信号。")
+        else:
+            fact_lines.append(f"- 当前资本议程共有 {len(agenda_items)} 项，A1 优先级最高：{humanize_agenda_justification(top)}。")
+    elif opportunity_queue.get('candidates'):
+        top_opp = sorted_opportunities(opportunity_queue)[0]
+        fact_lines.append(f"- O1 当前是最高分机会候选：{short(top_opp.get('theme'), 90)}。")
+    if theses:
+        top_thesis = theses[0]
+        fact_lines.append(f"- T1 当前仍是 {top_thesis.get('instrument')}；本轮判断仍是 review-only，不触发新动作。")
+    if invalidators:
+        top_inv = invalidators[0]
+        fact_lines.append(f"- I1 {humanize_invalidator_desc(top_inv.get('description'))}；命中 {top_inv.get('hit_count')} 次。")
+    if option_risk.get('data_status') in {'stale_source', 'unavailable', 'portfolio_unavailable'}:
+        fact_lines.append(f"- 持仓/期权源当前是 `{option_risk.get('data_status')}`；结论置信度受限。")
+    fact_lines = fact_lines[:3] or ['- 当前没有新的强信号；本轮仍是 review-only。']
+
+    interpretation_lines = ['- 这是 attention allocation 问题，不是执行问题。']
+    if focus_handle == 'A1':
+        if agenda_is_unknown_discovery(top_agenda):
+            interpretation_lines.append(f"- 如果要找新机会，优先深挖 {unknown_discovery_positive_for(opportunity_queue)}；如果只维护现有 book，它是在质疑 TSLA 是否仍应独占注意力。")
+        else:
+            interpretation_lines.append('- 更像“本周该不该占用注意力”，不是“现有 book 该不该立刻替代”。')
+    elif focus_handle == 'O1':
+        interpretation_lines.append('- 这是新机会候选，不是现有持仓的强制替代。')
+    else:
+        interpretation_lines.append('- 当前更像结构复核，而不是新判断或执行动作。')
+
+    verify_lines = []
+    if agenda_items and agenda_is_unknown_discovery(agenda_items[0]):
+        verify_lines.extend([
+            '- BNO：油价/霍尔木兹供给风险是否有价格、量能或 headline 二次确认',
+            '- XLB/RGTI：板块 dislocation 或 IV 异动是否仍在延续，而不是一次性噪音',
+        ])
+    elif agenda_items and agenda_items[0].get('required_questions'):
+        verify_lines.extend(f"- {humanize_required_question(item)}" for item in agenda_items[0].get('required_questions', [])[:2])
+    else:
+        verify_lines.extend(f"- {humanize_required_question(item)}" for item in (judgment.get('required_confirmations') or [])[:2])
+    if not verify_lines:
+        verify_lines = ['- 等待价格 / 流量二次确认', '- 确认当前 source freshness']
+
+    object_lines = [f"- {handle} {label}" for handle, label in object_alias_map.items()]
+    title = f'Finance｜{surface_label} | {et_time_label(generated_at)} | {report_id}'
+    primary_lines = [
+        title,
+        '',
+        '这次只看 1 件事：',
+        focus_line,
+        '',
+        'Fact',
+        *fact_lines,
+        '',
+        'Interpretation',
+        *interpretation_lines,
+        '',
+        'To Verify',
+        *verify_lines[:2],
+        '',
+        '对象',
+        *object_lines,
+        '',
+        '追问：' + ' / '.join(starter_queries),
+    ]
+    primary_markdown = '\n'.join(primary_lines).strip() + '\n'
+
+    thread_lines = [
+        f'{report_id}｜深挖入口',
+        '',
+        '对象卡',
+    ]
+    for card in thread_cards:
+        thread_lines.append(f"- {card['handle']} {card['label']}")
+        thread_lines.append(f"  作用：{card['role']}")
+    thread_lines.extend([
+        '',
+        '可直接追问',
+        *[f'- {query}' for query in starter_queries],
+    ])
+    thread_seed_markdown = '\n'.join(thread_lines).strip() + '\n'
+    return primary_markdown, thread_seed_markdown, object_alias_map, starter_queries
+
+
 def build_report(
     packet: dict[str, Any],
     judgment: dict[str, Any],
@@ -1135,6 +1548,23 @@ def build_report(
             portfolio=portfolio,
             option_risk=option_risk,
         )
+    report_id = report_short_id(envelope.get('packet_hash'), envelope.get('judgment_id'))
+    primary_markdown, thread_seed_markdown, object_alias_map, starter_queries = build_operator_markdown(
+        report_id=report_id,
+        generated_at=envelope['generated_at'],
+        judgment=judgment,
+        option_risk=option_risk or {},
+        thesis_registry=thesis_registry or {},
+        opportunity_queue=opportunity_queue or {},
+        invalidator_ledger=invalidator_ledger or {},
+        capital_agenda=capital_agenda or {},
+    )
+    envelope['report_id'] = report_id
+    envelope['discord_primary_markdown'] = primary_markdown
+    envelope['discord_thread_seed_markdown'] = thread_seed_markdown
+    envelope['object_alias_map'] = object_alias_map
+    envelope['starter_queries'] = starter_queries
+    envelope['followup_bundle_path'] = str(FINANCE / 'state' / 'report-reader' / f'{report_id}.json')
     envelope['report_hash'] = hash_payload(envelope)
     return envelope
 

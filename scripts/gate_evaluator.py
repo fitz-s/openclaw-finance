@@ -571,6 +571,27 @@ def main():
                    m_core >= thresholds['core_min_minutes_since_last'] and
                    global_cooldown_ok and
                    not in_quiet_hours)
+
+    # UX floor: a trading day with non-trivial accumulated candidates should not
+    # stay silent until late afternoon just because calibrated thresholds tightened.
+    # This is still review-only and still uses the same safety-gated report path.
+    midday_floor_start_minute = thresholds.get('midday_floor_start_minute', 11 * 60 + 30)
+    midday_floor_candidate_count = thresholds.get('midday_floor_candidate_count', 3)
+    midday_floor_cumulative_value = thresholds.get('midday_floor_cumulative_value', 10)
+    midday_floor_min_minutes_since_any = thresholds.get('midday_floor_min_minutes_since_any', 120)
+    minutes_now = now_chi.hour * 60 + now_chi.minute
+    midday_floor_passed = (
+        now_chi.weekday() < 5
+        and window in {'mid', 'late'}
+        and minutes_now >= midday_floor_start_minute
+        and len(candidates) >= midday_floor_candidate_count
+        and total_cv >= midday_floor_cumulative_value
+        and m_any >= midday_floor_min_minutes_since_any
+        and global_cooldown_ok
+        and not in_quiet_hours
+    )
+    if midday_floor_passed:
+        short_passed = True
     alert_passed = (max_urgency >= thresholds['immediate_alert_urgency'] and
                     m_alert >= thresholds.get('alert_min_minutes_since_last', 120))
     # immediate_alert intentionally checks NEITHER global_cooldown NOR quiet_hours
@@ -588,6 +609,13 @@ def main():
     elif short_passed and core_passed:
         rec_type = 'core'
         reason = f"short+core both passed; core fires to avoid perpetual short-only loop (cv={total_cv}, importance={total_importance})"
+    elif midday_floor_passed:
+        rec_type = 'short'
+        reason = (
+            f"midday_floor: no market-hours report for {m_any:.0f}m; "
+            f"candidate_count={len(candidates)} >= {midday_floor_candidate_count}; "
+            f"total_cumulative_value={total_cv} >= {midday_floor_cumulative_value}"
+        )
     elif short_passed:
         rec_type = 'short'
         reason = f"total_cumulative_value={total_cv} >= {thresholds['short_cumulative_value']}"
@@ -619,6 +647,7 @@ def main():
         "shortThresholdPassed": short_passed,
         "coreThresholdPassed": core_passed,
         "immediateAlertPassed": alert_passed,
+        "middayFloorPassed": midday_floor_passed,
         "shouldSend": should_send,
         "recommendedReportType": rec_type,
         "decisionReason": reason,

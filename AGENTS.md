@@ -43,6 +43,11 @@ finance/
 │   ├── finance_decision_log_compiler.py
 │   ├── finance_report_delivery_safety.py
 │   │
+│   ├── # ── Output Surfaces ──
+│   ├── announce_card_compiler.py         → state/announce-card.json
+│   ├── finance_report_reader_bundle.py   → state/report-reader/*.json
+│   ├── finance_followup_answer_guard.py  → state/followup-answer-validation.json
+│   │
 │   ├── # ── Scanner / Worker ──
 │   ├── finance_worker.py
 │   ├── gate_evaluator.py
@@ -57,12 +62,14 @@ finance/
 │   ├── capital-graph.json           # Deterministic exposure graph
 │   ├── capital-agenda.json          # Ranked review-only agenda
 │   ├── committee-memos/             # Role-decomposed assessments
-│   └── llm-job-context/             # Non-authoritative view cache
+│   ├── announce-card.json           # Notification surface
+│   ├── report-reader/               # Exploration bundles
+│   └── llm-job-context/             # Non-authoritative view cache (5 roles)
 │
-├── tests/                           # pytest suite (52 tests)
+├── tests/                           # pytest suite (84 tests)
 ├── tools/                           # Audit & snapshot export tools
 ├── docs/
-│   ├── openclaw-runtime/contracts/  # 16 runtime contracts
+│   ├── openclaw-runtime/contracts/  # 19 runtime contracts
 │   ├── verification.md
 │   └── operating-model.md
 ├── buffer/                          # Scanner observation buffer
@@ -86,6 +93,24 @@ cron finance-premarket-brief
 
 **`thesis_delta`** (default): opportunity-expansion-first report.  
 **`capital_delta`**: capital-competition-first report. Requires valid `capital-graph.json`; falls back to `thesis_delta` if absent.
+
+## Output Surfaces
+
+The finance subsystem delivers through three separate surfaces:
+
+| Surface | Script | State | Purpose |
+|---------|--------|-------|---------|
+| **Notification** | `announce_card_compiler.py` | `announce-card.json` | Attention router for Discord. ≤200 chars. |
+| **Record** | `finance_decision_report_render.py` | `finance-decision-report-envelope.json` | Canonical report. Unchanged authority chain. |
+| **Exploration** | `finance_report_reader_bundle.py` | `report-reader/*.json` | Rehydration bundle for deep-dive. |
+
+**Announce card** replaces the full report as Discord delivery. Contains: `attention_class`, `dominant_object`, `why_now`, `next_decision`, `handles`.
+
+**Reader bundle** converts internal object graph into navigable handles (`T1/O1/I1/S1`). Thread is UI; bundle is memory.
+
+**Followup guard** (`finance_followup_answer_guard.py`) validates deep-dive answers: binding, verb, review-only, structure.
+
+Context pack role `report_followup` provides rehydration context for the review room.
 
 ## Capital Competition Engine
 
@@ -167,6 +192,10 @@ python3 scripts/capital_graph_compiler.py
 python3 scripts/scenario_exposure_compiler.py
 python3 scripts/displacement_case_builder.py
 python3 scripts/capital_agenda_compiler.py
+
+# Output surfaces
+python3 scripts/announce_card_compiler.py
+python3 scripts/finance_report_reader_bundle.py
 ```
 
 After runtime changes, refresh snapshots:

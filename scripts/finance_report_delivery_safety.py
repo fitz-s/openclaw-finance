@@ -16,6 +16,7 @@ FINANCE = WORKSPACE / 'finance'
 SAFETY_STATE = FINANCE / 'state' / 'report-delivery-safety.json'
 JUDGMENT_ENVELOPE = FINANCE / 'state' / 'judgment-envelope.json'
 PRODUCT_VALIDATION = FINANCE / 'state' / 'finance-report-product-validation.json'
+REPORT_ENVELOPE = FINANCE / 'state' / 'finance-decision-report-envelope.json'
 JUDGMENT_VALIDATION = FINANCE / 'state' / 'judgment-validation.json'
 DECISION_LOG_REPORT = FINANCE / 'state' / 'finance-decision-log-report.json'
 OUT = FINANCE / 'state' / 'report-delivery-safety-check.json'
@@ -44,6 +45,7 @@ def default_safety_state() -> dict[str, Any]:
         'judgment_envelope_path': str(JUDGMENT_ENVELOPE),
         'judgment_validation_path': str(JUDGMENT_VALIDATION),
         'product_validation_path': str(PRODUCT_VALIDATION),
+        'report_envelope_path': str(REPORT_ENVELOPE),
         'decision_log_report_path': str(DECISION_LOG_REPORT),
     }
 
@@ -106,11 +108,13 @@ def evaluate(
     judgment_ref = judgment_path or Path(str(state.get('judgment_envelope_path') or JUDGMENT_ENVELOPE))
     judgment_validation_ref = judgment_validation_path or Path(str(state.get('judgment_validation_path') or JUDGMENT_VALIDATION))
     product_ref = product_validation_path or Path(str(state.get('product_validation_path') or PRODUCT_VALIDATION))
+    report_ref = Path(str(state.get('report_envelope_path') or REPORT_ENVELOPE))
     decision_log_ref = decision_log_report_path or Path(str(state.get('decision_log_report_path') or DECISION_LOG_REPORT))
 
     judgment = load_json_safe(judgment_ref, {}) or {}
     judgment_validation = load_json_safe(judgment_validation_ref, {}) or {}
     product = load_json_safe(product_ref, {}) or {}
+    report_envelope = load_json_safe(report_ref, {}) or {}
     decision_log = load_json_safe(decision_log_ref, {}) or {}
     judgment_ok = _basic_judgment_ok(judgment)
     judgment_validation_ok = (
@@ -132,6 +136,10 @@ def evaluate(
         blockers.append('judgment_validation_not_pass')
     if not product_ok:
         blockers.append('product_quality_validation_not_pass')
+    if product.get('discord_primary_ok') is not True:
+        blockers.append('discord_primary_not_validated')
+    if product.get('thread_followup_ok') is not True:
+        warnings.append('thread_followup_not_ready')
     if not decision_log_ok:
         blockers.append('decision_log_not_pass')
 
@@ -146,10 +154,13 @@ def evaluate(
         'judgment_envelope_path': str(judgment_ref),
         'judgment_validation_path': str(judgment_validation_ref),
         'product_validation_path': str(product_ref),
+        'report_envelope_path': str(report_ref),
         'decision_log_report_path': str(decision_log_ref),
         'judgment_envelope_ok': judgment_ok,
         'judgment_validation_ok': judgment_validation_ok,
         'product_quality_validation_ok': product_ok,
+        'discord_primary_ok': product.get('discord_primary_ok') is True and bool((report_envelope.get('discord_primary_markdown') or '').strip()),
+        'thread_followup_ok': product.get('thread_followup_ok') is True,
         'decision_log_ok': decision_log_ok,
     }
     return report

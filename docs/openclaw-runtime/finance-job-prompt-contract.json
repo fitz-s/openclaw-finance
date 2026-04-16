@@ -1,8 +1,28 @@
 {
-  "generated_at": "2026-04-16T13:15:00.905777+00:00",
+  "generated_at": "2026-04-16T19:39:08.520326+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "note": "Prompt hashes let GitHub reviewers see live OpenClaw job prompt drift without exposing secrets.",
   "jobs": {
+    "finance-midday-operator-review": {
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 11 * * 1-5",
+        "tz": "America/Chicago"
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "discord",
+        "to": "channel:1479790104490016808"
+      },
+      "prompt_sha256": "sha256:bcfc4339f4e6c10edfb6766b7af3321afe8f8b409d20e89e77901cf2f036e5a8",
+      "contains_context_pack": false,
+      "contains_non_authority_boundary": false,
+      "contains_candidate_path": false,
+      "contains_unknown_discovery_contract": false,
+      "contains_threshold_mutation_ban": false,
+      "message_preview": "【OpenClaw Finance Deterministic Report Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_discord_report_job.py --mode marketday-review\n\nOutput discipline:\n- Return stdout exactly.\n- If stdout is NO_REPLY, re"
+    },
     "finance-premarket-brief": {
       "enabled": true,
       "schedule": {
@@ -15,13 +35,33 @@
         "channel": "discord",
         "to": "channel:1479790104490016808"
       },
-      "prompt_sha256": "sha256:584aba8d6b950be4c317a9c842b434ae12619873377ae9e73d1de4a8d2ce0583",
+      "prompt_sha256": "sha256:f15e953e5d75683c8f556e2296305e16e30de49f56b9ca84d11ee0b34c554a26",
       "contains_context_pack": true,
       "contains_non_authority_boundary": true,
       "contains_candidate_path": true,
       "contains_unknown_discovery_contract": false,
       "contains_threshold_mutation_ban": true,
       "message_preview": "【OpenClaw Finance Report Orchestrator｜context-pack-first】\n你是 finance report adjudicator，不是 renderer，不是 scanner，不是 risk engine。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 只把 /Users"
+    },
+    "finance-premarket-delivery-watchdog": {
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "25 8 * * 1-5",
+        "tz": "America/Chicago"
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "discord",
+        "to": "channel:1479790104490016808"
+      },
+      "prompt_sha256": "sha256:37169ed3f56af52bbf01caad6cd23d0f128d8236d8121bb3f2af1ae7e3dc2a39",
+      "contains_context_pack": false,
+      "contains_non_authority_boundary": false,
+      "contains_candidate_path": false,
+      "contains_unknown_discovery_contract": false,
+      "contains_threshold_mutation_ban": false,
+      "message_preview": "【OpenClaw Finance Deterministic Report Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_discord_report_job.py --mode morning-watchdog\n\nOutput discipline:\n- Return stdout exactly.\n- If stdout is NO_REPLY, re"
     },
     "finance-report-renderer": {
       "enabled": false,
