@@ -56,6 +56,8 @@ SCHEMA_DOCS = [
     WORKSPACE / 'schemas' / 'wake-decision.schema.json',
     WORKSPACE / 'schemas' / 'judgment-envelope.schema.json',
     WORKSPACE / 'schemas' / 'decision-log.schema.json',
+    WORKSPACE / 'schemas' / 'source-registry-record.schema.json',
+    WORKSPACE / 'schemas' / 'source-health.schema.json',
 ]
 
 
@@ -292,6 +294,8 @@ def main() -> int:
             'docs/openclaw-runtime/runtime-gap-review.json',
             'docs/openclaw-runtime/contracts/campaign-projection-contract.md',
             'docs/openclaw-runtime/contracts/undercurrent-card-contract.md',
+            'docs/openclaw-runtime/contracts/source-registry-v2-contract.md',
+            'docs/openclaw-runtime/contracts/source-health-contract.md',
             *contracts,
             *schemas,
         ],

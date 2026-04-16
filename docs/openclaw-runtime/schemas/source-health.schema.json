@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workspace/schemas/source-health.schema.json",
+  "title": "SourceHealthReport",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["generated_at", "status", "registry_version", "health_policy_version", "source_count", "sources", "summary", "no_execution"],
+  "properties": {
+    "generated_at": { "type": "string", "format": "date-time" },
+    "status": { "type": "string", "enum": ["pass", "degraded", "fail"] },
+    "registry_version": { "type": "string" },
+    "health_policy_version": { "type": "string" },
+    "source_count": { "type": "integer", "minimum": 0 },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "source_id",
+          "evaluated_at",
+          "freshness_status",
+          "freshness_age_seconds",
+          "latency_status",
+          "observed_latency_seconds",
+          "schema_status",
+          "validation_status",
+          "rights_status",
+          "coverage_status",
+          "last_seen_at",
+          "last_success_at",
+          "last_error_at",
+          "breach_reasons",
+          "metric_refs",
+          "source_refs",
+          "health_hash",
+          "no_execution"
+        ],
+        "properties": {
+          "source_id": { "type": "string" },
+          "evaluated_at": { "type": "string", "format": "date-time" },
+          "freshness_status": { "type": "string", "enum": ["fresh", "aging", "stale", "unknown"] },
+          "freshness_age_seconds": { "type": ["number", "null"], "minimum": 0 },
+          "latency_status": { "type": "string", "enum": ["ok", "degraded", "breached", "unknown"] },
+          "observed_latency_seconds": { "type": ["number", "null"], "minimum": 0 },
+          "schema_status": { "type": "string", "enum": ["ok", "drift", "breaking_drift", "unknown"] },
+          "validation_status": { "type": "string", "enum": ["pass", "warn", "fail", "unknown"] },
+          "rights_status": { "type": "string", "enum": ["ok", "restricted", "expired", "unknown"] },
+          "coverage_status": { "type": "string", "enum": ["ok", "partial", "unavailable", "unknown"] },
+          "last_seen_at": { "type": ["string", "null"], "format": "date-time" },
+          "last_success_at": { "type": ["string", "null"], "format": "date-time" },
+          "last_error_at": { "type": ["string", "null"], "format": "date-time" },
+          "breach_reasons": { "type": "array", "items": { "type": "string" } },
+          "metric_refs": { "type": "array", "items": { "type": "string" } },
+          "source_refs": { "type": "array", "items": { "type": "string" } },
+          "health_hash": { "type": "string", "pattern": "^sha256:" },
+          "no_execution": { "type": "boolean" }
+        }
+      }
+    },
+    "summary": { "type": "object" },
+    "no_execution": { "type": "boolean" }
+  }
+}

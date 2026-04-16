@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-16T21:15:01.066880+00:00",
+  "generated_at": "2026-04-16T23:16:54.387891+00:00",
   "status": "pass",
   "dependency_boundary": "parent_openclaw_workspace",
   "finance_repo_policy": "These files are load-bearing runtime dependencies but are not owned by the finance repository. Reviewers must inspect this inventory when packet/wake/judgment behavior changes.",
@@ -65,10 +65,28 @@
       "sha256": "sha256:2d524f7ae87b638a2a6a7df01797f5191fcf57b32ecb9ef8526881e0cfc3a1aa"
     },
     {
+      "role": "source_registry_schema",
+      "path": "/Users/leofitz/.openclaw/workspace/schemas/source-registry-record.schema.json",
+      "exists": true,
+      "sha256": "sha256:9de62298f0a71b195045acbe905448fa00cea3cef291ca8656f3c11a55bfffcb"
+    },
+    {
+      "role": "source_health_schema",
+      "path": "/Users/leofitz/.openclaw/workspace/schemas/source-health.schema.json",
+      "exists": true,
+      "sha256": "sha256:4b6d835cb767857f8dbc9b4796c2208c1aa2c0e65d066d54b15174a15409b5ed"
+    },
+    {
       "role": "source_registry",
       "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/config/source-registry.json",
       "exists": true,
-      "sha256": "sha256:7ca18942e6b2bb46931c51af79a99ccc4741023cd1f2c677ceb71bffb98275f5"
+      "sha256": "sha256:3355d78ccee6c65774000b13128bb1a3cbb6f788d68e31e748e2b954149cbddc"
+    },
+    {
+      "role": "source_health_compiler",
+      "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/source_health/compiler.py",
+      "exists": true,
+      "sha256": "sha256:a40fcbb89ce832274604e66a373568f91871f95e7b75f8cf5cd8e1c932ad213f"
     },
     {
       "role": "live_finance_adapter",
@@ -98,7 +116,7 @@
       "role": "packet_compiler",
       "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/packet_compiler/compiler.py",
       "exists": true,
-      "sha256": "sha256:b9edd03d31365718a9a503541e7aba6f585368d6ed619c00298cc0b4b37340a0"
+      "sha256": "sha256:14fbb1c15eeec1fe016519a034a6e1532408ff27585f3702ad63dc148e1d5f1a"
     },
     {
       "role": "wake_policy",

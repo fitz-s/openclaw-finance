@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-16T21:15:00.780554+00:00",
+  "generated_at": "2026-04-16T23:16:26.812348+00:00",
   "subsystem": "finance",
   "openclaw_home": "/Users/leofitz/.openclaw",
   "finance_repo": "/Users/leofitz/.openclaw/workspace/finance",
@@ -21,6 +21,8 @@
     "docs/openclaw-runtime/runtime-gap-review.json",
     "docs/openclaw-runtime/contracts/campaign-projection-contract.md",
     "docs/openclaw-runtime/contracts/undercurrent-card-contract.md",
+    "docs/openclaw-runtime/contracts/source-registry-v2-contract.md",
+    "docs/openclaw-runtime/contracts/source-health-contract.md",
     "docs/openclaw-runtime/contracts/finance-openclaw-runtime-contract.md",
     "docs/openclaw-runtime/contracts/finance-report-contract.md",
     "docs/openclaw-runtime/contracts/finance-gate-taxonomy.md",
@@ -40,7 +42,9 @@
     "docs/openclaw-runtime/schemas/packet.schema.json",
     "docs/openclaw-runtime/schemas/wake-decision.schema.json",
     "docs/openclaw-runtime/schemas/judgment-envelope.schema.json",
-    "docs/openclaw-runtime/schemas/decision-log.schema.json"
+    "docs/openclaw-runtime/schemas/decision-log.schema.json",
+    "docs/openclaw-runtime/schemas/source-registry-record.schema.json",
+    "docs/openclaw-runtime/schemas/source-health.schema.json"
   ],
   "note": "Generated from the local OpenClaw runtime. State files and secrets are intentionally excluded."
 }
