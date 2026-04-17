@@ -24,6 +24,8 @@ OPENCLAW = Path('/Users/leofitz/.npm-global/bin/openclaw')
 PACKAGE = STATE / 'discord-campaign-board-package.json'
 CAMPAIGN_BOARD = STATE / 'campaign-board.json'
 CAMPAIGN_THREADS = STATE / 'campaign-threads.json'
+REPORT_ENVELOPE = STATE / 'finance-decision-report-envelope.json'
+FOLLOWUP_THREADS = STATE / 'finance-discord-followup-threads.json'
 RUNTIME = STATE / 'discord-campaign-board-runtime.json'
 REPORT = STATE / 'discord-campaign-board-delivery-report.json'
 DEFAULT_TARGET = 'channel:1479790104490016808'
@@ -262,6 +264,65 @@ def build_report(runtime: dict[str, Any], results: list[dict[str, Any]], *, appl
     }
 
 
+def sync_followup_thread_registry(runtime: dict[str, Any], campaign_board: dict[str, Any], report_envelope: dict[str, Any], *, path: Path = FOLLOWUP_THREADS) -> dict[str, Any]:
+    """Register campaign threads with OpenClaw's existing finance follow-up hook."""
+    try:
+        existing = load_json_safe(path, {}) or {}
+    except Exception:
+        existing = {}
+    threads = existing.get('threads') if isinstance(existing.get('threads'), dict) else {}
+    campaigns = {
+        str(campaign.get('campaign_id')): campaign
+        for campaign in campaign_board.get('campaigns', []) if isinstance(campaign, dict) and campaign.get('campaign_id')
+    }
+    runtime_threads = runtime.get('threads') if isinstance(runtime.get('threads'), dict) else {}
+    synced = 0
+    for local_thread_key, record in runtime_threads.items():
+        if not isinstance(record, dict) or not record.get('discord_thread_id'):
+            continue
+        thread_id = str(record['discord_thread_id'])
+        campaign = campaigns.get(str(record.get('campaign_id')) or '')
+        starter_queries = report_envelope.get('starter_queries') if isinstance(report_envelope.get('starter_queries'), list) else []
+        object_alias_map = report_envelope.get('object_alias_map') if isinstance(report_envelope.get('object_alias_map'), dict) else {}
+        if campaign:
+            starter_queries = [
+                f"why {campaign.get('campaign_id')}",
+                f"challenge {campaign.get('campaign_id')}",
+                f"sources {campaign.get('campaign_id')}",
+                f"trace {campaign.get('campaign_id')}",
+                *starter_queries,
+            ]
+        dedup_queries: list[str] = []
+        seen: set[str] = set()
+        for query in starter_queries:
+            key = str(query).strip()
+            if key and key not in seen:
+                seen.add(key)
+                dedup_queries.append(key)
+        threads[thread_id] = {
+            'updated_at': now_iso(),
+            'account_id': 'default',
+            'channel_id': str(record.get('target') or DEFAULT_TARGET).replace('channel:', ''),
+            'root_message_id': str(record.get('root_message_id') or record.get('discord_thread_id') or ''),
+            'campaign_id': record.get('campaign_id'),
+            'thread_key': local_thread_key,
+            'report_id': report_envelope.get('report_id'),
+            'followup_bundle_path': report_envelope.get('followup_bundle_path'),
+            'campaign_board_ref': str(CAMPAIGN_BOARD),
+            'campaign_cache_ref': str(STATE / 'campaign-cache.json'),
+            'starter_queries': dedup_queries[:12],
+            'object_alias_map': object_alias_map,
+            'rule': 'Thread UI only; rehydrate follow-up from bundle + campaign board/cache + selected handle. Bot messages ignored.',
+        }
+        synced += 1
+    payload = {
+        'generated_at': now_iso(),
+        'threads': threads,
+    }
+    atomic_write_json(path, payload)
+    return {'status': 'pass', 'synced_count': synced, 'path': str(path)}
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('--package', default=str(PACKAGE))
@@ -279,8 +340,11 @@ def main(argv: list[str] | None = None) -> int:
     campaign_board = load_json_safe(Path(args.campaign_board), {}) or {}
     runtime = load_runtime(runtime_path)
     runtime, results = apply_operations(package, campaign_board, runtime, apply=args.apply)
+    report_envelope = load_json_safe(REPORT_ENVELOPE, {}) or {}
+    followup_sync = sync_followup_thread_registry(runtime, campaign_board, report_envelope)
     atomic_write_json(runtime_path, runtime)
     report = build_report(runtime, results, apply=args.apply)
+    report['followup_thread_registry_sync'] = followup_sync
     atomic_write_json(report_path, report)
     print(json.dumps({'status': report['status'], 'apply': args.apply, 'result_count': report['result_count'], 'report': str(report_path)}, ensure_ascii=False))
     return 0 if report['status'] in {'pass', 'degraded'} else 1

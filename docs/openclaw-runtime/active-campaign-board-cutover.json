@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-17T01:45:28.022994Z",
+  "generated_at": "2026-04-17T02:10:13.315951Z",
   "status": "pass",
   "target": "channel:1479790104490016808",
   "boards_enabled": true,
@@ -9,19 +9,19 @@
     "live": {
       "message_id": "1494512799601393684",
       "last_hash": "sha256:fc1ead789c5e6b541fc3b707dcded426762e59882c595230f627dcf8ec5edecc",
-      "updated_at": "2026-04-17T01:45:15.145543Z",
+      "updated_at": "2026-04-17T02:10:08.096841Z",
       "target": "channel:1479790104490016808"
     },
     "scout": {
       "message_id": "1494512833432649809",
       "last_hash": "sha256:211d911bcfa5d8f9d5c31e7902aa6973e381f5b02c063eb96a1fe823e1f43fc1",
-      "updated_at": "2026-04-17T01:45:20.887786Z",
+      "updated_at": "2026-04-17T02:10:10.710344Z",
       "target": "channel:1479790104490016808"
     },
     "risk": {
       "message_id": "1494512880115253330",
       "last_hash": "sha256:369b86a916708b716f036b3d6ab0cacbf53833a6bb475c088c8b54844d956d25",
-      "updated_at": "2026-04-17T01:45:24.293297Z",
+      "updated_at": "2026-04-17T02:10:13.313506Z",
       "target": "channel:1479790104490016808"
     }
   },
@@ -63,12 +63,55 @@
       "seed_sent_at": "2026-04-17T01:45:28.021995Z"
     }
   },
-  "last_delivery_result_count": 4,
+  "followup_registry_path": "state/finance-discord-followup-threads.json",
+  "followup_registered_thread_count": 6,
+  "followup_registered_threads": {
+    "1494512907029975182": {
+      "campaign_id": "campaign:5caa5911dd2ed85b",
+      "followup_bundle_path": "/Users/leofitz/.openclaw/workspace/finance/state/report-reader/R775D.json",
+      "starter_queries": [
+        "why campaign:5caa5911dd2ed85b",
+        "challenge campaign:5caa5911dd2ed85b",
+        "sources campaign:5caa5911dd2ed85b",
+        "trace campaign:5caa5911dd2ed85b"
+      ]
+    },
+    "1494513564965404774": {
+      "campaign_id": "campaign:3035aaf653eabd8b",
+      "followup_bundle_path": "/Users/leofitz/.openclaw/workspace/finance/state/report-reader/R775D.json",
+      "starter_queries": [
+        "why campaign:3035aaf653eabd8b",
+        "challenge campaign:3035aaf653eabd8b",
+        "sources campaign:3035aaf653eabd8b",
+        "trace campaign:3035aaf653eabd8b"
+      ]
+    },
+    "1494513764199039006": {
+      "campaign_id": "campaign:cde06f1300433ed0",
+      "followup_bundle_path": "/Users/leofitz/.openclaw/workspace/finance/state/report-reader/R775D.json",
+      "starter_queries": [
+        "why campaign:cde06f1300433ed0",
+        "challenge campaign:cde06f1300433ed0",
+        "sources campaign:cde06f1300433ed0",
+        "trace campaign:cde06f1300433ed0"
+      ]
+    },
+    "1494513793143803985": {
+      "campaign_id": "campaign:9537e4a96b25c0a7",
+      "followup_bundle_path": "/Users/leofitz/.openclaw/workspace/finance/state/report-reader/R775D.json",
+      "starter_queries": [
+        "why campaign:9537e4a96b25c0a7",
+        "challenge campaign:9537e4a96b25c0a7",
+        "sources campaign:9537e4a96b25c0a7",
+        "trace campaign:9537e4a96b25c0a7"
+      ]
+    }
+  },
+  "last_delivery_result_count": 3,
   "last_delivery_actions": [
     "edit_board",
     "edit_board",
-    "edit_board",
-    "reply_thread_seed"
+    "edit_board"
   ],
   "fallback_floor": "finance_discord_report_job returns primary_fallback_markdown when board runtime is enabled",
   "no_execution": true

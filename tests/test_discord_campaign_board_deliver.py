@@ -6,7 +6,7 @@ from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / 'scripts'))
 
-from finance_discord_campaign_board_deliver import board_operations, build_report, default_runtime, thread_operations
+from finance_discord_campaign_board_deliver import board_operations, build_report, default_runtime, sync_followup_thread_registry, thread_operations
 
 
 def _package() -> dict:
@@ -72,3 +72,27 @@ def test_delivery_report_is_degraded_only_on_failed_results() -> None:
     report = build_report(default_runtime(), [{'result': {'ok': False}}], apply=True)
     assert report['status'] == 'degraded'
     assert report['no_execution'] is True
+
+
+def test_sync_followup_thread_registry_registers_runtime_threads(tmp_path) -> None:
+    path = tmp_path / 'finance-discord-followup-threads.json'
+    runtime = default_runtime()
+    runtime['threads'] = {
+        'thread:a': {
+            'discord_thread_id': '149',
+            'campaign_id': 'campaign:a',
+            'target': 'channel:1479790104490016808',
+        }
+    }
+    campaign_board = {'campaigns': [{'campaign_id': 'campaign:a'}]}
+    report_envelope = {
+        'report_id': 'R1',
+        'followup_bundle_path': 'state/report-reader/R1.json',
+        'starter_queries': ['why A1'],
+        'object_alias_map': {'A1': 'Agenda'},
+    }
+    result = sync_followup_thread_registry(runtime, campaign_board, report_envelope, path=path)
+    assert result['status'] == 'pass'
+    payload = json.loads(path.read_text())
+    assert payload['threads']['149']['campaign_id'] == 'campaign:a'
+    assert 'why campaign:a' in payload['threads']['149']['starter_queries']
