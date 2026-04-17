@@ -1,0 +1,439 @@
+{
+  "generated_at": "2026-04-17T16:48:22.932582Z",
+  "status": "pass",
+  "contract": "source-scout-candidates-v1",
+  "summary": {
+    "candidate_count": 12,
+    "lanes": {
+      "market_structure": 5,
+      "corp_filing_ir": 2,
+      "real_economy_alt": 2,
+      "news_policy_narrative": 1,
+      "human_field_private": 1,
+      "internal_private": 1
+    },
+    "sublanes": {
+      "options_iv": 3,
+      "options_flow_proxy": 1,
+      "price_volume": 1,
+      "sec_filings": 1,
+      "issuer_ir": 1,
+      "jobs": 1,
+      "energy_supply": 1,
+      "entity_event": 1,
+      "expert_transcript": 1,
+      "thread_unknowns": 1
+    },
+    "options_iv_candidate_count": 3,
+    "promotion_ready_count": 6
+  },
+  "candidates": [
+    {
+      "source_candidate_id": "source-scout:3a2afe9c5a893bb8",
+      "lane": "market_structure",
+      "sublane": "options_iv",
+      "provider": "ORATS",
+      "coverage": [
+        "US listed equity options",
+        "IV surface",
+        "skew",
+        "term structure"
+      ],
+      "latency_class": "intraday",
+      "cost_class": "premium",
+      "rights_policy": "derived_only",
+      "api_available": true,
+      "historical_depth": "multi-year",
+      "point_in_time_support": true,
+      "implementation_complexity": "medium",
+      "expected_value": "Improve IV rank/percentile/skew sensitivity for non-watchlist and watchlist campaigns.",
+      "required_metrics": [
+        "iv_rank",
+        "iv_percentile",
+        "iv_term_structure",
+        "skew",
+        "open_interest_change",
+        "volume_open_interest_ratio",
+        "unusual_contract_concentration",
+        "chain_snapshot_age_seconds",
+        "provider_confidence",
+        "point_in_time_replay_supported"
+      ],
+      "risks": [
+        "paid vendor",
+        "redistribution must remain derived-only"
+      ],
+      "promotion_blockers": [],
+      "status": "shadow_candidate",
+      "eligible_for_wake": false,
+      "eligible_for_judgment_support": false,
+      "no_execution": true
+    },
+    {
+      "source_candidate_id": "source-scout:2814053f6eec0223",
+      "lane": "market_structure",
+      "sublane": "options_iv",
+      "provider": "ThetaData",
+      "coverage": [
+        "US options history",
+        "greeks",
+        "IV",
+        "quotes/trades depending on subscription"
+      ],
+      "latency_class": "intraday",
+      "cost_class": "paid",
+      "rights_policy": "derived_only",
+      "api_available": true,
+      "historical_depth": "multi-year",
+      "point_in_time_support": true,
+      "implementation_complexity": "medium",
+      "expected_value": "Add point-in-time options history for IV anomaly replay and stale-chain detection.",
+      "required_metrics": [
+        "iv_rank",
+        "iv_percentile",
+        "iv_term_structure",
+        "skew",
+        "open_interest_change",
+        "volume_open_interest_ratio",
+        "unusual_contract_concentration",
+        "chain_snapshot_age_seconds",
+        "provider_confidence",
+        "point_in_time_replay_supported"
+      ],
+      "risks": [
+        "license terms must be checked",
+        "local storage volume risk"
+      ],
+      "promotion_blockers": [],
+      "status": "shadow_candidate",
+      "eligible_for_wake": false,
+      "eligible_for_judgment_support": false,
+      "no_execution": true
+    },
+    {
+      "source_candidate_id": "source-scout:a47a8a8ac55a1673",
+      "lane": "market_structure",
+      "sublane": "options_iv",
+      "provider": "Polygon Options",
+      "coverage": [
+        "options chain snapshots",
+        "trades/quotes by plan",
+        "underlying aggregates"
+      ],
+      "latency_class": "intraday",
+      "cost_class": "paid",
+      "rights_policy": "derived_only",
+      "api_available": true,
+      "historical_depth": "plan-dependent",
+      "point_in_time_support": null,
+      "implementation_complexity": "medium",
+      "expected_value": "Candidate fallback for broader options coverage when IV surface vendors are not available.",
+      "required_metrics": [
+        "iv_rank",
+        "iv_percentile",
+        "iv_term_structure",
+        "skew",
+        "open_interest_change",
+        "volume_open_interest_ratio",
+        "unusual_contract_concentration",
+        "chain_snapshot_age_seconds",
+        "provider_confidence",
+        "point_in_time_replay_supported"
+      ],
+      "risks": [
+        "plan-dependent greeks/IV coverage",
+        "rate limits"
+      ],
+      "promotion_blockers": [
+        "point_in_time_support_not_proven"
+      ],
+      "status": "shadow_candidate",
+      "eligible_for_wake": false,
+      "eligible_for_judgment_support": false,
+      "no_execution": true
+    },
+    {
+      "source_candidate_id": "source-scout:60f54460284ab756",
+      "lane": "market_structure",
+      "sublane": "options_flow_proxy",
+      "provider": "Nasdaq option-chain",
+      "coverage": [
+        "delayed option chain table",
+        "volume",
+        "open interest"
+      ],
+      "latency_class": "delayed_intraday",
+      "cost_class": "free",
+      "rights_policy": "derived_only",
+      "api_available": true,
+      "historical_depth": "snapshot_only",
+      "point_in_time_support": false,
+      "implementation_complexity": "low",
+      "expected_value": "Keep as conservative proxy, explicitly penalized when no primary options IV source exists.",
+      "required_metrics": [
+        "volume_open_interest_ratio",
+        "chain_snapshot_age_seconds",
+        "provider_confidence"
+      ],
+      "risks": [
+        "not a primary IV source",
+        "fragile endpoint",
+        "limited replay"
+      ],
+      "promotion_blockers": [
+        "point_in_time_support_not_proven"
+      ],
+      "status": "shadow_candidate",
+      "eligible_for_wake": false,
+      "eligible_for_judgment_support": false,
+      "no_execution": true
+    },
+    {
+      "source_candidate_id": "source-scout:6f6f3adb0b214f09",
+      "lane": "market_structure",
+      "sublane": "price_volume",
+      "provider": "Polygon Aggregates",
+      "coverage": [
+        "US equities",
+        "ETF aggregates",
+        "intraday bars"
+      ],
+      "latency_class": "intraday",
+      "cost_class": "paid",
+      "rights_policy": "derived_only",
+      "api_available": true,
+      "historical_depth": "multi-year plan-dependent",
+      "point_in_time_support": true,
+      "implementation_complexity": "medium",
+      "expected_value": "Upgrade yfinance fallback into point-in-time market tape for campaign replay.",
+      "required_metrics": [],
+      "risks": [
+        "paid plan",
+        "rate limits",
+        "redistribution constraints"
+      ],
+      "promotion_blockers": [],
+      "status": "shadow_candidate",
+      "eligible_for_wake": false,
+      "eligible_for_judgment_support": false,
+      "no_execution": true
+    },
+    {
+      "source_candidate_id": "source-scout:9071de35c5175f9e",
+      "lane": "corp_filing_ir",
+      "sublane": "sec_filings",
+      "provider": "SEC submissions/companyfacts APIs",
+      "coverage": [
+        "10-K",
+        "10-Q",
+        "8-K",
+        "Form 4",
+        "company facts"
+      ],
+      "latency_class": "event_driven",
+      "cost_class": "free",
+      "rights_policy": "raw_ok",
+      "api_available": true,
+      "historical_depth": "multi-year",
+      "point_in_time_support": true,
+      "implementation_complexity": "low",
+      "expected_value": "Close issuer-confirmation gaps and prevent narrative-only promotion.",
+      "required_metrics": [],
+      "risks": [
+        "fair access and user-agent compliance required"
+      ],
+      "promotion_blockers": [],
+      "status": "shadow_candidate",
+      "eligible_for_wake": false,
+      "eligible_for_judgment_support": false,
+      "no_execution": true
+    },
+    {
+      "source_candidate_id": "source-scout:1d8df98310a27f2a",
+      "lane": "corp_filing_ir",
+      "sublane": "issuer_ir",
+      "provider": "Issuer IR RSS / press release pages",
+      "coverage": [
+        "press releases",
+        "presentations",
+        "earnings dates"
+      ],
+      "latency_class": "event_driven",
+      "cost_class": "free",
+      "rights_policy": "derived_only",
+      "api_available": false,
+      "historical_depth": "issuer-dependent",
+      "point_in_time_support": null,
+      "implementation_complexity": "high",
+      "expected_value": "Adds primary issuer confirmation for campaign claims where SEC is too slow or incomplete.",
+      "required_metrics": [],
+      "risks": [
+        "site-specific scraping",
+        "robots/terms review required"
+      ],
+      "promotion_blockers": [
+        "point_in_time_support_not_proven"
+      ],
+      "status": "shadow_candidate",
+      "eligible_for_wake": false,
+      "eligible_for_judgment_support": false,
+      "no_execution": true
+    },
+    {
+      "source_candidate_id": "source-scout:4c863b6c047285f7",
+      "lane": "real_economy_alt",
+      "sublane": "jobs",
+      "provider": "Company careers / job posting aggregations",
+      "coverage": [
+        "hiring velocity",
+        "role mix",
+        "geography"
+      ],
+      "latency_class": "daily",
+      "cost_class": "free_or_paid",
+      "rights_policy": "derived_only",
+      "api_available": false,
+      "historical_depth": "must_build",
+      "point_in_time_support": false,
+      "implementation_complexity": "high",
+      "expected_value": "Add peacetime demand/capex hints for company campaigns.",
+      "required_metrics": [],
+      "risks": [
+        "anti-scraping",
+        "entity matching noise"
+      ],
+      "promotion_blockers": [
+        "point_in_time_support_not_proven"
+      ],
+      "status": "shadow_candidate",
+      "eligible_for_wake": false,
+      "eligible_for_judgment_support": false,
+      "no_execution": true
+    },
+    {
+      "source_candidate_id": "source-scout:7b327e7b67b84d87",
+      "lane": "real_economy_alt",
+      "sublane": "energy_supply",
+      "provider": "EIA / public energy datasets",
+      "coverage": [
+        "oil inventories",
+        "production",
+        "imports/exports",
+        "regional energy data"
+      ],
+      "latency_class": "daily_weekly",
+      "cost_class": "free",
+      "rights_policy": "raw_ok",
+      "api_available": true,
+      "historical_depth": "multi-year",
+      "point_in_time_support": true,
+      "implementation_complexity": "low",
+      "expected_value": "Cross-check BNO/oil/Hormuz narratives with official supply data when available.",
+      "required_metrics": [],
+      "risks": [
+        "release lag",
+        "macro not single-name specific"
+      ],
+      "promotion_blockers": [],
+      "status": "shadow_candidate",
+      "eligible_for_wake": false,
+      "eligible_for_judgment_support": false,
+      "no_execution": true
+    },
+    {
+      "source_candidate_id": "source-scout:b46dbc35b8e8d63f",
+      "lane": "news_policy_narrative",
+      "sublane": "entity_event",
+      "provider": "RavenPack / structured news analytics",
+      "coverage": [
+        "entity relevance",
+        "novelty",
+        "event classification",
+        "impact"
+      ],
+      "latency_class": "near_realtime",
+      "cost_class": "premium",
+      "rights_policy": "derived_only",
+      "api_available": true,
+      "historical_depth": "vendor-dependent",
+      "point_in_time_support": true,
+      "implementation_complexity": "high",
+      "expected_value": "Replace generic news summaries with entity/event/novelty intelligence.",
+      "required_metrics": [],
+      "risks": [
+        "premium vendor",
+        "strict redistribution controls"
+      ],
+      "promotion_blockers": [],
+      "status": "shadow_candidate",
+      "eligible_for_wake": false,
+      "eligible_for_judgment_support": false,
+      "no_execution": true
+    },
+    {
+      "source_candidate_id": "source-scout:99e18571c32542ce",
+      "lane": "human_field_private",
+      "sublane": "expert_transcript",
+      "provider": "Licensed expert transcript import",
+      "coverage": [
+        "expert interviews",
+        "channel checks",
+        "private research notes"
+      ],
+      "latency_class": "event_driven",
+      "cost_class": "premium",
+      "rights_policy": "none",
+      "api_available": false,
+      "historical_depth": "import-dependent",
+      "point_in_time_support": true,
+      "implementation_complexity": "medium",
+      "expected_value": "Adds compliant private research lane without exposing raw content to reviewer packets.",
+      "required_metrics": [],
+      "risks": [
+        "MNPI exclusion required",
+        "raw redistribution forbidden"
+      ],
+      "promotion_blockers": [
+        "rights_policy_not_approved"
+      ],
+      "status": "shadow_candidate",
+      "eligible_for_wake": false,
+      "eligible_for_judgment_support": false,
+      "no_execution": true
+    },
+    {
+      "source_candidate_id": "source-scout:6dc83fac4a2d418c",
+      "lane": "internal_private",
+      "sublane": "thread_unknowns",
+      "provider": "OpenClaw finance thread ledger",
+      "coverage": [
+        "operator follow-up unknowns",
+        "challenge questions",
+        "source requests"
+      ],
+      "latency_class": "event_driven",
+      "cost_class": "internal",
+      "rights_policy": "none",
+      "api_available": false,
+      "historical_depth": "local_runtime",
+      "point_in_time_support": true,
+      "implementation_complexity": "medium",
+      "expected_value": "Turns repeated user questions and unresolved unknowns into source scouting demand.",
+      "required_metrics": [],
+      "risks": [
+        "Discord conversation must not be committed",
+        "privacy boundary"
+      ],
+      "promotion_blockers": [
+        "rights_policy_not_approved"
+      ],
+      "status": "shadow_candidate",
+      "eligible_for_wake": false,
+      "eligible_for_judgment_support": false,
+      "no_execution": true
+    }
+  ],
+  "activation_boundary": "shadow-only; candidates cannot wake, support judgment, mutate thresholds, or change Discord delivery",
+  "no_execution": true,
+  "export_boundary": "reviewer-visible metadata only; no source activation and no raw vendor payloads"
+}

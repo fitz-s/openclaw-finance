@@ -37,6 +37,7 @@ Phase 1 preserves all v1 fields:
 Identity and lane:
 - `source_class`
 - `source_lane`
+- `source_sublane`
 - `modality`
 - `asset_horizon`
 - `coverage_universe`
@@ -82,12 +83,47 @@ Compliance and rights:
 
 Allowed `source_lane` values:
 - `market_structure`
-- `corporate_filing`
-- `real_economy_alt_data`
+- `corp_filing_ir`
+- `real_economy_alt`
 - `news_policy_narrative`
-- `human_field`
+- `human_field_private`
 - `internal_private`
 - `derived_context`
+
+Allowed `source_sublane` examples:
+- `market_structure.price_volume`
+- `market_structure.options_iv`
+- `market_structure.options_flow_proxy`
+- `market_structure.rates_fx_commodities`
+- `market_structure.crypto_gold_spx`
+- `corp_filing_ir.sec_filings`
+- `corp_filing_ir.earnings_transcripts`
+- `corp_filing_ir.issuer_ir`
+- `real_economy_alt.jobs`
+- `real_economy_alt.shipping`
+- `real_economy_alt.power_weather`
+- `news_policy_narrative.entity_event`
+- `human_field_private.expert_transcript`
+- `internal_private.watch_intent`
+- `internal_private.thread_unknowns`
+
+## Options / IV Discipline
+
+`market_structure.options_iv` is a first-class sublane. It must not be represented as generic price context.
+
+Required options/IV metadata when available:
+- `iv_rank`
+- `iv_percentile`
+- `iv_term_structure`
+- `skew`
+- `open_interest_change`
+- `volume_open_interest_ratio`
+- `unusual_contract_concentration`
+- `chain_snapshot_age_seconds`
+- `provider_confidence`
+- `point_in_time_replay_supported`
+
+If an options chain is stale, delayed, or proxy-only, downstream confidence must be penalized and operator surfaces must disclose the limitation.
 
 ## Compliance Rules
 
