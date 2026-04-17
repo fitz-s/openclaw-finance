@@ -65,7 +65,7 @@
     {
       "phase": 2,
       "name": "Brave API capability audit and endpoint inventory",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Record current OpenClaw Brave mode and Brave endpoint capability gaps.",
       "required_review2_content": [
         "Brave web/search",
@@ -73,16 +73,33 @@
         "Brave llm/context",
         "Brave Answers",
         "402 quota",
-        "current OpenClaw web_search abstraction"
+        "current OpenClaw web_search abstraction",
+        "official endpoint roles",
+        "Search Result storage boundary"
       ],
       "touchpoints": [
-        "docs/openclaw-runtime/brave-api-capability-audit.md",
-        "tools/export_openclaw_runtime_snapshot.py"
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-02-brave-api-audit-ralplan.md",
+        "tools/export_brave_api_capability_audit.py",
+        "docs/openclaw-runtime/brave-api-capability-audit.json",
+        "tests/test_brave_api_capability_audit_phase02.py"
       ],
       "acceptance": [
         "current mode detected",
         "missing endpoints documented",
-        "quota failure surfaced"
+        "quota failure surfaced",
+        "official Brave docs integrated",
+        "rights/storage boundary documented"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "official Brave API documentation",
+        "result": "Web/News are discovery lanes, LLM Context is selected reading, Answers is sidecar synthesis only, and raw Brave Search Results require storage discipline."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-02-brave-api-audit-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-02-implementation-critic.md",
+      "implementation": [
+        "tools/export_brave_api_capability_audit.py",
+        "docs/openclaw-runtime/brave-api-capability-audit.json"
       ]
     },
     {
