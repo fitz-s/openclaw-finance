@@ -6,6 +6,9 @@
   "snapshot_files": [
     "docs/openclaw-runtime/information-dominance-stack-plan.md",
     "docs/openclaw-runtime/information-dominance-stack-map.json",
+    "docs/openclaw-runtime/ralplan/source-to-campaign-phase-00-review-intake-ralplan.md",
+    "docs/openclaw-runtime/source-to-campaign-phase-ledger.json",
+    "docs/openclaw-runtime/critics/source-to-campaign-phase-00-implementation-critic.md",
     "docs/openclaw-runtime/finance-cron-jobs.json",
     "docs/openclaw-runtime/finance-crontab.txt",
     "docs/openclaw-runtime/finance-model-roles.json",
