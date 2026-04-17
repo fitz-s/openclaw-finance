@@ -29,6 +29,17 @@ It is used by Campaign Projection to make `PACKET_UPDATE_ONLY` visible as board 
     "status": "fresh|mixed|stale|unknown",
     "source_refs": []
   },
+  "acceleration_score": 0.0,
+  "cross_lane_confirmation": 0,
+  "source_diversity": 0,
+  "contradiction_load": 0,
+  "known_unknowns": [],
+  "source_health_refs": [],
+  "source_health_summary": {
+    "degraded_count": 0,
+    "degraded_sources": []
+  },
+  "shadow_inputs": {},
   "no_execution": true
 }
 ```
@@ -39,3 +50,19 @@ It is used by Campaign Projection to make `PACKET_UPDATE_ONLY` visible as board 
 - Repeated weak signals should increase persistence/velocity, not create spam.
 - An undercurrent can promote to a campaign but never bypasses judgment/product/delivery safety.
 - A stale or degraded source must be explicit in `source_freshness`.
+
+## Phase 3 Shadow Enrichment
+
+Phase 3 may enrich cards with Source Health, EvidenceAtom, ClaimGraph, and ContextGap metadata. These fields are advisory and shadow-only. They must not alter wake class, thresholds, delivery safety, Discord output, JudgmentEnvelope, or execution authority.
+
+Required enriched fields when shadow inputs are available:
+- `acceleration_score`
+- `cross_lane_confirmation`
+- `source_diversity`
+- `contradiction_load`
+- `known_unknowns`
+- `source_health_refs`
+- `source_health_summary`
+- `shadow_inputs`
+
+`known_unknowns` are context gaps, not conclusions.

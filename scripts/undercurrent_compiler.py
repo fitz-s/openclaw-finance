@@ -16,10 +16,15 @@ from typing import Any
 from atomic_io import atomic_write_json, load_json_safe
 
 FINANCE = Path('/Users/leofitz/.openclaw/workspace/finance')
+WORKSPACE = FINANCE.parent
 STATE = FINANCE / 'state'
 INVALIDATORS = STATE / 'invalidator-ledger.json'
 OPPORTUNITIES = STATE / 'opportunity-queue.json'
 CAPITAL_GRAPH = STATE / 'capital-graph.json'
+SOURCE_HEALTH = WORKSPACE / 'services' / 'market-ingest' / 'state' / 'source-health.json'
+SOURCE_ATOMS = STATE / 'source-atoms' / 'latest.jsonl'
+CLAIM_GRAPH = STATE / 'claim-graph.json'
+CONTEXT_GAPS = STATE / 'context-gaps.json'
 OUT = STATE / 'undercurrents.json'
 
 
@@ -30,6 +35,22 @@ def now_iso() -> str:
 def stable_id(prefix: str, *parts: Any) -> str:
     raw = '|'.join(str(p or '') for p in parts)
     return f'{prefix}:{hashlib.sha1(raw.encode("utf-8")).hexdigest()[:16]}'
+
+
+def load_jsonl(path: Path) -> list[dict[str, Any]]:
+    if not path.exists():
+        return []
+    rows: list[dict[str, Any]] = []
+    for line in path.read_text(encoding='utf-8', errors='replace').splitlines():
+        if not line.strip():
+            continue
+        try:
+            item = json.loads(line)
+        except Exception:
+            continue
+        if isinstance(item, dict):
+            rows.append(item)
+    return rows
 
 
 def short_text(value: Any, limit: int = 96) -> str:
@@ -71,6 +92,129 @@ def source_freshness_from_refs(refs: list[Any]) -> dict[str, Any]:
     else:
         status = 'fresh'
     return {'status': status, 'source_refs': source_refs[:8]}
+
+
+def as_list(value: Any) -> list[Any]:
+    return value if isinstance(value, list) else []
+
+
+def shadow_context(
+    *,
+    source_health: dict[str, Any] | None = None,
+    atoms: list[dict[str, Any]] | None = None,
+    claim_graph: dict[str, Any] | None = None,
+    context_gaps: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    atoms = atoms or []
+    claims = [
+        claim for claim in as_list((claim_graph or {}).get('claims'))
+        if isinstance(claim, dict) and claim.get('claim_id')
+    ]
+    gaps = [
+        gap for gap in as_list((context_gaps or {}).get('gaps'))
+        if isinstance(gap, dict) and gap.get('gap_id')
+    ]
+    health_rows = [
+        row for row in as_list((source_health or {}).get('sources'))
+        if isinstance(row, dict) and row.get('source_id')
+    ]
+    return {
+        'atoms': atoms,
+        'claims': claims,
+        'gaps': gaps,
+        'health_rows': health_rows,
+        'atom_by_id': {str(atom.get('atom_id')): atom for atom in atoms if isinstance(atom, dict) and atom.get('atom_id')},
+        'gaps_by_claim': {
+            str(claim_id): [gap for gap in gaps if str(gap.get('claim_id')) == str(claim_id)]
+            for claim_id in {gap.get('claim_id') for gap in gaps}
+        },
+        'health_by_source': {str(row.get('source_id')): row for row in health_rows},
+        'shadow_inputs': {
+            'source_health': bool(source_health),
+            'source_atoms': bool(atoms),
+            'claim_graph': bool(claim_graph),
+            'context_gaps': bool(context_gaps),
+        },
+    }
+
+
+def claim_matches_text(claim: dict[str, Any], text: str) -> bool:
+    if not text:
+        return False
+    haystack = ' '.join(str(claim.get(key) or '') for key in ['subject', 'object', 'predicate', 'event_class']).lower()
+    tokens = {token for token in text.lower().replace('|', ' ').replace('/', ' ').split() if len(token) >= 3}
+    return bool(tokens and any(token in haystack for token in tokens))
+
+
+def relevant_claims(card: dict[str, Any], ctx: dict[str, Any]) -> list[dict[str, Any]]:
+    claims = ctx.get('claims', [])
+    refs = card.get('linked_refs') if isinstance(card.get('linked_refs'), dict) else {}
+    text_parts = [
+        card.get('human_title'),
+        card.get('promotion_reason'),
+        ' '.join(str(item) for item in as_list(refs.get('opportunity'))),
+        ' '.join(str(item) for item in as_list(refs.get('invalidator'))),
+        ' '.join(str(item) for item in as_list(refs.get('thesis'))),
+    ]
+    text = ' '.join(str(part or '') for part in text_parts)
+    matched = [claim for claim in claims if claim_matches_text(claim, text)]
+    if not matched and claims and card.get('source_type') in {'invalidator_cluster', 'opportunity_accumulation'}:
+        matched = claims[:5]
+    return matched[:12]
+
+
+def enrich_with_shadow_context(card: dict[str, Any], ctx: dict[str, Any]) -> dict[str, Any]:
+    card = dict(card)
+    refs = dict(card.get('linked_refs') if isinstance(card.get('linked_refs'), dict) else {})
+    claims = relevant_claims(card, ctx)
+    atom_ids = sorted({str(claim.get('atom_id')) for claim in claims if claim.get('atom_id')})
+    atoms = [ctx.get('atom_by_id', {}).get(atom_id) for atom_id in atom_ids]
+    atoms = [atom for atom in atoms if isinstance(atom, dict)]
+    claim_ids = sorted({str(claim.get('claim_id')) for claim in claims if claim.get('claim_id')})
+    gaps = []
+    for claim_id in claim_ids:
+        gaps.extend(ctx.get('gaps_by_claim', {}).get(claim_id, []))
+    source_ids = sorted({str(atom.get('source_id')) for atom in atoms if atom.get('source_id')})
+    source_lanes = sorted({str(atom.get('source_lane')) for atom in atoms if atom.get('source_lane')})
+    source_health_rows = [ctx.get('health_by_source', {}).get(source_id) for source_id in source_ids]
+    source_health_rows = [row for row in source_health_rows if isinstance(row, dict)]
+    degraded_sources = [
+        row for row in source_health_rows
+        if row.get('freshness_status') in {'stale', 'unknown'} or row.get('rights_status') in {'restricted', 'unknown'}
+    ]
+    contradiction_load = sum(1 for claim in claims if as_list(claim.get('contradicts')))
+    known_unknowns = [
+        {
+            'gap_id': gap.get('gap_id'),
+            'missing_lane': gap.get('missing_lane'),
+            'why_load_bearing': short_text(gap.get('why_load_bearing'), 120),
+            'cost_of_ignorance': gap.get('cost_of_ignorance'),
+        }
+        for gap in gaps[:5]
+        if isinstance(gap, dict)
+    ]
+    refs['atom'] = atom_ids[:8]
+    refs['claim'] = claim_ids[:8]
+    refs['context_gap'] = [str(gap.get('gap_id')) for gap in gaps[:8] if gap.get('gap_id')]
+    card['linked_refs'] = refs
+    card['acceleration_score'] = round(float(card.get('velocity') or 0) + max(0, len(claims) - 1) * 0.25, 2)
+    card['cross_lane_confirmation'] = len(source_lanes)
+    card['source_diversity'] = len(source_ids)
+    card['contradiction_load'] = contradiction_load
+    card['known_unknowns'] = known_unknowns
+    card['source_health_refs'] = [str(row.get('source_id')) for row in source_health_rows[:8]]
+    card['shadow_inputs'] = dict(ctx.get('shadow_inputs') or {})
+    card['source_health_summary'] = {
+        'degraded_count': len(degraded_sources),
+        'degraded_sources': [str(row.get('source_id')) for row in degraded_sources[:5]],
+    }
+    if degraded_sources and card.get('source_freshness', {}).get('status') == 'fresh':
+        card['source_freshness'] = {
+            'status': 'mixed',
+            'source_refs': card.get('source_freshness', {}).get('source_refs', [])[:8],
+        }
+    card['no_execution'] = True
+    return card
 
 
 def compile_invalidator_undercurrents(invalidator_ledger: dict[str, Any]) -> list[dict[str, Any]]:
@@ -177,17 +321,30 @@ def compile_undercurrents(
     invalidator_ledger: dict[str, Any],
     opportunity_queue: dict[str, Any],
     capital_graph: dict[str, Any],
+    *,
+    source_health: dict[str, Any] | None = None,
+    atoms: list[dict[str, Any]] | None = None,
+    claim_graph: dict[str, Any] | None = None,
+    context_gaps: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
+    ctx = shadow_context(
+        source_health=source_health,
+        atoms=atoms,
+        claim_graph=claim_graph,
+        context_gaps=context_gaps,
+    )
     cards = []
     cards.extend(compile_invalidator_undercurrents(invalidator_ledger))
     cards.extend(compile_opportunity_undercurrents(opportunity_queue))
     cards.extend(compile_graph_undercurrents(capital_graph))
+    cards = [enrich_with_shadow_context(card, ctx) for card in cards]
     cards.sort(key=lambda row: float(row.get('persistence_score') or 0), reverse=True)
     return {
         'generated_at': now_iso(),
         'status': 'pass',
         'contract': 'undercurrent-card-v1',
         'undercurrents': cards,
+        'shadow_inputs': ctx['shadow_inputs'],
         'no_execution': True,
     }
 
@@ -197,6 +354,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--invalidators', default=str(INVALIDATORS))
     parser.add_argument('--opportunities', default=str(OPPORTUNITIES))
     parser.add_argument('--capital-graph', default=str(CAPITAL_GRAPH))
+    parser.add_argument('--source-health', default=str(SOURCE_HEALTH))
+    parser.add_argument('--source-atoms', default=str(SOURCE_ATOMS))
+    parser.add_argument('--claim-graph', default=str(CLAIM_GRAPH))
+    parser.add_argument('--context-gaps', default=str(CONTEXT_GAPS))
     parser.add_argument('--out', default=str(OUT))
     args = parser.parse_args(argv)
 
@@ -204,6 +365,10 @@ def main(argv: list[str] | None = None) -> int:
         load_json_safe(Path(args.invalidators), {}) or {},
         load_json_safe(Path(args.opportunities), {}) or {},
         load_json_safe(Path(args.capital_graph), {}) or {},
+        source_health=load_json_safe(Path(args.source_health), {}) or {},
+        atoms=load_jsonl(Path(args.source_atoms)),
+        claim_graph=load_json_safe(Path(args.claim_graph), {}) or {},
+        context_gaps=load_json_safe(Path(args.context_gaps), {}) or {},
     )
     atomic_write_json(Path(args.out), payload)
     print(json.dumps({'status': payload['status'], 'count': len(payload['undercurrents']), 'out': args.out}, ensure_ascii=False))
