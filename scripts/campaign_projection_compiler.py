@@ -66,6 +66,104 @@ def opportunity_label(item: dict[str, Any]) -> str:
     return f'{instrument}｜{label}' if instrument else label
 
 
+def humanize_raw_title(value: Any) -> str:
+    text = str(value or '').strip()
+    if text.startswith('invalidator direction conflict:theme:') and ' has hit ' in text:
+        left, _, hits = text.partition(' has hit ')
+        theme_key = left.replace('invalidator direction conflict:theme:', '').strip()
+        return f"{humanize_signal('direction_conflict:theme:' + theme_key)}（{hits.replace(' times', '次')}）"
+    if text.startswith('invalidator '):
+        return humanize_signal(text.replace('invalidator ', '', 1))
+    return text
+
+
+def claim_subjects(campaign: dict[str, Any]) -> list[str]:
+    subjects: list[str] = []
+    for value in as_list(campaign.get('linked_opportunities')):
+        parts = str(value).replace('opportunity:', '').replace('candidate:', '').split(':')
+        if parts and parts[-1]:
+            subjects.append(parts[-1].upper())
+    for unknown in as_list(campaign.get('known_unknowns')):
+        subject = unknown.get('subject') if isinstance(unknown, dict) else None
+        if subject:
+            subjects.append(str(subject).upper())
+    for value in as_list(campaign.get('linked_thesis')):
+        if 'TSLA' in str(value).upper():
+            subjects.append('TSLA')
+    return sorted({item for item in subjects if item and not item.startswith('PACKET')})[:4]
+
+
+def affected_objects_for_campaign(campaign: dict[str, Any]) -> list[str]:
+    title = str(campaign.get('human_title') or '')
+    objects = []
+    for symbol in ['RGTI', 'BNO', 'SMR', 'XLB', 'TSLA', 'MSTR', 'ORCL', 'NVDA', 'SPX', 'QQQ']:
+        if symbol in title.upper():
+            objects.append(symbol)
+    objects.extend(claim_subjects(campaign))
+    return sorted(set(objects), key=objects.index)[:5] if objects else []
+
+
+def directional_implication(campaign: dict[str, Any]) -> str:
+    objects = affected_objects_for_campaign(campaign)
+    title = str(campaign.get('human_title') or '').lower()
+    if 'unknown' in campaign.get('campaign_type', '') or campaign.get('campaign_type') in {'undercurrent_risk', 'invalidator_cluster'}:
+        if objects:
+            return f"利好/利空还不能定；当前真正影响的是是否把注意力从现有主轴转向 {'/'.join(objects)}。"
+        return '利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。'
+    if 'bno' in title or 'oil' in title or '霍尔木兹' in title:
+        return '更偏向能源/油价/地缘风险链条的深挖，不是现有持仓替代命令。'
+    if 'tsla' in title:
+        return '主要影响 TSLA thesis 的继续占用注意力资格。'
+    return '影响是候选议程的优先级变化；方向结论需要验证。'
+
+
+def top_known_unknown(campaign: dict[str, Any]) -> str:
+    gaps = as_list(campaign.get('known_unknowns'))
+    if not gaps:
+        return '暂无明确 context gap；先看价格/量能与来源新鲜度。'
+    gap = gaps[0]
+    if not isinstance(gap, dict):
+        return short(gap, 100)
+    lane = str(gap.get('missing_lane') or 'unknown')
+    reason = str(gap.get('why_load_bearing') or '')
+    labels = {
+        'market_structure': '缺价格/量能确认',
+        'corporate_filing': '缺官方/issuer 确认',
+        'derived_context': '缺二次交叉验证',
+    }
+    return f"{labels.get(lane, '缺' + lane)}：{short(reason, 90)}"
+
+
+def build_operator_brief(campaign: dict[str, Any]) -> dict[str, Any]:
+    objects = affected_objects_for_campaign(campaign)
+    why_now = campaign.get('why_now_delta')
+    why_now = str(why_now or '').replace(' 持续累积，需要判断是否影响 attention slot', ' 连续命中，正在挑战当前注意力分配')
+    if objects:
+        why_now = f"{why_now}；涉及 {'/'.join(objects)}"
+    if campaign.get('source_diversity'):
+        why_now = f"{why_now}；source diversity={campaign.get('source_diversity')}, contradiction_load={campaign.get('contradiction_load', 0)}"
+    verify_first = as_list(campaign.get('confirmations_needed'))[:2]
+    known = top_known_unknown(campaign)
+    if known.startswith('缺价格/量能确认') and objects:
+        verify_first = [f"先看 {'/'.join(objects)} 的价格/量能是否二次确认", *verify_first]
+    elif known.startswith('缺官方/issuer 确认') and objects:
+        verify_first = [f"查 {'/'.join(objects)} 是否有 SEC/issuer/press release 级确认", *verify_first]
+    return {
+        'title': campaign.get('human_title'),
+        'affected_objects': objects,
+        'implication': directional_implication(campaign),
+        'why_now': why_now,
+        'verify_first': verify_first[:3],
+        'known_unknown': known,
+        'ask': [
+            f"why {campaign.get('campaign_id')}",
+            f"challenge {campaign.get('campaign_id')}",
+            f"sources {campaign.get('campaign_id')}",
+            f"trace {campaign.get('campaign_id')}",
+        ],
+    }
+
+
 def top_unique_opportunities(queue: dict[str, Any], limit: int = 3) -> list[dict[str, Any]]:
     rows = [
         row for row in queue.get('candidates', [])
@@ -275,6 +373,7 @@ def campaign_from_undercurrent(card: dict[str, Any]) -> dict[str, Any]:
 
 def finalize_campaign(campaign: dict[str, Any], *, stage_reason: str) -> dict[str, Any]:
     out = dict(campaign)
+    out['human_title'] = short(humanize_raw_title(out.get('human_title')), 110)
     out.setdefault('linked_atoms', [])
     out.setdefault('linked_claims', [])
     out.setdefault('linked_context_gaps', [])
@@ -286,6 +385,14 @@ def finalize_campaign(campaign: dict[str, Any], *, stage_reason: str) -> dict[st
     out['stage_reason'] = stage_reason
     out['last_stage_hash'] = stable_hash(out.get('campaign_id'), out.get('stage'), stage_reason, out.get('board_class'))
     out['thread_status'] = out.get('thread_status') or 'unbound'
+    out['operator_brief'] = build_operator_brief(out)
+    out['affected_objects'] = out['operator_brief']['affected_objects']
+    out['directional_implication'] = out['operator_brief']['implication']
+    if out['affected_objects'] and str(out.get('human_title', '')).startswith('未知发现方向冲突'):
+        count = re.search(r'（(\\d+)次）', str(out.get('human_title')))
+        suffix = f"（{count.group(1)}次冲突）" if count else ''
+        out['human_title'] = short(f"未知发现｜{'/'.join(out['affected_objects'])}{suffix}", 110)
+        out['operator_brief']['title'] = out['human_title']
     out['no_execution'] = True
     return out
 
@@ -295,16 +402,20 @@ def render_board(title: str, campaigns: list[dict[str, Any]], empty: str) -> str
     if not campaigns:
         lines.extend(['', empty])
         return '\n'.join(lines).strip() + '\n'
-    for idx, item in enumerate(campaigns[:5], start=1):
+    for idx, item in enumerate(campaigns[:3], start=1):
+        brief = item.get('operator_brief') if isinstance(item.get('operator_brief'), dict) else {}
+        verify = brief.get('verify_first') if isinstance(brief.get('verify_first'), list) else item.get('confirmations_needed', [])[:2]
         lines.extend([
             '',
-            f"{idx}) {item['human_title']} | {item['stage']}",
-            f"为什么现在：{item['why_now_delta']}",
-            f"为什么还不是动作：{item['why_not_now']}",
-            f"与当前 book：{item['capital_relevance']}",
-            f"确认点：{'; '.join(item.get('confirmations_needed', [])[:2])}",
-            f"线程：why {item['campaign_id']} / challenge {item['campaign_id']} / sources {item['campaign_id']}",
+            f"{idx}) {short(item['human_title'], 72)} | {item['stage']}",
+            f"Implication：{short(brief.get('implication') or directional_implication(item), 105)}",
+            f"Why：{short(brief.get('why_now') or item['why_now_delta'], 115)}",
+            f"Verify：{short('; '.join(str(v) for v in verify[:2]) if verify else '价格/量能与来源新鲜度', 105)}",
+            f"Unknown：{short(brief.get('known_unknown') or top_known_unknown(item), 105)}",
+            f"Ask：why {item['campaign_id']} / challenge / sources",
         ])
+    if len(campaigns) > 3:
+        lines.append(f"\n还有 {len(campaigns) - 3} 个 campaign；在线程问 expand board。")
     return '\n'.join(lines).strip() + '\n'
 
 

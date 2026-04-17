@@ -145,12 +145,28 @@ def board_operations(package: dict[str, Any], runtime: dict[str, Any]) -> list[d
 
 
 def thread_seed(campaign: dict[str, Any]) -> str:
+    brief = campaign.get('operator_brief') if isinstance(campaign.get('operator_brief'), dict) else {}
+    unknowns = campaign.get('known_unknowns') if isinstance(campaign.get('known_unknowns'), list) else []
+    checks = brief.get('verify_first') if isinstance(brief.get('verify_first'), list) else campaign.get('confirmations_needed', [])
     lines = [
         f"{campaign.get('human_title') or campaign.get('campaign_id')}｜深挖入口",
         '',
-        f"为什么现在：{campaign.get('why_now_delta') or 'n/a'}",
-        f"为什么还不是动作：{campaign.get('why_not_now') or 'review-only'}",
-        f"确认点：{'; '.join(campaign.get('confirmations_needed', [])[:3]) if isinstance(campaign.get('confirmations_needed'), list) else 'n/a'}",
+        '结论',
+        f"- {brief.get('implication') or campaign.get('directional_implication') or '这是 review-only 的注意力分配问题，不是执行指令。'}",
+        '',
+        'Fact',
+        f"- 为什么现在：{campaign.get('why_now_delta') or 'n/a'}",
+        f"- 影响对象：{', '.join(brief.get('affected_objects') or campaign.get('affected_objects') or []) or '未明确'}",
+        '',
+        'Interpretation',
+        f"- {campaign.get('capital_relevance') or '需要判断是否值得占用 attention slot'}",
+        f"- 为什么还不是动作：{campaign.get('why_not_now') or 'review-only'}",
+        '',
+        'To Verify',
+        *[f"- {item}" for item in (checks[:3] if isinstance(checks, list) else [])],
+        '',
+        'Known Unknown',
+        f"- {brief.get('known_unknown') or (unknowns[0].get('why_load_bearing') if unknowns and isinstance(unknowns[0], dict) else '暂无明确 context gap')}",
         '',
         f"可问：why {campaign.get('campaign_id')} / challenge {campaign.get('campaign_id')} / sources {campaign.get('campaign_id')}",
     ]

@@ -34,13 +34,15 @@ def stable_id(prefix: str, *parts: Any) -> str:
 def build_cards(campaign: dict[str, Any]) -> dict[str, dict[str, Any]]:
     title = campaign.get('human_title')
     cid = campaign.get('campaign_id')
+    brief = campaign.get('operator_brief') if isinstance(campaign.get('operator_brief'), dict) else {}
     return {
         'why': {
             'evidence_slice_id': stable_id('slice', cid, 'why'),
             'title': title,
-            'fact_slice': [campaign.get('why_now_delta'), campaign.get('source_freshness')],
-            'interpretation_slice': [campaign.get('capital_relevance'), campaign.get('stage_reason')],
-            'to_verify': as_list(campaign.get('confirmations_needed'))[:4],
+            'conclusion': brief.get('implication') or campaign.get('directional_implication'),
+            'fact_slice': [campaign.get('why_now_delta'), campaign.get('source_freshness'), campaign.get('affected_objects')],
+            'interpretation_slice': [campaign.get('capital_relevance'), campaign.get('stage_reason'), brief.get('known_unknown')],
+            'to_verify': as_list(brief.get('verify_first')) or as_list(campaign.get('confirmations_needed'))[:4],
             'known_unknowns': as_list(campaign.get('known_unknowns'))[:3],
         },
         'challenge': {
@@ -96,6 +98,13 @@ def build_cards(campaign: dict[str, Any]) -> dict[str, dict[str, Any]]:
         },
         'expand': {
             'evidence_slice_id': stable_id('slice', cid, 'expand'),
+            'prebrief': {
+                'conclusion': brief.get('implication') or campaign.get('directional_implication'),
+                'facts': [campaign.get('why_now_delta'), campaign.get('source_freshness'), campaign.get('source_health_summary')],
+                'interpretation': [campaign.get('capital_relevance'), campaign.get('stage_reason')],
+                'unknowns': as_list(campaign.get('known_unknowns'))[:5],
+                'next_checks': as_list(brief.get('verify_first')) or as_list(campaign.get('confirmations_needed'))[:3],
+            },
             'campaign': campaign,
         },
     }

@@ -189,6 +189,7 @@ def enrich_with_shadow_context(card: dict[str, Any], ctx: dict[str, Any]) -> dic
             'missing_lane': gap.get('missing_lane'),
             'why_load_bearing': short_text(gap.get('why_load_bearing'), 120),
             'cost_of_ignorance': gap.get('cost_of_ignorance'),
+            'subject': gap.get('subject'),
         }
         for gap in gaps[:5]
         if isinstance(gap, dict)

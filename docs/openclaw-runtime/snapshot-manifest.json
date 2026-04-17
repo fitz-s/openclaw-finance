@@ -57,7 +57,8 @@
     "docs/openclaw-runtime/schemas/source-registry-record.schema.json",
     "docs/openclaw-runtime/schemas/source-health.schema.json",
     "docs/openclaw-runtime/critics/phase-8-implementation-critic.md",
-    "docs/openclaw-runtime/active-campaign-board-cutover.json"
+    "docs/openclaw-runtime/active-campaign-board-cutover.json",
+    "docs/openclaw-runtime/critics/phase-9-implementation-critic.md"
   ],
   "note": "Generated from the local OpenClaw runtime. State files and secrets are intentionally excluded."
 }
