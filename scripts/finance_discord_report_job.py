@@ -103,8 +103,10 @@ def run_chain() -> str:
     run([str(PYTHON), 'scripts/finance_report_reader_bundle.py'])
     run([str(PYTHON), 'scripts/finance_campaign_cache_builder.py'])
     run([str(PYTHON), 'scripts/finance_discord_campaign_board_package.py', '--out', str(BOARD_PACKAGE)])
+    run_optional([str(PYTHON), 'scripts/finance_followup_thread_registry_repair.py', '--quiet'])
     if board_runtime_enabled():
         run_optional([str(PYTHON), 'scripts/finance_discord_campaign_board_deliver.py', '--apply', '--report', str(BOARD_DELIVERY_REPORT)])
+        run_optional([str(PYTHON), 'scripts/finance_followup_thread_registry_repair.py', '--quiet'])
     envelope = json.loads(ENVELOPE.read_text(encoding='utf-8'))
     package = json.loads(BOARD_PACKAGE.read_text(encoding='utf-8')) if BOARD_PACKAGE.exists() else {}
     if board_runtime_enabled():

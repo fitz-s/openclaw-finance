@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any
 
 from atomic_io import atomic_write_json, load_json_safe
+from finance_followup_thread_registry_repair import upgrade_record
 
 
 FINANCE = Path('/Users/leofitz/.openclaw/workspace/finance')
@@ -330,6 +331,7 @@ def sync_followup_thread_registry(runtime: dict[str, Any], campaign_board: dict[
             'object_alias_map': object_alias_map,
             'rule': 'Thread UI only; rehydrate follow-up from bundle + campaign board/cache + selected handle. Bot messages ignored.',
         }
+        threads[thread_id], _ = upgrade_record(threads[thread_id], envelope=report_envelope)
         synced += 1
     payload = {
         'generated_at': now_iso(),

@@ -91,6 +91,14 @@ def test_shadow_delta_report_passes_product_validator() -> None:
                 }
             ]
         },
+        campaign_board={
+            'status': 'pass',
+            'discord_live_board_markdown': 'Finance｜Live Board\n1) Campaign ABC',
+            'campaigns': [{
+                'campaign_id': 'campaign:abc',
+                'human_title': 'ABC campaign',
+            }],
+        },
         shadow_delta=True,
     )
 
@@ -102,7 +110,9 @@ def test_shadow_delta_report_passes_product_validator() -> None:
     assert 'discord_primary_markdown' in report
     assert 'discord_thread_seed_markdown' in report
     assert report['object_alias_map']['T1'].startswith('现有 Thesis')
+    assert report['object_alias_map']['campaign:abc'] == 'ABC campaign'
     assert report['starter_queries']
+    assert 'why campaign:abc' in report['starter_queries']
     assert report['followup_bundle_path'].endswith('.json')
     assert not errors
     assert not warnings

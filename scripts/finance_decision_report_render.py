@@ -447,6 +447,41 @@ def append_macro_triad_to_board(board: Any, prices: dict[str, Any], broad_market
     return f'{text}\n\n{macro}\n'
 
 
+def campaign_followup_surface(campaign_board: dict[str, Any], *, limit: int = 4) -> tuple[dict[str, str], list[str]]:
+    campaigns = campaign_board.get('campaigns') if isinstance(campaign_board.get('campaigns'), list) else []
+    aliases: dict[str, str] = {}
+    queries: list[str] = []
+    for campaign in campaigns[:limit]:
+        if not isinstance(campaign, dict):
+            continue
+        campaign_id = str(campaign.get('campaign_id') or '').strip()
+        title = str(campaign.get('human_title') or campaign.get('thread_key') or '').strip()
+        if not campaign_id or not title:
+            continue
+        aliases[campaign_id] = title
+        queries.extend([
+            f'why {campaign_id}',
+            f'challenge {campaign_id}',
+            f'sources {campaign_id}',
+            f'trace {campaign_id}',
+        ])
+    return aliases, queries
+
+
+def dedup_strings(values: list[str], *, limit: int = 20) -> list[str]:
+    seen: set[str] = set()
+    result: list[str] = []
+    for value in values:
+        text = str(value).strip()
+        if not text or text in seen:
+            continue
+        seen.add(text)
+        result.append(text)
+        if len(result) >= limit:
+            break
+    return result
+
+
 def opportunity_lines(scan: dict[str, Any], watchlist: dict[str, Any] | None = None, portfolio: dict[str, Any] | None = None, limit: int = 1) -> list[str]:
     candidates = [item for item in scan.get('accumulated', []) if isinstance(item, dict)]
     if not candidates:
@@ -1670,6 +1705,9 @@ def build_report(
         envelope['discord_risk_board_markdown'] = append_macro_triad_to_board(campaign_board.get('discord_risk_board_markdown'), prices or {}, broad_market or {})
         envelope['campaign_board_ref'] = str(CAMPAIGN_BOARD)
         envelope['campaign_count'] = len(campaign_board.get('campaigns', []) if isinstance(campaign_board.get('campaigns'), list) else [])
+        campaign_aliases, campaign_queries = campaign_followup_surface(campaign_board)
+        object_alias_map = {**campaign_aliases, **object_alias_map}
+        starter_queries = dedup_strings([*starter_queries, *campaign_queries])
     envelope['discord_thread_seed_markdown'] = thread_seed_markdown
     envelope['object_alias_map'] = object_alias_map
     envelope['starter_queries'] = starter_queries
