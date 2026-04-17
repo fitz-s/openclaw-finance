@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import argparse
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
@@ -27,6 +27,10 @@ CAMPAIGN_CACHE = STATE / 'campaign-cache.json'
 FOLLOWUP_ROUTER = FINANCE / 'scripts' / 'finance_followup_context_router.py'
 ANSWER_GUARD = FINANCE / 'scripts' / 'finance_followup_answer_guard.py'
 ALLOWED_VERBS = ['why', 'challenge', 'compare', 'scenario', 'sources', 'trace', 'expand']
+OWNER_ACCOUNT_ID = 'default'
+OWNER_AGENT_LABEL = 'Mars'
+DEFAULT_TTL_DAYS = 30
+DEFAULT_MAX_RECORDS = 100
 
 
 def now_iso() -> str:
@@ -42,6 +46,26 @@ def as_str_list(value: Any) -> list[str]:
         if text:
             result.append(text)
     return result
+
+
+def parse_iso(value: Any) -> datetime | None:
+    text = str(value or '').strip()
+    if not text:
+        return None
+    try:
+        return datetime.fromisoformat(text.replace('Z', '+00:00')).astimezone(timezone.utc)
+    except ValueError:
+        return None
+
+
+def bundle_path_exists(value: Any) -> bool:
+    text = str(value or '').strip()
+    if not text:
+        return False
+    path = Path(text)
+    if not path.is_absolute():
+        path = FINANCE / path
+    return path.exists()
 
 
 def load_bundle(path_value: Any) -> dict[str, Any]:
@@ -127,8 +151,11 @@ def upgrade_record(record: dict[str, Any], *, envelope: dict[str, Any] | None = 
         *campaign_alias_queries(campaign_alias_map),
     ])
     upgraded = dict(record)
-    upgraded['updated_at'] = now_iso()
-    upgraded['account_id'] = str(upgraded.get('account_id') or 'default')
+    upgraded['updated_at'] = str(upgraded.get('updated_at') or now_iso())
+    upgraded['last_repaired_at'] = now_iso()
+    upgraded['account_id'] = OWNER_ACCOUNT_ID
+    upgraded['allowed_reply_account_ids'] = [OWNER_ACCOUNT_ID]
+    upgraded['allowed_reply_agent'] = OWNER_AGENT_LABEL
     upgraded['root_message_id'] = str(upgraded.get('root_message_id') or upgraded.get('thread_id') or '')
     upgraded['report_id'] = upgraded.get('report_id') or envelope.get('report_id') or bundle.get('report_handle')
     upgraded['followup_bundle_path'] = str(bundle_path)
@@ -144,13 +171,57 @@ def upgrade_record(record: dict[str, Any], *, envelope: dict[str, Any] | None = 
     upgraded['object_alias_map'] = aliases
     upgraded['rule'] = (
         'Thread UI only; rehydrate follow-up from followup_bundle_path + campaign board/cache '
-        '+ selected handle. Use finance_followup_context_router.py; bot messages ignored.'
+        '+ selected handle. Only Mars/default may reply. Use finance_followup_context_router.py; '
+        'bot messages ignored.'
     )
     after = json.dumps(upgraded, sort_keys=True, ensure_ascii=False)
     return upgraded, before != after
 
 
-def repair_registry(path: Path = REGISTRY, *, envelope_path: Path = ENVELOPE) -> dict[str, Any]:
+def prune_threads(
+    threads: dict[str, dict[str, Any]],
+    *,
+    ttl_days: int = DEFAULT_TTL_DAYS,
+    max_records: int = DEFAULT_MAX_RECORDS,
+    prune_missing_bundle: bool = True,
+    now: datetime | None = None,
+) -> tuple[dict[str, dict[str, Any]], dict[str, int]]:
+    now = now or datetime.now(timezone.utc)
+    cutoff = now - timedelta(days=max(ttl_days, 0))
+    kept: dict[str, dict[str, Any]] = {}
+    stats = {
+        'dropped_expired_count': 0,
+        'dropped_missing_bundle_count': 0,
+        'dropped_over_cap_count': 0,
+    }
+    for thread_id, record in threads.items():
+        updated = parse_iso(record.get('updated_at')) or parse_iso(record.get('last_repaired_at')) or now
+        if ttl_days >= 0 and updated < cutoff:
+            stats['dropped_expired_count'] += 1
+            continue
+        if prune_missing_bundle and not bundle_path_exists(record.get('followup_bundle_path')):
+            stats['dropped_missing_bundle_count'] += 1
+            continue
+        kept[str(thread_id)] = record
+    ordered = sorted(
+        kept.items(),
+        key=lambda item: parse_iso(item[1].get('updated_at')) or parse_iso(item[1].get('last_repaired_at')) or datetime.min.replace(tzinfo=timezone.utc),
+        reverse=True,
+    )
+    if max_records >= 0 and len(ordered) > max_records:
+        stats['dropped_over_cap_count'] = len(ordered) - max_records
+        ordered = ordered[:max_records]
+    return dict(ordered), stats
+
+
+def repair_registry(
+    path: Path = REGISTRY,
+    *,
+    envelope_path: Path = ENVELOPE,
+    ttl_days: int = DEFAULT_TTL_DAYS,
+    max_records: int = DEFAULT_MAX_RECORDS,
+    prune_missing_bundle: bool = True,
+) -> dict[str, Any]:
     payload = load_json_safe(path, {}) or {}
     threads = payload.get('threads') if isinstance(payload.get('threads'), dict) else {}
     envelope = load_json_safe(envelope_path, {}) or {}
@@ -163,16 +234,27 @@ def repair_registry(path: Path = REGISTRY, *, envelope_path: Path = ENVELOPE) ->
         repaired[str(thread_id)] = upgraded
         if did_change:
             changed += 1
+    pruned, prune_stats = prune_threads(
+        repaired,
+        ttl_days=ttl_days,
+        max_records=max_records,
+        prune_missing_bundle=prune_missing_bundle,
+    )
     result = {
         'generated_at': now_iso(),
-        'threads': repaired,
+        'ttl_days': ttl_days,
+        'max_records': max_records,
+        'owner_account_id': OWNER_ACCOUNT_ID,
+        'owner_agent_label': OWNER_AGENT_LABEL,
+        'threads': pruned,
     }
     atomic_write_json(path, result)
     return {
         'status': 'pass',
         'path': str(path),
-        'thread_count': len(repaired),
+        'thread_count': len(pruned),
         'changed_count': changed,
+        **prune_stats,
     }
 
 
@@ -180,9 +262,18 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description='Repair finance Discord follow-up thread registry records.')
     parser.add_argument('--registry', default=str(REGISTRY))
     parser.add_argument('--envelope', default=str(ENVELOPE))
+    parser.add_argument('--ttl-days', type=int, default=DEFAULT_TTL_DAYS)
+    parser.add_argument('--max-records', type=int, default=DEFAULT_MAX_RECORDS)
+    parser.add_argument('--keep-missing-bundles', action='store_true')
     parser.add_argument('--quiet', action='store_true')
     args = parser.parse_args(argv)
-    report = repair_registry(Path(args.registry), envelope_path=Path(args.envelope))
+    report = repair_registry(
+        Path(args.registry),
+        envelope_path=Path(args.envelope),
+        ttl_days=args.ttl_days,
+        max_records=args.max_records,
+        prune_missing_bundle=not args.keep_missing_bundles,
+    )
     if not args.quiet:
         print(json.dumps(report, ensure_ascii=False, indent=2))
     return 0
