@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-16T23:16:26.812348+00:00",
+  "generated_at": "2026-04-17T13:15:00.696873+00:00",
   "subsystem": "finance",
   "openclaw_home": "/Users/leofitz/.openclaw",
   "finance_repo": "/Users/leofitz/.openclaw/workspace/finance",
@@ -16,6 +16,7 @@
     "docs/openclaw-runtime/wake-threshold-attribution.json",
     "docs/openclaw-runtime/report-usefulness-score.json",
     "docs/openclaw-runtime/context-coverage-audit.json",
+    "docs/openclaw-runtime/active-campaign-board-cutover.json",
     "docs/openclaw-runtime/thesis-spine-telemetry-summary.json",
     "docs/openclaw-runtime/ibkr-watchlist-freshness-drill.json",
     "docs/openclaw-runtime/benchmark-boundary-audit.json",
@@ -24,6 +25,8 @@
     "docs/openclaw-runtime/contracts/undercurrent-card-contract.md",
     "docs/openclaw-runtime/contracts/source-registry-v2-contract.md",
     "docs/openclaw-runtime/contracts/source-health-contract.md",
+    "docs/openclaw-runtime/contracts/source-atom-contract.md",
+    "docs/openclaw-runtime/contracts/claim-atom-contract.md",
     "docs/openclaw-runtime/contracts/context-gap-contract.md",
     "docs/openclaw-runtime/contracts/discord-campaign-board-package-contract.md",
     "docs/openclaw-runtime/critics/phase-2-implementation-critic.md",
@@ -32,8 +35,8 @@
     "docs/openclaw-runtime/critics/phase-5-implementation-critic.md",
     "docs/openclaw-runtime/critics/phase-6-implementation-critic.md",
     "docs/openclaw-runtime/critics/phase-7-implementation-critic.md",
-    "docs/openclaw-runtime/contracts/claim-atom-contract.md",
-    "docs/openclaw-runtime/contracts/source-atom-contract.md",
+    "docs/openclaw-runtime/critics/phase-8-implementation-critic.md",
+    "docs/openclaw-runtime/critics/phase-9-implementation-critic.md",
     "docs/openclaw-runtime/contracts/finance-openclaw-runtime-contract.md",
     "docs/openclaw-runtime/contracts/finance-report-contract.md",
     "docs/openclaw-runtime/contracts/finance-gate-taxonomy.md",
@@ -55,10 +58,7 @@
     "docs/openclaw-runtime/schemas/judgment-envelope.schema.json",
     "docs/openclaw-runtime/schemas/decision-log.schema.json",
     "docs/openclaw-runtime/schemas/source-registry-record.schema.json",
-    "docs/openclaw-runtime/schemas/source-health.schema.json",
-    "docs/openclaw-runtime/critics/phase-8-implementation-critic.md",
-    "docs/openclaw-runtime/active-campaign-board-cutover.json",
-    "docs/openclaw-runtime/critics/phase-9-implementation-critic.md"
+    "docs/openclaw-runtime/schemas/source-health.schema.json"
   ],
   "note": "Generated from the local OpenClaw runtime. State files and secrets are intentionally excluded."
 }
