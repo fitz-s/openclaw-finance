@@ -382,21 +382,38 @@
     {
       "phase": 10,
       "name": "Event watcher and undercurrent claim-aware migration",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Move watcher semantics from theme/price overlap to claim persistence, source diversity, and context gaps.",
       "required_review2_content": [
         "event_watcher.py",
         "claim persistence",
         "cross-lane confirmation",
-        "PACKET_UPDATE_ONLY board mutation"
+        "PACKET_UPDATE_ONLY board mutation",
+        "context gap watcher signal",
+        "source health degradation"
       ],
       "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-10-claim-aware-undercurrents-ralplan.md",
         "scripts/event_watcher.py",
-        "scripts/undercurrent_compiler.py"
+        "scripts/undercurrent_compiler.py",
+        "tests/test_event_watcher_claim_aware_phase10.py"
       ],
       "acceptance": [
         "theme overlap is no longer main trigger",
-        "undercurrents use claim/source/gap evidence"
+        "undercurrents use claim/source/gap evidence",
+        "quota and coverage source health degrade undercurrent confidence",
+        "old watcher fallback remains compatible"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "event graph reasoning, provenance, weak-signal memory, contradiction evidence, and time-aware ranking research",
+        "result": "Use graph-linked claim signals, independent source/lane corroboration, contradiction load, context gaps, and source-health freshness/coverage penalties."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-10-claim-aware-undercurrents-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-10-implementation-critic.md",
+      "implementation": [
+        "scripts/event_watcher.py",
+        "scripts/undercurrent_compiler.py"
       ]
     },
     {

@@ -16,12 +16,11 @@ from typing import Any
 from atomic_io import atomic_write_json, load_json_safe
 
 FINANCE = Path('/Users/leofitz/.openclaw/workspace/finance')
-WORKSPACE = FINANCE.parent
 STATE = FINANCE / 'state'
 INVALIDATORS = STATE / 'invalidator-ledger.json'
 OPPORTUNITIES = STATE / 'opportunity-queue.json'
 CAPITAL_GRAPH = STATE / 'capital-graph.json'
-SOURCE_HEALTH = WORKSPACE / 'services' / 'market-ingest' / 'state' / 'source-health.json'
+SOURCE_HEALTH = STATE / 'source-health.json'
 SOURCE_ATOMS = STATE / 'source-atoms' / 'latest.jsonl'
 CLAIM_GRAPH = STATE / 'claim-graph.json'
 CONTEXT_GAPS = STATE / 'context-gaps.json'
@@ -120,7 +119,10 @@ def capital_relevance_score(card: dict[str, Any]) -> float:
 
 def freshness_penalty(card: dict[str, Any]) -> float:
     status = str((card.get('source_freshness') or {}).get('status') or 'unknown')
-    degraded = int((card.get('source_health_summary') or {}).get('degraded_count') or 0)
+    health = card.get('source_health_summary') if isinstance(card.get('source_health_summary'), dict) else {}
+    degraded = int(health.get('degraded_count') or 0)
+    quota = int(health.get('quota_degraded_count') or 0)
+    unavailable = int(health.get('unavailable_count') or 0)
     penalty = 0.0
     if status == 'mixed':
         penalty += 0.2
@@ -129,6 +131,7 @@ def freshness_penalty(card: dict[str, Any]) -> float:
     elif status == 'unknown':
         penalty += 0.3
     penalty += min(degraded, 5) * 0.08
+    penalty += min(quota + unavailable, 5) * 0.06
     return clamp(penalty)
 
 
@@ -262,9 +265,15 @@ def enrich_with_shadow_context(card: dict[str, Any], ctx: dict[str, Any]) -> dic
     source_health_rows = [row for row in source_health_rows if isinstance(row, dict)]
     degraded_sources = [
         row for row in source_health_rows
-        if row.get('freshness_status') in {'stale', 'unknown'} or row.get('rights_status') in {'restricted', 'unknown'}
+        if row.get('freshness_status') in {'stale', 'unknown'}
+        or row.get('rights_status') in {'restricted', 'unknown'}
+        or row.get('quota_status') == 'degraded'
+        or row.get('coverage_status') == 'unavailable'
     ]
+    quota_degraded_sources = [row for row in source_health_rows if row.get('quota_status') == 'degraded']
+    unavailable_sources = [row for row in source_health_rows if row.get('coverage_status') == 'unavailable']
     contradiction_load = sum(1 for claim in claims if as_list(claim.get('contradicts')))
+    claim_persistence = len(claim_ids)
     known_unknowns = [
         {
             'gap_id': gap.get('gap_id'),
@@ -290,7 +299,12 @@ def enrich_with_shadow_context(card: dict[str, Any], ctx: dict[str, Any]) -> dic
     card['source_health_summary'] = {
         'degraded_count': len(degraded_sources),
         'degraded_sources': [str(row.get('source_id')) for row in degraded_sources[:5]],
+        'quota_degraded_count': len(quota_degraded_sources),
+        'unavailable_count': len(unavailable_sources),
+        'degraded_reasons': sorted({str(reason) for row in degraded_sources for reason in as_list(row.get('breach_reasons'))})[:8],
     }
+    card['claim_persistence_score'] = claim_persistence
+    card['claim_ids'] = claim_ids[:8]
     if degraded_sources and card.get('source_freshness', {}).get('status') == 'fresh':
         card['source_freshness'] = {
             'status': 'mixed',
