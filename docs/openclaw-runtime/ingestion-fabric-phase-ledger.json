@@ -18,127 +18,311 @@
     {
       "phase": 0,
       "name": "Review2 intake and master plan baseline",
-      "status": "in_progress",
+      "status": "completed",
       "purpose": "Persist the full review2 document and create the controlling implementation ledger.",
-      "touchpoints": ["docs/review2-04-17-2026.md", "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-00-review2-intake-ralplan.md", "docs/openclaw-runtime/ingestion-fabric-phase-ledger.json"],
-      "acceptance": ["full review2 embedded", "phase ledger covers all major review2 requirements", "tests guard critical concepts"]
+      "touchpoints": [
+        "docs/review2-04-17-2026.md",
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-00-review2-intake-ralplan.md",
+        "docs/openclaw-runtime/ingestion-fabric-phase-ledger.json"
+      ],
+      "acceptance": [
+        "full review2 embedded",
+        "phase ledger covers all major review2 requirements",
+        "tests guard critical concepts"
+      ]
     },
     {
       "phase": 1,
       "name": "Contracts: QueryPack, SourceFetchRecord, EvidenceAtom bridge",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Define canonical source ingestion contracts before behavior changes.",
-      "required_review2_content": ["QueryPack", "SourceFetchRecord", "EvidenceAtom", "ClaimAtom", "ContextGap", "Never compress before provenance"],
-      "touchpoints": ["docs/openclaw-runtime/contracts/query-pack-contract.md", "docs/openclaw-runtime/contracts/source-fetch-record-contract.md", "docs/openclaw-runtime/contracts/evidence-atom-contract.md"],
-      "acceptance": ["contracts exist", "scanner is query planner in contract", "sidecar-only authority is explicit"]
+      "required_review2_content": [
+        "QueryPack",
+        "SourceFetchRecord",
+        "EvidenceAtom",
+        "ClaimAtom",
+        "ContextGap",
+        "Never compress before provenance"
+      ],
+      "touchpoints": [
+        "docs/openclaw-runtime/contracts/query-pack-contract.md",
+        "docs/openclaw-runtime/contracts/source-fetch-record-contract.md",
+        "docs/openclaw-runtime/contracts/evidence-atom-contract.md"
+      ],
+      "acceptance": [
+        "contracts exist",
+        "scanner is query planner in contract",
+        "sidecar-only authority is explicit"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-01-contracts-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-01-implementation-critic.md",
+      "implementation": [
+        "docs/openclaw-runtime/contracts/query-pack-contract.md",
+        "docs/openclaw-runtime/contracts/source-fetch-record-contract.md",
+        "docs/openclaw-runtime/contracts/source-atom-contract.md"
+      ]
     },
     {
       "phase": 2,
       "name": "Brave API capability audit and endpoint inventory",
       "status": "pending",
       "purpose": "Record current OpenClaw Brave mode and Brave endpoint capability gaps.",
-      "required_review2_content": ["Brave web/search", "Brave news/search", "Brave llm/context", "Brave Answers", "402 quota", "current OpenClaw web_search abstraction"],
-      "touchpoints": ["docs/openclaw-runtime/brave-api-capability-audit.md", "tools/export_openclaw_runtime_snapshot.py"],
-      "acceptance": ["current mode detected", "missing endpoints documented", "quota failure surfaced"]
+      "required_review2_content": [
+        "Brave web/search",
+        "Brave news/search",
+        "Brave llm/context",
+        "Brave Answers",
+        "402 quota",
+        "current OpenClaw web_search abstraction"
+      ],
+      "touchpoints": [
+        "docs/openclaw-runtime/brave-api-capability-audit.md",
+        "tools/export_openclaw_runtime_snapshot.py"
+      ],
+      "acceptance": [
+        "current mode detected",
+        "missing endpoints documented",
+        "quota failure surfaced"
+      ]
     },
     {
       "phase": 3,
       "name": "Query registry, lane watermarks, and source memory index",
       "status": "pending",
       "purpose": "Stop repeated low-yield queries and old-claim loops at query/claim/source level.",
-      "required_review2_content": ["query_registry", "lane_watermarks", "source_memory_index", "claim novelty", "not theme dedup"],
-      "touchpoints": ["scripts/query_registry_compiler.py", "scripts/source_memory_index.py", "state/query-registry.jsonl", "state/lane-watermarks.json"],
-      "acceptance": ["zero-yield repeated queries are suppressible", "claim novelty uses subject/predicate/horizon", "legacy theme dedup is not primary"]
+      "required_review2_content": [
+        "query_registry",
+        "lane_watermarks",
+        "source_memory_index",
+        "claim novelty",
+        "not theme dedup"
+      ],
+      "touchpoints": [
+        "scripts/query_registry_compiler.py",
+        "scripts/source_memory_index.py",
+        "state/query-registry.jsonl",
+        "state/lane-watermarks.json"
+      ],
+      "acceptance": [
+        "zero-yield repeated queries are suppressible",
+        "claim novelty uses subject/predicate/horizon",
+        "legacy theme dedup is not primary"
+      ]
     },
     {
       "phase": 4,
       "name": "Brave Web and News deterministic fetchers",
       "status": "pending",
       "purpose": "Use Brave web/news endpoints as deterministic source discovery lanes with freshness/date/domain controls.",
-      "required_review2_content": ["brave_news_search_fetcher.py", "brave_web_search_fetcher.py", "freshness", "date range", "allowed domains", "extra snippets"],
-      "touchpoints": ["scripts/brave_news_search_fetcher.py", "scripts/brave_web_search_fetcher.py", "state/brave-news-search-results.jsonl", "state/brave-web-search-results.jsonl"],
-      "acceptance": ["news/web fetchers output SourceFetchRecord-compatible rows", "freshness filters are explicit", "no answer synthesis"]
+      "required_review2_content": [
+        "brave_news_search_fetcher.py",
+        "brave_web_search_fetcher.py",
+        "freshness",
+        "date range",
+        "allowed domains",
+        "extra snippets"
+      ],
+      "touchpoints": [
+        "scripts/brave_news_search_fetcher.py",
+        "scripts/brave_web_search_fetcher.py",
+        "state/brave-news-search-results.jsonl",
+        "state/brave-web-search-results.jsonl"
+      ],
+      "acceptance": [
+        "news/web fetchers output SourceFetchRecord-compatible rows",
+        "freshness filters are explicit",
+        "no answer synthesis"
+      ]
     },
     {
       "phase": 5,
       "name": "Brave LLM Context reader lane",
       "status": "pending",
       "purpose": "Use llm/context only for selected source reading, not first-pass discovery.",
-      "required_review2_content": ["brave_llm_context_fetcher.py", "source_reading", "selected URL", "freshness limitations", "safe excerpts"],
-      "touchpoints": ["scripts/brave_llm_context_fetcher.py", "state/brave-llm-context-results.jsonl"],
-      "acceptance": ["first-pass discovery blocked", "selected URL/topic required", "results become evidence candidates only"]
+      "required_review2_content": [
+        "brave_llm_context_fetcher.py",
+        "source_reading",
+        "selected URL",
+        "freshness limitations",
+        "safe excerpts"
+      ],
+      "touchpoints": [
+        "scripts/brave_llm_context_fetcher.py",
+        "state/brave-llm-context-results.jsonl"
+      ],
+      "acceptance": [
+        "first-pass discovery blocked",
+        "selected URL/topic required",
+        "results become evidence candidates only"
+      ]
     },
     {
       "phase": 6,
       "name": "Brave Answers sidecar",
       "status": "pending",
       "purpose": "Add Answers API as sidecar synthesis with citations only, never canonical evidence.",
-      "required_review2_content": ["brave_answers_sidecar.py", "chat/completions", "citations", "sidecar_only", "not authority"],
-      "touchpoints": ["scripts/brave_answers_sidecar.py", "state/brave-answer-sidecars"],
-      "acceptance": ["answers without citations cannot promote", "citations convert to evidence candidates", "answer text is DerivedContext/Hypothesis only"]
+      "required_review2_content": [
+        "brave_answers_sidecar.py",
+        "chat/completions",
+        "citations",
+        "sidecar_only",
+        "not authority"
+      ],
+      "touchpoints": [
+        "scripts/brave_answers_sidecar.py",
+        "state/brave-answer-sidecars"
+      ],
+      "acceptance": [
+        "answers without citations cannot promote",
+        "citations convert to evidence candidates",
+        "answer text is DerivedContext/Hypothesis only"
+      ]
     },
     {
       "phase": 7,
       "name": "Query planner pack and scanner role downgrade",
       "status": "pending",
       "purpose": "Move LLM scanner from canonical ingestion into query planning and anomaly explanation.",
-      "required_review2_content": ["scanner as query planner", "finance_llm_context_pack.py", "QueryPack", "forbidden canonical ingestion"],
-      "touchpoints": ["scripts/finance_llm_context_pack.py", "scripts/query_pack_planner.py"],
-      "acceptance": ["scanner pack emits query-pack contract", "free-form web_search is no longer primary ingestion path"]
+      "required_review2_content": [
+        "scanner as query planner",
+        "finance_llm_context_pack.py",
+        "QueryPack",
+        "forbidden canonical ingestion"
+      ],
+      "touchpoints": [
+        "scripts/finance_llm_context_pack.py",
+        "scripts/query_pack_planner.py"
+      ],
+      "acceptance": [
+        "scanner pack emits query-pack contract",
+        "free-form web_search is no longer primary ingestion path"
+      ]
     },
     {
       "phase": 8,
       "name": "finance_worker reducer migration",
       "status": "pending",
       "purpose": "Downgrade finance_worker to compatibility reducer over claims/gaps while preserving legacy observations.",
-      "required_review2_content": ["finance_worker reducer", "legacy observation bridge", "parallel write", "canonical authority removed"],
-      "touchpoints": ["scripts/finance_worker.py", "scripts/thesis_state_reducer.py"],
-      "acceptance": ["claims can reduce to legacy observations", "old consumers survive", "worker no longer sole canonical ingress"]
+      "required_review2_content": [
+        "finance_worker reducer",
+        "legacy observation bridge",
+        "parallel write",
+        "canonical authority removed"
+      ],
+      "touchpoints": [
+        "scripts/finance_worker.py",
+        "scripts/thesis_state_reducer.py"
+      ],
+      "acceptance": [
+        "claims can reduce to legacy observations",
+        "old consumers survive",
+        "worker no longer sole canonical ingress"
+      ]
     },
     {
       "phase": 9,
       "name": "Source health and quota monitor",
       "status": "pending",
       "purpose": "Expose Brave quota/rate limit and source health failures as first-class source-health signals.",
-      "required_review2_content": ["402 quota", "source_health_monitor.py", "quota_state", "rate_limited", "failed fetch records"],
-      "touchpoints": ["scripts/source_health_monitor.py", "docs/openclaw-runtime/contracts/source-health-contract.md"],
-      "acceptance": ["Brave 402 becomes source health degradation", "reports cannot silently recycle old state"]
+      "required_review2_content": [
+        "402 quota",
+        "source_health_monitor.py",
+        "quota_state",
+        "rate_limited",
+        "failed fetch records"
+      ],
+      "touchpoints": [
+        "scripts/source_health_monitor.py",
+        "docs/openclaw-runtime/contracts/source-health-contract.md"
+      ],
+      "acceptance": [
+        "Brave 402 becomes source health degradation",
+        "reports cannot silently recycle old state"
+      ]
     },
     {
       "phase": 10,
       "name": "Event watcher and undercurrent claim-aware migration",
       "status": "pending",
       "purpose": "Move watcher semantics from theme/price overlap to claim persistence, source diversity, and context gaps.",
-      "required_review2_content": ["event_watcher.py", "claim persistence", "cross-lane confirmation", "PACKET_UPDATE_ONLY board mutation"],
-      "touchpoints": ["scripts/event_watcher.py", "scripts/undercurrent_compiler.py"],
-      "acceptance": ["theme overlap is no longer main trigger", "undercurrents use claim/source/gap evidence"]
+      "required_review2_content": [
+        "event_watcher.py",
+        "claim persistence",
+        "cross-lane confirmation",
+        "PACKET_UPDATE_ONLY board mutation"
+      ],
+      "touchpoints": [
+        "scripts/event_watcher.py",
+        "scripts/undercurrent_compiler.py"
+      ],
+      "acceptance": [
+        "theme overlap is no longer main trigger",
+        "undercurrents use claim/source/gap evidence"
+      ]
     },
     {
       "phase": 11,
       "name": "Reader bundle and follow-up slice indexing",
       "status": "pending",
       "purpose": "Make reader bundles carry claim IDs, lane coverage, source health, context gaps, and follow-up slice index.",
-      "required_review2_content": ["finance_report_reader_bundle.py", "claim ids", "lane coverage", "follow-up slices index"],
-      "touchpoints": ["scripts/finance_report_reader_bundle.py", "scripts/finance_followup_context_router.py"],
-      "acceptance": ["bundle exposes evidence slices", "follow-up no longer depends on raw thread history"]
+      "required_review2_content": [
+        "finance_report_reader_bundle.py",
+        "claim ids",
+        "lane coverage",
+        "follow-up slices index"
+      ],
+      "touchpoints": [
+        "scripts/finance_report_reader_bundle.py",
+        "scripts/finance_followup_context_router.py"
+      ],
+      "acceptance": [
+        "bundle exposes evidence slices",
+        "follow-up no longer depends on raw thread history"
+      ]
     },
     {
       "phase": 12,
       "name": "Parent market-ingest handoff plan",
       "status": "pending",
       "purpose": "Prepare parent-side changes without silently modifying external authority chain.",
-      "required_review2_content": ["source_registry", "source_promotion", "semantic_normalizer", "temporal_alignment", "packet_compiler", "wake_policy", "judgment_validator"],
-      "touchpoints": ["docs/openclaw-runtime/parent-ingestion-handoff.md"],
-      "acceptance": ["parent files mapped", "blast radius and rollback documented", "no parent mutation without explicit phase"]
+      "required_review2_content": [
+        "source_registry",
+        "source_promotion",
+        "semantic_normalizer",
+        "temporal_alignment",
+        "packet_compiler",
+        "wake_policy",
+        "judgment_validator"
+      ],
+      "touchpoints": [
+        "docs/openclaw-runtime/parent-ingestion-handoff.md"
+      ],
+      "acceptance": [
+        "parent files mapped",
+        "blast radius and rollback documented",
+        "no parent mutation without explicit phase"
+      ]
     },
     {
       "phase": 13,
       "name": "Rollout, monitoring, and closeout",
       "status": "pending",
       "purpose": "Export readiness, monitoring, and rollback evidence for the ingestion fabric.",
-      "required_review2_content": ["rollout", "rollback", "blast radius", "tests", "reviewer replay"],
-      "touchpoints": ["docs/openclaw-runtime/ingestion-fabric-closeout.json"],
-      "acceptance": ["all phases tracked", "monitoring exists", "rollback explicit"]
+      "required_review2_content": [
+        "rollout",
+        "rollback",
+        "blast radius",
+        "tests",
+        "reviewer replay"
+      ],
+      "touchpoints": [
+        "docs/openclaw-runtime/ingestion-fabric-closeout.json"
+      ],
+      "acceptance": [
+        "all phases tracked",
+        "monitoring exists",
+        "rollback explicit"
+      ]
     }
   ]
 }

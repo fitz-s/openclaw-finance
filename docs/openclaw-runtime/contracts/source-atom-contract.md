@@ -7,6 +7,7 @@ It is a shadow substrate in Phase 2. It is not wake, judgment, delivery, or exec
 ## Purpose
 
 - Preserve source identity, timestamps, bounded source text, symbols, rights, and lineage.
+- Preserve `fetch_id` lineage back to `SourceFetchRecord` when produced by deterministic fetchers.
 - Provide a stable trace base for later ClaimGraph, ContextGap, Undercurrent, CampaignProjection, and follow-up routing.
 - Make missing or weak context explicit without changing current finance report behavior.
 
@@ -15,6 +16,7 @@ It is a shadow substrate in Phase 2. It is not wake, judgment, delivery, or exec
 ```json
 {
   "atom_id": "atom:<stable-hash>",
+  "fetch_id": "fetch:<stable-hash>",
   "source_id": "source:unknown_web",
   "source_class": "news_policy",
   "source_lane": "news_policy_narrative",
@@ -62,6 +64,7 @@ It is a shadow substrate in Phase 2. It is not wake, judgment, delivery, or exec
 - `point_in_time_hash` is deterministic for the atom payload.
 - `no_execution` is always true.
 - Atoms may be generated from scanner state, but they must not mutate scanner state.
+- Atoms produced from QueryPack/SourceFetchRecord must retain `fetch_id`.
 - Atoms are not part of `ContextPacket` authority in Phase 2.
 
 ## Forbidden In Phase 2
