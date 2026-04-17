@@ -288,6 +288,8 @@ def main() -> int:
             'docs/openclaw-runtime/parent-dependency-drift.json',
             'docs/openclaw-runtime/wake-threshold-attribution.json',
             'docs/openclaw-runtime/report-usefulness-score.json',
+            'docs/openclaw-runtime/reviewer-packets/index.json',
+            'docs/openclaw-runtime/reviewer-packets/README.md',
             'docs/openclaw-runtime/context-coverage-audit.json',
             'docs/openclaw-runtime/active-campaign-board-cutover.json',
             'docs/openclaw-runtime/thesis-spine-telemetry-summary.json',
