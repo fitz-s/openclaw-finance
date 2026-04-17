@@ -105,25 +105,43 @@
     {
       "phase": 3,
       "name": "Query registry, lane watermarks, and source memory index",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Stop repeated low-yield queries and old-claim loops at query/claim/source level.",
       "required_review2_content": [
         "query_registry",
         "lane_watermarks",
         "source_memory_index",
         "claim novelty",
-        "not theme dedup"
+        "not theme dedup",
+        "rate-limit aware ingestion metadata",
+        "lane-independent watermarks"
       ],
       "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-03-query-memory-ralplan.md",
         "scripts/query_registry_compiler.py",
         "scripts/source_memory_index.py",
         "state/query-registry.jsonl",
-        "state/lane-watermarks.json"
+        "state/source-memory-index.json",
+        "state/lane-watermarks.json",
+        "tests/test_query_memory_phase03.py"
       ],
       "acceptance": [
         "zero-yield repeated queries are suppressible",
         "claim novelty uses subject/predicate/horizon",
-        "legacy theme dedup is not primary"
+        "legacy theme dedup is not primary",
+        "rate-limit retry metadata captured",
+        "watermarks remain lane-independent"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "canonicalization, indexing, stream watermark, and rate-limit best-practice references",
+        "result": "Use schema-versioned canonical query fingerprints, metadata-only source memory, lane-independent watermarks, and persisted retry/next-eligible metadata."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-03-query-memory-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-03-implementation-critic.md",
+      "implementation": [
+        "scripts/query_registry_compiler.py",
+        "scripts/source_memory_index.py"
       ]
     },
     {
