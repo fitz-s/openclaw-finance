@@ -1,0 +1,62 @@
+{
+  "contract": "parent-ingestion-handoff-v1",
+  "status": "proposal_only_no_parent_mutation",
+  "authority_boundary": {
+    "finance_repo_owns": ["contract artifacts", "compatibility tests", "migration notes", "finance-local shadow artifacts"],
+    "parent_runtime_owns": ["runtime authority", "deployment credentials", "cron/gateway/discord config", "wake policy activation", "packet compiler activation"],
+    "promotion_requires_explicit_parent_approval": true
+  },
+  "compatibility_policy": {
+    "default": "backward_compatible_additive_only",
+    "breaking_changes_require": ["new contract version", "migration window", "dual-run period", "rollback path"],
+    "forbidden_without_parent_phase": ["renames", "field removals", "type changes", "wake threshold behavior changes", "delivery behavior changes"]
+  },
+  "producer_artifacts": [
+    "state/query-packs/scanner-planned.jsonl",
+    "state/brave-news-search-results.jsonl",
+    "state/brave-web-search-results.jsonl",
+    "state/brave-llm-context-results.jsonl",
+    "state/brave-answer-sidecars/latest.jsonl",
+    "state/source-atoms/latest.jsonl",
+    "state/claim-graph.json",
+    "state/context-gaps.json",
+    "state/source-health.json",
+    "state/report-reader/latest.json"
+  ],
+  "parent_consumers": [
+    "services/market-ingest/config/source-registry.json",
+    "services/market-ingest/normalizer/source_promotion.py",
+    "services/market-ingest/normalizer/semantic_normalizer.py",
+    "services/market-ingest/temporal_alignment/alignment.py",
+    "services/market-ingest/packet_compiler/compiler.py",
+    "services/market-ingest/wake_policy/policy.py",
+    "services/market-ingest/validator/judgment_validator.py",
+    "services/market-ingest/source_health/compiler.py",
+    "services/market-ingest/adapters/live_finance_adapter.py"
+  ],
+  "feature_flags_default_off": [
+    "FINANCE_QUERY_PACK_PLANNER_ENABLED",
+    "FINANCE_DETERMINISTIC_BRAVE_FETCHERS_ENABLED",
+    "FINANCE_SOURCE_HEALTH_PARENT_CANONICAL_ENABLED",
+    "FINANCE_CLAIM_GRAPH_PACKET_ENABLED",
+    "FINANCE_UNDERCURRENT_BOARD_MUTATION_ENABLED",
+    "FINANCE_FOLLOWUP_SLICE_REHYDRATION_ENABLED"
+  ],
+  "cutover_gates": [
+    "refresh_parent_dependency_inventory",
+    "audit_parent_dependency_drift",
+    "run_parent_tests_before_mutation",
+    "implement_behind_flags",
+    "run_parent_tests_after_mutation",
+    "run_finance_full_suite",
+    "run_finance_report_path_dry_run",
+    "activate_or_restart_parent_runtime_only_after_approval"
+  ],
+  "rollback": {
+    "disable_all_feature_flags": true,
+    "revert_parent_packet_compiler_to_legacy_inputs": true,
+    "preserve_finance_shadow_artifacts_for_audit": true,
+    "discord_fallback": "complete_readable_primary_report_never_route_card_only"
+  },
+  "no_execution": true
+}

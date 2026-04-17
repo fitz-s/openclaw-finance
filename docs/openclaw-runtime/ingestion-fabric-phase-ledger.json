@@ -457,7 +457,7 @@
     {
       "phase": 12,
       "name": "Parent market-ingest handoff plan",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Prepare parent-side changes without silently modifying external authority chain.",
       "required_review2_content": [
         "source_registry",
@@ -469,12 +469,28 @@
         "judgment_validator"
       ],
       "touchpoints": [
-        "docs/openclaw-runtime/parent-ingestion-handoff.md"
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-12-parent-handoff-ralplan.md",
+        "docs/openclaw-runtime/parent-ingestion-handoff.md",
+        "docs/openclaw-runtime/parent-ingestion-handoff-contract.json",
+        "tests/test_ingestion_fabric_phase12_parent_handoff.py"
       ],
       "acceptance": [
         "parent files mapped",
         "blast radius and rollback documented",
-        "no parent mutation without explicit phase"
+        "no parent mutation without explicit phase",
+        "machine-readable handoff contract exists",
+        "feature flags default off"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "contract testing, API compatibility, rollout gates, feature flags, and protected ownership guidance",
+        "result": "Publish explicit contract, default to additive compatibility, dual-run before cutover, gate promotion on readiness, keep rollback/kill-switches, and preserve parent authority."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-12-parent-handoff-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-12-implementation-critic.md",
+      "implementation": [
+        "docs/openclaw-runtime/parent-ingestion-handoff.md",
+        "docs/openclaw-runtime/parent-ingestion-handoff-contract.json"
       ]
     },
     {
