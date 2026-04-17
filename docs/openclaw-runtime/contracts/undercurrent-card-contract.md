@@ -39,6 +39,16 @@ It is used by Campaign Projection to make `PACKET_UPDATE_ONLY` visible as board 
     "degraded_count": 0,
     "degraded_sources": []
   },
+  "undercurrent_score": 0.0,
+  "cross_lane_confirmation_score": 0.0,
+  "contradiction_load_score": 0.0,
+  "freshness_penalty": 0.0,
+  "capital_relevance_score": 0.0,
+  "promotion_candidate": false,
+  "promotion_blockers": [],
+  "peacetime_update_eligible": true,
+  "packet_update_visibility": "board_mutation_only",
+  "wake_impact": "none",
   "shadow_inputs": {},
   "no_execution": true
 }
@@ -66,3 +76,17 @@ Required enriched fields when shadow inputs are available:
 - `shadow_inputs`
 
 `known_unknowns` are context gaps, not conclusions.
+
+## Phase 06 Promotion Semantics
+
+Undercurrent promotion metadata is advisory. It must not alter wake class in this phase.
+
+Promotion candidates require:
+- source diversity of at least 2
+- cross-lane confirmation score at least 0.45
+- contradiction load score no higher than 0.35
+- capital relevance score at least 0.50
+- persistence score at least 0.55 after normalization
+- no severe freshness penalty
+
+`PACKET_UPDATE_ONLY` may use undercurrents for board mutation only. It must not become alert spam or execution language.

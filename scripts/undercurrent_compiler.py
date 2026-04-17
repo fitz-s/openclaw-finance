@@ -94,6 +94,88 @@ def source_freshness_from_refs(refs: list[Any]) -> dict[str, Any]:
     return {'status': status, 'source_refs': source_refs[:8]}
 
 
+def clamp(value: float, low: float = 0.0, high: float = 1.0) -> float:
+    return max(low, min(high, value))
+
+
+def normalized_persistence(card: dict[str, Any]) -> float:
+    return clamp(float(card.get('persistence_score') or 0) / 20)
+
+
+def normalized_acceleration(card: dict[str, Any]) -> float:
+    return clamp(float(card.get('acceleration_score') or card.get('velocity') or 0) / 10)
+
+
+def capital_relevance_score(card: dict[str, Any]) -> float:
+    refs = card.get('linked_refs') if isinstance(card.get('linked_refs'), dict) else {}
+    source_type = str(card.get('source_type') or '')
+    if source_type in {'hedge_gap', 'crowding'} or as_list(refs.get('capital_graph')):
+        return 0.8
+    if as_list(refs.get('opportunity')) or as_list(refs.get('invalidator')):
+        return 0.65
+    if as_list(refs.get('thesis')) or as_list(refs.get('scenario')):
+        return 0.55
+    return 0.35
+
+
+def freshness_penalty(card: dict[str, Any]) -> float:
+    status = str((card.get('source_freshness') or {}).get('status') or 'unknown')
+    degraded = int((card.get('source_health_summary') or {}).get('degraded_count') or 0)
+    penalty = 0.0
+    if status == 'mixed':
+        penalty += 0.2
+    elif status == 'stale':
+        penalty += 0.5
+    elif status == 'unknown':
+        penalty += 0.3
+    penalty += min(degraded, 5) * 0.08
+    return clamp(penalty)
+
+
+def score_and_gate(card: dict[str, Any]) -> dict[str, Any]:
+    card = dict(card)
+    cross_lane_score = clamp(float(card.get('cross_lane_confirmation') or 0) / 3)
+    contradiction_score = clamp(float(card.get('contradiction_load') or 0) / 5)
+    capital_score = capital_relevance_score(card)
+    fresh_penalty = freshness_penalty(card)
+    persistence = normalized_persistence(card)
+    acceleration = normalized_acceleration(card)
+    score = (
+        0.28 * persistence
+        + 0.18 * acceleration
+        + 0.24 * cross_lane_score
+        + 0.20 * capital_score
+        - 0.15 * contradiction_score
+        - 0.10 * fresh_penalty
+    )
+    blockers: list[str] = []
+    if int(card.get('source_diversity') or 0) < 2:
+        blockers.append('source_diversity_lt_2')
+    if cross_lane_score < 0.45:
+        blockers.append('cross_lane_confirmation_lt_0.45')
+    if contradiction_score > 0.35:
+        blockers.append('contradiction_load_gt_0.35')
+    if capital_score < 0.50:
+        blockers.append('capital_relevance_lt_0.50')
+    if persistence < 0.55:
+        blockers.append('persistence_score_lt_0.55')
+    if fresh_penalty >= 0.50:
+        blockers.append('freshness_penalty_high')
+    card.update({
+        'undercurrent_score': round(clamp(score), 4),
+        'cross_lane_confirmation_score': round(cross_lane_score, 4),
+        'contradiction_load_score': round(contradiction_score, 4),
+        'capital_relevance_score': round(capital_score, 4),
+        'freshness_penalty': round(fresh_penalty, 4),
+        'promotion_candidate': not blockers,
+        'promotion_blockers': blockers,
+        'peacetime_update_eligible': True,
+        'packet_update_visibility': 'board_mutation_only',
+        'wake_impact': 'none',
+    })
+    return card
+
+
 def as_list(value: Any) -> list[Any]:
     return value if isinstance(value, list) else []
 
@@ -215,7 +297,7 @@ def enrich_with_shadow_context(card: dict[str, Any], ctx: dict[str, Any]) -> dic
             'source_refs': card.get('source_freshness', {}).get('source_refs', [])[:8],
         }
     card['no_execution'] = True
-    return card
+    return score_and_gate(card)
 
 
 def compile_invalidator_undercurrents(invalidator_ledger: dict[str, Any]) -> list[dict[str, Any]]:

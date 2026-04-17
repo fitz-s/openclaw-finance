@@ -128,3 +128,44 @@ def test_undercurrent_output_remains_compatible_without_shadow_inputs():
     assert first['source_diversity'] == 0
     assert first['known_unknowns'] == []
     assert first['shadow_inputs']['claim_graph'] is False
+
+
+def test_undercurrent_score_requires_cross_lane_confirmation_for_promotion():
+    result = compile_undercurrents(_invalidators(), _opportunities(), {})
+    first = result['undercurrents'][0]
+    assert first['promotion_candidate'] is False
+    assert 'source_diversity_lt_2' in first['promotion_blockers']
+    assert 'cross_lane_confirmation_lt_0.45' in first['promotion_blockers']
+
+
+def test_undercurrent_blocks_promotion_on_high_contradiction_load():
+    claim_graph = _claim_graph()
+    claim_graph['claims'].extend([
+        {'claim_id': 'claim:extra1', 'atom_id': 'atom:news', 'subject': 'TSLA', 'predicate': 'mentions', 'object': 'TSLA extra risk', 'direction': 'bearish', 'contradicts': ['claim:price'], 'event_class': 'narrative'},
+        {'claim_id': 'claim:extra2', 'atom_id': 'atom:price', 'subject': 'TSLA', 'predicate': 'moves', 'object': 'TSLA price still up', 'direction': 'bullish', 'contradicts': ['claim:news'], 'event_class': 'price'},
+    ])
+    result = compile_undercurrents(
+        _invalidators(), _opportunities(), {},
+        source_health={'sources': []},
+        atoms=_atoms(),
+        claim_graph=claim_graph,
+        context_gaps={'gaps': []},
+    )
+    first = result['undercurrents'][0]
+    assert first['contradiction_load_score'] > 0.35
+    assert 'contradiction_load_gt_0.35' in first['promotion_blockers']
+
+
+def test_packet_update_only_visibility_is_board_mutation_only():
+    result = compile_undercurrents(
+        _invalidators(), _opportunities(), {},
+        source_health=_source_health(),
+        atoms=_atoms(),
+        claim_graph=_claim_graph(),
+        context_gaps=_context_gaps(),
+    )
+    first = result['undercurrents'][0]
+    assert first['peacetime_update_eligible'] is True
+    assert first['packet_update_visibility'] == 'board_mutation_only'
+    assert first['wake_impact'] == 'none'
+    assert first['no_execution'] is True

@@ -197,7 +197,7 @@
     {
       "phase": 6,
       "name": "Undercurrent Engine",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Make peacetime and dark undercurrents first-class and not just keyword/price watcher output.",
       "required_review_content": [
         "UndercurrentCard",
@@ -217,6 +217,12 @@
         "single-lane narrative cannot promote",
         "packet_update_only mutates peacetime board",
         "promotion reason is explicit"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-06-undercurrent-engine-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-06-implementation-critic.md",
+      "implementation": [
+        "scripts/undercurrent_compiler.py",
+        "docs/openclaw-runtime/contracts/undercurrent-card-contract.md"
       ]
     },
     {
