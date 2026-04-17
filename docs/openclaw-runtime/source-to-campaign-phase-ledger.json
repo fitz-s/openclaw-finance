@@ -406,7 +406,7 @@
     {
       "phase": 13,
       "name": "Final active cutover",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Only after source/evidence/replay/follow-up are stable, allow undercurrent promotion to influence wake and primary campaign boards.",
       "required_review_content": [
         "parallel-write before cutover",
@@ -424,6 +424,13 @@
         "fallbacks work",
         "no execution authority",
         "safety remains fail-closed"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-13-active-cutover-gate-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-13-implementation-critic.md",
+      "implementation": [
+        "scripts/finance_source_to_campaign_cutover_gate.py",
+        "scripts/finance_discord_report_job.py",
+        "docs/openclaw-runtime/contracts/source-to-campaign-cutover-gate-contract.md"
       ]
     },
     {
