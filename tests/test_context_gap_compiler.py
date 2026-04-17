@@ -42,7 +42,17 @@ def test_context_gap_marks_missing_market_structure_for_narrative_only_claim() -
 
 def test_context_gap_marks_missing_corporate_filing_for_unverified_issuer_claim() -> None:
     report = compile_context_gaps(_claim_graph(), generated_at='2026-04-16T15:20:00Z')
-    assert any(gap['missing_lane'] == 'corporate_filing' for gap in report['gaps'])
+    assert any(gap['missing_lane'] == 'corp_filing_ir' for gap in report['gaps'])
+
+
+def test_context_gap_records_status_and_closure_condition() -> None:
+    report = compile_context_gaps(_claim_graph(), generated_at='2026-04-16T15:20:00Z')
+    gap = next(item for item in report['gaps'] if item['missing_lane'] == 'market_structure')
+    assert gap['gap_status'] == 'open'
+    assert gap['closure_condition']
+    assert gap['weak_claim_ids'] == gap['what_claims_remain_weak']
+    assert gap['suggested_sources'] == gap['which_source_could_close_it']
+    assert gap['source_lane_present'] == 'news_policy_narrative'
 
 
 def test_context_gap_hash_is_deterministic() -> None:

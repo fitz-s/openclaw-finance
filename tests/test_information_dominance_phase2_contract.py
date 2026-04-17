@@ -21,6 +21,9 @@ def test_phase2_contracts_exist_and_preserve_shadow_boundary() -> None:
     assert 'evidence_rights' in claim_atom
     assert 'source_sublane' in claim_atom
     assert 'Gaps do not block delivery in Phase 2' in context_gap
+    assert 'gap_status' in context_gap
+    assert 'closure_condition' in context_gap
+    assert 'weak_claim_ids' in context_gap
     assert 'no_execution' in source_atom + claim_atom + context_gap
 
 

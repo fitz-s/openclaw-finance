@@ -26,11 +26,24 @@ def now_iso() -> str:
 def source_for_lane(lane: str) -> list[str]:
     return {
         'market_structure': ['source:yfinance', 'source:exchange_market_data'],
+        'corp_filing_ir': ['source:sec_edgar', 'source:issuer_press_release'],
         'corporate_filing': ['source:sec_edgar', 'source:issuer_press_release'],
         'news_policy_narrative': ['source:reuters', 'source:bloomberg'],
         'internal_private': ['source:portfolio_flex'],
         'derived_context': ['source:capital_graph', 'source:scenario_exposure'],
     }.get(lane, ['source:unknown_web'])
+
+
+def closure_condition_for(missing_lane: str, claim: dict[str, Any]) -> str:
+    subject = str(claim.get('subject') or 'the weak claim')
+    return {
+        'market_structure': f'Fresh price/volume/options evidence supports or contradicts {subject}.',
+        'corp_filing_ir': f'Official filing, issuer release, or IR source confirms or rejects {subject}.',
+        'corporate_filing': f'Official filing, issuer release, or IR source confirms or rejects {subject}.',
+        'derived_context': f'Capital graph, scenario exposure, or contradiction check resolves confidence for {subject}.',
+        'news_policy_narrative': f'Structured entity/event source confirms novelty and relevance for {subject}.',
+        'internal_private': f'Internal portfolio/watch-intent context confirms capital relevance for {subject}.',
+    }.get(missing_lane, f'A source in {missing_lane} closes the weak claim for {subject}.')
 
 
 def gaps_for_claim(claim: dict[str, Any]) -> list[dict[str, Any]]:
@@ -42,22 +55,29 @@ def gaps_for_claim(claim: dict[str, Any]) -> list[dict[str, Any]]:
     if event_class == 'narrative' and lane != 'market_structure':
         gaps.append(make_gap(claim_id, 'market_structure', 'Narrative-only claim lacks price/volume confirmation.', claim, 'medium'))
     if claim.get('predicate') in {'mentions', 'conflicts'} and claim.get('subject') not in {'news_policy_narrative', 'market_structure'} and event_class != 'filing':
-        gaps.append(make_gap(claim_id, 'corporate_filing', 'Issuer/security claim lacks official filing or issuer confirmation.', claim, 'medium'))
+        gaps.append(make_gap(claim_id, 'corp_filing_ir', 'Issuer/security claim lacks official filing or issuer confirmation.', claim, 'medium'))
     if certainty in {'weak', 'unknown'}:
         gaps.append(make_gap(claim_id, 'derived_context', 'Claim confidence is weak; needs triangulation or contradiction check.', claim, 'low'))
     return gaps
 
 
 def make_gap(claim_id: str, missing_lane: str, reason: str, claim: dict[str, Any], cost: str) -> dict[str, Any]:
+    suggested_sources = source_for_lane(missing_lane)
     return {
         'gap_id': stable_id('gap', claim_id, missing_lane, reason),
         'campaign_id': None,
+        'linked_campaign_id': None,
         'claim_id': claim_id,
         'missing_lane': missing_lane,
+        'source_lane_present': claim.get('source_lane'),
         'why_load_bearing': reason,
         'what_claims_remain_weak': [claim_id],
-        'which_source_could_close_it': source_for_lane(missing_lane),
+        'weak_claim_ids': [claim_id],
+        'which_source_could_close_it': suggested_sources,
+        'suggested_sources': suggested_sources,
         'cost_of_ignorance': cost,
+        'closure_condition': closure_condition_for(missing_lane, claim),
+        'gap_status': 'open',
         'subject': claim.get('subject'),
         'no_execution': True,
     }

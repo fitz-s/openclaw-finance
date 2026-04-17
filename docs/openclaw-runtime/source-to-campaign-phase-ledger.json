@@ -136,7 +136,7 @@
     {
       "phase": 4,
       "name": "ContextGap first-class unknowns",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Replace generic To Verify with traceable ContextGap objects.",
       "required_review_content": [
         "ContextGap",
@@ -155,6 +155,12 @@
         "high-impact unknowns have gap ids",
         "gaps link to weak claims",
         "gaps can close"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-04-context-gap-first-class-unknowns-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-04-implementation-critic.md",
+      "implementation": [
+        "scripts/context_gap_compiler.py",
+        "docs/openclaw-runtime/contracts/context-gap-contract.md"
       ]
     },
     {
