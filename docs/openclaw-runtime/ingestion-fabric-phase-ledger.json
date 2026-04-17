@@ -267,21 +267,39 @@
     {
       "phase": 7,
       "name": "Query planner pack and scanner role downgrade",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Move LLM scanner from canonical ingestion into query planning and anomaly explanation.",
       "required_review2_content": [
         "scanner as query planner",
         "finance_llm_context_pack.py",
         "QueryPack",
-        "forbidden canonical ingestion"
+        "forbidden canonical ingestion",
+        "closed schema planner output",
+        "planning-only tool boundary"
       ],
       "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-07-query-planner-pack-ralplan.md",
         "scripts/finance_llm_context_pack.py",
-        "scripts/query_pack_planner.py"
+        "scripts/query_pack_planner.py",
+        "state/query-packs/scanner-planned.jsonl",
+        "tests/test_query_pack_planner_phase07.py"
       ],
       "acceptance": [
         "scanner pack emits query-pack contract",
-        "free-form web_search is no longer primary ingestion path"
+        "free-form web_search is no longer primary ingestion path",
+        "unknown discovery query packs carry known-symbol exclusions",
+        "legacy observation path remains compatibility-only"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "agent safety, structured-output, JSON Schema, and evaluation guidance",
+        "result": "Split scanner planner from deterministic ingestion, use closed structured QueryPack output, keep planning-only tool boundaries, and treat tool/search output as untrusted until validated."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-07-query-planner-pack-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-07-implementation-critic.md",
+      "implementation": [
+        "scripts/query_pack_planner.py",
+        "scripts/finance_llm_context_pack.py"
       ]
     },
     {

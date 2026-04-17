@@ -50,6 +50,18 @@ def test_scanner_pack_has_hard_unknown_discovery_contract() -> None:
     assert isinstance(scanner['known_symbols_must_not_satisfy_unknown_discovery'], list)
 
 
+def test_scanner_pack_is_query_planner_first_not_freeform_ingestion() -> None:
+    scanner = build_packs()['scanner']
+
+    assert scanner['scanner_canonical_role'] == 'planner_first_legacy_observation_bridge'
+    assert scanner['free_form_web_search_canonical_ingestion'] is False
+    assert scanner['planner_is_not_evidence'] is True
+    assert scanner['query_pack_contract']['contract'] == 'query-pack-v1'
+    assert scanner['query_pack_contract']['additional_properties_allowed'] is False
+    assert 'free_form_web_search_as_canonical_ingestion' in scanner['forbidden_actions']
+    assert scanner['legacy_observation_bridge']['observations_are_not_canonical_ingestion'] is True
+
+
 def test_sidecar_and_weekly_packs_cannot_deliver_or_mutate_thresholds() -> None:
     packs = build_packs()
     sidecar = packs['thesis-sidecar']

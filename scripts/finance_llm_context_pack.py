@@ -49,6 +49,9 @@ FOLLOWUP_PACK = OUT_DIR / 'report-followup.json'
 READER_BUNDLE_DIR = STATE / 'report-reader'
 CAMPAIGN_BOARD = STATE / 'campaign-board.json'
 CAMPAIGN_CACHE = STATE / 'campaign-cache.json'
+QUERY_PACK_OUT = STATE / 'query-packs' / 'scanner-planned.jsonl'
+QUERY_PACK_REPORT = STATE / 'query-packs' / 'scanner-planned-report.json'
+QUERY_PACK_CONTRACT = FINANCE / 'docs' / 'openclaw-runtime' / 'contracts' / 'query-pack-contract.md'
 
 
 def now_iso() -> str:
@@ -341,11 +344,37 @@ def build_packs() -> dict[str, dict[str, Any]]:
     scanner = base_pack(
         'scanner',
         scanner_sources,
-        job_goal='Find object-linked evidence candidates while preserving a dedicated unknown-discovery lane.',
-        allowed_outputs=['finance/buffer/{YYYY-MM-DD}-scan-{HHMM}.json', 'machine summary only'],
-        forbidden_actions=['user_message', 'delivery', 'held_or_watchlist_as_unknown', 'execution', 'threshold_mutation'],
+        job_goal='Plan bounded QueryPack candidates for deterministic source acquisition; preserve legacy observation output only as a compatibility bridge.',
+        allowed_outputs=[str(QUERY_PACK_OUT), str(QUERY_PACK_REPORT), 'finance/buffer/{YYYY-MM-DD}-scan-{HHMM}.json legacy fallback', 'machine summary only'],
+        forbidden_actions=['user_message', 'delivery', 'held_or_watchlist_as_unknown', 'free_form_web_search_as_canonical_ingestion', 'execution', 'threshold_mutation'],
     )
     scanner.update({
+        'scanner_canonical_role': 'planner_first_legacy_observation_bridge',
+        'planner_prompt_version': 'query-planner-v1',
+        'free_form_web_search_canonical_ingestion': False,
+        'planner_is_not_evidence': True,
+        'planner_output_path': str(QUERY_PACK_OUT),
+        'planner_report_path': str(QUERY_PACK_REPORT),
+        'query_pack_contract_ref': str(QUERY_PACK_CONTRACT),
+        'query_pack_contract': {
+            'contract': 'query-pack-v1',
+            'additional_properties_allowed': False,
+            'required_fields': [
+                'pack_id', 'lane', 'purpose', 'query', 'freshness', 'allowed_domains',
+                'required_entities', 'max_results', 'authority_level', 'forbidden',
+                'planner_not_evidence', 'pack_is_not_authority', 'no_execution',
+            ],
+            'allowed_lanes': ['market_structure', 'corp_filing_ir', 'news_policy_narrative', 'real_economy_alt', 'human_field_private', 'internal_private'],
+            'allowed_purposes': ['source_discovery', 'source_reading', 'claim_closure', 'followup_slice', 'sidecar_synthesis'],
+            'authority_rule': 'QueryPack may request deterministic fetches but cannot satisfy evidence, wake, judgment, delivery, or execution authority.',
+        },
+        'tool_policy': {
+            'planning_only': True,
+            'parallel_tool_calls': False,
+            'allowed_tools': ['read_context_pack', 'emit_query_pack_json'],
+            'forbidden_tools': ['free_form_web_search_as_evidence', 'write_canonical_state', 'mutate_thresholds', 'deliver_discord'],
+            'tool_output_trust': 'untrusted_until_validated_by_deterministic_fetcher',
+        },
         'known_symbols_must_not_satisfy_unknown_discovery': known_symbols[:80],
         'fixed_search_budget': {
             'market_hours': ['invalidator_check', 'opportunity_followup', 'unknown_discovery'],
@@ -364,9 +393,15 @@ def build_packs() -> dict[str, dict[str, Any]]:
         'top_opportunity_candidates': opportunity_rows[:6],
         'top_invalidators': invalidator_rows[:6],
         'required_commands': [
+            '/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/query_pack_planner.py',
             '/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_worker.py',
             '/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/gate_evaluator.py',
         ],
+        'legacy_observation_bridge': {
+            'enabled': True,
+            'status': 'compatibility_only_until_finance_worker_reducer_migration',
+            'observations_are_not_canonical_ingestion': True,
+        },
         'final_output_rule': 'Return empty string or one machine summary line only.',
     })
 
