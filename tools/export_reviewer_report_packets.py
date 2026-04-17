@@ -24,6 +24,7 @@ WORKSPACE = OPENCLAW_HOME / 'workspace'
 STATE = FINANCE / 'state'
 DEFAULT_OUT = FINANCE / 'docs' / 'openclaw-runtime' / 'reviewer-packets'
 DEFAULT_SOURCE_HEALTH = WORKSPACE / 'services' / 'market-ingest' / 'state' / 'source-health.json'
+ARCHIVE_ROOT_NAME = 'report-archive'
 DECISION_LOG = WORKSPACE / 'decisions' / 'state' / 'finance-decision-log.jsonl'
 
 SAFE_TEXT_LIMIT = 240
@@ -227,17 +228,69 @@ def report_operator_surface(report_id: str, envelope: dict[str, Any]) -> dict[st
     }
 
 
+def archive_manifest_for(state_dir: Path, report_id: str) -> dict[str, Any] | None:
+    manifest = state_dir / ARCHIVE_ROOT_NAME / report_id / 'manifest.json'
+    payload = load_json(manifest, None)
+    return payload if isinstance(payload, dict) else None
+
+
+def archive_artifact_json(manifest: dict[str, Any] | None, key: str, default: Any = None) -> Any:
+    if not isinstance(manifest, dict):
+        return default
+    artifact = (manifest.get('artifacts') or {}).get(key) if isinstance(manifest.get('artifacts'), dict) else None
+    if not isinstance(artifact, dict) or not artifact.get('available'):
+        return default
+    path = Path(str(artifact.get('path') or ''))
+    return load_json(path, default)
+
+
+def archive_replay_summary(manifest: dict[str, Any] | None) -> dict[str, Any]:
+    if not isinstance(manifest, dict):
+        return {
+            'exact_replay_available': False,
+            'archive_manifest_available': False,
+            'reason': 'No report-time archive manifest for this report.',
+        }
+    artifacts = manifest.get('artifacts') if isinstance(manifest.get('artifacts'), dict) else {}
+    line_refs = archive_artifact_json(manifest, 'line_to_claim_refs', {}) or {}
+    return {
+        'exact_replay_available': bool(manifest.get('exact_replay_available')),
+        'archive_manifest_available': True,
+        'archive_contract': manifest.get('contract'),
+        'missing_required_artifacts': manifest.get('missing_required_artifacts') or [],
+        'artifact_availability': {
+            key: bool(value.get('available')) for key, value in artifacts.items() if isinstance(value, dict)
+        },
+        'line_to_claim_refs': {
+            'available': bool(line_refs),
+            'line_count': line_refs.get('line_count'),
+            'matched_line_count': line_refs.get('matched_line_count'),
+            'match_method': 'heuristic_subject_match',
+        },
+    }
+
+
 def report_packet(
     bundle_path: Path,
     *,
     envelope: dict[str, Any],
     decision_entries: dict[str, dict[str, Any]],
     info_snapshot: dict[str, Any],
+    state_dir: Path = STATE,
 ) -> dict[str, Any]:
     bundle = load_json(bundle_path, {}) or {}
     report_id = str(bundle.get('report_handle') or bundle_path.stem)
+    archive_manifest = archive_manifest_for(state_dir, report_id)
+    archived_bundle = archive_artifact_json(archive_manifest, 'reader_bundle', None)
+    if isinstance(archived_bundle, dict):
+        bundle = archived_bundle
+    archived_envelope = archive_artifact_json(archive_manifest, 'envelope', None)
+    operator_envelope = archived_envelope if isinstance(archived_envelope, dict) else envelope
+    archived_info = information_acquisition_snapshot_from_archive(archive_manifest)
+    effective_info = archived_info if archived_info is not None else info_snapshot
     cards = [card for card in bundle.get('object_cards', []) if isinstance(card, dict)]
     campaigns = [campaign for campaign in bundle.get('campaigns', []) if isinstance(campaign, dict)]
+    replay = archive_replay_summary(archive_manifest)
     return {
         'generated_at': now_iso(),
         'contract': 'finance-reviewer-report-packet-v1',
@@ -250,7 +303,8 @@ def report_packet(
             'portfolio_raw_state_included': False,
             'raw_licensed_snippets_included': False,
         },
-        'operator_surface': report_operator_surface(report_id, envelope),
+        'report_time_replay': replay,
+        'operator_surface': report_operator_surface(report_id, operator_envelope),
         'bundle_summary': {
             'bundle_id': bundle.get('bundle_id'),
             'generated_at': bundle.get('generated_at'),
@@ -267,10 +321,10 @@ def report_packet(
         'decision_log_summary': sanitize_decision_entry(decision_entries.get(report_id)),
         'top_object_cards': [sanitize_object_card(card) for card in cards[:TOP_OBJECT_LIMIT]],
         'top_campaigns': [sanitize_campaign(campaign) for campaign in campaigns[:TOP_CAMPAIGN_LIMIT]],
-        'information_acquisition_snapshot': info_snapshot,
+        'information_acquisition_snapshot': effective_info,
         'reviewer_notes': [
             'This packet is for report quality review, not for trading or execution.',
-            'Information acquisition snapshot is current sanitized finance/OpenClaw source state; exact historical source atoms were not archived per report before this export.',
+            'Uses report-time archive when available; otherwise falls back to current sanitized finance/OpenClaw source state.',
             'Raw Discord user messages and thread registry are intentionally excluded.',
         ],
         'no_execution': True,
@@ -407,6 +461,61 @@ def information_acquisition_snapshot(state_dir: Path, source_health_path: Path) 
     }
 
 
+def information_acquisition_snapshot_from_archive(manifest: dict[str, Any] | None) -> dict[str, Any] | None:
+    if not isinstance(manifest, dict):
+        return None
+    source_atoms = archive_artifact_json(manifest, 'source_atoms', {}) or {}
+    claim_graph = archive_artifact_json(manifest, 'claim_graph', {}) or {}
+    context_gaps = archive_artifact_json(manifest, 'context_gaps', {}) or {}
+    source_health = archive_artifact_json(manifest, 'source_health', {}) or {}
+    options_iv = archive_artifact_json(manifest, 'options_iv_surface', {}) or {}
+    atoms = [atom for atom in source_atoms.get('atoms', []) if isinstance(atom, dict)]
+    claims = [claim for claim in claim_graph.get('claims', []) if isinstance(claim, dict)]
+    gaps = [gap for gap in context_gaps.get('gaps', []) if isinstance(gap, dict)]
+    snapshot = information_acquisition_snapshot(Path('/nonexistent'), Path('/nonexistent'))
+    snapshot['scope'] = 'exact report-time archive snapshot'
+    snapshot['source_health'] = sanitize_source_health(source_health)
+    snapshot['source_atom_summary'].update({
+        'available': bool(source_atoms),
+        'generated_at': source_atoms.get('generated_at'),
+        'status': source_atoms.get('status'),
+        'atom_count': source_atoms.get('atom_count') or len(atoms),
+        'by_source_lane': dict(Counter(str(atom.get('source_lane') or 'unknown') for atom in atoms)),
+        'by_compliance_class': dict(Counter(str(atom.get('compliance_class') or 'unknown') for atom in atoms)),
+        'by_candidate_type': dict(Counter(str(atom.get('candidate_type') or 'unknown') for atom in atoms)),
+        'atoms': [sanitize_atom(atom) for atom in atoms[:TOP_SOURCE_ATOM_LIMIT]],
+    })
+    snapshot['claim_graph_summary'].update({
+        'available': bool(claim_graph),
+        'generated_at': claim_graph.get('generated_at'),
+        'status': claim_graph.get('status'),
+        'claim_count': claim_graph.get('claim_count') or len(claims),
+        'by_direction': dict(Counter(str(claim.get('direction') or 'unknown') for claim in claims)),
+        'by_source_lane': dict(Counter(str(claim.get('source_lane') or 'unknown') for claim in claims)),
+        'claims': [sanitize_claim(claim) for claim in claims[:TOP_CLAIM_LIMIT]],
+    })
+    snapshot['context_gap_summary'].update({
+        'available': bool(context_gaps),
+        'generated_at': context_gaps.get('generated_at'),
+        'status': context_gaps.get('status'),
+        'gap_count': context_gaps.get('gap_count') or len(gaps),
+        'by_missing_lane': dict(Counter(str(gap.get('missing_lane') or 'unknown') for gap in gaps)),
+        'gaps': [sanitize_gap(gap) for gap in gaps[:TOP_GAP_LIMIT]],
+    })
+    snapshot['options_iv_surface_summary'] = {
+        'available': bool(options_iv),
+        'generated_at': options_iv.get('generated_at'),
+        'status': options_iv.get('status'),
+        'summary': options_iv.get('summary') if isinstance(options_iv.get('summary'), dict) else {},
+    }
+    snapshot['known_limitations'] = [
+        'Snapshot came from local report-time archive when available.',
+        'Raw snippets and Discord conversation remain excluded from reviewer packet.',
+        'Line-to-claim refs are heuristic until renderer emits explicit bindings.',
+    ]
+    return snapshot
+
+
 def markdown_index(packets: list[dict[str, Any]]) -> str:
     lines = [
         '# Finance Reviewer Report Packets',
@@ -445,7 +554,7 @@ def export_packets(
     decision_entries = load_decision_entries(DECISION_LOG)
     info_snapshot = information_acquisition_snapshot(state_dir, source_health_path)
     packets = [
-        report_packet(path, envelope=envelope, decision_entries=decision_entries, info_snapshot=info_snapshot)
+        report_packet(path, envelope=envelope, decision_entries=decision_entries, info_snapshot=info_snapshot, state_dir=state_dir)
         for path in report_paths
     ]
     if out_dir.exists():
@@ -467,6 +576,7 @@ def export_packets(
                 'operator_surface_available': packet.get('operator_surface', {}).get('operator_surface_available'),
                 'object_card_count': packet.get('bundle_summary', {}).get('object_card_count'),
                 'campaign_count': packet.get('bundle_summary', {}).get('campaign_count'),
+                'exact_replay_available': packet.get('report_time_replay', {}).get('exact_replay_available'),
             }
             for packet in packets
         ],

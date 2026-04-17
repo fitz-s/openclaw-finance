@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-17T15:33:32.961257Z",
+  "generated_at": "2026-04-17T17:39:25.380172Z",
   "contract": "finance-reviewer-report-packet-v1",
   "report_id": "R28F9",
   "source_file": "<finance>/state/report-reader/R28F9.json",
@@ -9,6 +9,11 @@
     "account_ids_included": false,
     "portfolio_raw_state_included": false,
     "raw_licensed_snippets_included": false
+  },
+  "report_time_replay": {
+    "exact_replay_available": false,
+    "archive_manifest_available": false,
+    "reason": "No report-time archive manifest for this report."
   },
   "operator_surface": {
     "operator_surface_available": false,
@@ -96,14 +101,14 @@
   "top_object_cards": [
     {
       "attention_justification": "invalidator direction_conflict:theme:unknown_discovery has hit 11 times",
-      "not_positive_for": "不是 TSLA 加码信号；也不是立即替代现有 book 的命令",
-      "type": "agenda",
       "agenda_type": "invalidator_escalation",
       "label": "反证升级｜未知发现改道：RGTI/BNO/XLB（反证升级｜未知发现方向冲突（11次））",
+      "not_positive_for": "不是 TSLA 加码信号；也不是立即替代现有 book 的命令",
       "handle": "A1",
+      "type": "agenda",
+      "operator_summary": "A1 实际对象：RGTI/非 watchlist IV 异动观察；BNO/油价/霍尔木兹供给风险；XLB/材料板块相对消费的成本压力观察。这是是否切换注意力方向的问题，不是下单信号。",
       "positive_for": "RGTI/非 watchlist IV 异动观察；BNO/油价/霍尔木兹供给风险；XLB/材料板块相对消费的成本压力观察",
       "priority_score": 22.0,
-      "operator_summary": "A1 实际对象：RGTI/非 watchlist IV 异动观察；BNO/油价/霍尔木兹供给风险；XLB/材料板块相对消费的成本压力观察。这是是否切换注意力方向的问题，不是下单信号。",
       "role_text": "判断是否把 attention 分给 RGTI/非 watchlist IV 异动观察；BNO/油价/霍尔木兹供给风险；XLB/材料板块相对消费的成本压力观察",
       "required_questions": [
         "is thesis packet:market-ingest:SPY:2026-04-15T13:11:09.416795Z still valid after 11 invalidator hits?"
@@ -122,10 +127,10 @@
     },
     {
       "attention_justification": "invalidator source outage has hit 8 times",
-      "type": "agenda",
       "agenda_type": "invalidator_escalation",
       "label": "反证升级｜源中断（8次）",
       "handle": "A2",
+      "type": "agenda",
       "priority_score": 16.0,
       "role_text": "需要判断是否值得占用本周注意力",
       "required_questions": [
@@ -136,10 +141,10 @@
     },
     {
       "attention_justification": "invalidator official correction has hit 8 times",
-      "type": "agenda",
       "agenda_type": "invalidator_escalation",
       "label": "反证升级｜官方修正（8次）",
       "handle": "A3",
+      "type": "agenda",
       "priority_score": 16.0,
       "role_text": "需要判断是否值得占用本周注意力",
       "required_questions": [
@@ -150,10 +155,10 @@
     },
     {
       "attention_justification": "event_driven at 275% utilization",
-      "type": "agenda",
       "agenda_type": "exposure_crowding_warning",
       "label": "拥挤预警｜AAPL / GOOG",
       "handle": "A4",
+      "type": "agenda",
       "priority_score": 5.5,
       "role_text": "提示现有 attention slot 可能过度拥挤",
       "required_questions": [
@@ -164,10 +169,10 @@
     },
     {
       "attention_justification": "macro_hedges bucket has uncovered hedge coverage",
-      "type": "agenda",
       "agenda_type": "hedge_gap_alert",
       "label": "对冲缺口｜macro hedges bucket 对冲未覆盖",
       "handle": "A5",
+      "type": "agenda",
       "priority_score": 3.0,
       "role_text": "提示保护层缺口，不是执行指令",
       "required_questions": [
@@ -178,10 +183,10 @@
     },
     {
       "attention_justification": "event_driven bucket has uncovered hedge coverage",
-      "type": "agenda",
       "agenda_type": "hedge_gap_alert",
       "label": "对冲缺口｜event driven bucket 对冲未覆盖",
       "handle": "A6",
+      "type": "agenda",
       "priority_score": 3.0,
       "role_text": "提示保护层缺口，不是执行指令",
       "required_questions": [
@@ -191,66 +196,66 @@
       "source_refs": []
     },
     {
-      "type": "thesis",
       "instrument": "TSLA",
-      "status": "active",
-      "maturity": "seed",
       "handle": "T1",
+      "type": "thesis",
+      "maturity": "seed",
+      "status": "active",
       "required_confirmations": [
         "wake-eligible evidence",
         "price/flow continuation"
       ]
     },
     {
-      "type": "thesis",
       "instrument": "SMR",
-      "status": "active",
-      "maturity": "seed",
       "handle": "T2",
+      "type": "thesis",
+      "maturity": "seed",
+      "status": "active",
       "required_confirmations": [
         "wake-eligible evidence",
         "price/flow continuation"
       ]
     },
     {
-      "type": "thesis",
       "instrument": "ORCL",
-      "status": "active",
-      "maturity": "seed",
       "handle": "T3",
+      "type": "thesis",
+      "maturity": "seed",
+      "status": "active",
       "required_confirmations": [
         "wake-eligible evidence",
         "price/flow continuation"
       ]
     },
     {
-      "type": "thesis",
       "instrument": "NVDA",
-      "status": "active",
-      "maturity": "seed",
       "handle": "T4",
+      "type": "thesis",
+      "maturity": "seed",
+      "status": "active",
       "required_confirmations": [
         "wake-eligible evidence",
         "price/flow continuation"
       ]
     },
     {
-      "type": "thesis",
       "instrument": "NFLX",
-      "status": "active",
-      "maturity": "seed",
       "handle": "T5",
+      "type": "thesis",
+      "maturity": "seed",
+      "status": "active",
       "required_confirmations": [
         "wake-eligible evidence",
         "price/flow continuation"
       ]
     },
     {
-      "type": "thesis",
       "instrument": "MSTR",
-      "status": "active",
-      "maturity": "seed",
       "handle": "T6",
+      "type": "thesis",
+      "maturity": "seed",
+      "status": "active",
       "required_confirmations": [
         "wake-eligible evidence",
         "price/flow continuation"
@@ -259,16 +264,16 @@
   ],
   "top_campaigns": [
     {
-      "why_now_delta": "未知发现方向冲突（11次）",
-      "thread_key": "campaign-thread:4476f163d94eef56",
-      "priority_score": 22.0,
       "human_title": "未知发现改道｜RGTI｜非 watchlist IV 异动 / BNO｜霍尔木兹/原油供给双向风险 / XLB｜油价成本压力下材料相对消费走弱",
-      "campaign_id": "campaign:4476f163d94eef56",
-      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
-      "board_class": "live",
       "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
-      "stage": "escalation",
+      "priority_score": 22.0,
       "campaign_type": "undercurrent_risk",
+      "campaign_id": "campaign:4476f163d94eef56",
+      "why_now_delta": "未知发现方向冲突（11次）",
+      "board_class": "live",
+      "thread_key": "campaign-thread:4476f163d94eef56",
+      "stage": "escalation",
+      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
       "confirmations_needed": [
         "当前 thesis 在 11 次反证后是否仍成立"
       ],
@@ -279,36 +284,16 @@
       ]
     },
     {
-      "why_now_delta": "官方修正反证（8次）",
-      "thread_key": "campaign-thread:03656bc1840dd409",
-      "priority_score": 16.0,
       "human_title": "invalidator official correction has hit 8 times",
-      "campaign_id": "campaign:03656bc1840dd409",
-      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
-      "board_class": "risk",
       "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
-      "stage": "candidate",
-      "campaign_type": "invalidator_cluster",
-      "confirmations_needed": [
-        "当前 thesis 在 8 次反证后是否仍成立"
-      ],
-      "kill_switches": [
-        "来源降级或官方修正",
-        "连续两次 watcher update 不再支持",
-        "与现有 book 重叠但无新增边际价值"
-      ]
-    },
-    {
-      "why_now_delta": "数据源中断（8次）",
-      "thread_key": "campaign-thread:b78a0b20202dea7b",
       "priority_score": 16.0,
-      "human_title": "invalidator source outage has hit 8 times",
-      "campaign_id": "campaign:b78a0b20202dea7b",
-      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
-      "board_class": "risk",
-      "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
-      "stage": "candidate",
       "campaign_type": "invalidator_cluster",
+      "campaign_id": "campaign:03656bc1840dd409",
+      "why_now_delta": "官方修正反证（8次）",
+      "board_class": "risk",
+      "thread_key": "campaign-thread:03656bc1840dd409",
+      "stage": "candidate",
+      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
       "confirmations_needed": [
         "当前 thesis 在 8 次反证后是否仍成立"
       ],
@@ -319,16 +304,36 @@
       ]
     },
     {
-      "why_now_delta": "未知发现方向冲突（15次） 持续累积，需要判断是否影响 attention slot",
-      "thread_key": "campaign-thread:0522d7b7a4688dae",
-      "priority_score": 15.0,
+      "human_title": "invalidator source outage has hit 8 times",
+      "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
+      "priority_score": 16.0,
+      "campaign_type": "invalidator_cluster",
+      "campaign_id": "campaign:b78a0b20202dea7b",
+      "why_now_delta": "数据源中断（8次）",
+      "board_class": "risk",
+      "thread_key": "campaign-thread:b78a0b20202dea7b",
+      "stage": "candidate",
+      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
+      "confirmations_needed": [
+        "当前 thesis 在 8 次反证后是否仍成立"
+      ],
+      "kill_switches": [
+        "来源降级或官方修正",
+        "连续两次 watcher update 不再支持",
+        "与现有 book 重叠但无新增边际价值"
+      ]
+    },
+    {
       "human_title": "未知发现方向冲突（15次）",
+      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
+      "priority_score": 15.0,
+      "campaign_type": "undercurrent_risk",
       "campaign_id": "campaign:0522d7b7a4688dae",
-      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
+      "why_now_delta": "未知发现方向冲突（15次） 持续累积，需要判断是否影响 attention slot",
       "board_class": "risk",
-      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
+      "thread_key": "campaign-thread:0522d7b7a4688dae",
       "stage": "review",
-      "campaign_type": "undercurrent_risk",
+      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
       "confirmations_needed": [
         "下一次 watcher update 是否同向",
         "相关 scenario/capital edge 是否增强"
@@ -340,37 +345,37 @@
       ]
     },
     {
-      "why_now_delta": "板块方向冲突（15次） 持续累积，需要判断是否影响 attention slot",
-      "thread_key": "campaign-thread:4a571e6577bcff26",
-      "priority_score": 15.0,
       "human_title": "板块方向冲突（15次）",
-      "campaign_id": "campaign:4a571e6577bcff26",
-      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
-      "board_class": "risk",
       "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
-      "stage": "review",
-      "campaign_type": "undercurrent_risk",
-      "confirmations_needed": [
-        "下一次 watcher update 是否同向",
-        "相关 scenario/capital edge 是否增强"
-      ],
-      "kill_switches": [
-        "后续两次扫描不再命中",
-        "相关机会或 thesis 证据被官方修正",
-        "来源新鲜度降为 stale"
-      ]
-    },
-    {
-      "why_now_delta": "板块轮动冲突（15次） 持续累积，需要判断是否影响 attention slot",
-      "thread_key": "campaign-thread:790b25097274395c",
       "priority_score": 15.0,
+      "campaign_type": "undercurrent_risk",
+      "campaign_id": "campaign:4a571e6577bcff26",
+      "why_now_delta": "板块方向冲突（15次） 持续累积，需要判断是否影响 attention slot",
+      "board_class": "risk",
+      "thread_key": "campaign-thread:4a571e6577bcff26",
+      "stage": "review",
+      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
+      "confirmations_needed": [
+        "下一次 watcher update 是否同向",
+        "相关 scenario/capital edge 是否增强"
+      ],
+      "kill_switches": [
+        "后续两次扫描不再命中",
+        "相关机会或 thesis 证据被官方修正",
+        "来源新鲜度降为 stale"
+      ]
+    },
+    {
       "human_title": "板块轮动冲突（15次）",
+      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
+      "priority_score": 15.0,
+      "campaign_type": "undercurrent_risk",
       "campaign_id": "campaign:790b25097274395c",
-      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
+      "why_now_delta": "板块轮动冲突（15次） 持续累积，需要判断是否影响 attention slot",
       "board_class": "risk",
-      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
+      "thread_key": "campaign-thread:790b25097274395c",
       "stage": "review",
-      "campaign_type": "undercurrent_risk",
+      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
       "confirmations_needed": [
         "下一次 watcher update 是否同向",
         "相关 scenario/capital edge 是否增强"
@@ -382,16 +387,16 @@
       ]
     },
     {
-      "why_now_delta": "ORCL 冲突（14次） 持续累积，需要判断是否影响 attention slot",
-      "thread_key": "campaign-thread:08c719de139fc9db",
-      "priority_score": 14.0,
       "human_title": "ORCL 冲突（14次）",
-      "campaign_id": "campaign:08c719de139fc9db",
-      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
-      "board_class": "risk",
       "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
-      "stage": "review",
+      "priority_score": 14.0,
       "campaign_type": "undercurrent_risk",
+      "campaign_id": "campaign:08c719de139fc9db",
+      "why_now_delta": "ORCL 冲突（14次） 持续累积，需要判断是否影响 attention slot",
+      "board_class": "risk",
+      "thread_key": "campaign-thread:08c719de139fc9db",
+      "stage": "review",
+      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
       "confirmations_needed": [
         "下一次 watcher update 是否同向",
         "相关 scenario/capital edge 是否增强"
@@ -403,16 +408,16 @@
       ]
     },
     {
-      "why_now_delta": "price vs negative upstream:ORCL（14次） 持续累积，需要判断是否影响 attention slot",
-      "thread_key": "campaign-thread:f9363f29fa87e35b",
-      "priority_score": 14.0,
       "human_title": "price vs negative upstream:ORCL（14次）",
-      "campaign_id": "campaign:f9363f29fa87e35b",
-      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
-      "board_class": "risk",
       "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
-      "stage": "review",
+      "priority_score": 14.0,
       "campaign_type": "undercurrent_risk",
+      "campaign_id": "campaign:f9363f29fa87e35b",
+      "why_now_delta": "price vs negative upstream:ORCL（14次） 持续累积，需要判断是否影响 attention slot",
+      "board_class": "risk",
+      "thread_key": "campaign-thread:f9363f29fa87e35b",
+      "stage": "review",
+      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
       "confirmations_needed": [
         "下一次 watcher update 是否同向",
         "相关 scenario/capital edge 是否增强"
@@ -425,7 +430,7 @@
     }
   ],
   "information_acquisition_snapshot": {
-    "generated_at": "2026-04-17T15:33:32.958217Z",
+    "generated_at": "2026-04-17T17:39:25.371323Z",
     "scope": "current sanitized finance/source state; not exact per-report historical replay",
     "source_health": {
       "available": true,
@@ -1191,7 +1196,7 @@
   },
   "reviewer_notes": [
     "This packet is for report quality review, not for trading or execution.",
-    "Information acquisition snapshot is current sanitized finance/OpenClaw source state; exact historical source atoms were not archived per report before this export.",
+    "Uses report-time archive when available; otherwise falls back to current sanitized finance/OpenClaw source state.",
     "Raw Discord user messages and thread registry are intentionally excluded."
   ],
   "no_execution": true

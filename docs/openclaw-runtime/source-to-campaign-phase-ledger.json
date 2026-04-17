@@ -350,7 +350,7 @@
     {
       "phase": 11,
       "name": "Reviewer packet exact replay upgrade",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Extend reviewer packets with exact report-time source health, claim lineage, campaign trace, and context gaps.",
       "required_review_content": [
         "report_time_source_health",
@@ -367,6 +367,11 @@
         "raw_snippet_export_count remains zero",
         "new reports exact_replay_available true",
         "legacy reports flagged"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-11-reviewer-exact-replay-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-11-implementation-critic.md",
+      "implementation": [
+        "tools/export_reviewer_report_packets.py"
       ]
     },
     {

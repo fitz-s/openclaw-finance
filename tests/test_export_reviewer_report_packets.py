@@ -82,6 +82,50 @@ def test_export_reviewer_packets_sanitizes_runtime_state(tmp_path) -> None:
             'why_load_bearing': 'needs issuer confirmation',
         }],
     })
+    archive = state / 'report-archive' / 'R3'
+    _write_json(archive / 'envelope.json', {
+        'report_id': 'R3',
+        'discord_primary_markdown': 'Finance｜Archived Report\nFact\n- archived',
+        'discord_thread_seed_markdown': 'R3｜archive',
+    })
+    _write_json(archive / 'reader-bundle.json', {
+        'bundle_id': 'rb:R3',
+        'report_handle': 'R3',
+        'object_cards': [],
+        'campaigns': [],
+    })
+    _write_json(archive / 'source-atoms.json', {
+        'status': 'pass',
+        'atom_count': 1,
+        'atoms': [{
+            'atom_id': 'atom:archived',
+            'source_id': 'source:sec_edgar',
+            'source_lane': 'corp_filing_ir',
+            'compliance_class': 'public',
+            'raw_snippet': 'archived raw must not export',
+        }],
+    })
+    _write_json(archive / 'claim-graph.json', {'status': 'pass', 'claim_count': 1, 'claims': [{'claim_id': 'claim:archived', 'atom_id': 'atom:archived', 'subject': 'R3'}]})
+    _write_json(archive / 'context-gaps.json', {'status': 'pass', 'gap_count': 0, 'gaps': []})
+    _write_json(archive / 'source-health.json', {'status': 'pass', 'source_count': 1, 'sources': [{'source_id': 'source:sec_edgar', 'freshness_status': 'fresh'}]})
+    _write_json(archive / 'options-iv-surface.json', {'status': 'empty', 'summary': {'symbol_count': 0}})
+    _write_json(archive / 'line-to-claim-refs.json', {'line_count': 2, 'matched_line_count': 1})
+    _write_json(archive / 'manifest.json', {
+        'contract': 'report-time-archive-v1',
+        'report_id': 'R3',
+        'exact_replay_available': True,
+        'missing_required_artifacts': [],
+        'artifacts': {
+            'envelope': {'available': True, 'path': str(archive / 'envelope.json')},
+            'reader_bundle': {'available': True, 'path': str(archive / 'reader-bundle.json')},
+            'source_atoms': {'available': True, 'path': str(archive / 'source-atoms.json')},
+            'claim_graph': {'available': True, 'path': str(archive / 'claim-graph.json')},
+            'context_gaps': {'available': True, 'path': str(archive / 'context-gaps.json')},
+            'source_health': {'available': True, 'path': str(archive / 'source-health.json')},
+            'options_iv_surface': {'available': True, 'path': str(archive / 'options-iv-surface.json')},
+            'line_to_claim_refs': {'available': True, 'path': str(archive / 'line-to-claim-refs.json')},
+        },
+    })
     source_health = tmp_path / 'source-health.json'
     _write_json(source_health, {
         'status': 'degraded',
@@ -108,3 +152,8 @@ def test_export_reviewer_packets_sanitizes_runtime_state(tmp_path) -> None:
     assert 'raw_snippet' not in serialized or 'raw_snippet_included' in serialized
     assert all(packet['sanitization']['account_ids_included'] is False for packet in packets)
     assert any(packet['operator_surface']['operator_surface_available'] for packet in packets)
+    archived = next(packet for packet in packets if packet['report_id'] == 'R3')
+    assert archived['report_time_replay']['exact_replay_available'] is True
+    assert archived['information_acquisition_snapshot']['scope'] == 'exact report-time archive snapshot'
+    assert 'Archived Report' in archived['operator_surface']['discord_primary_markdown']
+    assert 'archived raw must not export' not in json.dumps(archived, ensure_ascii=False)

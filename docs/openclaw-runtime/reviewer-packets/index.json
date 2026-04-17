@@ -1,42 +1,47 @@
 {
-  "generated_at": "2026-04-17T15:33:32.964443Z",
+  "generated_at": "2026-04-17T17:39:25.382224Z",
   "contract": "finance-reviewer-report-packet-index-v1",
   "packet_count": 5,
   "reports": [
     {
+      "report_id": "RD697",
+      "file": "RD697.json",
+      "operator_surface_available": true,
+      "object_card_count": 87,
+      "campaign_count": 29,
+      "exact_replay_available": true
+    },
+    {
+      "report_id": "R0A9E",
+      "file": "R0A9E.json",
+      "operator_surface_available": false,
+      "object_card_count": 89,
+      "campaign_count": 30,
+      "exact_replay_available": false
+    },
+    {
       "report_id": "RF63A",
       "file": "RF63A.json",
-      "operator_surface_available": true,
+      "operator_surface_available": false,
       "object_card_count": 84,
-      "campaign_count": 30
+      "campaign_count": 30,
+      "exact_replay_available": false
     },
     {
       "report_id": "R775D",
       "file": "R775D.json",
       "operator_surface_available": false,
       "object_card_count": 93,
-      "campaign_count": 25
+      "campaign_count": 25,
+      "exact_replay_available": false
     },
     {
       "report_id": "R28F9",
       "file": "R28F9.json",
       "operator_surface_available": false,
       "object_card_count": 45,
-      "campaign_count": 25
-    },
-    {
-      "report_id": "RDADC",
-      "file": "RDADC.json",
-      "operator_surface_available": false,
-      "object_card_count": 44,
-      "campaign_count": 26
-    },
-    {
-      "report_id": "RC4E0",
-      "file": "RC4E0.json",
-      "operator_surface_available": false,
-      "object_card_count": 44,
-      "campaign_count": 0
+      "campaign_count": 25,
+      "exact_replay_available": false
     }
   ],
   "sanitization": {
@@ -46,10 +51,10 @@
     "account_ids_included": false
   },
   "written_files": [
+    "docs/openclaw-runtime/reviewer-packets/RD697.json",
+    "docs/openclaw-runtime/reviewer-packets/R0A9E.json",
     "docs/openclaw-runtime/reviewer-packets/RF63A.json",
     "docs/openclaw-runtime/reviewer-packets/R775D.json",
-    "docs/openclaw-runtime/reviewer-packets/R28F9.json",
-    "docs/openclaw-runtime/reviewer-packets/RDADC.json",
-    "docs/openclaw-runtime/reviewer-packets/RC4E0.json"
+    "docs/openclaw-runtime/reviewer-packets/R28F9.json"
   ]
 }
