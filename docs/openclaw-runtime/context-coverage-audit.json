@@ -1,0 +1,20 @@
+{
+  "generated_at": "2026-04-17T00:43:15.900166+00:00",
+  "status": "review",
+  "policy_version": "context-coverage-v1-review-only",
+  "source_coverage_score": 25.0,
+  "freshness_sla_breach_rate": 0.75,
+  "campaign_context_gap_rate": 1.111,
+  "campaign_known_unknown_count": 58,
+  "followup_grounding_failure": true,
+  "counts": {
+    "sources": 8,
+    "freshness_breaches": 6,
+    "claims": 9,
+    "context_gaps": 10,
+    "campaigns": 30
+  },
+  "review_only": true,
+  "no_threshold_mutation": true,
+  "no_execution": true
+}
