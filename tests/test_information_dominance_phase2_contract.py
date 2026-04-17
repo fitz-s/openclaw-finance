@@ -14,7 +14,12 @@ def test_phase2_contracts_exist_and_preserve_shadow_boundary() -> None:
 
     assert 'shadow substrate' in source_atom
     assert 'must not become an artifact dump' in source_atom
+    assert 'raw_snippet_ref' in source_atom
+    assert 'safe_excerpt' in source_atom
+    assert 'raw_snippet_redaction_required' in source_atom
     assert 'not by LLM free prose' in claim_atom
+    assert 'evidence_rights' in claim_atom
+    assert 'source_sublane' in claim_atom
     assert 'Gaps do not block delivery in Phase 2' in context_gap
     assert 'no_execution' in source_atom + claim_atom + context_gap
 

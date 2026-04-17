@@ -62,6 +62,12 @@ def test_source_atom_bounds_raw_snippet() -> None:
     atom = atom_from_observation(_scan_state()['accumulated'][1], registry=load_source_registry())
     assert len(atom['raw_snippet']) <= MAX_SNIPPET_CHARS
     assert atom['redistribution_policy'] == 'unknown'
+    assert atom['raw_snippet_ref'] == atom['raw_ref']
+    assert atom['safe_excerpt'] is None
+    assert atom['raw_snippet_redaction_required'] is True
+    assert atom['export_policy'] == 'metadata_only'
+    assert atom['lane'] == atom['source_lane']
+    assert atom['source_sublane']
 
 
 def test_source_atom_does_not_mutate_accumulated_observations() -> None:

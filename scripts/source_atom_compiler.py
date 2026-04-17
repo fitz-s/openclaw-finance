@@ -102,6 +102,37 @@ def source_meta(source_id: str, registry: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def source_sublane(source: dict[str, Any]) -> str:
+    sublane = str(source.get('source_sublane') or '').strip()
+    if sublane:
+        return sublane
+    lane = str(source.get('source_lane') or 'news_policy_narrative')
+    source_class = str(source.get('source_class') or '')
+    if lane == 'market_structure' and 'option' in source_class:
+        return 'market_structure.options_flow_proxy'
+    if lane == 'market_structure':
+        return 'market_structure.price_volume'
+    if lane == 'corp_filing_ir' or source_class in {'official_filing', 'filings_ir'}:
+        return 'corp_filing_ir.sec_filings'
+    if lane == 'internal_private':
+        return 'internal_private.watch_intent'
+    if lane == 'human_field_private':
+        return 'human_field_private.expert_transcript'
+    if lane == 'real_economy_alt':
+        return 'real_economy_alt.unknown'
+    return f'{lane}.entity_event' if lane == 'news_policy_narrative' else lane
+
+
+def export_policy_for(source: dict[str, Any]) -> tuple[str, bool]:
+    redistribution = str(source.get('redistribution_policy') or 'unknown')
+    compliance = str(source.get('compliance_class') or 'unknown')
+    if redistribution == 'raw_ok' and compliance in {'public', 'official', 'allowed'}:
+        return 'raw_ok', False
+    if redistribution in {'derived_only', 'summary_only'}:
+        return 'derived_only', True
+    return 'metadata_only', True
+
+
 def extract_symbols(*values: Any) -> list[str]:
     symbols: set[str] = set()
     for value in values:
@@ -122,6 +153,8 @@ def atom_from_observation(
     obs_id = str(observation.get('id') or observation.get('ts') or observation.get('theme') or 'unknown')
     source_id = infer_source_id(observation, registry)
     source = source_meta(source_id, registry)
+    sublane = source_sublane(source)
+    export_policy, redact_required = export_policy_for(source)
     observed_at = parse_ts(observation.get('observed_at')) or parse_ts(observation.get('ts')) or parse_ts(observation.get('scan_time')) or parse_ts(fallback_ingested_at)
     published_at = parse_ts(observation.get('published_at')) or observed_at
     ingested_at = parse_ts(observation.get('detected_at')) or parse_ts(fallback_ingested_at) or observed_at or now_iso()
@@ -136,6 +169,8 @@ def atom_from_observation(
         'source_id': source_id,
         'source_class': source.get('source_class') or 'untrusted_web',
         'source_lane': source.get('source_lane') or 'news_policy_narrative',
+        'lane': source.get('source_lane') or 'news_policy_narrative',
+        'source_sublane': sublane,
         'published_at': published_at,
         'observed_at': observed_at,
         'ingested_at': ingested_at,
@@ -149,6 +184,10 @@ def atom_from_observation(
         'modality': source.get('modality') or 'text',
         'raw_ref': raw_ref,
         'raw_snippet': snippet,
+        'raw_snippet_ref': raw_ref,
+        'safe_excerpt': snippet if not redact_required else None,
+        'raw_snippet_redaction_required': redact_required,
+        'export_policy': export_policy,
         'raw_uri': observation.get('url') if isinstance(observation.get('url'), str) else None,
         'raw_table_ref': observation.get('raw_table_ref') if isinstance(observation.get('raw_table_ref'), str) else None,
         'language': str(observation.get('language') or 'unknown'),

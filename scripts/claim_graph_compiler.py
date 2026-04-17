@@ -54,10 +54,13 @@ def infer_direction(text: str) -> str:
 
 def event_class_for(atom: dict[str, Any]) -> str:
     lane = str(atom.get('source_lane') or '')
-    snippet = str(atom.get('raw_snippet') or '').lower()
+    sublane = str(atom.get('source_sublane') or '')
+    snippet = str(atom.get('safe_excerpt') or atom.get('raw_snippet') or '').lower()
+    if sublane in {'market_structure.options_iv', 'market_structure.options_flow_proxy'}:
+        return 'flow'
     if lane == 'market_structure':
         return 'price'
-    if lane == 'corporate_filing' or '8-k' in snippet or 'filing' in snippet:
+    if lane in {'corporate_filing', 'corp_filing_ir'} or '8-k' in snippet or 'filing' in snippet:
         return 'filing'
     if lane == 'internal_private':
         return 'portfolio'
@@ -86,11 +89,14 @@ def claim_from_atom(atom: dict[str, Any]) -> dict[str, Any]:
     symbols = atom.get('symbol_candidates') if isinstance(atom.get('symbol_candidates'), list) else []
     subject = str(symbols[0]) if symbols else str(atom.get('source_lane') or atom.get('source_id') or 'unknown')
     event_class = event_class_for(atom)
-    snippet = short_text(atom.get('raw_snippet'), 180)
+    snippet = short_text(atom.get('safe_excerpt') or atom.get('raw_snippet'), 180)
     direction = infer_direction(snippet)
     claim = {
         'claim_id': stable_id('claim', atom.get('atom_id'), subject, snippet),
         'atom_id': atom.get('atom_id'),
+        'source_id': atom.get('source_id'),
+        'source_lane': atom.get('source_lane'),
+        'source_sublane': atom.get('source_sublane'),
         'subject': subject,
         'predicate': predicate_for(atom, event_class),
         'object': snippet,
@@ -102,9 +108,21 @@ def claim_from_atom(atom: dict[str, Any]) -> dict[str, Any]:
         'supports': [],
         'contradicts': [],
         'event_class': event_class,
-        'source_lane': atom.get('source_lane'),
         'why_it_matters_tags': [tag for tag in [event_class, atom.get('candidate_type')] if tag],
         'capital_relevance_tags': [str(symbol) for symbol in symbols[:3]],
+        'source_reliability_score': atom.get('reliability_score'),
+        'source_uniqueness_score': atom.get('uniqueness_score'),
+        'evidence_rights': {
+            'compliance_class': atom.get('compliance_class'),
+            'redistribution_policy': atom.get('redistribution_policy'),
+            'export_policy': atom.get('export_policy'),
+            'raw_snippet_redaction_required': atom.get('raw_snippet_redaction_required'),
+        },
+        'lineage': {
+            'atom_id': atom.get('atom_id'),
+            'point_in_time_hash': atom.get('point_in_time_hash'),
+            'raw_snippet_ref': atom.get('raw_snippet_ref'),
+        },
         'no_execution': True,
     }
     return claim

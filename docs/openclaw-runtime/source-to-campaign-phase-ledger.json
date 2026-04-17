@@ -71,7 +71,7 @@
     {
       "phase": 2,
       "name": "EvidenceAtom and ClaimAtom canonicalization",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Make provenance-first evidence the canonical substrate while preserving legacy observation compatibility.",
       "required_review_content": [
         "EvidenceAtom",
@@ -91,6 +91,12 @@
         "claims require atom ids",
         "atoms preserve event/observed/ingested time",
         "restricted raw snippets stay out of reviewer exports"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-02-evidence-claim-canonicalization-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-02-implementation-critic.md",
+      "implementation": [
+        "scripts/source_atom_compiler.py",
+        "scripts/claim_graph_compiler.py"
       ]
     },
     {
