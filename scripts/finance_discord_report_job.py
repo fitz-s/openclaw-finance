@@ -23,6 +23,9 @@ ENVELOPE = STATE / 'finance-decision-report-envelope.json'
 SAFETY = STATE / 'report-delivery-safety-check.json'
 HEALTH_MD = STATE / 'report-delivery-health-only.md'
 CONTEXT_PACK = STATE / 'llm-job-context' / 'report-orchestrator.json'
+BOARD_PACKAGE = STATE / 'discord-campaign-board-package.json'
+BOARD_RUNTIME = STATE / 'discord-campaign-board-runtime.json'
+BOARD_DELIVERY_REPORT = STATE / 'discord-campaign-board-delivery-report.json'
 CT = ZoneInfo('America/Chicago')
 
 
@@ -33,6 +36,18 @@ def run(args: list[str], *, stdout_path: Path | None = None) -> None:
             subprocess.run(args, stdout=out, stderr=subprocess.PIPE, **kwargs)
         return
     subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs)
+
+
+def run_optional(args: list[str]) -> None:
+    subprocess.run(args, cwd=str(FINANCE), check=False, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+
+def board_runtime_enabled() -> bool:
+    try:
+        data = json.loads(BOARD_RUNTIME.read_text(encoding='utf-8'))
+    except (FileNotFoundError, json.JSONDecodeError):
+        return False
+    return bool(data.get('boards_enabled') or data.get('threads_enabled'))
 
 
 def today_ct() -> datetime:
@@ -87,8 +102,15 @@ def run_chain() -> str:
         return HEALTH_MD.read_text(encoding='utf-8').strip() + '\n'
     run([str(PYTHON), 'scripts/finance_report_reader_bundle.py'])
     run([str(PYTHON), 'scripts/finance_campaign_cache_builder.py'])
+    run([str(PYTHON), 'scripts/finance_discord_campaign_board_package.py', '--out', str(BOARD_PACKAGE)])
+    if board_runtime_enabled():
+        run_optional([str(PYTHON), 'scripts/finance_discord_campaign_board_deliver.py', '--apply', '--report', str(BOARD_DELIVERY_REPORT)])
     envelope = json.loads(ENVELOPE.read_text(encoding='utf-8'))
-    primary = str(envelope.get('discord_live_board_markdown') or envelope.get('discord_primary_markdown') or envelope.get('markdown') or '').strip()
+    package = json.loads(BOARD_PACKAGE.read_text(encoding='utf-8')) if BOARD_PACKAGE.exists() else {}
+    if board_runtime_enabled():
+        primary = str(package.get('primary_fallback_markdown') or envelope.get('discord_primary_markdown') or envelope.get('markdown') or '').strip()
+    else:
+        primary = str(envelope.get('discord_live_board_markdown') or envelope.get('discord_primary_markdown') or envelope.get('markdown') or '').strip()
     if not primary:
         return 'Finance｜health-only\n\nReport generated but primary markdown was empty. Check finance-decision-report-envelope.json.\n'
     return primary + '\n'
