@@ -118,6 +118,44 @@ def test_opportunity_queue_preserves_status_and_excludes_known_symbols() -> None
     assert candidate['last_seen_at'] == '2026-04-01T10:01:00Z'
 
 
+def test_opportunity_queue_penalizes_stale_external_sources() -> None:
+    scan_state = {
+        'last_updated': '2026-04-17T17:00:00Z',
+        'last_scan_time': '2026-04-17T17:00:00Z',
+        'accumulated': [
+            {
+                'tickers': ['BNO'],
+                'discovery_scope': 'non_watchlist',
+                'theme': 'BNO stale Reuters story',
+                'novelty': 5,
+                'importance': 5,
+                'urgency': 5,
+                'ts': '2026-04-17T17:00:00Z',
+                'sources': [
+                    'https://www.reuters.com/business/energy/oil-prices-fall-second-day-expectations-us-iran-talks-may-resume-2026-04-15/',
+                    'https://www.reuters.com/business/energy/goldman-sachs-flags-twoway-risks-their-2026-oil-price-outlook-2026-04-15/',
+                ],
+            },
+            {
+                'tickers': ['USO'],
+                'discovery_scope': 'non_watchlist',
+                'theme': 'USO fresh market dislocation',
+                'novelty': 4,
+                'importance': 4,
+                'urgency': 4,
+                'ts': '2026-04-17T17:00:00Z',
+                'sources': ['state:broad-market-proxy.json USO -9.58% 2026-04-17T17:00Z'],
+            },
+        ],
+    }
+    queue = build_queue(scan_state, {'tickers': []}, {})
+    assert queue['candidates'][0]['instrument'] == 'USO'
+    stale = next(item for item in queue['candidates'] if item['instrument'] == 'BNO')
+    assert stale['source_freshness_status'] == 'stale'
+    assert stale['external_stale_source_count'] == 2
+    assert stale['score'] < stale['score_before_source_penalty']
+
+
 def test_invalidator_ledger_is_idempotent_for_same_source_time() -> None:
     packet = {
         'packet_id': 'packet:test',

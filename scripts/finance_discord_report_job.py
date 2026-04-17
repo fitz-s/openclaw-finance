@@ -85,6 +85,10 @@ def run_chain() -> str:
     run([str(PYTHON), 'scripts/price_fetcher.py'])
     run([str(PYTHON), 'scripts/broad_market_proxy_fetcher.py'])
     run_optional([str(PYTHON), 'scripts/options_iv_surface_compiler.py'])
+    run_optional([str(PYTHON), 'scripts/opportunity_queue_builder.py'])
+    run_optional([str(PYTHON), 'scripts/source_atom_compiler.py', '--report', str(STATE / 'source-atoms' / 'latest-report.json')])
+    run_optional([str(PYTHON), 'scripts/claim_graph_compiler.py'])
+    run_optional([str(PYTHON), 'scripts/context_gap_compiler.py'])
     run([str(PYTHON), 'scripts/finance_llm_context_pack.py'])
     run([
         str(PYTHON), 'scripts/judgment_envelope_gate.py',

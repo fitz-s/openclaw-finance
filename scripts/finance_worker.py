@@ -210,6 +210,7 @@ def write_shadow_source_atoms(state: dict, generated_at: str) -> None:
             scan_file=str(STATE_FILE),
         )
         write_atoms_jsonl(SOURCE_ATOMS_LATEST, report['atoms'])
+        atomic_write_json(FINANCE / 'state' / 'source-atoms' / 'latest-report.json', report)
     except Exception as exc:
         print(f"⚠️ source atom shadow write skipped: {exc}", file=sys.stderr)
 

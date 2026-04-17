@@ -64,4 +64,8 @@ def test_report_archive_compiler_writes_manifest_and_artifacts(tmp_path, monkeyp
 def test_report_job_runs_archive_compiler_optionally() -> None:
     text = (ROOT / 'scripts' / 'finance_discord_report_job.py').read_text(encoding='utf-8')
     assert 'finance_report_archive_compiler.py' in text
+    assert 'source_atom_compiler.py' in text
+    assert 'claim_graph_compiler.py' in text
+    assert 'context_gap_compiler.py' in text
+    assert 'opportunity_queue_builder.py' in text
     assert 'run_optional' in text
