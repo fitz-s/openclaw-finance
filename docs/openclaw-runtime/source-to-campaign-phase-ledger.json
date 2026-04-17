@@ -102,7 +102,7 @@
     {
       "phase": 3,
       "name": "Options and IV sensitivity upgrade",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Promote options volatility and IV from weak proxy into explicit market_structure.options_iv lane with confidence penalties.",
       "required_review_content": [
         "options/IV sensitivity",
@@ -124,6 +124,13 @@
         "IV anomalies update peacetime board",
         "stale chain reduces confidence",
         "non-watchlist IV spike requires cross-lane confirmation"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-03-options-iv-sensitivity-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-03-implementation-critic.md",
+      "implementation": [
+        "scripts/options_iv_surface_compiler.py",
+        "scripts/finance_discord_report_job.py",
+        "docs/openclaw-runtime/contracts/options-iv-surface-contract.md"
       ]
     },
     {
