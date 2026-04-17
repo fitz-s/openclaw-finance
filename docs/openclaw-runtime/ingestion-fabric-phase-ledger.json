@@ -191,23 +191,39 @@
     {
       "phase": 5,
       "name": "Brave LLM Context reader lane",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Use llm/context only for selected source reading, not first-pass discovery.",
       "required_review2_content": [
         "brave_llm_context_fetcher.py",
         "source_reading",
         "selected URL",
         "freshness limitations",
-        "safe excerpts"
+        "safe excerpts",
+        "snippet digest not raw snippet persistence",
+        "scoped reader not first-pass discovery"
       ],
       "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-05-brave-llm-context-reader-ralplan.md",
         "scripts/brave_llm_context_fetcher.py",
-        "state/brave-llm-context-results.jsonl"
+        "state/brave-llm-context-results.jsonl",
+        "tests/test_brave_llm_context_phase05.py"
       ],
       "acceptance": [
         "first-pass discovery blocked",
         "selected URL/topic required",
-        "results become evidence candidates only"
+        "results become evidence candidates only",
+        "raw context snippets are not persisted",
+        "snippet ceiling remains configurable"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "official Brave LLM Context API and rate-limit documentation",
+        "result": "Use POST-capable scoped reader, indirect source selection via domains/Goggles, metadata-only context refs, configurable snippet ceiling, and explicit rate-limit metadata."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-05-brave-llm-context-reader-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-05-implementation-critic.md",
+      "implementation": [
+        "scripts/brave_llm_context_fetcher.py"
       ]
     },
     {
