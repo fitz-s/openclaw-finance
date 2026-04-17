@@ -20,8 +20,8 @@ def _source_health() -> dict:
 
 def _atoms() -> list[dict]:
     return [
-        {'atom_id': 'atom:news', 'source_id': 'source:reuters'},
-        {'atom_id': 'atom:price', 'source_id': 'source:yfinance'},
+        {'atom_id': 'atom:news', 'source_id': 'source:reuters', 'source_lane': 'news_policy_narrative'},
+        {'atom_id': 'atom:price', 'source_id': 'source:yfinance', 'source_lane': 'market_structure'},
     ]
 
 
@@ -42,6 +42,9 @@ def _campaign_board() -> dict:
         'source_diversity': 2,
         'known_unknowns': [{'gap_id': 'gap:filing'}],
         'linked_atoms': ['atom:news'],
+        'linked_claims': ['claim:news'],
+        'linked_context_gaps': ['gap:filing'],
+        'cross_lane_confirmation': 2,
     }]}
 
 
@@ -49,6 +52,11 @@ def test_source_roi_tracker_scores_source_contribution_without_mutation() -> Non
     rows = source_roi_rows(_source_health(), _atoms(), _claim_graph(), _campaign_board(), generated_at='2026-04-17T00:00:00Z')
     by_id = {row['source_id']: row for row in rows}
     assert by_id['source:reuters']['campaign_contribution_count'] == 1
+    assert by_id['source:reuters']['source_lane_set'] == ['news_policy_narrative']
+    assert by_id['source:reuters']['campaign_value_score'] > 0
+    assert by_id['source:reuters']['claim_refs'] == ['claim:news']
+    assert by_id['source:reuters']['campaign_refs'] == ['campaign:tsla']
+    assert by_id['source:reuters']['context_gap_closure_time_hours'] is None
     assert by_id['source:reuters']['no_threshold_mutation'] is True
     assert by_id['source:reuters']['no_execution'] is True
 
@@ -58,6 +66,10 @@ def test_campaign_outcomes_record_campaign_ids_and_followup_hits() -> None:
     assert rows[0]['campaign_id'] == 'campaign:tsla'
     assert rows[0]['followup_hit'] is True
     assert rows[0]['followup_verb'] == 'why'
+    assert rows[0]['linked_claims'] == ['claim:news']
+    assert rows[0]['linked_context_gaps'] == ['gap:filing']
+    assert rows[0]['cross_lane_confirmation'] == 2
+    assert rows[0]['peacetime_to_live_conversion'] is False
     assert rows[0]['no_threshold_mutation'] is True
 
 

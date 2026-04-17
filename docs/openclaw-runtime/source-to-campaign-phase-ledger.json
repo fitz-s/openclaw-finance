@@ -377,7 +377,7 @@
     {
       "phase": 12,
       "name": "Source ROI and learning",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Attribute campaign value, follow-up usefulness, gap closure, and false positives back to source lanes.",
       "required_review_content": [
         "source ROI",
@@ -395,6 +395,12 @@
         "source contribution is measured",
         "low-value sources decay",
         "untrusted sources cannot dominate"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-12-source-roi-learning-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-12-implementation-critic.md",
+      "implementation": [
+        "scripts/source_roi_tracker.py",
+        "docs/openclaw-runtime/contracts/source-roi-contract.md"
       ]
     },
     {
