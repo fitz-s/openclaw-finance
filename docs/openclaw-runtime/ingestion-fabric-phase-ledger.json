@@ -229,23 +229,39 @@
     {
       "phase": 6,
       "name": "Brave Answers sidecar",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Add Answers API as sidecar synthesis with citations only, never canonical evidence.",
       "required_review2_content": [
         "brave_answers_sidecar.py",
         "chat/completions",
         "citations",
         "sidecar_only",
-        "not authority"
+        "not authority",
+        "streaming citation tags",
+        "answer prose as DerivedContext/Hypothesis only"
       ],
       "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-06-brave-answers-sidecar-ralplan.md",
         "scripts/brave_answers_sidecar.py",
-        "state/brave-answer-sidecars"
+        "state/brave-answer-sidecars",
+        "tests/test_brave_answers_sidecar_phase06.py"
       ],
       "acceptance": [
         "answers without citations cannot promote",
         "citations convert to evidence candidates",
-        "answer text is DerivedContext/Hypothesis only"
+        "answer text is DerivedContext/Hypothesis only",
+        "enum and usage stream tags are telemetry only",
+        "raw stream frames and raw citation snippets are not persisted"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "official Brave Answers API and rate-limit documentation",
+        "result": "Use POST chat/completions with model=brave, stream=true for citations, parse citation/enum/usage tags, keep Answers billing separate, and allow only citation URLs to become evidence candidates."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-06-brave-answers-sidecar-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-06-implementation-critic.md",
+      "implementation": [
+        "scripts/brave_answers_sidecar.py"
       ]
     },
     {
