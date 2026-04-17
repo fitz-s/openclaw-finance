@@ -6,6 +6,9 @@
   "snapshot_files": [
     "docs/openclaw-runtime/information-dominance-stack-plan.md",
     "docs/openclaw-runtime/information-dominance-stack-map.json",
+    "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-00-review2-intake-ralplan.md",
+    "docs/openclaw-runtime/ingestion-fabric-phase-ledger.json",
+    "docs/openclaw-runtime/critics/ingestion-fabric-phase-00-implementation-critic.md",
     "docs/openclaw-runtime/ralplan/source-to-campaign-phase-00-review-intake-ralplan.md",
     "docs/openclaw-runtime/ralplan/source-to-campaign-phase-01-source-office-scout-ralplan.md",
     "docs/openclaw-runtime/ralplan/source-to-campaign-phase-02-evidence-claim-canonicalization-ralplan.md",
