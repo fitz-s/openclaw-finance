@@ -71,6 +71,14 @@ def validate_verb(answer: dict[str, Any]) -> list[str]:
     return []
 
 
+def validate_evidence_slice(answer: dict[str, Any]) -> list[str]:
+    if answer.get('verb') == 'open':
+        return []
+    if not answer.get('evidence_slice_id'):
+        return ['missing_evidence_slice_id']
+    return []
+
+
 def validate_review_only(answer_text: str) -> list[str]:
     """Check answer does not contain execution language."""
     errors: list[str] = []
@@ -85,6 +93,8 @@ def validate_review_only(answer_text: str) -> list[str]:
 def validate_structure(answer_text: str) -> list[str]:
     """Check answer follows Fact/Interpretation/Unknown/What Would Change structure."""
     warnings: list[str] = []
+    if 'insufficient_data' in answer_text.lower():
+        return warnings
     for section in REQUIRED_SECTIONS:
         # Check for section header presence (flexible matching)
         if section.lower() not in answer_text.lower() and section.replace(' ', '').lower() not in answer_text.lower():
@@ -114,6 +124,7 @@ def validate(
 
     all_errors.extend(validate_binding(answer, bundle or {}))
     all_errors.extend(validate_verb(answer))
+    all_errors.extend(validate_evidence_slice(answer))
     all_errors.extend(validate_review_only(answer_text))
     all_errors.extend(validate_forbidden_keys(answer))
 
@@ -130,6 +141,8 @@ def validate(
         'bundle_ref': answer.get('bundle_ref'),
         'selected_handle': answer.get('selected_handle'),
         'verb': answer.get('verb'),
+        'evidence_slice_id': answer.get('evidence_slice_id'),
+        'answer_status': answer.get('answer_status') or ('insufficient_data' if 'insufficient_data' in answer_text.lower() else 'answered'),
         'review_only': True,
         'no_execution': True,
     }

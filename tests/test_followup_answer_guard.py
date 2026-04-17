@@ -24,6 +24,7 @@ def _stub_answer(**overrides):
         'bundle_ref': 'rb:Rabc123',
         'selected_handle': 'T1',
         'verb': 'trace',
+        'evidence_slice_id': 'slice:test',
         'answer_text': 'Fact\n- TSLA at $265\nInterpretation\n- sideways\nUnknown\n- volume\nWhat Would Change\n- breakout above $280',
     }
     base.update(overrides)
@@ -92,3 +93,19 @@ def test_review_only_always_set():
     result = validate(_stub_answer(), _stub_bundle())
     assert result['review_only'] is True
     assert result['no_execution'] is True
+
+
+def test_missing_evidence_slice_id_blocked():
+    answer = _stub_answer()
+    answer.pop('evidence_slice_id')
+    result = validate(answer, _stub_bundle())
+    assert result['status'] == 'fail'
+    assert 'missing_evidence_slice_id' in result['errors']
+
+
+def test_insufficient_data_answer_allowed_but_still_review_only():
+    answer = _stub_answer(answer_text='insufficient_data: missing linked_displacement_cases', answer_status='insufficient_data')
+    result = validate(answer, _stub_bundle())
+    assert result['status'] == 'pass'
+    assert result['answer_status'] == 'insufficient_data'
+    assert result['review_only'] is True

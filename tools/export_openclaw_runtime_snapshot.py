@@ -304,6 +304,7 @@ def main() -> int:
             'docs/openclaw-runtime/critics/phase-3-implementation-critic.md',
             'docs/openclaw-runtime/critics/phase-4-implementation-critic.md',
             'docs/openclaw-runtime/critics/phase-5-implementation-critic.md',
+            'docs/openclaw-runtime/critics/phase-6-implementation-critic.md',
             *contracts,
             *schemas,
         ],
