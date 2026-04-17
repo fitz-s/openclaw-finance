@@ -228,7 +228,7 @@
     {
       "phase": 7,
       "name": "Campaign OS board upgrade",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Turn Discord primary product into campaign boards with lane coverage and known unknowns.",
       "required_review_content": [
         "CampaignProjection",
@@ -247,6 +247,12 @@
         "cards are object-first",
         "cards disclose source health",
         "machine footers stay out of operator primary"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-07-campaign-os-board-upgrade-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-07-implementation-critic.md",
+      "implementation": [
+        "scripts/campaign_projection_compiler.py",
+        "docs/openclaw-runtime/contracts/campaign-projection-contract.md"
       ]
     },
     {

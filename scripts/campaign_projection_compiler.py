@@ -164,6 +164,34 @@ def build_operator_brief(campaign: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def lane_coverage_summary(campaign: dict[str, Any]) -> dict[str, Any]:
+    health = campaign.get('source_health_summary') if isinstance(campaign.get('source_health_summary'), dict) else {}
+    return {
+        'source_diversity': int(campaign.get('source_diversity') or 0),
+        'cross_lane_confirmation': int(campaign.get('cross_lane_confirmation') or 0),
+        'cross_lane_confirmation_score': float(campaign.get('cross_lane_confirmation_score') or 0),
+        'source_health_degraded_count': int(health.get('degraded_count') or 0),
+        'source_health_degraded_sources': as_list(health.get('degraded_sources'))[:5],
+    }
+
+
+def evidence_quality_line(campaign: dict[str, Any]) -> str:
+    coverage = campaign.get('lane_coverage_summary') if isinstance(campaign.get('lane_coverage_summary'), dict) else lane_coverage_summary(campaign)
+    score = campaign.get('undercurrent_score')
+    blockers = as_list(campaign.get('promotion_blockers'))
+    blocker = blockers[0] if blockers else 'none'
+    parts = [
+        f"lanes={coverage.get('cross_lane_confirmation', 0)}",
+        f"sources={coverage.get('source_diversity', 0)}",
+    ]
+    if score is not None:
+        parts.append(f"score={score}")
+    if coverage.get('source_health_degraded_count'):
+        parts.append(f"degraded_sources={coverage.get('source_health_degraded_count')}")
+    parts.append(f"blocker={blocker}")
+    return '; '.join(parts)
+
+
 def top_unique_opportunities(queue: dict[str, Any], limit: int = 3) -> list[dict[str, Any]]:
     rows = [
         row for row in queue.get('candidates', [])
@@ -359,6 +387,16 @@ def campaign_from_undercurrent(card: dict[str, Any]) -> dict[str, Any]:
         'source_diversity': source_diversity,
         'cross_lane_confirmation': cross_lane,
         'contradiction_load': contradiction_load,
+        'cross_lane_confirmation_score': card.get('cross_lane_confirmation_score'),
+        'contradiction_load_score': card.get('contradiction_load_score'),
+        'capital_relevance_score': card.get('capital_relevance_score'),
+        'freshness_penalty': card.get('freshness_penalty'),
+        'undercurrent_score': card.get('undercurrent_score'),
+        'promotion_candidate': bool(card.get('promotion_candidate')),
+        'promotion_blockers': as_list(card.get('promotion_blockers')),
+        'peacetime_update_eligible': bool(card.get('peacetime_update_eligible')),
+        'packet_update_visibility': card.get('packet_update_visibility') or 'none',
+        'wake_impact': card.get('wake_impact') or 'none',
         'known_unknowns': as_list(card.get('known_unknowns'))[:5],
         'source_health_summary': card.get('source_health_summary') if isinstance(card.get('source_health_summary'), dict) else {'degraded_count': 0, 'degraded_sources': []},
         'thread_key': stable_id('campaign-thread', card.get('undercurrent_id'), title),
@@ -381,7 +419,14 @@ def finalize_campaign(campaign: dict[str, Any], *, stage_reason: str) -> dict[st
     out.setdefault('source_diversity', 0)
     out.setdefault('cross_lane_confirmation', 0)
     out.setdefault('contradiction_load', 0)
+    out.setdefault('undercurrent_score', None)
+    out.setdefault('promotion_candidate', False)
+    out.setdefault('promotion_blockers', [])
+    out.setdefault('peacetime_update_eligible', False)
+    out.setdefault('packet_update_visibility', 'none')
+    out.setdefault('wake_impact', 'none')
     out.setdefault('source_health_summary', {'degraded_count': 0, 'degraded_sources': []})
+    out['lane_coverage_summary'] = lane_coverage_summary(out)
     out['stage_reason'] = stage_reason
     out['last_stage_hash'] = stable_hash(out.get('campaign_id'), out.get('stage'), stage_reason, out.get('board_class'))
     out['thread_status'] = out.get('thread_status') or 'unbound'
@@ -410,6 +455,7 @@ def render_board(title: str, campaigns: list[dict[str, Any]], empty: str) -> str
             f"{idx}) {short(item['human_title'], 72)} | {item['stage']}",
             f"Implication：{short(brief.get('implication') or directional_implication(item), 105)}",
             f"Why：{short(brief.get('why_now') or item['why_now_delta'], 115)}",
+            f"Evidence：{short(evidence_quality_line(item), 115)}",
             f"Verify：{short('; '.join(str(v) for v in verify[:2]) if verify else '价格/量能与来源新鲜度', 105)}",
             f"Unknown：{short(brief.get('known_unknown') or top_known_unknown(item), 105)}",
             f"Ask：why {item['campaign_id']} / challenge / sources",

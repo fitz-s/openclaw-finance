@@ -41,6 +41,18 @@ A campaign is the durable object the operator can follow across days or weeks. I
   "contradiction_load": 0,
   "known_unknowns": [],
   "source_health_summary": {"degraded_count": 0, "degraded_sources": []},
+  "lane_coverage_summary": {
+    "source_diversity": 0,
+    "cross_lane_confirmation": 0,
+    "cross_lane_confirmation_score": 0.0,
+    "source_health_degraded_count": 0
+  },
+  "undercurrent_score": 0.0,
+  "promotion_candidate": false,
+  "promotion_blockers": [],
+  "peacetime_update_eligible": false,
+  "packet_update_visibility": "board_mutation_only|none",
+  "wake_impact": "none",
   "linked_atoms": [],
   "linked_claims": [],
   "linked_context_gaps": [],
@@ -76,3 +88,14 @@ Phase 4 may write local lifecycle artifacts:
 These artifacts are local projection state only. `campaign-threads.json` maps `thread_key` to campaign identity and may preserve external thread IDs if already known, but Phase 4 must not create Discord threads, edit Discord messages, or claim thread existence. Thread is UI, not memory.
 
 CampaignProjection 2.0 may carry Source Health, EvidenceAtom, ClaimGraph, ContextGap, and Undercurrent metadata as audit/projection fields. It remains outside wake, judgment, delivery safety, and execution authority.
+
+## Source-to-Campaign Phase 07 Board Quality
+
+Campaign cards derived from undercurrents should expose evidence quality:
+- source diversity
+- cross-lane confirmation
+- undercurrent score
+- top promotion blocker
+- source health degradation
+
+These fields are explanatory only. `promotion_candidate` remains advisory until an explicit active cutover phase consumes it.

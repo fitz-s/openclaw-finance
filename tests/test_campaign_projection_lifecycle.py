@@ -35,6 +35,13 @@ def _undercurrents() -> dict:
         'source_freshness': {'status': 'mixed', 'source_refs': ['state:claim-graph.json']},
         'source_diversity': 2,
         'cross_lane_confirmation': 2,
+        'cross_lane_confirmation_score': 0.66,
+        'undercurrent_score': 0.72,
+        'promotion_candidate': False,
+        'promotion_blockers': ['contradiction_load_gt_0.35'],
+        'peacetime_update_eligible': True,
+        'packet_update_visibility': 'board_mutation_only',
+        'wake_impact': 'none',
         'contradiction_load': 1,
         'known_unknowns': [{'gap_id': 'gap:filing', 'missing_lane': 'corporate_filing', 'why_load_bearing': 'issuer confirmation missing'}],
         'source_health_summary': {'degraded_count': 1, 'degraded_sources': ['source:yfinance']},
@@ -50,6 +57,12 @@ def test_campaign_projection_carries_undercurrent_shadow_refs() -> None:
     assert campaign['linked_context_gaps'] == ['gap:filing']
     assert campaign['known_unknowns'][0]['missing_lane'] == 'corporate_filing'
     assert campaign['source_health_summary']['degraded_count'] == 1
+    assert campaign['undercurrent_score'] == 0.72
+    assert campaign['promotion_candidate'] is False
+    assert campaign['promotion_blockers'] == ['contradiction_load_gt_0.35']
+    assert campaign['lane_coverage_summary']['source_diversity'] == 2
+    assert campaign['packet_update_visibility'] == 'board_mutation_only'
+    assert campaign['wake_impact'] == 'none'
     assert campaign['no_execution'] is True
 
 
@@ -60,6 +73,15 @@ def test_campaign_stage_reason_uses_quality_fields_without_authority_change() ->
     assert 'source_diversity=2' in campaign['stage_reason']
     assert campaign['last_stage_hash'].startswith('sha256:')
     assert board['no_execution'] is True
+
+
+def test_campaign_board_contains_evidence_quality_line() -> None:
+    board = compile_campaign_board({}, {}, {}, {}, {}, {}, {}, _undercurrents())
+    text = board['discord_risk_board_markdown']
+    assert 'Evidence：' in text
+    assert 'lanes=2' in text
+    assert 'score=0.72' in text
+    assert 'blocker=contradiction_load_gt_0.35' in text
 
 
 def test_campaign_stage_history_records_transition() -> None:

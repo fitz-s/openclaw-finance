@@ -57,6 +57,7 @@ def test_campaign_board_contains_implication_and_known_unknown() -> None:
     board = compile_campaign_board({}, {}, {}, {}, {}, {}, {}, _undercurrents())
     text = board['discord_risk_board_markdown'] + board['discord_live_board_markdown']
     assert 'Implication：' in text
+    assert 'Evidence：' in text
     assert 'Unknown：' in text
     assert '缺官方/issuer 确认' in text
 
