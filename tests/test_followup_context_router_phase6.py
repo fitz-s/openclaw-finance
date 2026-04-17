@@ -30,6 +30,13 @@ def _campaign() -> dict:
         'linked_atoms': ['atom:1'],
         'linked_claims': ['claim:1'],
         'linked_context_gaps': ['gap:1'],
+        'known_unknowns': [{
+            'gap_id': 'gap:1',
+            'missing_lane': 'displacement_case',
+            'why_load_bearing': 'Need displacement case before compare.',
+            'closure_condition': 'Build displacement case.',
+            'gap_status': 'open',
+        }],
         'source_health_summary': {'degraded_count': 1},
     }
 
@@ -65,6 +72,18 @@ def test_missing_compare_context_returns_insufficient_data_metadata() -> None:
     assert routed['status'] == 'pass'
     assert routed['insufficient_data'] is True
     assert 'linked_displacement_cases' in routed['missing_fields']
+    assert routed['recommended_answer_status'] == 'insufficient_data'
+    assert routed['evidence_slice_coverage']['coverage_status'] == 'insufficient'
+    assert routed['context_gap_guidance'][0]['gap_id'] == 'gap:1'
+
+
+def test_followup_router_emits_verb_specific_evidence_groups() -> None:
+    cache = build_cache(_board())
+    why = route_context(query='why campaign:abc', bundle=_bundle(), campaign_board=_board(), campaign_cache=cache)
+    sources = route_context(query='sources campaign:abc', bundle=_bundle(), campaign_board=_board(), campaign_cache=cache)
+    assert 'promotion_reason' in why['required_evidence_groups']
+    assert 'claim_lineage' in sources['required_evidence_groups']
+    assert why['required_evidence_groups'] != sources['required_evidence_groups']
 
 
 def test_compare_still_requires_secondary_handle() -> None:

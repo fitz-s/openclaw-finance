@@ -109,3 +109,16 @@ def test_insufficient_data_answer_allowed_but_still_review_only():
     assert result['status'] == 'pass'
     assert result['answer_status'] == 'insufficient_data'
     assert result['review_only'] is True
+
+
+def test_followup_guard_blocks_answered_response_with_missing_required_coverage():
+    answer = _stub_answer(
+        answer_status='answered',
+        evidence_slice_coverage={
+            'coverage_status': 'insufficient',
+            'missing_fields': ['linked_displacement_cases'],
+        },
+    )
+    result = validate(answer, _stub_bundle())
+    assert result['status'] == 'fail'
+    assert 'answered_with_missing_required_evidence' in result['errors']

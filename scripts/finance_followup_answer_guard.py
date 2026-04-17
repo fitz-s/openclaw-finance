@@ -76,6 +76,14 @@ def validate_evidence_slice(answer: dict[str, Any]) -> list[str]:
         return []
     if not answer.get('evidence_slice_id'):
         return ['missing_evidence_slice_id']
+    coverage = answer.get('evidence_slice_coverage')
+    if isinstance(coverage, dict):
+        missing = coverage.get('missing_fields')
+        has_missing = isinstance(missing, list) and bool(missing)
+        status = str(answer.get('answer_status') or '').lower()
+        text = str(answer.get('answer_text') or answer.get('text') or '').lower()
+        if has_missing and status != 'insufficient_data' and 'insufficient_data' not in text:
+            return ['answered_with_missing_required_evidence']
     return []
 
 

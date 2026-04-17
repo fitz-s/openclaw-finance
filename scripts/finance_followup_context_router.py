@@ -19,6 +19,15 @@ CAMPAIGN_BOARD = STATE / 'campaign-board.json'
 CAMPAIGN_CACHE = STATE / 'campaign-cache.json'
 OUT = STATE / 'followup-context-route.json'
 VALID_VERBS = {'why', 'challenge', 'compare', 'scenario', 'sources', 'trace', 'expand'}
+VERB_GROUPS = {
+    'why': ['campaign_projection', 'recent_claims', 'source_health', 'promotion_reason', 'event_timeline'],
+    'challenge': ['countercase_memo', 'invalidators', 'contradictions', 'denied_hypotheses', 'freshness_risks'],
+    'compare': ['capital_graph_slice', 'displacement_case', 'bucket_competition', 'portfolio_attachment'],
+    'scenario': ['scenario_exposure', 'hedge_coverage', 'crowding_risk', 'linked_campaigns'],
+    'sources': ['source_atoms', 'claim_lineage', 'rights_and_redaction', 'freshness_by_lane'],
+    'trace': ['handle_to_claim_to_atom_to_source_lineage'],
+    'expand': ['prepared_campaign_cache', 'report_bundle_summary'],
+}
 VERB_ALIASES = {
     'why': 'why',
     '为什么': 'why',
@@ -117,6 +126,38 @@ def required_slice_keys(verb: str) -> list[str]:
     }.get(verb, [])
 
 
+def context_gap_guidance(campaign: dict[str, Any] | None, missing_fields: list[str]) -> list[dict[str, Any]]:
+    if not campaign or not missing_fields:
+        return []
+    known_unknowns = [gap for gap in campaign.get('known_unknowns', []) if isinstance(gap, dict)]
+    guidance: list[dict[str, Any]] = []
+    for field in missing_fields:
+        related_gap = known_unknowns[0] if known_unknowns else {}
+        guidance.append({
+            'missing_field': field,
+            'gap_id': related_gap.get('gap_id'),
+            'missing_lane': related_gap.get('missing_lane') or field,
+            'why_load_bearing': related_gap.get('why_load_bearing') or f'{field} is required for this follow-up verb.',
+            'closure_condition': related_gap.get('closure_condition') or f'Provide {field} evidence before answering strongly.',
+            'gap_status': related_gap.get('gap_status') or 'open',
+        })
+    return guidance
+
+
+def evidence_coverage(campaign: dict[str, Any] | None, verb: str, missing_fields: list[str]) -> dict[str, Any]:
+    required = required_slice_keys(verb)
+    present = []
+    if campaign:
+        present = [key for key in required if key not in missing_fields and key != 'campaign']
+    return {
+        'required_keys': required,
+        'required_evidence_groups': VERB_GROUPS.get(verb, []),
+        'present_keys': present,
+        'missing_fields': missing_fields,
+        'coverage_status': 'insufficient' if missing_fields else 'complete',
+    }
+
+
 def missing_fields_for_campaign(campaign: dict[str, Any] | None, verb: str) -> list[str]:
     if not campaign:
         return []
@@ -168,6 +209,8 @@ def route_context(
     evidence_slice = required_slice_keys(verb)
     missing_fields = missing_fields_for_campaign(selected_campaign, verb)
     insufficient_data = bool(missing_fields and verb in {'compare', 'scenario', 'sources', 'trace'})
+    coverage = evidence_coverage(selected_campaign, verb, missing_fields)
+    gaps = context_gap_guidance(selected_campaign, missing_fields)
     evidence_slice_id = stable_id('slice', bundle.get('bundle_id'), campaign_board.get('contract'), verb, resolved_primary, resolved_secondary, ','.join(evidence_slice))
 
     return {
@@ -185,9 +228,13 @@ def route_context(
         'selected_campaign': selected_campaign,
         'selected_object_card': selected_card,
         'cache_slice': cache_slice,
+        'required_evidence_groups': VERB_GROUPS.get(verb, []),
         'evidence_slice_keys': evidence_slice,
+        'evidence_slice_coverage': coverage,
         'missing_fields': missing_fields,
+        'context_gap_guidance': gaps,
         'insufficient_data': insufficient_data,
+        'recommended_answer_status': 'insufficient_data' if insufficient_data else 'answered',
         'bundle_ref': bundle.get('bundle_id'),
         'campaign_board_ref': campaign_board.get('contract'),
         'insufficient_data_rule': 'Return insufficient_data with missing fields instead of generic inference when required slice is empty.',

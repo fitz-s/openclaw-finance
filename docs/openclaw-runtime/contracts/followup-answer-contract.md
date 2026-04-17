@@ -77,4 +77,6 @@ The follow-up router must emit:
 
 If required slice fields are absent, the answer should return `insufficient_data` with the missing fields instead of generic inference. `insufficient_data` is still review-only and still requires `evidence_slice_id`.
 
+If a route supplies `evidence_slice_coverage.coverage_status=insufficient`, an answer may only pass as `answer_status=insufficient_data`. It must not present itself as fully answered.
+
 Parent Discord thread routing is out of scope for Phase 6; thread history remains UI only.

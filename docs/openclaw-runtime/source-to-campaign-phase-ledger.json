@@ -258,7 +258,7 @@
     {
       "phase": 8,
       "name": "Verb-specific follow-up committee room",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Make why/compare/challenge/scenario/sources/trace use distinct evidence slices.",
       "required_review_content": [
         "verb + primary_handle",
@@ -277,6 +277,13 @@
         "compare requires capital/displacement slice",
         "sources requires atom lineage",
         "guard rejects missing evidence coverage"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-08-verb-specific-followup-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-08-implementation-critic.md",
+      "implementation": [
+        "scripts/finance_followup_context_router.py",
+        "scripts/finance_followup_answer_guard.py",
+        "docs/openclaw-runtime/contracts/followup-context-slice-contract.md"
       ]
     },
     {
