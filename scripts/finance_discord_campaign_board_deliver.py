@@ -149,6 +149,8 @@ def thread_seed(campaign: dict[str, Any]) -> str:
     brief = campaign.get('operator_brief') if isinstance(campaign.get('operator_brief'), dict) else {}
     unknowns = campaign.get('known_unknowns') if isinstance(campaign.get('known_unknowns'), list) else []
     checks = brief.get('verify_first') if isinstance(brief.get('verify_first'), list) else campaign.get('confirmations_needed', [])
+    blockers = campaign.get('promotion_blockers') if isinstance(campaign.get('promotion_blockers'), list) else []
+    coverage = campaign.get('lane_coverage_summary') if isinstance(campaign.get('lane_coverage_summary'), dict) else {}
     lines = [
         f"{campaign.get('human_title') or campaign.get('campaign_id')}｜深挖入口",
         '',
@@ -168,6 +170,11 @@ def thread_seed(campaign: dict[str, Any]) -> str:
         '',
         'Known Unknown',
         f"- {brief.get('known_unknown') or (unknowns[0].get('why_load_bearing') if unknowns and isinstance(unknowns[0], dict) else '暂无明确 context gap')}",
+        '',
+        '预备深挖',
+        f"- why：{brief.get('why_now') or campaign.get('why_now_delta') or 'n/a'}",
+        f"- challenge：{(blockers[0] if blockers else (campaign.get('kill_switches') or ['暂无明确 blocker'])[0])}",
+        f"- sources：lanes={coverage.get('cross_lane_confirmation', campaign.get('cross_lane_confirmation', 0))}; sources={coverage.get('source_diversity', campaign.get('source_diversity', 0))}; freshness={(campaign.get('source_freshness') or {}).get('status', 'unknown')}",
         '',
         f"可问：why {campaign.get('campaign_id')} / challenge {campaign.get('campaign_id')} / sources {campaign.get('campaign_id')}",
     ]

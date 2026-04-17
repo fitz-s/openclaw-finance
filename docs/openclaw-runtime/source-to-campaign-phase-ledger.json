@@ -289,7 +289,7 @@
     {
       "phase": 9,
       "name": "Deep-dive cache",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Prebake why/challenge/compare/scenario/sources/trace cards for top campaigns before the user asks.",
       "required_review_content": [
         "anticipatory context",
@@ -308,6 +308,12 @@
         "thread seed includes prepared details",
         "first follow-up can hit cache",
         "stale cache is marked"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-09-deep-dive-cache-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-09-implementation-critic.md",
+      "implementation": [
+        "scripts/finance_campaign_cache_builder.py",
+        "scripts/finance_discord_campaign_board_deliver.py"
       ]
     },
     {

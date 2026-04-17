@@ -16,6 +16,15 @@ STATE = FINANCE / 'state'
 CAMPAIGN_BOARD = STATE / 'campaign-board.json'
 OUT = STATE / 'campaign-cache.json'
 VERBS = ('why', 'challenge', 'compare', 'scenario', 'sources', 'trace', 'expand')
+VERB_GROUPS = {
+    'why': ['campaign_projection', 'recent_claims', 'source_health', 'promotion_reason', 'event_timeline'],
+    'challenge': ['countercase_memo', 'invalidators', 'contradictions', 'denied_hypotheses', 'freshness_risks'],
+    'compare': ['capital_graph_slice', 'displacement_case', 'bucket_competition', 'portfolio_attachment'],
+    'scenario': ['scenario_exposure', 'hedge_coverage', 'crowding_risk', 'linked_campaigns'],
+    'sources': ['source_atoms', 'claim_lineage', 'rights_and_redaction', 'freshness_by_lane'],
+    'trace': ['handle_to_claim_to_atom_to_source_lineage'],
+    'expand': ['prepared_campaign_cache', 'report_bundle_summary'],
+}
 
 
 def now_iso() -> str:
@@ -31,11 +40,47 @@ def stable_id(prefix: str, *parts: Any) -> str:
     return f'{prefix}:' + hashlib.sha1(raw.encode('utf-8')).hexdigest()[:16]
 
 
+def grounding_summary(campaign: dict[str, Any]) -> dict[str, Any]:
+    return {
+        'atoms': len(as_list(campaign.get('linked_atoms'))),
+        'claims': len(as_list(campaign.get('linked_claims'))),
+        'context_gaps': len(as_list(campaign.get('linked_context_gaps'))),
+        'source_diversity': int(campaign.get('source_diversity') or 0),
+        'cross_lane_confirmation': int(campaign.get('cross_lane_confirmation') or 0),
+        'source_health_degraded_count': int((campaign.get('source_health_summary') or {}).get('degraded_count') or 0) if isinstance(campaign.get('source_health_summary'), dict) else 0,
+    }
+
+
+def answer_status_for(verb: str, card: dict[str, Any]) -> str:
+    if verb == 'compare' and not as_list(card.get('linked_displacement_cases')):
+        return 'insufficient_data'
+    if verb == 'scenario' and not as_list(card.get('linked_scenarios')):
+        return 'insufficient_data'
+    if verb in {'sources', 'trace'}:
+        refs = card.get('linked_refs') if isinstance(card.get('linked_refs'), dict) else card.get('lineage_refs') if isinstance(card.get('lineage_refs'), dict) else {}
+        if not any(as_list(refs.get(key)) for key in ['atoms', 'claims', 'context_gaps', 'opportunity', 'invalidator', 'thesis', 'scenario']):
+            return 'insufficient_data'
+    return 'ready'
+
+
+def finalize_card(verb: str, card: dict[str, Any], campaign: dict[str, Any]) -> dict[str, Any]:
+    out = dict(card)
+    out['required_evidence_groups'] = VERB_GROUPS.get(verb, [])
+    out['grounding_summary'] = grounding_summary(campaign)
+    out['answer_status'] = answer_status_for(verb, out)
+    out['refresh_policy'] = 'refresh_on_report_or_campaign_stage_change'
+    out['review_only'] = True
+    out['no_execution'] = True
+    if out['answer_status'] == 'insufficient_data':
+        out['insufficient_data_reason'] = 'Required evidence slice is incomplete; answer should state missing fields instead of inferring.'
+    return out
+
+
 def build_cards(campaign: dict[str, Any]) -> dict[str, dict[str, Any]]:
     title = campaign.get('human_title')
     cid = campaign.get('campaign_id')
     brief = campaign.get('operator_brief') if isinstance(campaign.get('operator_brief'), dict) else {}
-    return {
+    cards = {
         'why': {
             'evidence_slice_id': stable_id('slice', cid, 'why'),
             'title': title,
@@ -108,6 +153,7 @@ def build_cards(campaign: dict[str, Any]) -> dict[str, dict[str, Any]]:
             'campaign': campaign,
         },
     }
+    return {verb: finalize_card(verb, card, campaign) for verb, card in cards.items()}
 
 
 def build_cache(campaign_board: dict[str, Any], top_n: int = 5) -> dict[str, Any]:

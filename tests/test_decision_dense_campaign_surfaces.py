@@ -32,6 +32,8 @@ def _undercurrents() -> dict:
         'source_freshness': {'status': 'mixed', 'source_refs': ['ev:bno']},
         'source_diversity': 3,
         'cross_lane_confirmation': 2,
+        'promotion_blockers': ['source_diversity_lt_2'],
+        'lane_coverage_summary': {'source_diversity': 3, 'cross_lane_confirmation': 2},
         'contradiction_load': 2,
         'known_unknowns': [{
             'gap_id': 'gap:filing',
@@ -69,6 +71,25 @@ def test_campaign_cache_prepares_decision_dense_why_card() -> None:
     assert card['conclusion']
     assert 'BNO' in card['fact_slice'][2]
     assert card['known_unknowns']
+    assert card['required_evidence_groups']
+    assert card['grounding_summary']['context_gaps'] == 1
+    assert card['answer_status'] == 'ready'
+
+
+def test_campaign_cache_builds_all_verb_cards_for_top_campaigns() -> None:
+    board = compile_campaign_board({}, {}, {}, {}, {}, {}, {}, _undercurrents())
+    cache = build_cache(board)
+    cards = next(iter(cache['cache'].values()))
+    assert set(cache['verbs']) == set(cards)
+    assert all(cards[verb]['required_evidence_groups'] for verb in cache['verbs'])
+
+
+def test_campaign_cache_marks_missing_compare_as_insufficient_data() -> None:
+    board = compile_campaign_board({}, {}, {}, {}, {}, {}, {}, _undercurrents())
+    cache = build_cache(board)
+    cards = next(iter(cache['cache'].values()))
+    assert cards['compare']['answer_status'] == 'insufficient_data'
+    assert 'insufficient_data_reason' in cards['compare']
 
 
 def test_thread_seed_contains_prebrief_not_menu_only() -> None:
@@ -78,4 +99,6 @@ def test_thread_seed_contains_prebrief_not_menu_only() -> None:
     assert 'Fact' in seed
     assert 'Interpretation' in seed
     assert 'Known Unknown' in seed
+    assert '预备深挖' in seed
+    assert 'sources：lanes=' in seed
     assert '可问：' in seed
