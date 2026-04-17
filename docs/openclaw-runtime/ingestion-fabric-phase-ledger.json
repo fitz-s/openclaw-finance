@@ -419,21 +419,39 @@
     {
       "phase": 11,
       "name": "Reader bundle and follow-up slice indexing",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Make reader bundles carry claim IDs, lane coverage, source health, context gaps, and follow-up slice index.",
       "required_review2_content": [
         "finance_report_reader_bundle.py",
         "claim ids",
         "lane coverage",
-        "follow-up slices index"
+        "follow-up slices index",
+        "source health in follow-up",
+        "insufficient-data evidence slicing"
       ],
       "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-11-reader-bundle-followup-slices-ralplan.md",
         "scripts/finance_report_reader_bundle.py",
-        "scripts/finance_followup_context_router.py"
+        "scripts/finance_followup_context_router.py",
+        "docs/openclaw-runtime/contracts/reader-bundle-contract.md",
+        "tests/test_report_reader_bundle.py"
       ],
       "acceptance": [
         "bundle exposes evidence slices",
-        "follow-up no longer depends on raw thread history"
+        "follow-up no longer depends on raw thread history",
+        "slices include provenance hashes and permission metadata",
+        "router returns bundle slice coverage"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "retrieval, file-search citation, compact session memory, insufficient-context RAG, and retrieval safety guidance",
+        "result": "Treat every bundle slice as a provenance-bearing evidence unit with source metadata, content hash, retrieval score, permissions, and insufficient-data behavior."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-11-reader-bundle-followup-slices-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-11-implementation-critic.md",
+      "implementation": [
+        "scripts/finance_report_reader_bundle.py",
+        "scripts/finance_followup_context_router.py"
       ]
     },
     {

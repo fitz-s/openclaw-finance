@@ -46,7 +46,24 @@ def _board() -> dict:
 
 
 def _bundle() -> dict:
-    return {'bundle_id': 'rb:test', 'campaign_alias_map': {'C1': 'campaign:abc'}, 'object_cards': [{'handle': 'A1', 'type': 'agenda'}], 'handles': {'A1': {'type': 'agenda'}}}
+    return {
+        'bundle_id': 'rb:test',
+        'campaign_alias_map': {'C1': 'campaign:abc'},
+        'object_cards': [{'handle': 'A1', 'type': 'agenda'}],
+        'handles': {'A1': {'type': 'agenda'}},
+        'followup_slice_index': {
+            'A1': {
+                'trace': {
+                    'evidence_slice_id': 'slice:rb:test:A1:trace',
+                    'linked_claims': ['claim:bundle'],
+                    'linked_atoms': ['atom:bundle'],
+                    'linked_context_gaps': ['gap:bundle'],
+                    'lane_coverage': {'lanes': ['news_policy_narrative']},
+                    'source_health_summary': {'degraded_count': 1},
+                }
+            }
+        },
+    }
 
 
 def test_followup_router_resolves_campaign_and_bundle_aliases() -> None:
@@ -84,6 +101,14 @@ def test_followup_router_emits_verb_specific_evidence_groups() -> None:
     assert 'promotion_reason' in why['required_evidence_groups']
     assert 'claim_lineage' in sources['required_evidence_groups']
     assert why['required_evidence_groups'] != sources['required_evidence_groups']
+
+
+def test_followup_router_uses_bundle_slice_index_for_object_handles() -> None:
+    routed = route_context(query='trace A1', bundle=_bundle(), campaign_board=_board(), campaign_cache=build_cache(_board()))
+    assert routed['status'] == 'pass'
+    assert routed['bundle_slice']['linked_claims'] == ['claim:bundle']
+    assert routed['evidence_slice_id'] == 'slice:rb:test:A1:trace'
+    assert routed['evidence_slice_coverage']['bundle_lane_coverage']['lanes'] == ['news_policy_narrative']
 
 
 def test_compare_still_requires_secondary_handle() -> None:

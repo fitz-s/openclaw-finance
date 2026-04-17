@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-17T23:40:39.762993+00:00",
+  "generated_at": "2026-04-17T23:45:50.852893+00:00",
   "subsystem": "finance",
   "openclaw_home": "/Users/leofitz/.openclaw",
   "finance_repo": "/Users/leofitz/.openclaw/workspace/finance",
@@ -17,6 +17,7 @@
     "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-08-finance-worker-reducer-ralplan.md",
     "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-09-source-health-quota-monitor-ralplan.md",
     "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-10-claim-aware-undercurrents-ralplan.md",
+    "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-11-reader-bundle-followup-slices-ralplan.md",
     "docs/openclaw-runtime/ingestion-fabric-phase-ledger.json",
     "docs/openclaw-runtime/brave-api-capability-audit.json",
     "docs/openclaw-runtime/critics/ingestion-fabric-phase-00-implementation-critic.md",
@@ -30,6 +31,7 @@
     "docs/openclaw-runtime/critics/ingestion-fabric-phase-08-implementation-critic.md",
     "docs/openclaw-runtime/critics/ingestion-fabric-phase-09-implementation-critic.md",
     "docs/openclaw-runtime/critics/ingestion-fabric-phase-10-implementation-critic.md",
+    "docs/openclaw-runtime/critics/ingestion-fabric-phase-11-implementation-critic.md",
     "docs/openclaw-runtime/ralplan/source-to-campaign-phase-00-review-intake-ralplan.md",
     "docs/openclaw-runtime/ralplan/source-to-campaign-phase-01-source-office-scout-ralplan.md",
     "docs/openclaw-runtime/ralplan/source-to-campaign-phase-02-evidence-claim-canonicalization-ralplan.md",

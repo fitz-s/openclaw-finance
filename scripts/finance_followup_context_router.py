@@ -104,6 +104,16 @@ def campaign_aliases(bundle: dict[str, Any]) -> dict[str, str]:
     return {str(k): str(v) for k, v in aliases.items() if k and v}
 
 
+def bundle_slice_for(bundle: dict[str, Any], handle: str, verb: str) -> dict[str, Any] | None:
+    index = bundle.get('followup_slice_index') if isinstance(bundle.get('followup_slice_index'), dict) else {}
+    entry = index.get(handle)
+    if isinstance(entry, dict):
+        slice_row = entry.get(verb) or entry.get('trace') or entry.get('expand')
+        if isinstance(slice_row, dict):
+            return slice_row
+    return None
+
+
 def is_missing(value: Any) -> bool:
     if value is None:
         return True
@@ -201,6 +211,7 @@ def route_context(
     if primary and not selected_campaign and not selected_card:
         errors.append(f'unknown_primary_handle:{primary}')
     cache_slice = None
+    bundle_slice = bundle_slice_for(bundle, primary, verb) or bundle_slice_for(bundle, resolved_primary, verb)
     if selected_campaign:
         cache_slice = cache.get(str(selected_campaign.get('campaign_id')), {}).get(verb)
     if selected_campaign and cache_slice is None:
@@ -210,8 +221,15 @@ def route_context(
     missing_fields = missing_fields_for_campaign(selected_campaign, verb)
     insufficient_data = bool(missing_fields and verb in {'compare', 'scenario', 'sources', 'trace'})
     coverage = evidence_coverage(selected_campaign, verb, missing_fields)
+    if bundle_slice:
+        coverage = dict(coverage)
+        coverage['bundle_slice_available'] = True
+        coverage['bundle_lane_coverage'] = bundle_slice.get('lane_coverage', {})
+        coverage['bundle_source_health_summary'] = bundle_slice.get('source_health_summary', {})
+        coverage['bundle_linked_claims'] = bundle_slice.get('linked_claims', [])
+        coverage['bundle_linked_context_gaps'] = bundle_slice.get('linked_context_gaps', [])
     gaps = context_gap_guidance(selected_campaign, missing_fields)
-    evidence_slice_id = stable_id('slice', bundle.get('bundle_id'), campaign_board.get('contract'), verb, resolved_primary, resolved_secondary, ','.join(evidence_slice))
+    evidence_slice_id = bundle_slice.get('evidence_slice_id') if bundle_slice else stable_id('slice', bundle.get('bundle_id'), campaign_board.get('contract'), verb, resolved_primary, resolved_secondary, ','.join(evidence_slice))
 
     return {
         'generated_at': now_iso(),
@@ -228,6 +246,7 @@ def route_context(
         'selected_campaign': selected_campaign,
         'selected_object_card': selected_card,
         'cache_slice': cache_slice,
+        'bundle_slice': bundle_slice,
         'required_evidence_groups': VERB_GROUPS.get(verb, []),
         'evidence_slice_keys': evidence_slice,
         'evidence_slice_coverage': coverage,

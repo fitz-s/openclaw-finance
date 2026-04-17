@@ -141,6 +141,8 @@ def test_compile_bundle_basic():
     assert isinstance(bundle['object_cards'], list)
     assert isinstance(bundle['starter_queries'], list)
     assert isinstance(bundle['object_alias_map'], dict)
+    assert isinstance(bundle['followup_slice_index'], dict)
+    assert isinstance(bundle['evidence_index_summary'], dict)
 
 
 def test_compile_bundle_deterministic():
@@ -165,3 +167,29 @@ def test_compile_bundle_deterministic():
     assert b1['handles'] == b2['handles']
     assert len(b1['object_cards']) == len(b2['object_cards'])
     assert b1['starter_queries'] == b2['starter_queries']
+
+
+def test_compile_bundle_exposes_claim_gap_source_health_slices():
+    bundle = compile_bundle(
+        _stub_report(), _stub_entry(),
+        {'theses': [{'thesis_id': 'thesis:TSLA', 'instrument': 'TSLA', 'status': 'active'}]},
+        {'intents': [{'intent_id': 'wi:TSLA', 'symbol': 'TSLA', 'roles': ['event_sensitive']}]},
+        {'scenarios': []},
+        {'candidates': []}, {'invalidators': []},
+        {'agenda_items': []}, {}, {}, {}, {},
+        source_atoms=[{'atom_id': 'atom:tsla', 'source_id': 'source:reuters', 'source_lane': 'news_policy_narrative'}],
+        claim_graph={'claims': [{'claim_id': 'claim:tsla', 'atom_id': 'atom:tsla', 'subject': 'TSLA', 'predicate': 'mentions', 'object': 'TSLA delivery risk'}]},
+        context_gaps={'gaps': [{'gap_id': 'gap:tsla', 'claim_id': 'claim:tsla', 'missing_lane': 'corp_filing_ir'}]},
+        source_health={'sources': [{'source_id': 'source:reuters', 'freshness_status': 'fresh', 'rights_status': 'restricted', 'breach_reasons': ['rights_restricted']}]},
+    )
+    card = next(c for c in bundle['object_cards'] if c['handle'] == 'T1')
+    assert card['linked_claims'] == ['claim:tsla']
+    assert card['linked_atoms'] == ['atom:tsla']
+    assert card['linked_context_gaps'] == ['gap:tsla']
+    assert card['lane_coverage']['lanes'] == ['news_policy_narrative']
+    assert card['source_health_summary']['degraded_count'] == 1
+    trace_slice = bundle['followup_slice_index']['T1']['trace']
+    assert trace_slice['linked_claims'] == ['claim:tsla']
+    assert trace_slice['content_hash'].startswith('sha256:')
+    assert trace_slice['retrieval_score'] == 1.0
+    assert trace_slice['permission_metadata']['raw_thread_history_allowed'] is False

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 from datetime import datetime, timezone
 from pathlib import Path
@@ -27,6 +28,10 @@ PRICES = STATE / 'prices.json'
 PORTFOLIO = STATE / 'portfolio-resolved.json'
 CAMPAIGN_BOARD = STATE / 'campaign-board.json'
 CAMPAIGN_CACHE = STATE / 'campaign-cache.json'
+SOURCE_ATOMS = STATE / 'source-atoms' / 'latest.jsonl'
+CLAIM_GRAPH = STATE / 'claim-graph.json'
+CONTEXT_GAPS = STATE / 'context-gaps.json'
+SOURCE_HEALTH = STATE / 'source-health.json'
 DOSSIER_DIR = STATE / 'thesis-dossiers'
 CUSTOM_METRICS_DIR = STATE / 'custom-metrics'
 OUT_DIR = STATE / 'report-reader'
@@ -62,9 +67,34 @@ def now_iso() -> str:
     return datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z')
 
 
+def canonical_hash(payload: Any) -> str:
+    raw = json.dumps(payload, sort_keys=True, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
+    return 'sha256:' + hashlib.sha256(raw).hexdigest()
+
+
 def short_text(value: Any, limit: int = 80) -> str:
     text = ' '.join(str(value or '').split())
     return text[:limit]
+
+
+def load_jsonl(path: Path) -> list[dict[str, Any]]:
+    if not path.exists():
+        return []
+    rows: list[dict[str, Any]] = []
+    for line in path.read_text(encoding='utf-8', errors='replace').splitlines():
+        if not line.strip():
+            continue
+        try:
+            item = json.loads(line)
+        except Exception:
+            continue
+        if isinstance(item, dict):
+            rows.append(item)
+    return rows
+
+
+def as_list(value: Any) -> list[Any]:
+    return value if isinstance(value, list) else []
 
 
 def decision_id_short(decision_id: str | None) -> str:
@@ -555,6 +585,132 @@ def build_capital_summary(
     }
 
 
+def build_evidence_index(
+    atoms: list[dict[str, Any]],
+    claim_graph: dict[str, Any],
+    context_gaps: dict[str, Any],
+    source_health: dict[str, Any],
+) -> dict[str, Any]:
+    claims = [claim for claim in as_list(claim_graph.get('claims')) if isinstance(claim, dict) and claim.get('claim_id')]
+    gaps = [gap for gap in as_list(context_gaps.get('gaps')) if isinstance(gap, dict) and gap.get('gap_id')]
+    health_rows = [row for row in as_list(source_health.get('sources')) if isinstance(row, dict) and row.get('source_id')]
+    atom_by_id = {str(atom.get('atom_id')): atom for atom in atoms if isinstance(atom, dict) and atom.get('atom_id')}
+    gaps_by_claim: dict[str, list[dict[str, Any]]] = {}
+    for gap in gaps:
+        claim_ids = as_list(gap.get('weak_claim_ids')) or [gap.get('claim_id')]
+        for claim_id in claim_ids:
+            if claim_id:
+                gaps_by_claim.setdefault(str(claim_id), []).append(gap)
+    return {
+        'atoms': atoms,
+        'claims': claims,
+        'gaps': gaps,
+        'health_rows': health_rows,
+        'atom_by_id': atom_by_id,
+        'gaps_by_claim': gaps_by_claim,
+        'health_by_source': {str(row.get('source_id')): row for row in health_rows},
+    }
+
+
+def card_matches_claim(card: dict[str, Any], claim: dict[str, Any]) -> bool:
+    text = ' '.join(str(card.get(key) or '') for key in ['handle', 'label', 'instrument', 'description', 'theme', 'agenda_id', 'thesis_id', 'candidate_id'])
+    text += ' ' + ' '.join(str(v) for v in as_list(card.get('linked_instruments')))
+    haystack = ' '.join(str(claim.get(key) or '') for key in ['subject', 'predicate', 'object', 'event_class'])
+    tokens = {token.lower() for token in text.replace('/', ' ').replace('|', ' ').split() if len(token) >= 3}
+    haystack_l = haystack.lower()
+    return bool(tokens and any(token in haystack_l for token in tokens))
+
+
+def evidence_for_card(card: dict[str, Any], index: dict[str, Any]) -> dict[str, Any]:
+    claims = [claim for claim in index.get('claims', []) if card_matches_claim(card, claim)]
+    if not claims and card.get('handle') == 'A1':
+        claims = index.get('claims', [])[:5]
+    claim_ids = [str(claim.get('claim_id')) for claim in claims if claim.get('claim_id')]
+    atom_ids = sorted({str(claim.get('atom_id')) for claim in claims if claim.get('atom_id')})
+    atoms = [index.get('atom_by_id', {}).get(atom_id) for atom_id in atom_ids]
+    atoms = [atom for atom in atoms if isinstance(atom, dict)]
+    gap_rows: list[dict[str, Any]] = []
+    for claim_id in claim_ids:
+        gap_rows.extend(index.get('gaps_by_claim', {}).get(claim_id, []))
+    source_ids = sorted({str(atom.get('source_id')) for atom in atoms if atom.get('source_id')})
+    lanes = sorted({str(atom.get('source_lane')) for atom in atoms if atom.get('source_lane')})
+    health_rows = [index.get('health_by_source', {}).get(source_id) for source_id in source_ids]
+    health_rows = [row for row in health_rows if isinstance(row, dict)]
+    degraded = [
+        row for row in health_rows
+        if row.get('freshness_status') in {'stale', 'unknown'}
+        or row.get('rights_status') in {'restricted', 'unknown'}
+        or row.get('quota_status') == 'degraded'
+        or row.get('coverage_status') == 'unavailable'
+    ]
+    return {
+        'linked_claims': claim_ids[:12],
+        'linked_atoms': atom_ids[:12],
+        'linked_context_gaps': [str(gap.get('gap_id')) for gap in gap_rows if gap.get('gap_id')][:12],
+        'lane_coverage': {
+            'lanes': lanes,
+            'source_ids': source_ids,
+            'claim_count': len(claim_ids),
+            'atom_count': len(atom_ids),
+            'context_gap_count': len(gap_rows),
+        },
+        'source_health_summary': {
+            'degraded_count': len(degraded),
+            'degraded_sources': [str(row.get('source_id')) for row in degraded[:8]],
+            'degraded_reasons': sorted({str(reason) for row in degraded for reason in as_list(row.get('breach_reasons'))})[:8],
+        },
+    }
+
+
+def enrich_object_cards_with_evidence(cards: list[dict[str, Any]], index: dict[str, Any]) -> list[dict[str, Any]]:
+    enriched = []
+    for card in cards:
+        next_card = dict(card)
+        next_card.update(evidence_for_card(card, index))
+        enriched.append(next_card)
+    return enriched
+
+
+def build_followup_slice_index(object_cards: list[dict[str, Any]], bundle_id: str) -> dict[str, Any]:
+    out: dict[str, Any] = {}
+    for card in object_cards:
+        handle = str(card.get('handle') or '')
+        if not handle:
+            continue
+        base = {
+            'handle': handle,
+            'card_type': card.get('type'),
+            'source_id': f"reader-bundle:{bundle_id}:{handle}",
+            'source_name': 'finance_report_reader_bundle',
+            'version': 'followup-slice-v1',
+            'permission_metadata': {
+                'review_only': True,
+                'raw_thread_history_allowed': False,
+                'raw_source_dump_allowed': False,
+            },
+            'linked_claims': card.get('linked_claims', []),
+            'linked_atoms': card.get('linked_atoms', []),
+            'linked_context_gaps': card.get('linked_context_gaps', []),
+            'lane_coverage': card.get('lane_coverage', {}),
+            'source_health_summary': card.get('source_health_summary', {}),
+            'retrieval_score': 1.0 if card.get('linked_claims') or card.get('linked_atoms') else 0.0,
+            'no_execution': True,
+        }
+        base['content_hash'] = canonical_hash({
+            'handle': handle,
+            'linked_claims': base['linked_claims'],
+            'linked_atoms': base['linked_atoms'],
+            'linked_context_gaps': base['linked_context_gaps'],
+            'lane_coverage': base['lane_coverage'],
+            'source_health_summary': base['source_health_summary'],
+        })
+        out[handle] = {
+            verb: dict(base, evidence_slice_id=f"slice:{bundle_id}:{handle}:{verb}", verb=verb)
+            for verb in ['why', 'challenge', 'sources', 'trace', 'expand']
+        }
+    return out
+
+
 def build_followup_digest(object_cards: list[dict[str, Any]], report_handle: str) -> list[str]:
     """Precompute compact answer material for Discord follow-up rehydration."""
     digest: list[str] = [f'{report_handle}: review-only; explain/compare/challenge/source trace only; no execution.']
@@ -609,6 +765,10 @@ def compile_bundle(
     portfolio: dict[str, Any],
     campaign_board: dict[str, Any] | None = None,
     campaign_cache: dict[str, Any] | None = None,
+    source_atoms: list[dict[str, Any]] | None = None,
+    claim_graph: dict[str, Any] | None = None,
+    context_gaps: dict[str, Any] | None = None,
+    source_health: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Compile self-contained reader bundle."""
     decision_id = decision_log_entry.get('decision_id') or report.get('report_hash')
@@ -637,6 +797,9 @@ def compile_bundle(
     s_handles, s_cards = build_scenario_cards(scenario_cards_data)
     handles.update(s_handles)
     all_cards.extend(s_cards)
+    bundle_id = f'rb:{report_handle}'
+    evidence_index = build_evidence_index(source_atoms or [], claim_graph or {}, context_gaps or {}, source_health or {})
+    all_cards = enrich_object_cards_with_evidence(all_cards, evidence_index)
 
     starter_questions = build_starter_questions(all_cards)
     starter_queries = build_starter_queries(starter_questions, report_handle)
@@ -647,7 +810,7 @@ def compile_bundle(
     }
 
     return {
-        'bundle_id': f'rb:{report_handle}',
+        'bundle_id': bundle_id,
         'decision_id': decision_id,
         'report_hash': report.get('report_hash'),
         'report_handle': report_handle,
@@ -662,6 +825,13 @@ def compile_bundle(
         'campaigns': (campaign_board or {}).get('campaigns', []) if isinstance((campaign_board or {}).get('campaigns', []), list) else [],
         'campaign_alias_map': {c.get('campaign_id'): c.get('human_title') for c in ((campaign_board or {}).get('campaigns', []) if isinstance((campaign_board or {}).get('campaigns', []), list) else []) if isinstance(c, dict) and c.get('campaign_id')},
         'followup_digest': build_followup_digest(all_cards, report_handle),
+        'followup_slice_index': build_followup_slice_index(all_cards, bundle_id),
+        'evidence_index_summary': {
+            'claim_count': len(evidence_index.get('claims', [])),
+            'atom_count': len(evidence_index.get('atoms', [])),
+            'context_gap_count': len(evidence_index.get('gaps', [])),
+            'source_health_count': len(evidence_index.get('health_rows', [])),
+        },
         'portfolio_attachment': build_portfolio_attachment(watch_intent, portfolio),
         'capital_summary': build_capital_summary(capital_graph, capital_agenda, displacement_cases),
         'no_execution': True,
@@ -688,11 +858,16 @@ def main(argv: list[str] | None = None) -> int:
     portfolio = load_json_safe(PORTFOLIO, {}) or {}
     campaign_board = load_json_safe(CAMPAIGN_BOARD, {}) or {}
     campaign_cache = load_json_safe(CAMPAIGN_CACHE, {}) or {}
+    source_atoms = load_jsonl(SOURCE_ATOMS)
+    claim_graph = load_json_safe(CLAIM_GRAPH, {}) or {}
+    context_gaps = load_json_safe(CONTEXT_GAPS, {}) or {}
+    source_health = load_json_safe(SOURCE_HEALTH, {}) or {}
 
     bundle = compile_bundle(
         report, entry, thesis_registry, watch_intent, scenario_cards_data,
         opportunity_queue, invalidator_ledger, capital_agenda, capital_graph,
         displacement_cases, prices, portfolio, campaign_board, campaign_cache,
+        source_atoms, claim_graph, context_gaps, source_health,
     )
 
     out_dir = Path(args.out_dir)
