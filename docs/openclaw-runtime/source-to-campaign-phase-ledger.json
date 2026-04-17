@@ -166,7 +166,7 @@
     {
       "phase": 5,
       "name": "Report-time archive and exact replay",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Archive report-time envelope, atoms, claims, gaps, source health, campaign board, and line-to-claim refs.",
       "required_review_content": [
         "exact historical replay",
@@ -185,6 +185,13 @@
         "new reviewer packets can replay report-time state",
         "operator lines trace to claim ids",
         "legacy reports are explicitly non-replayable"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-05-report-time-archive-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-05-implementation-critic.md",
+      "implementation": [
+        "scripts/finance_report_archive_compiler.py",
+        "scripts/finance_discord_report_job.py",
+        "docs/openclaw-runtime/contracts/report-time-archive-contract.md"
       ]
     },
     {

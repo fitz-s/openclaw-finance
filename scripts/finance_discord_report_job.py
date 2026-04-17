@@ -104,6 +104,7 @@ def run_chain() -> str:
     run([str(PYTHON), 'scripts/finance_report_reader_bundle.py'])
     run([str(PYTHON), 'scripts/finance_campaign_cache_builder.py'])
     run([str(PYTHON), 'scripts/finance_discord_campaign_board_package.py', '--out', str(BOARD_PACKAGE)])
+    run_optional([str(PYTHON), 'scripts/finance_report_archive_compiler.py'])
     run_optional([str(PYTHON), 'scripts/finance_followup_thread_registry_repair.py', '--quiet'])
     if board_runtime_enabled():
         run_optional([str(PYTHON), 'scripts/finance_discord_campaign_board_deliver.py', '--apply', '--report', str(BOARD_DELIVERY_REPORT)])
