@@ -147,7 +147,7 @@
     {
       "phase": 4,
       "name": "Brave Web and News deterministic fetchers",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Use Brave web/news endpoints as deterministic source discovery lanes with freshness/date/domain controls.",
       "required_review2_content": [
         "brave_news_search_fetcher.py",
@@ -155,18 +155,37 @@
         "freshness",
         "date range",
         "allowed domains",
-        "extra snippets"
+        "extra snippets",
+        "metadata-only persistence",
+        "quota/rate-limit error metadata"
       ],
       "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-04-brave-web-news-fetchers-ralplan.md",
+        "scripts/brave_search_fetcher_common.py",
         "scripts/brave_news_search_fetcher.py",
         "scripts/brave_web_search_fetcher.py",
         "state/brave-news-search-results.jsonl",
-        "state/brave-web-search-results.jsonl"
+        "state/brave-web-search-results.jsonl",
+        "tests/test_brave_web_news_fetchers_phase04.py"
       ],
       "acceptance": [
         "news/web fetchers output SourceFetchRecord-compatible rows",
         "freshness filters are explicit",
-        "no answer synthesis"
+        "no answer synthesis",
+        "dry-run works without API key or network",
+        "raw snippets and raw response bodies are not persisted"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "official Brave Web/News API and rate-limit documentation",
+        "result": "Separate endpoint wrappers, endpoint-specific count caps, payload-expansion options default off, rate-limit headers captured, and metadata-only retention."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-04-brave-web-news-fetchers-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-04-implementation-critic.md",
+      "implementation": [
+        "scripts/brave_search_fetcher_common.py",
+        "scripts/brave_news_search_fetcher.py",
+        "scripts/brave_web_search_fetcher.py"
       ]
     },
     {
