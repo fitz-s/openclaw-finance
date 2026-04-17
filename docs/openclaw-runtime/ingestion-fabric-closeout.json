@@ -1,0 +1,192 @@
+{
+  "generated_at": "2026-04-17T23:53:17.578749Z",
+  "contract": "ingestion-fabric-closeout-v1",
+  "status": "complete",
+  "north_star": "Finance Intelligence Ingestion Fabric",
+  "design_rule": "Never compress before provenance.",
+  "phase_summary": {
+    "phase_count": 14,
+    "statuses": {
+      "completed": 14
+    },
+    "completed_phases": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11,
+      12,
+      13
+    ],
+    "pending_phases": [],
+    "all_completed": true
+  },
+  "artifact_matrix": {
+    "query_pack_planner": {
+      "path": "/Users/leofitz/.openclaw/workspace/finance/scripts/query_pack_planner.py",
+      "exists": true,
+      "size": 10470
+    },
+    "brave_web_fetcher": {
+      "path": "/Users/leofitz/.openclaw/workspace/finance/scripts/brave_web_search_fetcher.py",
+      "exists": true,
+      "size": 247
+    },
+    "brave_news_fetcher": {
+      "path": "/Users/leofitz/.openclaw/workspace/finance/scripts/brave_news_search_fetcher.py",
+      "exists": true,
+      "size": 249
+    },
+    "brave_llm_context_reader": {
+      "path": "/Users/leofitz/.openclaw/workspace/finance/scripts/brave_llm_context_fetcher.py",
+      "exists": true,
+      "size": 11985
+    },
+    "brave_answers_sidecar": {
+      "path": "/Users/leofitz/.openclaw/workspace/finance/scripts/brave_answers_sidecar.py",
+      "exists": true,
+      "size": 17138
+    },
+    "source_health_monitor": {
+      "path": "/Users/leofitz/.openclaw/workspace/finance/scripts/source_health_monitor.py",
+      "exists": true,
+      "size": 18045
+    },
+    "source_memory_index": {
+      "path": "/Users/leofitz/.openclaw/workspace/finance/scripts/source_memory_index.py",
+      "exists": true,
+      "size": 13356
+    },
+    "reader_bundle": {
+      "path": "/Users/leofitz/.openclaw/workspace/finance/scripts/finance_report_reader_bundle.py",
+      "exists": true,
+      "size": 40308
+    },
+    "followup_router": {
+      "path": "/Users/leofitz/.openclaw/workspace/finance/scripts/finance_followup_context_router.py",
+      "exists": true,
+      "size": 11818
+    },
+    "parent_handoff": {
+      "path": "/Users/leofitz/.openclaw/workspace/finance/docs/openclaw-runtime/parent-ingestion-handoff.md",
+      "exists": true,
+      "size": 7759
+    },
+    "parent_handoff_contract": {
+      "path": "/Users/leofitz/.openclaw/workspace/finance/docs/openclaw-runtime/parent-ingestion-handoff-contract.json",
+      "exists": true,
+      "size": 2767
+    },
+    "source_health": {
+      "path": "/Users/leofitz/.openclaw/workspace/finance/state/source-health.json",
+      "exists": true,
+      "size": 13172
+    },
+    "latest_reader_bundle": {
+      "path": "/Users/leofitz/.openclaw/workspace/finance/state/report-reader/latest.json",
+      "exists": true,
+      "size": 529248
+    }
+  },
+  "monitoring": {
+    "source_health_status": "degraded",
+    "source_count": 7,
+    "stale_reuse_guard": "active",
+    "source_health_history_count": 1,
+    "query_registry_count": 0,
+    "reader_bundle_has_slice_index": true,
+    "reader_bundle_slice_handles": 92,
+    "monitoring_artifacts": {
+      "source_health_status": {
+        "path": "/Users/leofitz/.openclaw/workspace/finance/state/source-health.json",
+        "exists": true
+      },
+      "source_health_history": {
+        "path": "/Users/leofitz/.openclaw/workspace/finance/state/source-health-history.jsonl",
+        "exists": true
+      },
+      "query_registry": {
+        "path": "/Users/leofitz/.openclaw/workspace/finance/state/query-registry.jsonl",
+        "exists": false
+      },
+      "source_memory_index": {
+        "path": "/Users/leofitz/.openclaw/workspace/finance/state/source-memory-index.json",
+        "exists": true
+      },
+      "lane_watermarks": {
+        "path": "/Users/leofitz/.openclaw/workspace/finance/state/lane-watermarks.json",
+        "exists": true
+      },
+      "reader_bundle_latest": {
+        "path": "/Users/leofitz/.openclaw/workspace/finance/state/report-reader/latest.json",
+        "exists": true
+      },
+      "undercurrents": {
+        "path": "/Users/leofitz/.openclaw/workspace/finance/state/undercurrents.json",
+        "exists": true
+      }
+    }
+  },
+  "orr_readiness_checklist": {
+    "launch_criteria_defined": true,
+    "security_governance_review_required_before_parent_cutover": true,
+    "runbook_required_before_parent_cutover": true,
+    "go_no_go_owner": "parent_runtime_owner",
+    "status": "finance_local_ready_parent_cutover_pending"
+  },
+  "rollout_monitoring": {
+    "strategy": "feature_flagged_shadow_then_canary_then_parent_activation",
+    "control_population": "legacy scanner/report path",
+    "canary_population": "parent runtime with finance ingestion flags enabled",
+    "go_no_go_metrics": [
+      "source_health_status",
+      "stale_reuse_guard",
+      "query_pack_count",
+      "fetch_failure_rate",
+      "followup_slice_coverage",
+      "discord_primary_route_card_only_count"
+    ],
+    "actionable_alerts_required": true
+  },
+  "rollback": {
+    "disable_flags": [
+      "FINANCE_QUERY_PACK_PLANNER_ENABLED",
+      "FINANCE_DETERMINISTIC_BRAVE_FETCHERS_ENABLED",
+      "FINANCE_SOURCE_HEALTH_PARENT_CANONICAL_ENABLED",
+      "FINANCE_CLAIM_GRAPH_PACKET_ENABLED",
+      "FINANCE_UNDERCURRENT_BOARD_MUTATION_ENABLED",
+      "FINANCE_FOLLOWUP_SLICE_REHYDRATION_ENABLED"
+    ],
+    "fallback_primary": "complete_readable_discord_primary_report",
+    "forbidden_fallback": "route_card_only_primary",
+    "parent_runtime_rollback_required_for_active_cutover": true
+  },
+  "residual_risks": [
+    "Parent market-ingest runtime is not mutated in this finance-local campaign.",
+    "Live Brave API calls remain untested in this branch because local quota was degraded and phases used dry-run/mocked tests.",
+    "Active Discord thread listener/follow-up routing still requires parent runtime cutover.",
+    "Claim/entity matching remains heuristic until parent semantic normalizer adopts claim graph contracts."
+  ],
+  "operational_handoff": {
+    "owner": "parent_openclaw_runtime_owner",
+    "finance_artifact_owner": "finance_repo",
+    "escalation_channel": "current OpenClaw/Codex thread plus parent runtime review",
+    "runbook_required": true,
+    "incident_state_notes_required": true
+  },
+  "verification_evidence": [
+    "python3 -m pytest -q tests",
+    "python3 -m compileall -q scripts tools tests",
+    "python3 tools/audit_operating_model.py",
+    "python3 tools/audit_benchmark_boundary.py",
+    "phase-specific tests recorded in commit trailers"
+  ],
+  "no_execution": true
+}

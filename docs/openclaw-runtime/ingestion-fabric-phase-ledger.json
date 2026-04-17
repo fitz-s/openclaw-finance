@@ -496,7 +496,7 @@
     {
       "phase": 13,
       "name": "Rollout, monitoring, and closeout",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Export readiness, monitoring, and rollback evidence for the ingestion fabric.",
       "required_review2_content": [
         "rollout",
@@ -506,12 +506,28 @@
         "reviewer replay"
       ],
       "touchpoints": [
-        "docs/openclaw-runtime/ingestion-fabric-closeout.json"
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-13-closeout-ralplan.md",
+        "tools/export_ingestion_fabric_closeout.py",
+        "docs/openclaw-runtime/ingestion-fabric-closeout.json",
+        "tests/test_ingestion_fabric_closeout_phase13.py"
       ],
       "acceptance": [
         "all phases tracked",
         "monitoring exists",
-        "rollback explicit"
+        "rollback explicit",
+        "ORR readiness and operational handoff recorded",
+        "parent runtime residual risks explicit"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "ORR/readiness, rollout monitoring, release evidence, rollback drills, residual risk, and incident handoff guidance",
+        "result": "Closeout must include readiness checklist, go/no-go metrics, acceptance evidence, rollback drills, residual risk tracking, and operational handoff."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-13-closeout-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-13-implementation-critic.md",
+      "implementation": [
+        "tools/export_ingestion_fabric_closeout.py",
+        "docs/openclaw-runtime/ingestion-fabric-closeout.json"
       ]
     }
   ]
