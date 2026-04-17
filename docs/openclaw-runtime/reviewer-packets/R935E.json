@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-04-17T22:15:01.065407Z",
+  "generated_at": "2026-04-17T22:15:01.047873Z",
   "contract": "finance-reviewer-report-packet-v1",
-  "report_id": "R0A9E",
-  "source_file": "<finance>/state/report-reader/R0A9E.json",
+  "report_id": "R935E",
+  "source_file": "<finance>/state/report-reader/R935E.json",
   "sanitization": {
     "discord_conversation_included": false,
     "discord_thread_ids_included": false,
@@ -21,11 +21,11 @@
     "reason": "Historical per-report Discord primary markdown was not archived before reviewer packet export."
   },
   "bundle_summary": {
-    "bundle_id": "rb:R0A9E",
-    "generated_at": "2026-04-17T15:49:03.466593Z",
+    "bundle_id": "rb:R935E",
+    "generated_at": "2026-04-17T17:46:47.667677Z",
     "report_hash_present": true,
-    "object_card_count": 89,
-    "campaign_count": 30,
+    "object_card_count": 94,
+    "campaign_count": 29,
     "starter_queries": [
       "why A1",
       "challenge A1",
@@ -35,15 +35,15 @@
       "sources A2"
     ],
     "followup_digest": [
-      "R0A9E: review-only; explain/compare/challenge/source trace only; no execution.",
+      "R935E: review-only; explain/compare/challenge/source trace only; no execution.",
       "A1: 反证升级｜板块方向冲突（16次）",
-      "Top opportunities: O1 BNO: BNO Hormuz physical supply constraints — 496M bbl cumulative loss, Gol；O2 SPY: Macro scenario: SPY invalidator cluster — directional conflict across ；O3 BNO: BNO Hormuz thesis — physical supply constraints decoupled from price; ；O4 SPY: invalidator cluster: SPY packet direction_conflict themes sustained at；O5 USO: Commodity sector extreme dislocation: USO -9.82% / XLE -4.39% vs SPY +",
-      "Main invalidators: I1 direction_conflict:theme:broad_market:sector hit_count=30；I2 direction_conflict:theme:sector_rotation_proxy hit_count=30；I3 direction_conflict:theme:unknown_discovery hit_count=30；I4 source outage hit_count=6；I5 official correction hit_count=6"
+      "Top opportunities: O1 BNO: BNO Hormuz physical supply constraints — 496M bbl cumulative loss, Gol；O2 SPY: Macro scenario: SPY invalidator cluster — directional conflict across ；O3 BNO: BNO Hormuz physical supply destruction persists: 496M bbl cumulative l；O4 DBC: USO -9.91% intraday is historically extreme commodity capitulation; pr；O5 DBC: USO extreme commodity capitulation — -9.58% intraday, pressure_score 8",
+      "Main invalidators: I1 direction_conflict:theme:broad_market:sector hit_count=37；I2 direction_conflict:theme:sector_rotation_proxy hit_count=37；I3 direction_conflict:theme:unknown_discovery hit_count=37；I4 direction_conflict:theme:options_chain_context hit_count=7；I5 price_vs_negative_upstream:AAPL hit_count=7"
     ],
     "object_alias_map_sample": {
       "A1": "反证升级｜板块方向冲突（16次）",
       "A2": "反证升级｜板块轮动方向冲突（16次）",
-      "A3": "反证升级｜未知发现改道：BNO/SPY/USO（反证升级｜未知发现方向冲突（16次））",
+      "A3": "反证升级｜未知发现改道：BNO/SPY/DBC（反证升级｜未知发现方向冲突（16次））",
       "A4": "拥挤预警｜AAPL / ACHR",
       "A5": "对冲缺口｜macro hedges bucket 对冲未覆盖",
       "A6": "对冲缺口｜event driven bucket 对冲未覆盖",
@@ -69,20 +69,20 @@
   },
   "decision_log_summary": {
     "available": true,
-    "created_at": "2026-04-17T15:48:50.627135Z",
-    "decision_id": "decision:efec841f2395e0a13244",
-    "report_id": "R0A9E",
+    "created_at": "2026-04-17T17:46:21.196924Z",
+    "decision_id": "decision:db94a48cf09ec2a97ff9",
+    "report_id": "R935E",
     "operator_action": "logged_no_trade",
     "execution_decision": "none",
-    "judgment_id": "judgment:packet:market-ingest:SPY:2026-04-17T15:45:14.285704Z:no-trade",
+    "judgment_id": "judgment:2026-04-17T17:44:38Z:scheduled",
     "policy_version": "finance-semantic-v1",
     "wake_class": "PACKET_UPDATE_ONLY",
     "wake_dispatch_action": "persist_only",
     "ref_counts": {
-      "thesis_refs": 20,
+      "thesis_refs": 8,
       "scenario_refs": 8,
-      "opportunity_candidate_refs": 12,
-      "invalidator_refs": 11,
+      "opportunity_candidate_refs": 6,
+      "invalidator_refs": 8,
       "capital_agenda_refs": 0,
       "displacement_case_refs": 0
     },
@@ -124,12 +124,12 @@
       "source_refs": []
     },
     {
-      "label": "反证升级｜未知发现改道：BNO/SPY/USO（反证升级｜未知发现方向冲突（16次））",
+      "label": "反证升级｜未知发现改道：BNO/SPY/DBC（反证升级｜未知发现方向冲突（16次））",
       "handle": "A3",
-      "positive_for": "BNO/油价/霍尔木兹供给风险；SPY 深挖；USO 深挖",
-      "operator_summary": "A1 实际对象：BNO/油价/霍尔木兹供给风险；SPY 深挖；USO 深挖。这是是否切换注意力方向的问题，不是下单信号。",
+      "positive_for": "BNO/油价/霍尔木兹供给风险；SPY 深挖；DBC 深挖",
+      "operator_summary": "A1 实际对象：BNO/油价/霍尔木兹供给风险；SPY 深挖；DBC 深挖。这是是否切换注意力方向的问题，不是下单信号。",
       "agenda_type": "invalidator_escalation",
-      "role_text": "判断是否把 attention 分给 BNO/油价/霍尔木兹供给风险；SPY 深挖；USO 深挖",
+      "role_text": "判断是否把 attention 分给 BNO/油价/霍尔木兹供给风险；SPY 深挖；DBC 深挖",
       "attention_justification": "invalidator direction_conflict:theme:unknown_discovery has hit 16 times",
       "not_positive_for": "不是 TSLA 加码信号；也不是立即替代现有 book 的命令",
       "type": "agenda",
@@ -138,15 +138,17 @@
         "is thesis packet:market-ingest:SPY:2026-04-16T20:41:58.331334Z still valid after 16 invalidator hits?"
       ],
       "related_opportunities": [
-        "BNO｜霍尔木兹/原油供给双向风险（score 13.91）",
-        "SPY｜Macro scenario: SPY invalidator cluster — directional conflict across broad market（score 13.04）",
-        "USO｜Commodity sector extreme dislocation: USO -9.82% / XLE -4.39% vs SPY +1.18% — ener（score 7.8）"
+        "BNO｜霍尔木兹/原油供给双向风险（score 10.53）",
+        "SPY｜Macro scenario: SPY invalidator cluster — directional conflict across broad market（score 9.4）",
+        "DBC｜USO -9.91% intraday is historically extreme commodity capitulation; pressure_score（score 7.8）"
       ],
       "source_refs": [
         "https://www.reuters.com/business/energy/oil-prices-fall-second-day-expectations-us-iran-talks-may-resume-2026-04-15/",
         "https://www.reuters.com/business/energy/goldman-sachs-flags-twoway-risks-their-2026-oil-price-outlook-2026-04-15/",
         "state:invalidator-ledger.json",
-        "state:broad-market-proxy.json USO -9.82% pressure_score 81.49; XLE -4.39% pressure_score 42.58; SPY +1.18%; XLY +3.02% 2026-04-17T15:26:23Z"
+        "state:broad-market-proxy.json USO -9.9118% DBC -3.2874% 2026-04-17T16:09Z",
+        "state:broad-market-proxy.json USO pressure_score 81.49 2026-04-17T16:09Z",
+        "state:prices.json USO 113.43 -9.82% vol 25625136 2026-04-17T15:20Z"
       ]
     },
     {
@@ -283,16 +285,16 @@
     },
     {
       "board_class": "live",
-      "directional_implication": "利好/利空还不能定；当前真正影响的是是否把注意力从现有主轴转向 RGTI/BNO/SMR/032C7C3EAC2584EB/14A878B4E1F61258。",
-      "human_title": "未知发现改道｜RGTI｜非 watchlist IV 异动 / BNO｜霍尔木兹/原油供给双向风险 / SMR｜SMR thesis conflict — price -4.56% with elevated volu…",
+      "directional_implication": "利好/利空还不能定；当前真正影响的是是否把注意力从现有主轴转向 BNO/10184D7D1AFD876D/DB0789452435DF60/F97287E1B56C3589。",
+      "human_title": "未知发现改道｜BNO｜霍尔木兹/原油供给双向风险 / SPY｜Macro scenario: SPY invalidator cluster — directional conflict… / DBC｜Unknown…",
       "why_now_delta": "未知发现方向冲突（16次）",
       "priority_score": 32.0,
       "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
       "stage": "escalation",
       "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
       "campaign_type": "undercurrent_risk",
-      "thread_key": "campaign-thread:cde06f1300433ed0",
-      "campaign_id": "campaign:cde06f1300433ed0",
+      "thread_key": "campaign-thread:9cf6a06b2e69dda2",
+      "campaign_id": "campaign:9cf6a06b2e69dda2",
       "confirmations_needed": [
         "当前 thesis 在 16 次反证后是否仍成立"
       ],
@@ -351,14 +353,14 @@
       "board_class": "risk",
       "directional_implication": "利好/利空还不能定；当前真正影响的是是否把注意力从现有主轴转向 BNO/MSTR/SMR。",
       "human_title": "未知发现｜BNO/MSTR/SMR",
-      "why_now_delta": "未知发现方向冲突（18次） 持续累积，需要判断是否影响 attention slot",
-      "priority_score": 18.0,
+      "why_now_delta": "未知发现方向冲突（35次） 持续累积，需要判断是否影响 attention slot",
+      "priority_score": 35.0,
       "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
       "stage": "review",
       "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
       "campaign_type": "undercurrent_risk",
-      "thread_key": "campaign-thread:b30bef764d904d07",
-      "campaign_id": "campaign:b30bef764d904d07",
+      "thread_key": "campaign-thread:74dc0f4b3c7ed60f",
+      "campaign_id": "campaign:74dc0f4b3c7ed60f",
       "confirmations_needed": [
         "下一次 watcher update 是否同向",
         "相关 scenario/capital edge 是否增强"
@@ -378,15 +380,15 @@
     {
       "board_class": "risk",
       "directional_implication": "利好/利空还不能定；当前真正影响的是是否把注意力从现有主轴转向 BNO/MSTR/SMR。",
-      "human_title": "板块方向冲突（18次）",
-      "why_now_delta": "板块方向冲突（18次） 持续累积，需要判断是否影响 attention slot",
-      "priority_score": 18.0,
+      "human_title": "板块方向冲突（35次）",
+      "why_now_delta": "板块方向冲突（35次） 持续累积，需要判断是否影响 attention slot",
+      "priority_score": 35.0,
       "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
       "stage": "review",
       "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
       "campaign_type": "undercurrent_risk",
-      "thread_key": "campaign-thread:f8d9708f287f19f6",
-      "campaign_id": "campaign:f8d9708f287f19f6",
+      "thread_key": "campaign-thread:a25f5cea54196cb5",
+      "campaign_id": "campaign:a25f5cea54196cb5",
       "confirmations_needed": [
         "下一次 watcher update 是否同向",
         "相关 scenario/capital edge 是否增强"
@@ -406,15 +408,15 @@
     {
       "board_class": "risk",
       "directional_implication": "利好/利空还不能定；当前真正影响的是是否把注意力从现有主轴转向 BNO/MSTR/SMR。",
-      "human_title": "板块轮动冲突（18次）",
-      "why_now_delta": "板块轮动冲突（18次） 持续累积，需要判断是否影响 attention slot",
-      "priority_score": 18.0,
+      "human_title": "板块轮动冲突（35次）",
+      "why_now_delta": "板块轮动冲突（35次） 持续累积，需要判断是否影响 attention slot",
+      "priority_score": 35.0,
       "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
       "stage": "review",
       "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
       "campaign_type": "undercurrent_risk",
-      "thread_key": "campaign-thread:ae7df128ba2eb679",
-      "campaign_id": "campaign:ae7df128ba2eb679",
+      "thread_key": "campaign-thread:8d9281d14a47abff",
+      "campaign_id": "campaign:8d9281d14a47abff",
       "confirmations_needed": [
         "下一次 watcher update 是否同向",
         "相关 scenario/capital edge 是否增强"
@@ -432,29 +434,29 @@
       ]
     },
     {
-      "board_class": "risk",
-      "directional_implication": "利好/利空还不能定；当前真正影响的是是否把注意力从现有主轴转向 ORCL/ATM。",
-      "human_title": "ORCL 冲突（17次）",
-      "why_now_delta": "ORCL 冲突（17次） 持续累积，需要判断是否影响 attention slot",
-      "priority_score": 17.0,
+      "board_class": "scout",
+      "directional_implication": "更偏向能源/油价/地缘风险链条的深挖，不是现有持仓替代命令。",
+      "human_title": "BNO｜BNO Hormuz physical supply constraints — 496M bbl cumulative loss, Go…",
+      "why_now_delta": "BNO 候选分数 10.92，可能进入 peacetime campaign",
+      "priority_score": 10.92,
       "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
-      "stage": "review",
+      "stage": "candidate",
       "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
-      "campaign_type": "undercurrent_risk",
-      "thread_key": "campaign-thread:da9a96febc4ac0b9",
-      "campaign_id": "campaign:da9a96febc4ac0b9",
+      "campaign_type": "peacetime_scout",
+      "thread_key": "campaign-thread:1fd1b28925f45bb2",
+      "campaign_id": "campaign:1fd1b28925f45bb2",
       "confirmations_needed": [
         "下一次 watcher update 是否同向",
         "相关 scenario/capital edge 是否增强"
       ],
       "kill_switches": [
-        "后续两次扫描不再命中",
-        "相关机会或 thesis 证据被官方修正",
-        "来源新鲜度降为 stale"
+        "价格/量能不确认",
+        "source freshness 降级",
+        "候选分数连续下滑"
       ],
       "known_unknowns": [
-        "Claim confidence is weak; needs triangulation or contradiction check.",
-        "Claim confidence is weak; needs triangulation or contradiction check."
+        "Issuer/security claim lacks official filing or issuer confirmation.",
+        "Narrative-only claim lacks price/volume confirmation."
       ]
     }
   ],
