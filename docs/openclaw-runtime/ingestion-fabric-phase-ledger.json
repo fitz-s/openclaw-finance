@@ -305,22 +305,39 @@
     {
       "phase": 8,
       "name": "finance_worker reducer migration",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Downgrade finance_worker to compatibility reducer over claims/gaps while preserving legacy observations.",
       "required_review2_content": [
         "finance_worker reducer",
         "legacy observation bridge",
         "parallel write",
-        "canonical authority removed"
+        "canonical authority removed",
+        "idempotent reducer shadow report",
+        "legacy/new evaluation mode"
       ],
       "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-08-finance-worker-reducer-ralplan.md",
         "scripts/finance_worker.py",
-        "scripts/thesis_state_reducer.py"
+        "scripts/thesis_state_reducer.py",
+        "state/finance-worker-reducer-report.json",
+        "tests/test_finance_worker_reducer_phase08.py"
       ],
       "acceptance": [
         "claims can reduce to legacy observations",
         "old consumers survive",
-        "worker no longer sole canonical ingress"
+        "worker no longer sole canonical ingress",
+        "claim graph and context gaps compile in worker closure",
+        "reducer report exposes parity/idempotency metadata"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "event-sourcing, CDC, schema evolution, idempotency, and migration flag guidance",
+        "result": "Use compatibility bridge, shadow writes, idempotent reducer keys, schema-versioned artifacts, and parity/evaluation mode before cutover."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-08-finance-worker-reducer-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-08-implementation-critic.md",
+      "implementation": [
+        "scripts/finance_worker.py"
       ]
     },
     {

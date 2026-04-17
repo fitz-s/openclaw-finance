@@ -13,6 +13,7 @@ BUFFER_DIR = FINANCE / 'buffer'
 STATE_FILE = FINANCE / 'state' / 'intraday-open-scan-state.json'
 ARCHIVE_DIR = FINANCE / 'buffer' / 'archive'
 INVALID_DIR = FINANCE / 'buffer' / 'invalid'
+REDUCER_REPORT = FINANCE / 'state' / 'finance-worker-reducer-report.json'
 TZ_CHI = ZoneInfo('America/Chicago')
 BUFFER_PARSE_GRACE_SECONDS = 120
 MAX_OBSERVATION_AGE_HOURS = 36
@@ -198,7 +199,7 @@ def prune_stale_accumulated(accumulated: list, now_utc: datetime):
     return kept, pruned
 
 
-def write_shadow_source_atoms(state: dict, generated_at: str) -> None:
+def write_shadow_source_atoms(state: dict, generated_at: str) -> dict | None:
     """Best-effort shadow write; never block scanner/gate behavior."""
     try:
         from source_atom_compiler import SOURCE_ATOMS_LATEST, compile_atoms, load_source_registry, write_atoms_jsonl
@@ -211,8 +212,117 @@ def write_shadow_source_atoms(state: dict, generated_at: str) -> None:
         )
         write_atoms_jsonl(SOURCE_ATOMS_LATEST, report['atoms'])
         atomic_write_json(FINANCE / 'state' / 'source-atoms' / 'latest-report.json', report)
+        return report
     except Exception as exc:
         print(f"⚠️ source atom shadow write skipped: {exc}", file=sys.stderr)
+        return None
+
+
+def load_jsonl(path: Path) -> list[dict]:
+    if not path.exists():
+        return []
+    rows = []
+    for line in path.read_text(encoding='utf-8', errors='replace').splitlines():
+        if not line.strip():
+            continue
+        try:
+            payload = json.loads(line)
+        except Exception:
+            continue
+        if isinstance(payload, dict):
+            rows.append(payload)
+    return rows
+
+
+def reduce_claims_to_legacy_observations(claim_graph: dict, context_gaps: dict, *, generated_at: str, limit: int = 12) -> list[dict]:
+    """Project ClaimGraph rows into legacy observation shape for old consumers.
+
+    These rows are a compatibility view. They are not canonical ingestion and
+    should not be written into accumulated until the active cutover is explicit.
+    """
+    claims = [claim for claim in claim_graph.get('claims', []) if isinstance(claim, dict)]
+    gaps = [gap for gap in context_gaps.get('gaps', []) if isinstance(gap, dict)]
+    gaps_by_claim: dict[str, list[dict]] = {}
+    for gap in gaps:
+        for claim_id in gap.get('weak_claim_ids', []) if isinstance(gap.get('weak_claim_ids'), list) else [gap.get('claim_id')]:
+            if claim_id:
+                gaps_by_claim.setdefault(str(claim_id), []).append(gap)
+
+    rows = []
+    for claim in claims[:limit]:
+        claim_id = str(claim.get('claim_id') or '')
+        subject = str(claim.get('subject') or 'unknown')
+        predicate = str(claim.get('predicate') or 'mentions')
+        direction = str(claim.get('direction') or 'ambiguous')
+        weak_gaps = gaps_by_claim.get(claim_id, [])
+        gap_lanes = sorted({str(gap.get('missing_lane')) for gap in weak_gaps if gap.get('missing_lane')})
+        urgency = 4.0 if weak_gaps else 3.0
+        importance = 4.0 if claim.get('source_lane') in {'market_structure', 'corp_filing_ir'} else 3.0
+        novelty = max(1.0, float(claim.get('source_uniqueness_score') or 0.4) * 5)
+        rows.append({
+            'id': f"claim-reducer:{claim_id}",
+            'ts': generated_at,
+            'theme': f"{subject} {predicate} ({direction})",
+            'urgency': urgency,
+            'importance': importance,
+            'novelty': round(novelty, 2),
+            'cumulative_value': 3.0,
+            'summary': str(claim.get('object') or '')[:280],
+            'sources': [claim.get('source_id')] if claim.get('source_id') else [],
+            'candidate_type': 'claim_reducer_projection',
+            'discovery_scope': 'claim_graph_projection',
+            'object_links': {
+                'claim_refs': [claim_id],
+                'context_gap_refs': [gap.get('gap_id') for gap in weak_gaps if gap.get('gap_id')],
+            },
+            'confirmation_needed': gap_lanes,
+            'legacy_bridge_only': True,
+            'canonical_ingestion': False,
+            'no_execution': True,
+        })
+    return rows
+
+
+def write_shadow_claim_gap_reducer_report(generated_at: str) -> dict | None:
+    """Compile ClaimGraph/ContextGap and a reducer report; never block worker."""
+    try:
+        from claim_graph_compiler import OUT as CLAIM_GRAPH_OUT, compile_claim_graph
+        from context_gap_compiler import OUT as CONTEXT_GAPS_OUT, compile_context_gaps
+        from source_atom_compiler import SOURCE_ATOMS_LATEST
+
+        atoms = load_jsonl(SOURCE_ATOMS_LATEST)
+        claim_graph = compile_claim_graph(atoms, generated_at=generated_at)
+        atomic_write_json(CLAIM_GRAPH_OUT, claim_graph)
+        context_gaps = compile_context_gaps(claim_graph, generated_at=generated_at)
+        atomic_write_json(CONTEXT_GAPS_OUT, context_gaps)
+        reduced = reduce_claims_to_legacy_observations(claim_graph, context_gaps, generated_at=generated_at)
+        report = {
+            'generated_at': generated_at,
+            'status': 'pass',
+            'contract': 'finance-worker-reducer-report-v1',
+            'worker_role': 'compatibility_reducer',
+            'migration_mode': 'legacy_and_shadow',
+            'evaluation_mode': 'both',
+            'idempotency_key': claim_graph.get('graph_hash'),
+            'canonical_ingestion_authority': 'EvidenceAtom/ClaimGraph/ContextGap shadow substrate',
+            'accumulated_authority': 'legacy_bridge_not_canonical_ingestion',
+            'legacy_bridge_status': 'active_compatibility_output',
+            'source_atom_count': len(atoms),
+            'claim_count': claim_graph.get('claim_count', 0),
+            'gap_count': context_gaps.get('gap_count', 0),
+            'reduced_legacy_observation_count': len(reduced),
+            'reduced_legacy_observation_preview': reduced[:5],
+            'claim_graph_hash': claim_graph.get('graph_hash'),
+            'context_gap_hash': context_gaps.get('context_gap_hash'),
+            'parity_basis': 'legacy accumulated remains primary compatibility output; reduced observations are shadow comparison rows',
+            'shadow_only': True,
+            'no_execution': True,
+        }
+        atomic_write_json(REDUCER_REPORT, report)
+        return report
+    except Exception as exc:
+        print(f"⚠️ claim/gap reducer shadow write skipped: {exc}", file=sys.stderr)
+        return None
 
 def main():
     now_utc = datetime.now(timezone.utc)
@@ -362,6 +472,9 @@ def main():
     state['intraday_window'] = current_window(now_chi)
     state['last_updated'] = now_utc.isoformat()
     state['last_worker_run_at'] = now_utc.isoformat()
+    state['worker_role'] = 'compatibility_reducer'
+    state['accumulated_authority'] = 'legacy_bridge_not_canonical_ingestion'
+    state['canonical_ingestion_authority'] = 'EvidenceAtom/ClaimGraph/ContextGap shadow substrate'
     state['invalid_buffer_files'] = invalid_files[-20:]
     state['recovered_invalid_buffer_files'] = recovered_files[-20:]
     state['stale_accumulated_pruned_count'] = pruned_count
@@ -384,7 +497,9 @@ def main():
         state.setdefault('last_scan_time', None)
 
     atomic_write_json(STATE_FILE, state)
-    write_shadow_source_atoms(state, now_utc.isoformat().replace('+00:00', 'Z'))
+    generated_at = now_utc.isoformat().replace('+00:00', 'Z')
+    write_shadow_source_atoms(state, generated_at)
+    write_shadow_claim_gap_reducer_report(generated_at)
     print(
         f"✅ Processed {len(buffer_files)} files. Added {new_observations_count} new observations. "
         f"Recovered invalid files: {len(recovered_files)}. Invalid files quarantined: {len(invalid_files)}."
