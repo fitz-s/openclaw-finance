@@ -319,7 +319,7 @@
     {
       "phase": 10,
       "name": "72h inactive finance thread lifecycle",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Remove inactive finance threads from active follow-up and optionally archive/lock them after 72h inactivity.",
       "required_review_content": [
         "inactive for 72 hours",
@@ -338,6 +338,13 @@
         "inactive thread exits hot path after 72h",
         "activity refreshes last_activity_at",
         "registry remains bounded"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-10-thread-lifecycle-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-10-implementation-critic.md",
+      "implementation": [
+        "scripts/finance_followup_thread_registry_repair.py",
+        "scripts/finance_thread_lifecycle_gc.py",
+        "docs/openclaw-runtime/contracts/finance-thread-lifecycle-contract.md"
       ]
     },
     {

@@ -35,6 +35,10 @@ def test_upgrade_record_adds_campaign_rehydration_fields(tmp_path) -> None:
     assert upgraded['allowed_reply_account_ids'] == ['default']
     assert upgraded['allowed_reply_agent'] == 'Mars'
     assert upgraded['updated_at'] != upgraded['last_repaired_at']
+    assert upgraded['created_at'] == '2026-04-17T13:13:07.434Z'
+    assert upgraded['last_activity_at'].startswith('2026-04-17T13:13:07.434')
+    assert upgraded['inactive_after_hours'] == 72
+    assert upgraded['lifecycle_status'] == 'active'
     assert upgraded['campaign_board_ref'].endswith('campaign-board.json')
     assert upgraded['campaign_cache_ref'].endswith('campaign-cache.json')
     assert upgraded['followup_context_router_path'].endswith('finance_followup_context_router.py')
@@ -91,6 +95,7 @@ def test_prune_threads_drops_expired_missing_bundle_and_over_cap(tmp_path) -> No
         },
         ttl_days=30,
         max_records=1,
+        inactive_after_hours=72,
         prune_missing_bundle=True,
         now=now,
     )
@@ -98,3 +103,22 @@ def test_prune_threads_drops_expired_missing_bundle_and_over_cap(tmp_path) -> No
     assert stats['dropped_expired_count'] == 1
     assert stats['dropped_missing_bundle_count'] == 1
     assert stats['dropped_over_cap_count'] == 1
+
+
+def test_prune_threads_drops_inactive_after_72h(tmp_path) -> None:
+    bundle = tmp_path / 'live.json'
+    bundle.write_text('{}')
+    now = datetime(2026, 4, 17, tzinfo=timezone.utc)
+    kept, stats = prune_threads(
+        {
+            'inactive': {'updated_at': '2026-04-13T00:00:00Z', 'last_activity_at': '2026-04-13T00:00:00Z', 'followup_bundle_path': str(bundle)},
+            'active': {'updated_at': '2026-04-13T00:00:00Z', 'last_user_message_at': '2026-04-16T23:00:00Z', 'followup_bundle_path': str(bundle)},
+        },
+        ttl_days=30,
+        max_records=10,
+        inactive_after_hours=72,
+        prune_missing_bundle=True,
+        now=now,
+    )
+    assert list(kept) == ['active']
+    assert stats['dropped_inactive_count'] == 1

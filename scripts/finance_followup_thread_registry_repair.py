@@ -31,6 +31,7 @@ OWNER_ACCOUNT_ID = 'default'
 OWNER_AGENT_LABEL = 'Mars'
 DEFAULT_TTL_DAYS = 30
 DEFAULT_MAX_RECORDS = 100
+DEFAULT_INACTIVE_HOURS = 72
 
 
 def now_iso() -> str:
@@ -66,6 +67,32 @@ def bundle_path_exists(value: Any) -> bool:
     if not path.is_absolute():
         path = FINANCE / path
     return path.exists()
+
+
+def latest_activity_time(record: dict[str, Any]) -> datetime | None:
+    candidates = [
+        parse_iso(record.get('last_activity_at')),
+        parse_iso(record.get('last_user_message_at')),
+        parse_iso(record.get('last_bot_reply_at')),
+        parse_iso(record.get('updated_at')),
+        parse_iso(record.get('created_at')),
+    ]
+    candidates = [item for item in candidates if item is not None]
+    return max(candidates) if candidates else None
+
+
+def lifecycle_fields(record: dict[str, Any], *, default_time: str) -> dict[str, Any]:
+    created_at = str(record.get('created_at') or record.get('updated_at') or default_time)
+    activity = latest_activity_time(record)
+    last_activity_at = activity.isoformat().replace('+00:00', 'Z') if activity else created_at
+    return {
+        'created_at': created_at,
+        'last_user_message_at': record.get('last_user_message_at'),
+        'last_bot_reply_at': record.get('last_bot_reply_at'),
+        'last_activity_at': str(record.get('last_activity_at') or last_activity_at),
+        'inactive_after_hours': int(record.get('inactive_after_hours') or DEFAULT_INACTIVE_HOURS),
+        'lifecycle_status': str(record.get('lifecycle_status') or 'active'),
+    }
 
 
 def load_bundle(path_value: Any) -> dict[str, Any]:
@@ -153,6 +180,7 @@ def upgrade_record(record: dict[str, Any], *, envelope: dict[str, Any] | None = 
     upgraded = dict(record)
     upgraded['updated_at'] = str(upgraded.get('updated_at') or now_iso())
     upgraded['last_repaired_at'] = now_iso()
+    upgraded.update(lifecycle_fields(upgraded, default_time=upgraded['updated_at']))
     upgraded['account_id'] = OWNER_ACCOUNT_ID
     upgraded['allowed_reply_account_ids'] = [OWNER_ACCOUNT_ID]
     upgraded['allowed_reply_agent'] = OWNER_AGENT_LABEL
@@ -183,6 +211,7 @@ def prune_threads(
     *,
     ttl_days: int = DEFAULT_TTL_DAYS,
     max_records: int = DEFAULT_MAX_RECORDS,
+    inactive_after_hours: int = DEFAULT_INACTIVE_HOURS,
     prune_missing_bundle: bool = True,
     now: datetime | None = None,
 ) -> tuple[dict[str, dict[str, Any]], dict[str, int]]:
@@ -193,11 +222,16 @@ def prune_threads(
         'dropped_expired_count': 0,
         'dropped_missing_bundle_count': 0,
         'dropped_over_cap_count': 0,
+        'dropped_inactive_count': 0,
     }
     for thread_id, record in threads.items():
         updated = parse_iso(record.get('updated_at')) or parse_iso(record.get('last_repaired_at')) or now
+        activity = latest_activity_time(record) or updated
         if ttl_days >= 0 and updated < cutoff:
             stats['dropped_expired_count'] += 1
+            continue
+        if inactive_after_hours >= 0 and activity < now - timedelta(hours=inactive_after_hours):
+            stats['dropped_inactive_count'] += 1
             continue
         if prune_missing_bundle and not bundle_path_exists(record.get('followup_bundle_path')):
             stats['dropped_missing_bundle_count'] += 1
@@ -220,6 +254,7 @@ def repair_registry(
     envelope_path: Path = ENVELOPE,
     ttl_days: int = DEFAULT_TTL_DAYS,
     max_records: int = DEFAULT_MAX_RECORDS,
+    inactive_after_hours: int = DEFAULT_INACTIVE_HOURS,
     prune_missing_bundle: bool = True,
 ) -> dict[str, Any]:
     payload = load_json_safe(path, {}) or {}
@@ -238,6 +273,7 @@ def repair_registry(
         repaired,
         ttl_days=ttl_days,
         max_records=max_records,
+        inactive_after_hours=inactive_after_hours,
         prune_missing_bundle=prune_missing_bundle,
     )
     result = {
@@ -246,6 +282,7 @@ def repair_registry(
         'max_records': max_records,
         'owner_account_id': OWNER_ACCOUNT_ID,
         'owner_agent_label': OWNER_AGENT_LABEL,
+        'inactive_after_hours': inactive_after_hours,
         'threads': pruned,
     }
     atomic_write_json(path, result)
@@ -264,6 +301,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--envelope', default=str(ENVELOPE))
     parser.add_argument('--ttl-days', type=int, default=DEFAULT_TTL_DAYS)
     parser.add_argument('--max-records', type=int, default=DEFAULT_MAX_RECORDS)
+    parser.add_argument('--inactive-hours', type=int, default=DEFAULT_INACTIVE_HOURS)
     parser.add_argument('--keep-missing-bundles', action='store_true')
     parser.add_argument('--quiet', action='store_true')
     args = parser.parse_args(argv)
@@ -272,6 +310,7 @@ def main(argv: list[str] | None = None) -> int:
         envelope_path=Path(args.envelope),
         ttl_days=args.ttl_days,
         max_records=args.max_records,
+        inactive_after_hours=args.inactive_hours,
         prune_missing_bundle=not args.keep_missing_bundles,
     )
     if not args.quiet:
