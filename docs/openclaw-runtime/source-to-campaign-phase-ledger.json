@@ -436,7 +436,7 @@
     {
       "phase": 14,
       "name": "Monitoring, rollback hardening, and closeout",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Lock operational metrics and close the source-to-campaign stack with documented rollback and reviewer evidence.",
       "required_review_content": [
         "source_coverage_score",
@@ -456,6 +456,12 @@
         "monitoring metrics are exported",
         "rollback is documented",
         "reviewer evidence complete"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-14-monitoring-closeout-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-14-implementation-critic.md",
+      "implementation": [
+        "tools/export_source_to_campaign_closeout.py",
+        "docs/openclaw-runtime/source-to-campaign-closeout.json"
       ]
     }
   ]

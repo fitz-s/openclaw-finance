@@ -14,6 +14,7 @@ python3 tools/score_report_usefulness.py
 python3 tools/drill_ibkr_watchlist_freshness.py
 python3 tools/audit_benchmark_boundary.py
 python3 tools/review_runtime_gaps.py
+python3 tools/export_source_to_campaign_closeout.py
 
 git add docs/openclaw-runtime
 
