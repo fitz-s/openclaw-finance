@@ -42,7 +42,25 @@ Source Health is a shadow audit surface in Phase 1. It does not change wake, jud
   "last_seen_at": "...",
   "last_success_at": "...",
   "last_error_at": null,
+  "quota_status": "ok|degraded|not_applicable|unknown",
+  "rate_limit_status": "ok|limited|not_applicable|unknown",
+  "last_quota_error": null,
+  "retry_after_sec": null,
+  "x_ratelimit_remaining": null,
+  "x_ratelimit_reset": null,
+  "success_count": 0,
+  "failure_count": 0,
+  "timeout_count": 0,
+  "rate_limited_count": 0,
+  "freshness_lag_seconds": 0,
+  "quota_remaining": null,
+  "quota_reset_at": null,
+  "retry_after_seconds": null,
+  "breaker_state": "closed|open|half_open|unknown",
+  "degraded_state": "quota_limited|fetch_failed|stale|partial_data|null",
+  "health_score": 1.0,
   "breach_reasons": [],
+  "problem_details": {},
   "metric_refs": [],
   "source_refs": [],
   "health_hash": "sha256:...",
@@ -68,6 +86,9 @@ Rights:
 
 - `no_execution` is always true.
 - Unknown state must be explicit, not silently treated as fresh or allowed.
+- Quota/rate-limit degradation must be explicit; 402/429 must not be silently treated as a normal no-result fetch.
+- Dry-run-only fetches must remain `unknown`, not `fresh`.
+- `stale_reuse_guard` must tell downstream report surfaces when old narratives could be silently recycled because source access is degraded.
 - Health hashes must be deterministic for the same row payload.
 - Health is appendable to history for later source ROI and coverage learning.
 - Packet manifests may include `source_health_hash` only as audit metadata in Phase 1.

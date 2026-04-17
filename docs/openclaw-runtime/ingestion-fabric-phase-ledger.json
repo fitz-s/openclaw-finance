@@ -343,22 +343,40 @@
     {
       "phase": 9,
       "name": "Source health and quota monitor",
-      "status": "pending",
+      "status": "completed",
       "purpose": "Expose Brave quota/rate limit and source health failures as first-class source-health signals.",
       "required_review2_content": [
         "402 quota",
         "source_health_monitor.py",
         "quota_state",
         "rate_limited",
-        "failed fetch records"
+        "failed fetch records",
+        "stale reuse guard",
+        "source health metrics"
       ],
       "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-09-source-health-quota-monitor-ralplan.md",
         "scripts/source_health_monitor.py",
-        "docs/openclaw-runtime/contracts/source-health-contract.md"
+        "docs/openclaw-runtime/contracts/source-health-contract.md",
+        "state/source-health.json",
+        "tests/test_source_health_monitor_phase09.py"
       ],
       "acceptance": [
         "Brave 402 becomes source health degradation",
-        "reports cannot silently recycle old state"
+        "reports cannot silently recycle old state",
+        "dry-run records are explicit unknown",
+        "quota/rate-limit fields and problem details are emitted"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "metrics, freshness SLO, rate-limit, circuit breaker, stale marker, and problem-details references",
+        "result": "Use multi-signal source health metrics, freshness lag, quota/rate-limit telemetry, breaker/degraded state, and machine-readable problem details."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-09-source-health-quota-monitor-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-09-implementation-critic.md",
+      "implementation": [
+        "scripts/source_health_monitor.py",
+        "docs/openclaw-runtime/contracts/source-health-contract.md"
       ]
     },
     {
