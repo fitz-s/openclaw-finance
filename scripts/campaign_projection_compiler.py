@@ -24,6 +24,8 @@ CAPITAL_GRAPH = STATE / 'capital-graph.json'
 DISPLACEMENT_CASES = STATE / 'displacement-cases.json'
 UNDERCURRENTS = STATE / 'undercurrents.json'
 OUT = STATE / 'campaign-board.json'
+STAGE_HISTORY = STATE / 'campaign-stage-history.jsonl'
+CAMPAIGN_THREADS = STATE / 'campaign-threads.json'
 
 
 def now_iso() -> str:
@@ -35,9 +37,18 @@ def stable_id(prefix: str, *parts: Any) -> str:
     return f'{prefix}:{hashlib.sha1(raw.encode("utf-8")).hexdigest()[:16]}'
 
 
+def stable_hash(*parts: Any) -> str:
+    raw = '|'.join(str(p or '') for p in parts)
+    return 'sha256:' + hashlib.sha256(raw.encode('utf-8')).hexdigest()
+
+
 def short(value: Any, limit: int = 120) -> str:
     text = ' '.join(str(value or '').split())
     return text if len(text) <= limit else text[: limit - 1].rstrip() + '…'
+
+
+def as_list(value: Any) -> list[Any]:
+    return value if isinstance(value, list) else []
 
 
 def opportunity_label(item: dict[str, Any]) -> str:
@@ -118,6 +129,15 @@ def campaign_stage(campaign_type: str, score: float) -> str:
     return 'scout'
 
 
+def quality_adjusted_stage(campaign_type: str, score: float, *, source_diversity: int = 0, cross_lane_confirmation: int = 0, contradiction_load: int = 0) -> str:
+    quality_score = score + source_diversity + cross_lane_confirmation + min(contradiction_load, 3)
+    if campaign_type in {'undercurrent_risk', 'invalidator_cluster'} and (quality_score >= 12 or contradiction_load >= 2):
+        return 'review'
+    if campaign_type == 'peacetime_scout' and quality_score >= 10:
+        return 'candidate'
+    return campaign_stage(campaign_type, score)
+
+
 def board_class(campaign_type: str, stage: str) -> str:
     if stage == 'escalation' or campaign_type == 'live_opportunity':
         return 'live'
@@ -147,7 +167,7 @@ def campaign_from_agenda(item: dict[str, Any], opportunity_queue: dict[str, Any]
                 if isinstance(src, str) and src not in source_refs:
                     source_refs.append(src)
     title = agenda_title(item, opportunity_queue)
-    return {
+    campaign = {
         'campaign_id': stable_id('campaign', item.get('agenda_id'), title),
         'campaign_type': ctype,
         'board_class': board_class(ctype, stage),
@@ -168,6 +188,7 @@ def campaign_from_agenda(item: dict[str, Any], opportunity_queue: dict[str, Any]
         'priority_score': score,
         'no_execution': True,
     }
+    return finalize_campaign(campaign, stage_reason='agenda priority and canonical capital agenda score')
 
 
 def campaign_from_opportunity(item: dict[str, Any]) -> dict[str, Any]:
@@ -175,7 +196,7 @@ def campaign_from_opportunity(item: dict[str, Any]) -> dict[str, Any]:
     ctype = 'live_opportunity' if score >= 15 else 'peacetime_scout'
     stage = campaign_stage(ctype, score)
     title = opportunity_label(item)
-    return {
+    campaign = {
         'campaign_id': stable_id('campaign', item.get('candidate_id'), title),
         'campaign_type': ctype,
         'board_class': board_class(ctype, stage),
@@ -196,6 +217,7 @@ def campaign_from_opportunity(item: dict[str, Any]) -> dict[str, Any]:
         'priority_score': score,
         'no_execution': True,
     }
+    return finalize_campaign(campaign, stage_reason='opportunity score and peacetime scout status')
 
 
 def campaign_from_undercurrent(card: dict[str, Any]) -> dict[str, Any]:
@@ -212,7 +234,11 @@ def campaign_from_undercurrent(card: dict[str, Any]) -> dict[str, Any]:
         stage = 'review'
     title = str(card.get('human_title') or 'Undercurrent')
     refs = card.get('linked_refs') if isinstance(card.get('linked_refs'), dict) else {}
-    return {
+    source_diversity = int(card.get('source_diversity') or 0)
+    cross_lane = int(card.get('cross_lane_confirmation') or 0)
+    contradiction_load = int(card.get('contradiction_load') or 0)
+    stage = quality_adjusted_stage(ctype, score, source_diversity=source_diversity, cross_lane_confirmation=cross_lane, contradiction_load=contradiction_load)
+    campaign = {
         'campaign_id': stable_id('campaign', card.get('undercurrent_id'), title),
         'campaign_type': ctype,
         'board_class': board_class(ctype, stage),
@@ -228,11 +254,40 @@ def campaign_from_undercurrent(card: dict[str, Any]) -> dict[str, Any]:
         'linked_opportunities': refs.get('opportunity', []),
         'linked_invalidators': refs.get('invalidator', []),
         'linked_displacement_cases': [],
+        'linked_atoms': refs.get('atom', []),
+        'linked_claims': refs.get('claim', []),
+        'linked_context_gaps': refs.get('context_gap', []),
         'source_freshness': card.get('source_freshness') if isinstance(card.get('source_freshness'), dict) else {'status': 'unknown', 'source_refs': []},
+        'source_diversity': source_diversity,
+        'cross_lane_confirmation': cross_lane,
+        'contradiction_load': contradiction_load,
+        'known_unknowns': as_list(card.get('known_unknowns'))[:5],
+        'source_health_summary': card.get('source_health_summary') if isinstance(card.get('source_health_summary'), dict) else {'degraded_count': 0, 'degraded_sources': []},
         'thread_key': stable_id('campaign-thread', card.get('undercurrent_id'), title),
         'priority_score': score,
         'no_execution': True,
     }
+    return finalize_campaign(
+        campaign,
+        stage_reason=f'undercurrent score={score:g}, source_diversity={source_diversity}, cross_lane={cross_lane}, contradiction_load={contradiction_load}',
+    )
+
+
+def finalize_campaign(campaign: dict[str, Any], *, stage_reason: str) -> dict[str, Any]:
+    out = dict(campaign)
+    out.setdefault('linked_atoms', [])
+    out.setdefault('linked_claims', [])
+    out.setdefault('linked_context_gaps', [])
+    out.setdefault('known_unknowns', [])
+    out.setdefault('source_diversity', 0)
+    out.setdefault('cross_lane_confirmation', 0)
+    out.setdefault('contradiction_load', 0)
+    out.setdefault('source_health_summary', {'degraded_count': 0, 'degraded_sources': []})
+    out['stage_reason'] = stage_reason
+    out['last_stage_hash'] = stable_hash(out.get('campaign_id'), out.get('stage'), stage_reason, out.get('board_class'))
+    out['thread_status'] = out.get('thread_status') or 'unbound'
+    out['no_execution'] = True
+    return out
 
 
 def render_board(title: str, campaigns: list[dict[str, Any]], empty: str) -> str:
@@ -251,6 +306,98 @@ def render_board(title: str, campaigns: list[dict[str, Any]], empty: str) -> str
             f"线程：why {item['campaign_id']} / challenge {item['campaign_id']} / sources {item['campaign_id']}",
         ])
     return '\n'.join(lines).strip() + '\n'
+
+
+def load_jsonl(path: Path) -> list[dict[str, Any]]:
+    if not path.exists():
+        return []
+    rows: list[dict[str, Any]] = []
+    for line in path.read_text(encoding='utf-8', errors='replace').splitlines():
+        if not line.strip():
+            continue
+        try:
+            item = json.loads(line)
+        except Exception:
+            continue
+        if isinstance(item, dict):
+            rows.append(item)
+    return rows
+
+
+def build_stage_transitions(campaigns: list[dict[str, Any]], existing_rows: list[dict[str, Any]] | None = None, *, generated_at: str | None = None) -> list[dict[str, Any]]:
+    existing_rows = existing_rows or []
+    generated = generated_at or now_iso()
+    latest_hash: dict[str, str] = {}
+    for row in existing_rows:
+        if isinstance(row, dict) and row.get('campaign_id') and row.get('last_stage_hash'):
+            latest_hash[str(row['campaign_id'])] = str(row['last_stage_hash'])
+    transitions: list[dict[str, Any]] = []
+    for campaign in campaigns:
+        cid = str(campaign.get('campaign_id') or '')
+        stage_hash = str(campaign.get('last_stage_hash') or '')
+        if not cid or not stage_hash or latest_hash.get(cid) == stage_hash:
+            continue
+        transitions.append({
+            'transition_id': stable_id('campaign-stage-transition', cid, stage_hash),
+            'campaign_id': cid,
+            'created_at': generated,
+            'stage': campaign.get('stage'),
+            'board_class': campaign.get('board_class'),
+            'stage_reason': campaign.get('stage_reason'),
+            'last_stage_hash': stage_hash,
+            'source_refs': {
+                'atoms': as_list(campaign.get('linked_atoms'))[:8],
+                'claims': as_list(campaign.get('linked_claims'))[:8],
+                'context_gaps': as_list(campaign.get('linked_context_gaps'))[:8],
+            },
+            'no_execution': True,
+        })
+    return transitions
+
+
+def append_stage_transitions(path: Path, transitions: list[dict[str, Any]]) -> None:
+    if not transitions:
+        return
+    path.parent.mkdir(parents=True, exist_ok=True)
+    with path.open('a', encoding='utf-8') as fh:
+        for transition in transitions:
+            fh.write(json.dumps(transition, ensure_ascii=False, sort_keys=True) + '\n')
+
+
+def build_thread_registry(campaigns: list[dict[str, Any]], existing_registry: dict[str, Any] | None = None, *, generated_at: str | None = None) -> dict[str, Any]:
+    existing = existing_registry if isinstance(existing_registry, dict) else {}
+    existing_threads = existing.get('threads') if isinstance(existing.get('threads'), dict) else {}
+    generated = generated_at or now_iso()
+    threads: dict[str, dict[str, Any]] = {}
+    for campaign in campaigns:
+        thread_key = str(campaign.get('thread_key') or '')
+        if not thread_key:
+            continue
+        previous = existing_threads.get(thread_key) if isinstance(existing_threads.get(thread_key), dict) else {}
+        thread_status = str(previous.get('thread_status') or previous.get('status') or campaign.get('thread_status') or 'unbound')
+        threads[thread_key] = {
+            'thread_key': thread_key,
+            'campaign_id': campaign.get('campaign_id'),
+            'thread_status': thread_status,
+            'discord_thread_id': previous.get('discord_thread_id'),
+            'created_at': previous.get('created_at') or generated,
+            'updated_at': generated,
+            'human_title': campaign.get('human_title'),
+            'board_class': campaign.get('board_class'),
+            'stage': campaign.get('stage'),
+            'bundle_ref': previous.get('bundle_ref'),
+            'no_execution': True,
+        }
+        campaign['thread_status'] = thread_status
+    return {
+        'generated_at': generated,
+        'status': 'pass',
+        'contract': 'campaign-threads-v1-local',
+        'threads': threads,
+        'thread_count': len(threads),
+        'thread_is_ui_not_memory': True,
+        'no_execution': True,
+    }
 
 
 def compile_campaign_board(
@@ -281,6 +428,8 @@ def compile_campaign_board(
         if key not in dedup or float(campaign.get('priority_score') or 0) > float(dedup[key].get('priority_score') or 0):
             dedup[key] = campaign
     campaigns = sorted(dedup.values(), key=lambda c: (c.get('board_class') != 'live', -float(c.get('priority_score') or 0), c.get('human_title', '')))
+    thread_registry = build_thread_registry(campaigns, {}, generated_at=now_iso())
+    stage_transitions = build_stage_transitions(campaigns, [], generated_at=thread_registry['generated_at'])
     boards = {
         'live': [c for c in campaigns if c.get('board_class') == 'live'],
         'scout': [c for c in campaigns if c.get('board_class') == 'scout'],
@@ -292,6 +441,8 @@ def compile_campaign_board(
         'contract': 'campaign-projection-v1',
         'campaigns': campaigns,
         'boards': boards,
+        'stage_transitions': stage_transitions,
+        'thread_registry': thread_registry,
         'discord_live_board_markdown': render_board('Finance｜Live Board', boards['live'], '当前没有必须打断你的 live campaign。'),
         'discord_scout_board_markdown': render_board('Finance｜Peacetime Board', boards['scout'], '当前没有 scout campaign。'),
         'discord_risk_board_markdown': render_board('Finance｜Risk / Undercurrent Board', boards['risk'], '当前没有 risk campaign。'),
@@ -300,6 +451,8 @@ def compile_campaign_board(
             'opportunity_queue': str(OPPORTUNITY_QUEUE),
             'invalidator_ledger': str(INVALIDATOR_LEDGER),
             'undercurrents': str(UNDERCURRENTS),
+            'stage_history': str(STAGE_HISTORY),
+            'campaign_threads': str(CAMPAIGN_THREADS),
         },
         'no_execution': True,
     }
@@ -315,6 +468,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--capital-graph', default=str(CAPITAL_GRAPH))
     parser.add_argument('--displacement-cases', default=str(DISPLACEMENT_CASES))
     parser.add_argument('--undercurrents', default=str(UNDERCURRENTS))
+    parser.add_argument('--stage-history', default=str(STAGE_HISTORY))
+    parser.add_argument('--campaign-threads', default=str(CAMPAIGN_THREADS))
     parser.add_argument('--out', default=str(OUT))
     args = parser.parse_args(argv)
 
@@ -328,7 +483,14 @@ def main(argv: list[str] | None = None) -> int:
         load_json_safe(Path(args.displacement_cases), {}) or {},
         load_json_safe(Path(args.undercurrents), {}) or {},
     )
+    existing_history = load_jsonl(Path(args.stage_history))
+    transitions = build_stage_transitions(payload['campaigns'], existing_history, generated_at=payload['generated_at'])
+    payload['stage_transitions'] = transitions
+    thread_registry = build_thread_registry(payload['campaigns'], load_json_safe(Path(args.campaign_threads), {}) or {}, generated_at=payload['generated_at'])
+    payload['thread_registry'] = thread_registry
     atomic_write_json(Path(args.out), payload)
+    append_stage_transitions(Path(args.stage_history), transitions)
+    atomic_write_json(Path(args.campaign_threads), thread_registry)
     print(json.dumps({'status': payload['status'], 'campaign_count': len(payload['campaigns']), 'out': args.out}, ensure_ascii=False))
     return 0
 

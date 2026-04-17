@@ -301,6 +301,7 @@ def main() -> int:
             'docs/openclaw-runtime/contracts/context-gap-contract.md',
             'docs/openclaw-runtime/critics/phase-2-implementation-critic.md',
             'docs/openclaw-runtime/critics/phase-3-implementation-critic.md',
+            'docs/openclaw-runtime/critics/phase-4-implementation-critic.md',
             *contracts,
             *schemas,
         ],
