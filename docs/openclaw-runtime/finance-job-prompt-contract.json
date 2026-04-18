@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-17T22:15:00.674208+00:00",
+  "generated_at": "2026-04-18T00:09:33.669960+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "note": "Prompt hashes let GitHub reviewers see live OpenClaw job prompt drift without exposing secrets.",
   "jobs": {
@@ -35,13 +35,13 @@
         "channel": "discord",
         "to": "channel:1479790104490016808"
       },
-      "prompt_sha256": "sha256:f15e953e5d75683c8f556e2296305e16e30de49f56b9ca84d11ee0b34c554a26",
+      "prompt_sha256": "sha256:136b742b3c3d6c640b80502e8cdf146cc5f9354018a95863ab4a5cda27bffeb5",
       "contains_context_pack": true,
       "contains_non_authority_boundary": true,
       "contains_candidate_path": true,
       "contains_unknown_discovery_contract": false,
       "contains_threshold_mutation_ban": true,
-      "message_preview": "【OpenClaw Finance Report Orchestrator｜context-pack-first】\n你是 finance report adjudicator，不是 renderer，不是 scanner，不是 risk engine。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 只把 /Users"
+      "message_preview": "【OpenClaw Finance Report Orchestrator｜context-pack-first】\n你是 finance report adjudicator，不是 renderer，不是 scanner，不是 risk engine。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_parent_market_ingest_cutover.py"
     },
     "finance-premarket-delivery-watchdog": {
       "enabled": true,
@@ -92,13 +92,13 @@
         "mode": "none",
         "channel": "last"
       },
-      "prompt_sha256": "sha256:b4004765c563876859c140a12980e576af63d1a4cb6a76a3ca44641eb7a7272c",
+      "prompt_sha256": "sha256:5decf78e61728557d13df1e57b5413b0772bae8117f20ababca48589e4f4d649",
       "contains_context_pack": true,
       "contains_non_authority_boundary": true,
       "contains_candidate_path": false,
       "contains_unknown_discovery_contract": true,
       "contains_threshold_mutation_ban": false,
-      "message_preview": "【finance market-hours scanner｜context-pack-first】\n你是 finance scanner。不要发用户消息。你的任务是找 object-linked evidence candidates，不是写报告。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 读取 /Users/l"
+      "message_preview": "【finance market-hours scanner｜query-pack-planner-first】\n你是 finance scanner。不要发用户消息。你的主任务是提出 bounded QueryPack / object-linked source questions，不是把 free-form web_search prose 当 canonical evidence。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openc"
     },
     "finance-subagent-scanner-offhours": {
       "enabled": true,
@@ -111,13 +111,13 @@
         "mode": "none",
         "channel": "last"
       },
-      "prompt_sha256": "sha256:a4d765a1cbeb541ab1dfe9a8dd64e2b634f6fe03ff529f78da39d54eac5c6c61",
+      "prompt_sha256": "sha256:117e78ff8b15dacabdd3951434441f4c105b26c6b8cf72e0296400a531aa0961",
       "contains_context_pack": true,
       "contains_non_authority_boundary": true,
       "contains_candidate_path": false,
       "contains_unknown_discovery_contract": true,
       "contains_threshold_mutation_ban": false,
-      "message_preview": "【finance offhours scanner｜context-pack-first】\n你是 finance scanner。不要发用户消息。你的任务是找 object-linked evidence candidates，不是写报告。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 读取 /Users/leofi"
+      "message_preview": "【finance offhours scanner｜query-pack-planner-first】\n你是 finance scanner。不要发用户消息。你的主任务是提出 bounded QueryPack / object-linked source questions，不是把 free-form web_search prose 当 canonical evidence。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/"
     },
     "finance-thesis-sidecar": {
       "enabled": false,

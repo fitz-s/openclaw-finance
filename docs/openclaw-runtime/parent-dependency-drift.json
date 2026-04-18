@@ -1,7 +1,18 @@
 {
-  "generated_at": "2026-04-17T22:15:01.416607+00:00",
-  "status": "pass",
-  "changed_count": 0,
-  "changed": [],
+  "generated_at": "2026-04-18T00:10:04.115287+00:00",
+  "status": "drift_detected",
+  "changed_count": 2,
+  "changed": [
+    {
+      "role": "live_finance_adapter",
+      "baseline_sha256": "sha256:a4588dc81ee5e0628e3651318938414bfa6790dd87dc2ac7741eec1e11cfe573",
+      "current_sha256": "sha256:583a135d0ac533ee0e86b1c01563ac9ed9fbe0fac77f3fb4c30ca28338f44149"
+    },
+    {
+      "role": "source_health_compiler",
+      "baseline_sha256": "sha256:a40fcbb89ce832274604e66a373568f91871f95e7b75f8cf5cd8e1c932ad213f",
+      "current_sha256": "sha256:0fbc1499fd13c1ecae455efcf05c6152b88c22cd4410c82a618c6313b5c96517"
+    }
+  ],
   "note": "Drift is informational for reviewer visibility; commit the refreshed snapshot after intentional parent dependency changes."
 }
