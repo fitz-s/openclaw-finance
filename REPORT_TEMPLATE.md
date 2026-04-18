@@ -1,4 +1,4 @@
-# REPORT_TEMPLATE.md — Compatibility Stub
+# REPORT_TEMPLATE.md — Deprecated Compatibility Stub
 
 This file exists only for legacy OpenClaw BOOT/mainline audit scripts that still
 hash or check the historical root-level `REPORT_TEMPLATE.md` path.
@@ -9,6 +9,7 @@ Current active path:
 `ContextPacket -> WakeDecision -> JudgmentEnvelope -> finance_decision_report_render.py -> finance_report_product_validator.py -> finance_decision_log_compiler.py -> finance_report_delivery_safety.py -> Discord operator primary + thread seed`
 
 Canonical current style/contract surfaces:
+- `docs/openclaw-runtime/contracts/finance-openclaw-runtime-contract.md`
 - `STYLE_GUIDE.md`
 - `docs/openclaw-runtime/contracts/finance-report-contract.md`
 - `state/finance-decision-report-envelope.json`
