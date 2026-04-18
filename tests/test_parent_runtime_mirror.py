@@ -16,6 +16,8 @@ MIRROR = ROOT / 'docs' / 'openclaw-runtime' / 'parent-runtime'
 def test_parent_runtime_mirror_contains_cutover_source_files() -> None:
     expected = [
         MIRROR / 'services' / 'market-ingest' / 'adapters' / 'live_finance_adapter.py',
+        MIRROR / 'services' / 'market-ingest' / 'normalizer' / 'source_promotion.py',
+        MIRROR / 'services' / 'market-ingest' / 'normalizer' / 'semantic_normalizer.py',
         MIRROR / 'services' / 'market-ingest' / 'source_health' / 'compiler.py',
         MIRROR / 'services' / 'market-ingest' / 'packet_compiler' / 'compiler.py',
         MIRROR / 'services' / 'market-ingest' / 'wake_policy' / 'policy.py',

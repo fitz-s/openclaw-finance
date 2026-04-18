@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-18T14:26:40.421090+00:00",
+  "generated_at": "2026-04-18T15:29:27.128691+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "jobs": [
     {
@@ -62,12 +62,12 @@
       },
       "state": {
         "consecutiveErrors": 0,
-        "lastDeliveryStatus": "delivered",
-        "lastRunAtMs": 1776515491832,
+        "lastDeliveryStatus": "not-delivered",
+        "lastRunAtMs": 1776525590883,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 132158,
-        "lastDelivered": true,
+        "lastDurationMs": 48194,
+        "lastDelivered": false,
         "nextRunAtMs": 1776690600000
       }
     },

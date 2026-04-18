@@ -18,6 +18,8 @@ CRON = OPENCLAW_HOME / 'cron' / 'jobs.json'
 
 MIRROR_FILES = {
     'services/market-ingest/adapters/live_finance_adapter.py': SERVICE / 'adapters' / 'live_finance_adapter.py',
+    'services/market-ingest/normalizer/source_promotion.py': SERVICE / 'normalizer' / 'source_promotion.py',
+    'services/market-ingest/normalizer/semantic_normalizer.py': SERVICE / 'normalizer' / 'semantic_normalizer.py',
     'services/market-ingest/source_health/compiler.py': SERVICE / 'source_health' / 'compiler.py',
     'services/market-ingest/packet_compiler/compiler.py': SERVICE / 'packet_compiler' / 'compiler.py',
     'services/market-ingest/wake_policy/policy.py': SERVICE / 'wake_policy' / 'policy.py',

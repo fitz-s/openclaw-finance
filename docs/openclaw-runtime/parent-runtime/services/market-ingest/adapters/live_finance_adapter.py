@@ -634,6 +634,9 @@ def apply_promotion(record: dict[str, Any], promotion: dict[str, Any], candidate
         "promotion_reason_code": promotion.get("reason_code"),
         "allowed_for_judgment_support": promotion.get("allowed_for_judgment_support"),
     })
+    for key in ("support_requires_primary_confirmation", "support_scope", "support_reason_code"):
+        if promotion.get(key) is not None:
+            record["structured_facts"][key] = promotion.get(key)
     if promotion.get("source_reliability_score") is not None:
         record["source_reliability"] = promotion["source_reliability_score"]
     if promotion.get("source_reliability_tier"):
@@ -673,6 +676,9 @@ def apply_promotion(record: dict[str, Any], promotion: dict[str, Any], candidate
         record["quarantine"]["reason_detail"] = ";".join(promotion["blocking_reasons"])
         record["quarantine"]["allowed_for_wake"] = False
         record["quarantine"]["allowed_for_judgment_support"] = support_allowed
+        for key in ("support_requires_primary_confirmation", "support_scope", "support_reason_code"):
+            if promotion_result_value := promotion.get(key):
+                record["quarantine"][key] = promotion_result_value
         if not support_allowed:
             record["supports"] = []
     return record

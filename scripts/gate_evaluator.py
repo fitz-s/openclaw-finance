@@ -165,6 +165,136 @@ def minutes_since(iso_str: Optional[str], now: datetime) -> float:
         return 9999.0
 
 
+def parse_iso_dt(iso_str: Optional[str]) -> datetime | None:
+    if not iso_str:
+        return None
+    try:
+        parsed = datetime.fromisoformat(str(iso_str).replace('Z', '+00:00'))
+    except Exception:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def load_jsonl_safe(path: Path, limit: int = 500) -> list[dict]:
+    if not path.exists():
+        return []
+    rows: list[dict] = []
+    for line in path.read_text(encoding='utf-8', errors='replace').splitlines()[-limit:]:
+        if not line.strip():
+            continue
+        try:
+            payload = json.loads(line)
+        except Exception:
+            continue
+        if isinstance(payload, dict):
+            rows.append(payload)
+    return rows
+
+
+def event_time_for_record(record: dict) -> datetime | None:
+    for key in ('observed_at', 'published_at', 'effective_from', 'ingested_at', 'detected_at'):
+        parsed = parse_iso_dt(record.get(key))
+        if parsed is not None:
+            return parsed
+    return None
+
+
+def latest_iso(values: list[datetime]) -> str | None:
+    if not values:
+        return None
+    return max(values).isoformat().replace('+00:00', 'Z')
+
+
+def live_evidence_freshness(now_utc: datetime, *, freshness_minutes: int = 120) -> dict:
+    """Summarize parent market-ingest freshness for the legacy gate.
+
+    This does not grant wake authority. It only prevents the legacy scanner
+    stale guard from hiding the fact that parent ContextPacket evidence moved.
+    """
+    rows = load_jsonl_safe(LIVE_EVIDENCE)
+    event_times: list[datetime] = []
+    ingested_times: list[datetime] = []
+    fresh_records: list[dict] = []
+    support_count = 0
+    wake_count = 0
+    context_only_count = 0
+    support_needs_primary_count = 0
+    fresh_support_count = 0
+    fresh_context_only_count = 0
+    fresh_non_support_context_count = 0
+
+    for row in rows:
+        q = row.get('quarantine') if isinstance(row.get('quarantine'), dict) else {}
+        sf = row.get('structured_facts') if isinstance(row.get('structured_facts'), dict) else {}
+        event_time = event_time_for_record(row)
+        ingested = parse_iso_dt(row.get('ingested_at') or row.get('detected_at'))
+        if event_time:
+            event_times.append(event_time)
+        if ingested:
+            ingested_times.append(ingested)
+        is_fresh = bool(event_time and (now_utc - event_time).total_seconds() <= freshness_minutes * 60)
+        if is_fresh:
+            fresh_records.append(row)
+        support_allowed = q.get('allowed_for_judgment_support') is True
+        wake_allowed = q.get('allowed_for_wake') is True
+        context_only = str(q.get('disposition') or '').upper() == 'CONTEXT_ONLY'
+        needs_primary = (
+            q.get('support_requires_primary_confirmation') is True
+            or sf.get('support_requires_primary_confirmation') is True
+        )
+        support_count += int(support_allowed)
+        wake_count += int(wake_allowed)
+        context_only_count += int(context_only)
+        support_needs_primary_count += int(needs_primary)
+        fresh_support_count += int(is_fresh and support_allowed)
+        fresh_context_only_count += int(is_fresh and context_only)
+        fresh_non_support_context_count += int(is_fresh and context_only and not support_allowed)
+
+    latest_event = max(event_times) if event_times else None
+    latest_ingested = max(ingested_times) if ingested_times else None
+    latest_age_min = round((now_utc - latest_event).total_seconds() / 60.0, 1) if latest_event else None
+    status = 'missing'
+    if rows:
+        if fresh_support_count:
+            status = 'fresh_support'
+        elif fresh_context_only_count:
+            status = 'fresh_context_only'
+        elif latest_age_min is not None and latest_age_min <= freshness_minutes:
+            status = 'fresh_non_support'
+        else:
+            status = 'stale'
+    warnings: list[str] = []
+    if rows and wake_count == 0:
+        warnings.append('no_wake_eligible_live_evidence')
+    if fresh_non_support_context_count:
+        warnings.append('fresh_context_only_without_judgment_support')
+    if support_needs_primary_count:
+        warnings.append('fresh_support_requires_primary_confirmation')
+    if status in {'missing', 'stale'}:
+        warnings.append('live_evidence_not_fresh')
+    return {
+        'status': status,
+        'freshness_window_minutes': freshness_minutes,
+        'record_count': len(rows),
+        'latest_event_at': latest_iso(event_times),
+        'latest_ingested_at': latest_iso(ingested_times),
+        'latest_event_age_minutes': latest_age_min,
+        'support_count': support_count,
+        'wake_allowed_count': wake_count,
+        'context_only_count': context_only_count,
+        'fresh_record_count': len(fresh_records),
+        'fresh_support_count': fresh_support_count,
+        'fresh_context_only_count': fresh_context_only_count,
+        'fresh_non_support_context_count': fresh_non_support_context_count,
+        'support_requires_primary_confirmation_count': support_needs_primary_count,
+        'clears_legacy_stale': fresh_support_count > 0,
+        'warnings': warnings,
+        'source': str(LIVE_EVIDENCE),
+    }
+
+
 def apply_decay(candidates: list, decay_cfg: dict) -> list:
     """Continuous decay: reduce all scores, remove items below threshold.
     Exempt keywords bypass decay entirely (nuclear/assassination/war events persist).
@@ -522,14 +652,22 @@ def main():
     candidates = scan.get('accumulated', [])
 
     # --- Step 0: Data freshness check ---
-    # If no signal has been ingested in > 2 hours, block reporting (stale data guard)
+    # Legacy scanner observations remain the threshold substrate, but parent
+    # market-ingest may have fresher support-only evidence after source cutover.
     last_scan = scan.get('last_scan_time')
+    legacy_data_stale = False
+    legacy_scan_age_min = None
     data_stale = False
     if last_scan:
         scan_age_min = minutes_since(last_scan, now_utc)
+        legacy_scan_age_min = round(scan_age_min, 1)
         if scan_age_min > 120:
-            data_stale = True
+            legacy_data_stale = True
             print(f"⚠️ Data stale: last scan was {scan_age_min:.0f} min ago (>{120} min threshold)")
+    live_freshness = live_evidence_freshness(now_utc)
+    data_stale = legacy_data_stale and not live_freshness.get('clears_legacy_stale')
+    if legacy_data_stale and not data_stale:
+        print("ℹ️ Legacy scan stale, but parent live evidence has fresh judgment-supporting context.")
 
     # --- Step 1: Continuous decay (runs every evaluation) ---
     before_count = len(candidates)
@@ -631,6 +769,9 @@ def main():
         "window": window,
         "isMarketHours": is_market_hours(window),
         "dataStale": data_stale,
+        "legacyDataStale": legacy_data_stale,
+        "legacyScanAgeMinutes": legacy_scan_age_min,
+        "liveEvidenceFreshness": live_freshness,
         "candidateCount": len(candidates),
         "decayedRemoved": removed,
         "totalUrgency": round(total_urgency, 2),
