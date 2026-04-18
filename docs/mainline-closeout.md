@@ -12,15 +12,17 @@ The finance subsystem is now an OpenClaw-embedded, review-only finance lane with
 - thesis-delta report rendering
 - bounded sidecar artifacts
 - outcome telemetry
-- context-pack-first LLM job cognition surfaces
+- deterministic Discord report job surface for user-visible premarket delivery
+- context-pack-first LLM cognition surfaces for scanner/sidecar/weekly artifact lanes
 - reviewer-visible runtime snapshots and prompt hashes
 
 The active user-visible report path remains:
 
 ```text
 OpenClaw cron finance-premarket-brief
+-> finance_discord_report_job.py --mode marketday-review
+-> price_fetcher.py / broad_market_proxy_fetcher.py / optional IV and source compilers
 -> finance_llm_context_pack.py
--> JudgmentEnvelope candidate / deterministic fallback
 -> judgment_envelope_gate.py
 -> finance_decision_report_render.py
 -> finance_report_product_validator.py
@@ -28,6 +30,8 @@ OpenClaw cron finance-premarket-brief
 -> finance_report_delivery_safety.py
 -> Discord announce only if safety passes
 ```
+
+The premarket job must not be an LLM orchestrator that streams progress text into Discord. It is a deterministic stdout job; OpenClaw delivery may only publish stdout after the script completes.
 
 ## Packages Completed
 
@@ -40,6 +44,7 @@ OpenClaw cron finance-premarket-brief
 7. Bounded research sidecar scripts.
 8. Outcome telemetry and learning integration.
 9. LLM job cognition surface: context packs, prompt contracts, manual sidecar job, prompt hash snapshots.
+10. Premarket delivery hardening: replace the user-visible LLM orchestrator cron prompt with deterministic stdout delivery to prevent progress text fan-out.
 
 ## Live Job State
 
@@ -86,4 +91,3 @@ No additional feature package is currently required for the stated Thesis Spine 
 - Report renderer rollback: run `finance_decision_report_render.py --report-mode packet_first`.
 - Sidecar rollback: keep `finance-thesis-sidecar` disabled/manual.
 - Context pack rollback: remove prompt references to `finance_llm_context_pack.py`; deterministic hot path still works.
-

@@ -119,6 +119,9 @@ def finance_job_prompt_contract(jobs: list[dict[str, Any]]) -> dict[str, Any]:
             'schedule': job.get('schedule'),
             'delivery': job.get('delivery'),
             'prompt_sha256': 'sha256:' + hashlib.sha256(message.encode('utf-8')).hexdigest(),
+            'contains_deterministic_report_job': 'OpenClaw Finance Deterministic Report Job' in message,
+            'runs_finance_discord_report_job': 'finance_discord_report_job.py' in message,
+            'forbids_progress_text': 'Do not emit progress text' in message or 'Do not summarize' in message,
             'contains_context_pack': 'llm-job-context' in message,
             'contains_non_authority_boundary': (
                 'pack_is_not_authority' in message

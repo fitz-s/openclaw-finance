@@ -11,9 +11,11 @@ def test_exported_prompt_snapshot_enforces_context_pack_contract() -> None:
     payload = json.loads(SNAPSHOT.read_text())
     jobs = payload['jobs']
 
-    assert jobs['finance-premarket-brief']['contains_context_pack'] is True
-    assert jobs['finance-premarket-brief']['contains_non_authority_boundary'] is True
-    assert jobs['finance-premarket-brief']['contains_candidate_path'] is True
+    assert jobs['finance-premarket-brief']['contains_deterministic_report_job'] is True
+    assert jobs['finance-premarket-brief']['runs_finance_discord_report_job'] is True
+    assert jobs['finance-premarket-brief']['forbids_progress_text'] is True
+    assert jobs['finance-premarket-brief']['contains_context_pack'] is False
+    assert jobs['finance-premarket-brief']['contains_candidate_path'] is False
     assert jobs['finance-subagent-scanner']['contains_unknown_discovery_contract'] is True
     assert jobs['finance-subagent-scanner']['contains_non_authority_boundary'] is True
     assert jobs['finance-subagent-scanner-offhours']['contains_unknown_discovery_contract'] is True
