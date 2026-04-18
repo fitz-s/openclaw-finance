@@ -46,9 +46,13 @@ def write_json(path: Path, payload: dict[str, Any]) -> None:
 
 
 def build_steps(*, dry_run: bool = False) -> list[tuple[str, list[str], bool]]:
+    brave_activation = [str(PYTHON), str(FINANCE / 'scripts' / 'brave_source_activation.py')]
+    if dry_run:
+        brave_activation.append('--dry-run')
     steps: list[tuple[str, list[str], bool]] = [
         ('finance_context_pack', [str(PYTHON), str(FINANCE / 'scripts' / 'finance_llm_context_pack.py')], True),
         ('query_pack_planner', [str(PYTHON), str(FINANCE / 'scripts' / 'query_pack_planner.py')], True),
+        ('brave_source_activation', brave_activation, True),
         ('finance_source_health', [str(PYTHON), str(FINANCE / 'scripts' / 'source_health_monitor.py')], True),
         ('parent_live_finance_adapter', [str(PYTHON), str(MARKET_INGEST / 'adapters' / 'live_finance_adapter.py')], True),
         (
@@ -85,7 +89,7 @@ def build_steps(*, dry_run: bool = False) -> list[tuple[str, list[str], bool]]:
         ),
     ]
     if dry_run:
-        return steps[:3]
+        return steps[:4]
     return steps
 
 

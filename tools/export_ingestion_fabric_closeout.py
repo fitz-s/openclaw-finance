@@ -17,6 +17,7 @@ ARTIFACTS = {
     'query_pack_planner': FINANCE / 'scripts' / 'query_pack_planner.py',
     'brave_web_fetcher': FINANCE / 'scripts' / 'brave_web_search_fetcher.py',
     'brave_news_fetcher': FINANCE / 'scripts' / 'brave_news_search_fetcher.py',
+    'brave_source_activation': FINANCE / 'scripts' / 'brave_source_activation.py',
     'brave_llm_context_reader': FINANCE / 'scripts' / 'brave_llm_context_fetcher.py',
     'brave_answers_sidecar': FINANCE / 'scripts' / 'brave_answers_sidecar.py',
     'source_health_monitor': FINANCE / 'scripts' / 'source_health_monitor.py',

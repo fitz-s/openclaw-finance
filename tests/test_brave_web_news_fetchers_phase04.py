@@ -112,3 +112,60 @@ def test_brave_dry_run_does_not_require_api_key_or_network(monkeypatch) -> None:
     assert record['result_count'] == 0
     assert called['value'] is False
     assert record['request_params']['freshness'] == 'pd'
+
+
+def test_brave_missing_api_key_is_distinct_from_dry_run(monkeypatch) -> None:
+    called = {'value': False}
+
+    def fake_execute(*args, **kwargs):
+        called['value'] = True
+        raise AssertionError('network should not be called without an API key')
+
+    monkeypatch.delenv('BRAVE_SEARCH_API_KEY', raising=False)
+    monkeypatch.delenv('BRAVE_API_KEY', raising=False)
+    monkeypatch.setattr(brave, 'read_api_key', lambda: None)
+    monkeypatch.setattr(brave, 'execute_request', fake_execute)
+    record = brave.fetch_from_pack(_pack(), endpoint_type='news', dry_run=False)
+    assert record['status'] == 'failed'
+    assert record['error_code'] == 'missing_api_key'
+    assert record['application_error_code'] == 'missing_api_key'
+    assert record['error_class'] == 'missing_credentials'
+    assert record['retryable'] is False
+    assert called['value'] is False
+
+
+def test_brave_api_key_can_resolve_from_openclaw_exec_secret_ref(monkeypatch, tmp_path: Path) -> None:
+    config = {
+        'plugins': {
+            'entries': {
+                'brave': {
+                    'config': {
+                        'webSearch': {
+                            'apiKey': {'source': 'exec', 'provider': 'keychain_exec', 'id': 'brave_search_api_key'}
+                        }
+                    }
+                }
+            }
+        },
+        'secrets': {
+            'providers': {
+                'keychain_exec': {'source': 'exec', 'command': '/safe/keychain_resolver.py', 'timeoutMs': 5000}
+            }
+        },
+    }
+    config_path = tmp_path / 'openclaw.json'
+    config_path.write_text(json.dumps(config), encoding='utf-8')
+
+    class Result:
+        returncode = 0
+        stdout = json.dumps({'protocolVersion': 1, 'values': {'brave_search_api_key': 'resolved-secret'}})
+
+    def fake_run(cmd, *, input, capture_output, text, timeout):
+        assert cmd == ['/safe/keychain_resolver.py']
+        assert json.loads(input) == {'ids': ['brave_search_api_key']}
+        return Result()
+
+    monkeypatch.delenv('BRAVE_SEARCH_API_KEY', raising=False)
+    monkeypatch.delenv('BRAVE_API_KEY', raising=False)
+    monkeypatch.setattr(brave.subprocess, 'run', fake_run)
+    assert brave.read_api_key(config_path=config_path) == 'resolved-secret'

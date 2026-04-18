@@ -42,12 +42,14 @@ def test_source_health_marks_rate_limited_fetch_record() -> None:
     row = report['sources'][0]
     assert row['quota_status'] == 'degraded'
     assert row['rate_limit_status'] == 'limited'
+    assert row['source_lane_unavailable_reason'] == 'quota_limited'
     assert row['retry_after_sec'] == '60'
     assert row['retry_after_seconds'] == '60'
     assert row['x_ratelimit_remaining'] == '0'
     assert row['quota_remaining'] == '0'
     assert row['coverage_status'] == 'unavailable'
     assert row['health_score'] < 1.0
+    assert report['stale_reuse_guard']['source_lane_unavailable_reasons']['source:brave_news'] == 'quota_limited'
 
 
 def test_source_health_dry_run_is_unknown_not_fresh() -> None:
@@ -66,6 +68,46 @@ def test_source_health_dry_run_is_unknown_not_fresh() -> None:
     assert 'dry_run_no_live_fetch' in row['breach_reasons']
     assert row['freshness_status'] == 'unknown'
     assert row['freshness_lag_seconds'] is None
+
+
+def test_source_health_marks_missing_brave_credentials_distinctly() -> None:
+    record = {
+        'fetch_id': 'fetch:missing-key',
+        'source_id': 'source:brave_news',
+        'endpoint': 'brave/news/search',
+        'status': 'failed',
+        'fetched_at': '2026-04-17T21:59:00Z',
+        'error_code': 'missing_api_key',
+        'application_error_code': 'missing_api_key',
+        'error_class': 'missing_credentials',
+        'quota_state': {},
+    }
+    report = shm.build_report(fetch_records=[record], generated_at='2026-04-17T22:00:00Z')
+    row = report['sources'][0]
+    assert row['coverage_status'] == 'unavailable'
+    assert row['degraded_state'] == 'missing_credentials'
+    assert row['source_lane_unavailable_reason'] == 'missing_credentials'
+    assert 'missing_api_key' in row['breach_reasons']
+    assert report['stale_reuse_guard']['source_lane_unavailable_reasons']['source:brave_news'] == 'missing_credentials'
+
+
+def test_source_health_marks_brave_network_error_distinctly() -> None:
+    record = {
+        'fetch_id': 'fetch:network',
+        'source_id': 'source:brave_web',
+        'endpoint': 'brave/web/search',
+        'status': 'failed',
+        'fetched_at': '2026-04-17T21:59:00Z',
+        'error_code': 'URLError',
+        'application_error_code': 'URLError',
+        'error_class': 'network_error',
+        'quota_state': {},
+    }
+    report = shm.build_report(fetch_records=[record], generated_at='2026-04-17T22:00:00Z')
+    row = report['sources'][0]
+    assert row['degraded_state'] == 'network_error'
+    assert row['source_lane_unavailable_reason'] == 'network_error'
+    assert 'network_fetch_failed' in row['breach_reasons']
 
 
 def test_source_health_atoms_contribute_freshness_and_rights() -> None:

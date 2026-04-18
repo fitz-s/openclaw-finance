@@ -228,6 +228,7 @@ def merge_fetch_record(rows: dict[str, dict[str, Any]], record: dict[str, Any], 
         row['rate_limit_status'] = 'limited'
         row['breaker_state'] = 'open'
         row['degraded_state'] = 'quota_limited'
+        row['source_lane_unavailable_reason'] = 'quota_limited'
         row['last_error_at'] = record.get('fetched_at')
         row['last_quota_error'] = record.get('application_error_code') or record.get('error_code') or str(status_code or 'rate_limited')
         row['breach_reasons'].append('quota_or_rate_limited')
@@ -237,11 +238,21 @@ def merge_fetch_record(rows: dict[str, dict[str, Any]], record: dict[str, Any], 
         row['quota_status'] = 'unknown'
         row['rate_limit_status'] = 'unknown'
         row['breaker_state'] = 'open'
-        row['degraded_state'] = 'fetch_failed'
+        error_class = str(record.get('error_class') or '')
+        error_code = str(record.get('application_error_code') or record.get('error_code') or '')
+        if error_class == 'missing_credentials' or error_code == 'missing_api_key':
+            row['degraded_state'] = 'missing_credentials'
+            row['breach_reasons'].append('missing_api_key')
+        elif error_class == 'network_error':
+            row['degraded_state'] = 'network_error'
+            row['breach_reasons'].append('network_fetch_failed')
+        else:
+            row['degraded_state'] = 'fetch_failed'
+            row['breach_reasons'].append('fetch_failed')
         row['last_error_at'] = record.get('fetched_at')
         if str(record.get('error_code') or '').lower().find('timeout') >= 0:
             row['timeout_count'] += 1
-        row['breach_reasons'].append('fetch_failed')
+        row['source_lane_unavailable_reason'] = row['degraded_state']
     row['retry_after_sec'] = quota.get('retry_after_sec') or row.get('retry_after_sec')
     row['x_ratelimit_remaining'] = quota.get('x_ratelimit_remaining') or row.get('x_ratelimit_remaining')
     row['x_ratelimit_reset'] = quota.get('x_ratelimit_reset') or row.get('x_ratelimit_reset')
@@ -340,6 +351,11 @@ def build_report(
         'status': 'active' if summary['quota_degraded_count'] or summary['rate_limited_count'] or summary['stale_or_unknown_count'] else 'clear',
         'reason': 'source access degraded or freshness unknown; downstream reports must disclose instead of silently recycling old narratives',
         'degraded_sources': [row['source_id'] for row in finalized if row.get('quota_status') == 'degraded' or row.get('coverage_status') == 'unavailable' or row.get('freshness_status') in {'stale', 'unknown'}],
+        'source_lane_unavailable_reasons': {
+            row['source_id']: row.get('source_lane_unavailable_reason') or row.get('degraded_state') or row.get('last_quota_error') or row.get('freshness_status')
+            for row in finalized
+            if row.get('quota_status') == 'degraded' or row.get('coverage_status') == 'unavailable' or row.get('freshness_status') in {'stale', 'unknown'}
+        },
     }
     return {
         'generated_at': generated,

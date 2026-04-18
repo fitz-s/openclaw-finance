@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import json
 import os
+import subprocess
 import urllib.error
 import urllib.parse
 import urllib.request
@@ -18,6 +19,7 @@ from query_registry_compiler import should_skip_query, load_jsonl as load_query_
 FINANCE = Path('/Users/leofitz/.openclaw/workspace/finance')
 STATE = FINANCE / 'state'
 QUERY_REGISTRY = STATE / 'query-registry.jsonl'
+OPENCLAW_CONFIG = Path('/Users/leofitz/.openclaw/openclaw.json')
 BRAVE_API_BASE = 'https://api.search.brave.com/res/v1'
 ENDPOINTS = {
     'web': {
@@ -172,11 +174,44 @@ def quota_state_from_headers(headers: dict[str, Any], *, status_code: int | None
     }
 
 
-def read_api_key(env_name: str = 'BRAVE_SEARCH_API_KEY') -> str | None:
+def resolve_exec_secret(ref: dict[str, Any], config: dict[str, Any]) -> str | None:
+    if ref.get('source') != 'exec' or not ref.get('provider') or not ref.get('id'):
+        return None
+    provider = ((config.get('secrets') or {}).get('providers') or {}).get(str(ref.get('provider')))
+    if not isinstance(provider, dict) or provider.get('source') != 'exec' or not provider.get('command'):
+        return None
+    try:
+        proc = subprocess.run(
+            [str(provider['command'])],
+            input=json.dumps({'ids': [ref['id']]}),
+            capture_output=True,
+            text=True,
+            timeout=max(1, int(provider.get('timeoutMs') or 5000) / 1000),
+        )
+    except Exception:
+        return None
+    if proc.returncode != 0 or not proc.stdout.strip():
+        return None
+    try:
+        payload = json.loads(proc.stdout)
+    except Exception:
+        return None
+    value = ((payload.get('values') or {}).get(str(ref.get('id'))))
+    return str(value) if value else None
+
+
+def read_api_key(env_name: str = 'BRAVE_SEARCH_API_KEY', *, config_path: Path = OPENCLAW_CONFIG) -> str | None:
     for name in (env_name, 'BRAVE_API_KEY'):
         value = os.environ.get(name)
         if value:
             return value
+    config = load_json(config_path, {}) or {}
+    try:
+        ref = config['plugins']['entries']['brave']['config']['webSearch']['apiKey']
+    except Exception:
+        ref = None
+    if isinstance(ref, dict):
+        return resolve_exec_secret(ref, config)
     return None
 
 
@@ -241,6 +276,10 @@ def application_error_code(payload: dict[str, Any], fallback: str | None) -> str
 
 
 def classify_error(status_code: int | None, app_code: str | None) -> dict[str, Any]:
+    if app_code == 'missing_api_key':
+        return {'error_class': 'missing_credentials', 'retryable': False}
+    if app_code in {'TimeoutError', 'URLError', 'ConnectionError', 'OSError'}:
+        return {'error_class': 'network_error', 'retryable': True}
     if status_code in {402, 429} or app_code in {'QUOTA_LIMITED', 'RATE_LIMITED', 'USAGE_LIMIT_EXCEEDED'}:
         return {'error_class': 'throttle_or_quota', 'retryable': True}
     if status_code == 422 or app_code in {'SUBSCRIPTION_TOKEN_INVALID', 'SUBSCRIPTION_NOT_FOUND', 'RESOURCE_NOT_ALLOWED', 'OPTION_NOT_IN_PLAN', 'INVALID_URL'}:

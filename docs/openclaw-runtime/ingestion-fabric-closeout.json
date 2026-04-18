@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-17T23:53:17.578749Z",
+  "generated_at": "2026-04-18T15:41:15.568621Z",
   "contract": "ingestion-fabric-closeout-v1",
   "status": "complete",
   "north_star": "Finance Intelligence Ingestion Fabric",
@@ -44,6 +44,11 @@
       "exists": true,
       "size": 249
     },
+    "brave_source_activation": {
+      "path": "/Users/leofitz/.openclaw/workspace/finance/scripts/brave_source_activation.py",
+      "exists": true,
+      "size": 11622
+    },
     "brave_llm_context_reader": {
       "path": "/Users/leofitz/.openclaw/workspace/finance/scripts/brave_llm_context_fetcher.py",
       "exists": true,
@@ -57,7 +62,7 @@
     "source_health_monitor": {
       "path": "/Users/leofitz/.openclaw/workspace/finance/scripts/source_health_monitor.py",
       "exists": true,
-      "size": 18045
+      "size": 19128
     },
     "source_memory_index": {
       "path": "/Users/leofitz/.openclaw/workspace/finance/scripts/source_memory_index.py",
@@ -87,22 +92,22 @@
     "source_health": {
       "path": "/Users/leofitz/.openclaw/workspace/finance/state/source-health.json",
       "exists": true,
-      "size": 13172
+      "size": 11777
     },
     "latest_reader_bundle": {
       "path": "/Users/leofitz/.openclaw/workspace/finance/state/report-reader/latest.json",
       "exists": true,
-      "size": 529248
+      "size": 613712
     }
   },
   "monitoring": {
     "source_health_status": "degraded",
-    "source_count": 7,
+    "source_count": 6,
     "stale_reuse_guard": "active",
-    "source_health_history_count": 1,
-    "query_registry_count": 0,
+    "source_health_history_count": 17,
+    "query_registry_count": 5,
     "reader_bundle_has_slice_index": true,
-    "reader_bundle_slice_handles": 92,
+    "reader_bundle_slice_handles": 70,
     "monitoring_artifacts": {
       "source_health_status": {
         "path": "/Users/leofitz/.openclaw/workspace/finance/state/source-health.json",
@@ -114,7 +119,7 @@
       },
       "query_registry": {
         "path": "/Users/leofitz/.openclaw/workspace/finance/state/query-registry.jsonl",
-        "exists": false
+        "exists": true
       },
       "source_memory_index": {
         "path": "/Users/leofitz/.openclaw/workspace/finance/state/source-memory-index.json",
