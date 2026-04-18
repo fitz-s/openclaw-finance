@@ -3,7 +3,7 @@
   "job_assignments": {
     "finance-open-shortreports-v2": "primary-sonnet",
     "finance-core-report-v2": "primary-sonnet",
-    "finance-premarket-brief": "primary",
+    "finance-premarket-brief": "secondary",
     "finance-immediate-alert": "primary-sonnet",
     "finance-subagent-scanner": "finance-scanner",
     "finance-subagent-scanner-offhours": "finance-scanner",
@@ -24,6 +24,11 @@
       "description": "Once-daily high quality: morning briefs, weekly reviews, one-off reports",
       "model": "google-gemini-cli/gemini-3-flash",
       "cost_tier": "max_subscription"
+    },
+    "secondary": {
+      "description": "High-frequency, token-intensive: scanning, monitoring, simple decisions",
+      "model": "minimax-portal/MiniMax-M2.7",
+      "cost_tier": "free_oauth_limited"
     }
   }
 }

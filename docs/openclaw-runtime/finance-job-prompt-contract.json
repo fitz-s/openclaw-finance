@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-18T13:39:17.803245+00:00",
+  "generated_at": "2026-04-18T14:26:40.421381+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "note": "Prompt hashes let GitHub reviewers see live OpenClaw job prompt drift without exposing secrets.",
   "jobs": {
@@ -104,16 +104,16 @@
         "mode": "none",
         "channel": "last"
       },
-      "prompt_sha256": "sha256:5decf78e61728557d13df1e57b5413b0772bae8117f20ababca48589e4f4d649",
+      "prompt_sha256": "sha256:9c1645af7bed8b3e6bb9fbaf95ec1f613119937ca37365be5781206e07b90662",
       "contains_deterministic_report_job": false,
       "runs_finance_discord_report_job": false,
-      "forbids_progress_text": false,
+      "forbids_progress_text": true,
       "contains_context_pack": true,
       "contains_non_authority_boundary": true,
       "contains_candidate_path": false,
       "contains_unknown_discovery_contract": true,
       "contains_threshold_mutation_ban": false,
-      "message_preview": "【finance market-hours scanner｜query-pack-planner-first】\n你是 finance scanner。不要发用户消息。你的主任务是提出 bounded QueryPack / object-linked source questions，不是把 free-form web_search prose 当 canonical evidence。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openc"
+      "message_preview": "【OpenClaw Finance Deterministic Scanner Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/query_pack_planner.p"
     },
     "finance-subagent-scanner-offhours": {
       "enabled": true,
@@ -126,16 +126,16 @@
         "mode": "none",
         "channel": "last"
       },
-      "prompt_sha256": "sha256:117e78ff8b15dacabdd3951434441f4c105b26c6b8cf72e0296400a531aa0961",
+      "prompt_sha256": "sha256:fde33a4dc9112c368c649527ced900e424f1aeaf3f4d430a55b9403cbce4379d",
       "contains_deterministic_report_job": false,
       "runs_finance_discord_report_job": false,
-      "forbids_progress_text": false,
+      "forbids_progress_text": true,
       "contains_context_pack": true,
       "contains_non_authority_boundary": true,
       "contains_candidate_path": false,
       "contains_unknown_discovery_contract": true,
       "contains_threshold_mutation_ban": false,
-      "message_preview": "【finance offhours scanner｜query-pack-planner-first】\n你是 finance scanner。不要发用户消息。你的主任务是提出 bounded QueryPack / object-linked source questions，不是把 free-form web_search prose 当 canonical evidence。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/"
+      "message_preview": "【OpenClaw Finance Deterministic Scanner Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/query_pack_planner.p"
     },
     "finance-thesis-sidecar": {
       "enabled": false,
