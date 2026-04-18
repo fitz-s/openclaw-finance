@@ -32,6 +32,7 @@ SOURCE_ATOMS = STATE / 'source-atoms' / 'latest.jsonl'
 CLAIM_GRAPH = STATE / 'claim-graph.json'
 CONTEXT_GAPS = STATE / 'context-gaps.json'
 SOURCE_HEALTH = STATE / 'source-health.json'
+OPTIONS_IV_SURFACE = STATE / 'options-iv-surface.json'
 DOSSIER_DIR = STATE / 'thesis-dossiers'
 CUSTOM_METRICS_DIR = STATE / 'custom-metrics'
 OUT_DIR = STATE / 'report-reader'
@@ -711,6 +712,40 @@ def build_followup_slice_index(object_cards: list[dict[str, Any]], bundle_id: st
     return out
 
 
+def options_iv_source_card(surface: dict[str, Any]) -> dict[str, Any] | None:
+    if not surface:
+        return None
+    summary = surface.get('summary') if isinstance(surface.get('summary'), dict) else {}
+    return {
+        'handle': 'SIV1',
+        'type': 'source_context',
+        'label': 'Options IV surface｜source context only',
+        'ref': str(OPTIONS_IV_SURFACE),
+        'status': surface.get('status'),
+        'surface_policy_version': surface.get('surface_policy_version') or surface.get('contract'),
+        'primary_source_status': surface.get('primary_source_status'),
+        'provider_set': surface.get('provider_set', [])[:8] if isinstance(surface.get('provider_set'), list) else [],
+        'primary_provider_set': surface.get('primary_provider_set', [])[:8] if isinstance(surface.get('primary_provider_set'), list) else [],
+        'summary': {
+            'symbol_count': surface.get('symbol_count') or summary.get('symbol_count') or 0,
+            'provider_backed_count': summary.get('provider_backed_count'),
+            'proxy_only_count': summary.get('proxy_only_count'),
+            'missing_iv_count': summary.get('missing_iv_count'),
+            'stale_or_unknown_chain_count': summary.get('stale_or_unknown_chain_count'),
+            'provider_confidence': {
+                'min': summary.get('min_provider_confidence'),
+                'max': summary.get('max_provider_confidence'),
+            },
+        },
+        'source_health_refs': surface.get('source_health_refs', [])[:12] if isinstance(surface.get('source_health_refs'), list) else [],
+        'rights_policy': surface.get('rights_policy') or 'unknown',
+        'derived_only': surface.get('derived_only') is True,
+        'raw_payload_retained': surface.get('raw_payload_retained') is True,
+        'authority': 'source_context_only_not_judgment_wake_threshold_or_execution',
+        'no_execution': True,
+    }
+
+
 def build_followup_digest(object_cards: list[dict[str, Any]], report_handle: str) -> list[str]:
     """Precompute compact answer material for Discord follow-up rehydration."""
     digest: list[str] = [f'{report_handle}: review-only; explain/compare/challenge/source trace only; no execution.']
@@ -769,6 +804,7 @@ def compile_bundle(
     claim_graph: dict[str, Any] | None = None,
     context_gaps: dict[str, Any] | None = None,
     source_health: dict[str, Any] | None = None,
+    options_iv_surface: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Compile self-contained reader bundle."""
     decision_id = decision_log_entry.get('decision_id') or report.get('report_hash')
@@ -797,6 +833,10 @@ def compile_bundle(
     s_handles, s_cards = build_scenario_cards(scenario_cards_data)
     handles.update(s_handles)
     all_cards.extend(s_cards)
+    iv_card = options_iv_source_card(options_iv_surface or {})
+    if iv_card:
+        handles['SIV1'] = {'type': 'source_context', 'ref': str(OPTIONS_IV_SURFACE)}
+        all_cards.append(iv_card)
     bundle_id = f'rb:{report_handle}'
     evidence_index = build_evidence_index(source_atoms or [], claim_graph or {}, context_gaps or {}, source_health or {})
     all_cards = enrich_object_cards_with_evidence(all_cards, evidence_index)
@@ -834,6 +874,7 @@ def compile_bundle(
         },
         'portfolio_attachment': build_portfolio_attachment(watch_intent, portfolio),
         'capital_summary': build_capital_summary(capital_graph, capital_agenda, displacement_cases),
+        'options_iv_surface_summary': iv_card,
         'no_execution': True,
     }
 
@@ -862,12 +903,17 @@ def main(argv: list[str] | None = None) -> int:
     claim_graph = load_json_safe(CLAIM_GRAPH, {}) or {}
     context_gaps = load_json_safe(CONTEXT_GAPS, {}) or {}
     source_health = load_json_safe(SOURCE_HEALTH, {}) or {}
+    options_iv_surface = load_json_safe(OPTIONS_IV_SURFACE, {}) or {}
 
     bundle = compile_bundle(
         report, entry, thesis_registry, watch_intent, scenario_cards_data,
         opportunity_queue, invalidator_ledger, capital_agenda, capital_graph,
         displacement_cases, prices, portfolio, campaign_board, campaign_cache,
-        source_atoms, claim_graph, context_gaps, source_health,
+        source_atoms=source_atoms,
+        claim_graph=claim_graph,
+        context_gaps=context_gaps,
+        source_health=source_health,
+        options_iv_surface=options_iv_surface,
     )
 
     out_dir = Path(args.out_dir)

@@ -76,6 +76,10 @@ def candidate(
     implementation_complexity: str,
     expected_value: str,
     required_metrics: list[str] | None = None,
+    credential_ref: str | None = None,
+    activation_mode: str = 'candidate_only',
+    source_health_id: str | None = None,
+    primary_eligible: bool = False,
     risks: list[str] | None = None,
     promotion_blockers: list[str] | None = None,
 ) -> dict[str, Any]:
@@ -84,6 +88,8 @@ def candidate(
         blockers.append('rights_policy_not_approved')
     if point_in_time_support is not True:
         blockers.append('point_in_time_support_not_proven')
+    if primary_eligible and blockers:
+        blockers.append('primary_eligibility_blocked')
     return {
         'source_candidate_id': stable_id(lane, sublane, provider),
         'lane': lane,
@@ -99,6 +105,10 @@ def candidate(
         'implementation_complexity': implementation_complexity,
         'expected_value': expected_value,
         'required_metrics': required_metrics or [],
+        'credential_ref': credential_ref,
+        'activation_mode': activation_mode,
+        'source_health_id': source_health_id or f"source:{provider.lower().replace(' ', '_').replace('/', '_')}_{sublane}",
+        'primary_eligible': primary_eligible and not blockers,
         'risks': risks or [],
         'promotion_blockers': sorted(set(blockers)),
         'status': 'shadow_candidate',
@@ -124,7 +134,12 @@ def build_candidates() -> list[dict[str, Any]]:
             implementation_complexity='medium',
             expected_value='Improve IV rank/percentile/skew sensitivity for non-watchlist and watchlist campaigns.',
             required_metrics=OPTIONS_IV_METRICS,
+            credential_ref='ORATS_API_KEY',
+            activation_mode='credential_gated',
+            source_health_id='source:orats_options_iv',
+            primary_eligible=True,
             risks=['paid vendor', 'redistribution must remain derived-only'],
+            promotion_blockers=['live_agreement_not_verified'],
         ),
         candidate(
             lane='market_structure',
@@ -140,6 +155,10 @@ def build_candidates() -> list[dict[str, Any]]:
             implementation_complexity='medium',
             expected_value='Add point-in-time options history for IV anomaly replay and stale-chain detection.',
             required_metrics=OPTIONS_IV_METRICS,
+            credential_ref='THETADATA_BASE_URL',
+            activation_mode='local_terminal',
+            source_health_id='source:thetadata_options_iv',
+            primary_eligible=True,
             risks=['license terms must be checked', 'local storage volume risk'],
         ),
         candidate(
@@ -156,7 +175,32 @@ def build_candidates() -> list[dict[str, Any]]:
             implementation_complexity='medium',
             expected_value='Candidate fallback for broader options coverage when IV surface vendors are not available.',
             required_metrics=OPTIONS_IV_METRICS,
+            credential_ref='POLYGON_API_KEY',
+            activation_mode='credential_gated',
+            source_health_id='source:polygon_options_iv',
+            primary_eligible=False,
             risks=['plan-dependent greeks/IV coverage', 'rate limits'],
+        ),
+        candidate(
+            lane='market_structure',
+            sublane='options_iv',
+            provider='Tradier Options',
+            coverage=['option chains', 'courtesy ORATS greeks/IV when greeks=true', 'realtime options for brokerage accounts'],
+            latency_class='intraday',
+            cost_class='brokerage_or_paid',
+            rights_policy='derived_only',
+            api_available=True,
+            historical_depth='limited',
+            point_in_time_support=False,
+            implementation_complexity='medium',
+            expected_value='Constrained fallback for live chain greeks/IV when dedicated IV vendors are unavailable.',
+            required_metrics=OPTIONS_IV_METRICS,
+            credential_ref='TRADIER_ACCESS_TOKEN',
+            activation_mode='credential_gated',
+            source_health_id='source:tradier_options_iv',
+            primary_eligible=False,
+            risks=['greeks are courtesy data', 'hourly greeks cadence', 'brokerage/account entitlement constraints'],
+            promotion_blockers=['courtesy_greeks_not_primary_iv_truth'],
         ),
         candidate(
             lane='market_structure',
@@ -172,6 +216,9 @@ def build_candidates() -> list[dict[str, Any]]:
             implementation_complexity='low',
             expected_value='Keep as conservative proxy, explicitly penalized when no primary options IV source exists.',
             required_metrics=['volume_open_interest_ratio', 'chain_snapshot_age_seconds', 'provider_confidence'],
+            activation_mode='proxy_fallback',
+            source_health_id='source:nasdaq_options_flow_proxy',
+            primary_eligible=False,
             risks=['not a primary IV source', 'fragile endpoint', 'limited replay'],
         ),
         candidate(
@@ -308,6 +355,7 @@ def summarize(candidates: list[dict[str, Any]]) -> dict[str, Any]:
         'lanes': lanes,
         'sublanes': sublanes,
         'options_iv_candidate_count': sum(1 for row in candidates if row['sublane'] == 'options_iv'),
+        'primary_options_iv_candidate_count': sum(1 for row in candidates if row.get('sublane') == 'options_iv' and row.get('primary_eligible')),
         'promotion_ready_count': sum(1 for row in candidates if not row['promotion_blockers']),
     }
 

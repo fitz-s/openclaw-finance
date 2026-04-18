@@ -22,6 +22,10 @@ A candidate is not an activated source. It cannot wake the user, support Judgmen
   "implementation_complexity": "low|medium|high",
   "expected_value": "why this source improves campaign intelligence",
   "required_metrics": [],
+  "credential_ref": null,
+  "activation_mode": "candidate_only|credential_gated|local_terminal|proxy_fallback",
+  "source_health_id": "source:provider_lane",
+  "primary_eligible": false,
   "risks": [],
   "promotion_blockers": [],
   "status": "shadow_candidate",
@@ -52,6 +56,8 @@ Candidates in `market_structure/options_iv` must explicitly describe whether the
 - stale-chain detection
 - provider confidence
 - point-in-time replay
+- credential or local-terminal activation mode
+- source-health row id and whether it is eligible to become primary options-IV context
 
 ## Promotion Rules
 
@@ -60,6 +66,8 @@ A source candidate may not be promoted unless:
 - point-in-time support is understood
 - cost and redistribution policy are explicit
 - implementation complexity and API limits are reviewed
+- credentials/local terminal/subscription requirements are explicit
+- primary eligibility is false until rights, metrics, and point-in-time replay are validated
 - a later RALPLAN approves activation
 
 ## Export Rules

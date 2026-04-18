@@ -32,6 +32,7 @@ PORTFOLIO = FINANCE / 'state' / 'portfolio-resolved.json'
 OPTION_RISK = FINANCE / 'state' / 'portfolio-option-risk.json'
 BROAD_MARKET = FINANCE / 'state' / 'broad-market-proxy.json'
 OPTIONS_FLOW = FINANCE / 'state' / 'options-flow-proxy.json'
+OPTIONS_IV_SURFACE = FINANCE / 'state' / 'options-iv-surface.json'
 WATCH_INTENT = FINANCE / 'state' / 'watch-intent.json'
 THESIS_REGISTRY = FINANCE / 'state' / 'thesis-registry.json'
 OPPORTUNITY_QUEUE = FINANCE / 'state' / 'opportunity-queue.json'
@@ -82,6 +83,38 @@ def hash_payload(payload: dict[str, Any]) -> str:
 
 def hash_text(text: str) -> str:
     return 'sha256:' + hashlib.sha256(text.encode('utf-8')).hexdigest()
+
+
+def file_hash(path: Path) -> str | None:
+    if not path.exists() or not path.is_file():
+        return None
+    return 'sha256:' + hashlib.sha256(path.read_bytes()).hexdigest()
+
+
+def options_iv_context_summary(surface: dict[str, Any]) -> dict[str, Any]:
+    summary = surface.get('summary') if isinstance(surface.get('summary'), dict) else {}
+    return {
+        'status': surface.get('status'),
+        'surface_policy_version': surface.get('surface_policy_version') or surface.get('contract'),
+        'generated_at': surface.get('generated_at'),
+        'symbol_count': surface.get('symbol_count') or summary.get('symbol_count') or 0,
+        'primary_source_status': surface.get('primary_source_status'),
+        'primary_provider_set': surface.get('primary_provider_set', [])[:8] if isinstance(surface.get('primary_provider_set'), list) else [],
+        'proxy_only_count': summary.get('proxy_only_count'),
+        'missing_iv_count': summary.get('missing_iv_count'),
+        'stale_or_unknown_chain_count': summary.get('stale_or_unknown_chain_count'),
+        'provider_backed_count': summary.get('provider_backed_count'),
+        'provider_confidence': {
+            'min': summary.get('min_provider_confidence'),
+            'max': summary.get('max_provider_confidence'),
+        },
+        'source_health_refs': surface.get('source_health_refs', [])[:12] if isinstance(surface.get('source_health_refs'), list) else [],
+        'rights_policy': surface.get('rights_policy') or 'unknown',
+        'derived_only': surface.get('derived_only') is True,
+        'raw_payload_retained': surface.get('raw_payload_retained') is True,
+        'authority': 'source_context_only_not_judgment_wake_threshold_or_execution',
+        'no_execution': surface.get('no_execution') is True,
+    }
 
 
 def report_short_id(report_hash: Any, judgment_id: Any) -> str:
@@ -1593,6 +1626,7 @@ def build_report(
     capital_graph: dict[str, Any] | None = None,
     displacement_cases: dict[str, Any] | None = None,
     campaign_board: dict[str, Any] | None = None,
+    options_iv_surface: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     has_valid_capital_graph = bool(capital_graph and capital_graph.get('graph_hash'))
     if report_mode == 'capital_delta' and has_valid_capital_graph:
@@ -1623,6 +1657,10 @@ def build_report(
         'opportunity_candidate_refs': judgment.get('opportunity_candidate_refs') or packet.get('opportunity_candidate_refs', []),
         'invalidator_refs': judgment.get('invalidator_refs') or packet.get('invalidator_refs', []),
         'source_quality_summary': packet.get('source_quality_summary', {}),
+        'options_iv_surface_ref': str(OPTIONS_IV_SURFACE),
+        'options_iv_surface_hash': file_hash(OPTIONS_IV_SURFACE),
+        'options_iv_surface_summary': options_iv_context_summary(options_iv_surface or {}),
+        'options_iv_authority': 'source_context_only_not_judgment_wake_threshold_or_execution',
         'markdown': '',
         'report_hash': '',
     }
@@ -1728,6 +1766,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--sec-semantics', default=str(SEC_SEMANTICS))
     parser.add_argument('--broad-market', default=str(BROAD_MARKET))
     parser.add_argument('--options-flow', default=str(OPTIONS_FLOW))
+    parser.add_argument('--options-iv-surface', default=str(OPTIONS_IV_SURFACE))
     parser.add_argument('--portfolio', default=str(PORTFOLIO))
     parser.add_argument('--option-risk', default=str(OPTION_RISK))
     parser.add_argument('--out', default=str(OUT))
@@ -1759,6 +1798,7 @@ def main(argv: list[str] | None = None) -> int:
         sec_semantics=load_json_safe(Path(args.sec_semantics), {}) or {},
         broad_market=load_json_safe(Path(args.broad_market), {}) or {},
         options_flow=load_json_safe(Path(args.options_flow), {}) or {},
+        options_iv_surface=load_json_safe(Path(args.options_iv_surface), {}) or {},
         portfolio=load_json_safe(Path(args.portfolio), {}) or {},
         option_risk=load_json_safe(Path(args.option_risk), {}) or {},
         watch_intent=load_json_safe(Path(args.watch_intent), {}) or {},

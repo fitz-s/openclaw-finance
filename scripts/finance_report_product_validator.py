@@ -193,6 +193,31 @@ def _validate_thread_seed(report: dict[str, Any]) -> tuple[list[dict[str, str]],
     return errors, warnings
 
 
+def _validate_options_iv_context(report: dict[str, Any]) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
+    errors: list[dict[str, str]] = []
+    warnings: list[dict[str, str]] = []
+    summary = report.get('options_iv_surface_summary')
+    if summary is None:
+        warnings.append(error('options_iv_surface_summary_missing', 'options IV surface is absent from report source context'))
+        return errors, warnings
+    if not isinstance(summary, dict):
+        errors.append(error('options_iv_surface_summary_invalid', 'options IV surface summary must be a compact object'))
+        return errors, warnings
+    if summary.get('raw_payload_retained') is True:
+        errors.append(error('options_iv_raw_payload_retained', 'options IV context must not retain raw vendor payloads'))
+    if summary.get('authority') != 'source_context_only_not_judgment_wake_threshold_or_execution':
+        errors.append(error('options_iv_authority_boundary_missing', 'options IV context must remain source-context-only'))
+    if summary.get('derived_only') is not True and (summary.get('symbol_count') or 0):
+        errors.append(error('options_iv_not_derived_only', 'options IV rows must be derived-only'))
+    if report.get('options_iv_authority') != 'source_context_only_not_judgment_wake_threshold_or_execution':
+        errors.append(error('options_iv_report_authority_boundary_missing', 'report envelope must keep options IV out of judgment/wake/threshold authority'))
+    refs = set(report.get('evidence_refs') or [])
+    iv_refs = {str(ref) for ref in summary.get('source_health_refs', []) if isinstance(ref, str)}
+    if refs & iv_refs:
+        errors.append(error('options_iv_refs_in_judgment_evidence', 'options IV source-health refs must not be JudgmentEnvelope evidence_refs'))
+    return errors, warnings
+
+
 def _validate_campaign_boards(report: dict[str, Any]) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
     errors: list[dict[str, str]] = []
     warnings: list[dict[str, str]] = []
@@ -223,8 +248,9 @@ def validate_report(report: dict[str, Any], packet: dict[str, Any], judgment: di
     primary_errors, primary_warnings, primary_text = _validate_operator_primary(report)
     thread_errors, thread_warnings = _validate_thread_seed(report)
     board_errors, board_warnings = _validate_campaign_boards(report)
-    errors = artifact_errors + primary_errors + board_errors
-    warnings = artifact_warnings + primary_warnings + thread_errors + thread_warnings + board_warnings
+    options_errors, options_warnings = _validate_options_iv_context(report)
+    errors = artifact_errors + primary_errors + board_errors + options_errors
+    warnings = artifact_warnings + primary_warnings + thread_errors + thread_warnings + board_warnings + options_warnings
     return {
         'errors': errors,
         'warnings': warnings,
@@ -236,6 +262,8 @@ def validate_report(report: dict[str, Any], packet: dict[str, Any], judgment: di
         'thread_warnings': thread_warnings,
         'campaign_board_errors': board_errors,
         'campaign_board_warnings': board_warnings,
+        'options_iv_errors': options_errors,
+        'options_iv_warnings': options_warnings,
         'discord_primary_ok': not primary_errors,
         'thread_followup_ok': not thread_errors,
         'campaign_boards_ok': not board_errors,
@@ -275,6 +303,8 @@ def main(argv: list[str] | None = None) -> int:
         'thread_warnings': result['thread_warnings'],
         'campaign_board_errors': result['campaign_board_errors'],
         'campaign_board_warnings': result['campaign_board_warnings'],
+        'options_iv_errors': result['options_iv_errors'],
+        'options_iv_warnings': result['options_iv_warnings'],
         'discord_primary_ok': result['discord_primary_ok'],
         'thread_followup_ok': result['thread_followup_ok'],
         'campaign_boards_ok': result['campaign_boards_ok'],

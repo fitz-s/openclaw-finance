@@ -114,5 +114,7 @@ def test_shadow_delta_report_passes_product_validator() -> None:
     assert report['starter_queries']
     assert 'why campaign:abc' in report['starter_queries']
     assert report['followup_bundle_path'].endswith('.json')
+    assert report['options_iv_surface_summary']['authority'] == 'source_context_only_not_judgment_wake_threshold_or_execution'
+    assert report['options_iv_authority'] == 'source_context_only_not_judgment_wake_threshold_or_execution'
     assert not errors
     assert not warnings

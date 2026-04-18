@@ -84,6 +84,7 @@ def run_chain() -> str:
     # direction is present or explicitly unavailable in the operator surface.
     run([str(PYTHON), 'scripts/price_fetcher.py'])
     run([str(PYTHON), 'scripts/broad_market_proxy_fetcher.py'])
+    run_optional([str(PYTHON), 'scripts/options_iv_provider_fetcher.py'])
     run_optional([str(PYTHON), 'scripts/options_iv_surface_compiler.py'])
     run_optional([str(PYTHON), 'scripts/opportunity_queue_builder.py'])
     run_optional([str(PYTHON), 'scripts/source_atom_compiler.py', '--report', str(STATE / 'source-atoms' / 'latest-report.json')])

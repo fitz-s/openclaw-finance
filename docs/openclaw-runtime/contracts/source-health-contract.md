@@ -57,7 +57,8 @@ Source Health is a shadow audit surface in Phase 1. It does not change wake, jud
   "quota_reset_at": null,
   "retry_after_seconds": null,
   "breaker_state": "closed|open|half_open|unknown",
-  "degraded_state": "quota_limited|fetch_failed|stale|partial_data|null",
+  "degraded_state": "quota_limited|fetch_failed|missing_credentials|network_error|subscription_denied|stale|partial_data|null",
+  "source_lane_unavailable_reason": null,
   "health_score": 1.0,
   "breach_reasons": [],
   "problem_details": {},
@@ -82,6 +83,12 @@ Rights:
 - `expired`: license or contract has expired.
 - `unknown`: rights metadata is missing or unknown.
 
+Provider diagnostics:
+- `missing_credentials`: credential or local terminal/API token is absent.
+- `network_error`: DNS, connection, timeout, or local terminal reachability failed.
+- `subscription_denied`: provider plan lacks requested data, greeks, IV, or realtime permission.
+- `fetch_failed`: provider returned an application/schema error not covered by the above.
+
 ## Required Invariants
 
 - `no_execution` is always true.
@@ -89,6 +96,7 @@ Rights:
 - Quota/rate-limit degradation must be explicit; 402/429 must not be silently treated as a normal no-result fetch.
 - Dry-run-only fetches must remain `unknown`, not `fresh`.
 - `stale_reuse_guard` must tell downstream report surfaces when old narratives could be silently recycled because source access is degraded.
+- For source lanes such as `market_structure.options_iv`, `source_lane_unavailable_reason` must distinguish missing credentials, network errors, subscription denial, quota, and stale data when possible.
 - Health hashes must be deterministic for the same row payload.
 - Health is appendable to history for later source ROI and coverage learning.
 - Packet manifests may include `source_health_hash` only as audit metadata in Phase 1.

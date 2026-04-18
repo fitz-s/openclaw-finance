@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-18T15:41:15.568621Z",
+  "generated_at": "2026-04-18T16:47:35.491883Z",
   "contract": "ingestion-fabric-closeout-v1",
   "status": "complete",
   "north_star": "Finance Intelligence Ingestion Fabric",
@@ -62,7 +62,7 @@
     "source_health_monitor": {
       "path": "/Users/leofitz/.openclaw/workspace/finance/scripts/source_health_monitor.py",
       "exists": true,
-      "size": 19128
+      "size": 19477
     },
     "source_memory_index": {
       "path": "/Users/leofitz/.openclaw/workspace/finance/scripts/source_memory_index.py",
@@ -72,7 +72,7 @@
     "reader_bundle": {
       "path": "/Users/leofitz/.openclaw/workspace/finance/scripts/finance_report_reader_bundle.py",
       "exists": true,
-      "size": 40308
+      "size": 42771
     },
     "followup_router": {
       "path": "/Users/leofitz/.openclaw/workspace/finance/scripts/finance_followup_context_router.py",
@@ -92,22 +92,22 @@
     "source_health": {
       "path": "/Users/leofitz/.openclaw/workspace/finance/state/source-health.json",
       "exists": true,
-      "size": 11777
+      "size": 15368
     },
     "latest_reader_bundle": {
       "path": "/Users/leofitz/.openclaw/workspace/finance/state/report-reader/latest.json",
       "exists": true,
-      "size": 613712
+      "size": 640664
     }
   },
   "monitoring": {
     "source_health_status": "degraded",
-    "source_count": 6,
+    "source_count": 8,
     "stale_reuse_guard": "active",
-    "source_health_history_count": 17,
+    "source_health_history_count": 19,
     "query_registry_count": 5,
     "reader_bundle_has_slice_index": true,
-    "reader_bundle_slice_handles": 70,
+    "reader_bundle_slice_handles": 74,
     "monitoring_artifacts": {
       "source_health_status": {
         "path": "/Users/leofitz/.openclaw/workspace/finance/state/source-health.json",

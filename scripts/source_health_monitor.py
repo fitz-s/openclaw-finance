@@ -18,6 +18,7 @@ BRAVE_WEB = STATE / 'brave-web-search-results.jsonl'
 BRAVE_NEWS = STATE / 'brave-news-search-results.jsonl'
 BRAVE_CONTEXT = STATE / 'brave-llm-context-results.jsonl'
 BRAVE_ANSWERS = STATE / 'brave-answer-sidecars' / 'latest.jsonl'
+OPTIONS_IV_FETCH_RECORDS = STATE / 'options-iv-fetch-records.jsonl'
 QUERY_REGISTRY = STATE / 'query-registry.jsonl'
 REDUCER_REPORT = STATE / 'finance-worker-reducer-report.json'
 BRAVE_AUDIT = FINANCE / 'docs' / 'openclaw-runtime' / 'brave-api-capability-audit.json'
@@ -30,6 +31,9 @@ SOURCE_IDS_BY_ENDPOINT = {
     'brave/news/search': 'source:brave_news',
     'brave/llm/context': 'source:brave_llm_context',
     'brave/answers/chat_completions': 'source:brave_answers',
+    'polygon/options/snapshot': 'source:polygon_options_iv',
+    'thetadata/option/snapshot/greeks/implied_volatility': 'source:thetadata_options_iv',
+    'tradier/markets/options/chains': 'source:tradier_options_iv',
 }
 
 
@@ -264,7 +268,7 @@ def merge_fetch_record(rows: dict[str, dict[str, Any]], record: dict[str, Any], 
         row['freshness_lag_seconds'] = row.get('freshness_age_seconds')
     row['validation_status'] = 'warn' if row.get('breach_reasons') else 'pass'
     row['schema_status'] = 'ok'
-    row['rights_status'] = 'restricted' if source_id.startswith('source:brave') else row.get('rights_status') or 'unknown'
+    row['rights_status'] = 'restricted' if source_id.startswith('source:brave') or source_id.endswith('_options_iv') else row.get('rights_status') or 'unknown'
     row['metric_refs'].append(str(record.get('_source_path') or 'fetch_record'))
     if record.get('fetch_id') or record.get('answer_id'):
         row['source_refs'].append(str(record.get('fetch_id') or record.get('answer_id')))
@@ -392,7 +396,7 @@ def main(argv: list[str] | None = None) -> int:
     if not safe_state_path(out) or not safe_state_path(history):
         print(json.dumps({'status': 'blocked', 'blocking_reasons': ['unsafe_state_path']}, ensure_ascii=False))
         return 2
-    records = fetch_records_from_paths([BRAVE_WEB, BRAVE_NEWS, BRAVE_CONTEXT, BRAVE_ANSWERS])
+    records = fetch_records_from_paths([BRAVE_WEB, BRAVE_NEWS, BRAVE_CONTEXT, BRAVE_ANSWERS, OPTIONS_IV_FETCH_RECORDS])
     report = build_report(
         atoms=load_jsonl(SOURCE_ATOMS),
         fetch_records=records,

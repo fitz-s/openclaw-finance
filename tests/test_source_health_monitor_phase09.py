@@ -110,6 +110,27 @@ def test_source_health_marks_brave_network_error_distinctly() -> None:
     assert 'network_fetch_failed' in row['breach_reasons']
 
 
+def test_source_health_ingests_options_iv_fetch_records() -> None:
+    record = {
+        'fetch_id': 'fetch:options-iv',
+        'source_id': 'source:polygon_options_iv',
+        'endpoint': 'polygon/options/snapshot',
+        'status': 'failed',
+        'fetched_at': '2026-04-17T21:59:00Z',
+        'error_code': 'missing_api_key',
+        'application_error_code': 'missing_api_key',
+        'error_class': 'missing_credentials',
+        'quota_state': {},
+    }
+    report = shm.build_report(fetch_records=[record], generated_at='2026-04-17T22:00:00Z')
+    row = report['sources'][0]
+    assert row['source_id'] == 'source:polygon_options_iv'
+    assert row['rights_status'] == 'restricted'
+    assert row['degraded_state'] == 'missing_credentials'
+    assert row['source_lane_unavailable_reason'] == 'missing_credentials'
+    assert report['stale_reuse_guard']['source_lane_unavailable_reasons']['source:polygon_options_iv'] == 'missing_credentials'
+
+
 def test_source_health_atoms_contribute_freshness_and_rights() -> None:
     atoms = [
         {
@@ -149,6 +170,7 @@ def test_source_health_cli_writes_report_and_history(tmp_path: Path, monkeypatch
     monkeypatch.setattr(shm, 'BRAVE_NEWS', tmp_path / 'missing-news.jsonl')
     monkeypatch.setattr(shm, 'BRAVE_CONTEXT', tmp_path / 'missing-context.jsonl')
     monkeypatch.setattr(shm, 'BRAVE_ANSWERS', tmp_path / 'missing-answers.jsonl')
+    monkeypatch.setattr(shm, 'OPTIONS_IV_FETCH_RECORDS', tmp_path / 'missing-options-iv.jsonl')
     monkeypatch.setattr(shm, 'BRAVE_AUDIT', tmp_path / 'missing-audit.json')
     monkeypatch.setattr(shm, 'REDUCER_REPORT', tmp_path / 'missing-reducer.json')
     try:

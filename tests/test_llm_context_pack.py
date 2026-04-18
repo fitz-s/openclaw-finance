@@ -39,6 +39,9 @@ def test_report_pack_has_candidate_contract_and_evidence_boundaries() -> None:
         assert row.get('evidence_id')
         assert row.get('source_artifact')
         assert row.get('source_ref')
+    assert 'options_iv_surface_summary' in report
+    assert report['options_iv_surface_summary']['authority'] == 'source_context_only_not_judgment_wake_threshold_or_execution'
+    assert 'options_iv_surface' not in report['candidate_contract']['required_fields']
 
 
 def test_scanner_pack_has_hard_unknown_discovery_contract() -> None:
