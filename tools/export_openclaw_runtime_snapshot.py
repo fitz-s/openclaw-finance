@@ -257,10 +257,31 @@ def copy_schemas() -> list[str]:
     return copied
 
 
+def copy_parent_runtime_mirror() -> list[str]:
+    mirror_out = OUT / 'parent-runtime'
+    files = [
+        WORKSPACE / 'services' / 'market-ingest' / 'adapters' / 'live_finance_adapter.py',
+        WORKSPACE / 'services' / 'market-ingest' / 'source_health' / 'compiler.py',
+        WORKSPACE / 'services' / 'market-ingest' / 'packet_compiler' / 'compiler.py',
+        WORKSPACE / 'services' / 'market-ingest' / 'wake_policy' / 'policy.py',
+    ]
+    copied: list[str] = []
+    for source in files:
+        if not source.exists():
+            continue
+        rel = source.relative_to(WORKSPACE)
+        target = mirror_out / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, target)
+        copied.append(str(target.relative_to(FINANCE)))
+    return copied
+
+
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     contracts = copy_contracts()
     schemas = copy_schemas()
+    parent_runtime = copy_parent_runtime_mirror()
     jobs = finance_jobs()
     write_json(OUT / 'finance-cron-jobs.json', {
         'generated_at': now_iso(),
@@ -338,6 +359,8 @@ def main() -> int:
             'docs/openclaw-runtime/operating-model-audit.json',
             'docs/openclaw-runtime/parent-dependency-inventory.json',
             'docs/openclaw-runtime/parent-dependency-drift.json',
+            'docs/openclaw-runtime/parent-runtime/manifest.json',
+            'docs/openclaw-runtime/parent-runtime/cron/finance-jobs-slice.json',
             'docs/openclaw-runtime/wake-threshold-attribution.json',
             'docs/openclaw-runtime/report-usefulness-score.json',
             'docs/openclaw-runtime/reviewer-packets/index.json',
@@ -391,6 +414,7 @@ def main() -> int:
             'docs/openclaw-runtime/critics/phase-9-implementation-critic.md',
             *contracts,
             *schemas,
+            *parent_runtime,
         ],
         'note': 'Generated from the local OpenClaw runtime. State files and secrets are intentionally excluded.',
     })

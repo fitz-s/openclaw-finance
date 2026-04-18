@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-17T23:58:45.006740+00:00",
+  "generated_at": "2026-04-18T00:21:25.580860+00:00",
   "subsystem": "finance",
   "openclaw_home": "/Users/leofitz/.openclaw",
   "finance_repo": "/Users/leofitz/.openclaw/workspace/finance",
@@ -65,6 +65,8 @@
     "docs/openclaw-runtime/operating-model-audit.json",
     "docs/openclaw-runtime/parent-dependency-inventory.json",
     "docs/openclaw-runtime/parent-dependency-drift.json",
+    "docs/openclaw-runtime/parent-runtime/manifest.json",
+    "docs/openclaw-runtime/parent-runtime/cron/finance-jobs-slice.json",
     "docs/openclaw-runtime/wake-threshold-attribution.json",
     "docs/openclaw-runtime/report-usefulness-score.json",
     "docs/openclaw-runtime/reviewer-packets/index.json",
@@ -137,7 +139,11 @@
     "docs/openclaw-runtime/schemas/judgment-envelope.schema.json",
     "docs/openclaw-runtime/schemas/decision-log.schema.json",
     "docs/openclaw-runtime/schemas/source-registry-record.schema.json",
-    "docs/openclaw-runtime/schemas/source-health.schema.json"
+    "docs/openclaw-runtime/schemas/source-health.schema.json",
+    "docs/openclaw-runtime/parent-runtime/services/market-ingest/adapters/live_finance_adapter.py",
+    "docs/openclaw-runtime/parent-runtime/services/market-ingest/source_health/compiler.py",
+    "docs/openclaw-runtime/parent-runtime/services/market-ingest/packet_compiler/compiler.py",
+    "docs/openclaw-runtime/parent-runtime/services/market-ingest/wake_policy/policy.py"
   ],
   "note": "Generated from the local OpenClaw runtime. State files and secrets are intentionally excluded."
 }

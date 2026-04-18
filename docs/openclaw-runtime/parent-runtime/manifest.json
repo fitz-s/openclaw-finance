@@ -1,0 +1,38 @@
+{
+  "generated_at": "2026-04-18T00:21:25.612768Z",
+  "contract": "parent-runtime-mirror-v1",
+  "status": "pass",
+  "purpose": "Reviewer-visible mirror of parent runtime files relevant to finance cutover.",
+  "files": [
+    {
+      "role": "services/market-ingest/adapters/live_finance_adapter.py",
+      "source_path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/adapters/live_finance_adapter.py",
+      "mirror_path": "docs/openclaw-runtime/parent-runtime/services/market-ingest/adapters/live_finance_adapter.py",
+      "exists": true,
+      "sha256": "sha256:583a135d0ac533ee0e86b1c01563ac9ed9fbe0fac77f3fb4c30ca28338f44149"
+    },
+    {
+      "role": "services/market-ingest/source_health/compiler.py",
+      "source_path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/source_health/compiler.py",
+      "mirror_path": "docs/openclaw-runtime/parent-runtime/services/market-ingest/source_health/compiler.py",
+      "exists": true,
+      "sha256": "sha256:0fbc1499fd13c1ecae455efcf05c6152b88c22cd4410c82a618c6313b5c96517"
+    },
+    {
+      "role": "services/market-ingest/packet_compiler/compiler.py",
+      "source_path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/packet_compiler/compiler.py",
+      "mirror_path": "docs/openclaw-runtime/parent-runtime/services/market-ingest/packet_compiler/compiler.py",
+      "exists": true,
+      "sha256": "sha256:14fbb1c15eeec1fe016519a034a6e1532408ff27585f3702ad63dc148e1d5f1a"
+    },
+    {
+      "role": "services/market-ingest/wake_policy/policy.py",
+      "source_path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/wake_policy/policy.py",
+      "mirror_path": "docs/openclaw-runtime/parent-runtime/services/market-ingest/wake_policy/policy.py",
+      "exists": true,
+      "sha256": "sha256:ed279fac5da76e4c88ec0352a47e36905f60c83d30947b5bff823afed5d0ace6"
+    }
+  ],
+  "cron_slice": "docs/openclaw-runtime/parent-runtime/cron/finance-jobs-slice.json",
+  "no_execution": true
+}
