@@ -22,6 +22,9 @@ OPTIONS_IV_FETCH_RECORDS = STATE / 'options-iv-fetch-records.jsonl'
 QUERY_REGISTRY = STATE / 'query-registry.jsonl'
 REDUCER_REPORT = STATE / 'finance-worker-reducer-report.json'
 BRAVE_AUDIT = FINANCE / 'docs' / 'openclaw-runtime' / 'brave-api-capability-audit.json'
+BRAVE_BUDGET_STATE = STATE / 'brave-budget-state.json'
+OFFHOURS_ROUTER_STATE = STATE / 'offhours-source-router-state.json'
+SESSION_APERTURE_STATE = STATE / 'session-aperture-state.json'
 OUT = STATE / 'source-health.json'
 HISTORY = STATE / 'source-health-history.jsonl'
 CONTRACT = 'source-health-v2-shadow'
@@ -322,6 +325,48 @@ def merge_reducer_report(rows: dict[str, dict[str, Any]], reducer: dict[str, Any
         row['breach_reasons'].append('no_source_atoms_in_reducer')
 
 
+def merge_budget_guard(
+    rows: dict[str, dict[str, Any]],
+    budget_state: dict[str, Any],
+    router_state: dict[str, Any],
+    aperture_state: dict[str, Any],
+    *,
+    evaluated_at: datetime,
+) -> None:
+    if not budget_state and not router_state and not aperture_state:
+        return
+    row = rows.setdefault('source:brave_budget_guard', empty_row('source:brave_budget_guard', evaluated_at.isoformat().replace('+00:00', 'Z')))
+    row['coverage_status'] = 'ok'
+    row['validation_status'] = 'pass'
+    row['schema_status'] = 'ok'
+    row['rights_status'] = 'ok'
+    row['rate_limit_status'] = 'not_applicable'
+    row['breaker_state'] = 'closed'
+    row['last_seen_at'] = budget_state.get('generated_at') or router_state.get('generated_at') or aperture_state.get('generated_at')
+    row['last_success_at'] = row['last_seen_at']
+    row['metric_refs'].extend([str(BRAVE_BUDGET_STATE), str(OFFHOURS_ROUTER_STATE), str(SESSION_APERTURE_STATE)])
+    router_aperture = router_state.get('session_aperture') if isinstance(router_state.get('session_aperture'), dict) else {}
+    row['source_refs'].append(str(aperture_state.get('aperture_id') or router_aperture.get('aperture_id') or 'unknown_aperture'))
+    decision = budget_state.get('last_decision') if isinstance(budget_state.get('last_decision'), dict) else router_state.get('budget_decision') if isinstance(router_state.get('budget_decision'), dict) else {}
+    if decision.get('allowed') is False:
+        row['quota_status'] = 'degraded'
+        row['degraded_state'] = str(decision.get('reason') or 'budget_guard_denied')
+        row['source_lane_unavailable_reason'] = row['degraded_state']
+        row['breach_reasons'].append(row['degraded_state'])
+    else:
+        row['quota_status'] = 'ok'
+        row['degraded_state'] = None
+    observed = parse_ts(row.get('last_seen_at'))
+    if observed:
+        age = max(0.0, (evaluated_at - observed).total_seconds())
+        row['freshness_age_seconds'] = int(age)
+        row['freshness_lag_seconds'] = int(age)
+        row['freshness_status'] = freshness_status(age, 6 * 60 * 60)
+    else:
+        row['freshness_status'] = 'unknown'
+        row['breach_reasons'].append('budget_guard_timestamp_unknown')
+
+
 def report_status(rows: list[dict[str, Any]]) -> str:
     if any(row.get('quota_status') == 'degraded' or row.get('coverage_status') == 'unavailable' for row in rows):
         return 'degraded'
@@ -336,6 +381,9 @@ def build_report(
     fetch_records: list[dict[str, Any]] | None = None,
     brave_audit: dict[str, Any] | None = None,
     reducer_report: dict[str, Any] | None = None,
+    budget_state: dict[str, Any] | None = None,
+    router_state: dict[str, Any] | None = None,
+    aperture_state: dict[str, Any] | None = None,
     generated_at: str | None = None,
 ) -> dict[str, Any]:
     generated = generated_at or now_iso()
@@ -347,6 +395,7 @@ def build_report(
         merge_fetch_record(rows, record, evaluated_at=evaluated_at)
     merge_brave_audit(rows, brave_audit or {}, evaluated_at=evaluated_at)
     merge_reducer_report(rows, reducer_report or {}, evaluated_at=evaluated_at)
+    merge_budget_guard(rows, budget_state or {}, router_state or {}, aperture_state or {}, evaluated_at=evaluated_at)
     finalized = [finalize_row(row) for row in rows.values()]
     finalized.sort(key=lambda item: item['source_id'])
     summary = {
@@ -399,6 +448,7 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('--out', default=str(OUT))
     parser.add_argument('--history', default=str(HISTORY))
+    parser.add_argument('--include-runtime-control-state', action='store_true')
     args = parser.parse_args(argv)
     out = Path(args.out)
     history = Path(args.history)
@@ -406,11 +456,19 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({'status': 'blocked', 'blocking_reasons': ['unsafe_state_path']}, ensure_ascii=False))
         return 2
     records = fetch_records_from_paths([BRAVE_WEB, BRAVE_NEWS, BRAVE_CONTEXT, BRAVE_ANSWERS, OPTIONS_IV_FETCH_RECORDS])
+    runtime_kwargs = {}
+    if args.include_runtime_control_state:
+        runtime_kwargs = {
+            'budget_state': load_json_safe(BRAVE_BUDGET_STATE, {}) or {},
+            'router_state': load_json_safe(OFFHOURS_ROUTER_STATE, {}) or {},
+            'aperture_state': load_json_safe(SESSION_APERTURE_STATE, {}) or {},
+        }
     report = build_report(
         atoms=load_jsonl(SOURCE_ATOMS),
         fetch_records=records,
         brave_audit=load_json_safe(BRAVE_AUDIT, {}) or {},
         reducer_report=load_json_safe(REDUCER_REPORT, {}) or {},
+        **runtime_kwargs,
     )
     atomic_write_json(out, report)
     append_jsonl(history, {'generated_at': report['generated_at'], 'status': report['status'], 'source_count': report['source_count'], 'health_hash': report['health_hash'], 'summary': report['summary']})

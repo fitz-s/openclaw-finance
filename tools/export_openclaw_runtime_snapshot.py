@@ -240,6 +240,7 @@ def runtime_control_state_snapshots() -> list[str]:
     snapshots = {
         'session-aperture-state.json': STATE / 'session-aperture-state.json',
         'brave-budget-state.json': STATE / 'brave-budget-state.json',
+        'offhours-source-router-state.json': STATE / 'offhours-source-router-state.json',
     }
     copied: list[str] = []
     for target_name, source in snapshots.items():
@@ -375,6 +376,9 @@ def main() -> int:
             'docs/openclaw-runtime/ralplan/source-to-campaign-phase-14-monitoring-closeout-ralplan.md',
             'docs/openclaw-runtime/ralplan/source-freshness-hotfix-2026-04-17-ralplan.md',
             'docs/openclaw-runtime/ralplan/offhours-intelligence-p0-ralplan.md',
+            'docs/openclaw-runtime/ralplan/offhours-intelligence-p1-ralplan.md',
+            'docs/openclaw-runtime/scouts/offhours-intelligence-p1-internal-explorer.md',
+            'docs/openclaw-runtime/scouts/offhours-intelligence-p1-external-scout.md',
             'docs/openclaw-runtime/source-to-campaign-phase-ledger.json',
             'docs/openclaw-runtime/source-to-campaign-closeout.json',
             'docs/openclaw-runtime/source-scout-candidates.json',
@@ -396,6 +400,7 @@ def main() -> int:
             'docs/openclaw-runtime/thesis-spine-telemetry-summary.json',
             'docs/openclaw-runtime/session-aperture-state.json',
             'docs/openclaw-runtime/brave-budget-state.json',
+            'docs/openclaw-runtime/offhours-source-router-state.json',
             'docs/openclaw-runtime/ibkr-watchlist-freshness-drill.json',
             'docs/openclaw-runtime/benchmark-boundary-audit.json',
             'docs/openclaw-runtime/runtime-gap-review.json',
@@ -435,7 +440,9 @@ def main() -> int:
             'docs/openclaw-runtime/critics/source-to-campaign-phase-14-implementation-critic.md',
             'docs/openclaw-runtime/critics/source-freshness-hotfix-2026-04-17-critic.md',
             'docs/openclaw-runtime/critics/offhours-intelligence-p0-implementation-critic.md',
+            'docs/openclaw-runtime/critics/offhours-intelligence-p1-implementation-critic.md',
             'docs/openclaw-runtime/cleanup/offhours-intelligence-p0-20260419.md',
+            'docs/openclaw-runtime/cleanup/offhours-intelligence-p1-20260419.md',
             'docs/openclaw-runtime/critics/phase-2-implementation-critic.md',
             'docs/openclaw-runtime/critics/phase-3-implementation-critic.md',
             'docs/openclaw-runtime/critics/phase-4-implementation-critic.md',

@@ -45,15 +45,22 @@ def write_json(path: Path, payload: dict[str, Any]) -> None:
     tmp.replace(path)
 
 
-def build_steps(*, dry_run: bool = False) -> list[tuple[str, list[str], bool]]:
+def build_steps(*, dry_run: bool = False, scanner_mode: str = 'auto') -> list[tuple[str, list[str], bool]]:
+    query_planner = [str(PYTHON), str(FINANCE / 'scripts' / 'query_pack_planner.py'), '--scanner-mode', scanner_mode]
     brave_activation = [str(PYTHON), str(FINANCE / 'scripts' / 'brave_source_activation.py')]
+    source_health = [str(PYTHON), str(FINANCE / 'scripts' / 'source_health_monitor.py')]
+    if scanner_mode == 'offhours-scan':
+        source_health.append('--include-runtime-control-state')
     if dry_run:
         brave_activation.append('--dry-run')
-    steps: list[tuple[str, list[str], bool]] = [
+    steps: list[tuple[str, list[str], bool]] = []
+    if scanner_mode == 'offhours-scan':
+        steps.append(('offhours_source_router', [str(PYTHON), str(FINANCE / 'scripts' / 'offhours_source_router.py')], True))
+    steps.extend([
         ('finance_context_pack', [str(PYTHON), str(FINANCE / 'scripts' / 'finance_llm_context_pack.py')], True),
-        ('query_pack_planner', [str(PYTHON), str(FINANCE / 'scripts' / 'query_pack_planner.py')], True),
+        ('query_pack_planner', query_planner, True),
         ('brave_source_activation', brave_activation, True),
-        ('finance_source_health', [str(PYTHON), str(FINANCE / 'scripts' / 'source_health_monitor.py')], True),
+        ('finance_source_health', source_health, True),
         ('parent_live_finance_adapter', [str(PYTHON), str(MARKET_INGEST / 'adapters' / 'live_finance_adapter.py')], True),
         (
             'parent_source_health',
@@ -87,21 +94,27 @@ def build_steps(*, dry_run: bool = False) -> list[tuple[str, list[str], bool]]:
             ],
             True,
         ),
-    ]
+    ])
     if dry_run:
-        return steps[:4]
+        dry_steps: list[tuple[str, list[str], bool]] = []
+        for step in steps:
+            dry_steps.append(step)
+            if step[0] == 'finance_source_health':
+                break
+        return dry_steps
     return steps
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('--dry-run', action='store_true')
+    parser.add_argument('--scanner-mode', choices=['auto', 'market-hours-scan', 'offhours-scan'], default='auto')
     parser.add_argument('--report', default=str(REPORT))
     args = parser.parse_args(argv)
     results = []
     status = 'pass'
     try:
-        for name, cmd, required in build_steps(dry_run=args.dry_run):
+        for name, cmd, required in build_steps(dry_run=args.dry_run, scanner_mode=args.scanner_mode):
             results.append(run_step(name, cmd, required=required))
     except Exception as exc:
         status = 'fail'
@@ -109,6 +122,7 @@ def main(argv: list[str] | None = None) -> int:
     payload = {
         'status': status,
         'mode': 'dry_run' if args.dry_run else 'apply',
+        'scanner_mode': args.scanner_mode,
         'steps': results,
         'parent_outputs': {
             'live_evidence': str(MI_STATE / 'live-evidence-records.jsonl'),

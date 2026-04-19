@@ -17,6 +17,7 @@ STATE = FINANCE / 'state'
 SCANNER_PACK = STATE / 'llm-job-context' / 'scanner.json'
 OUT = STATE / 'query-packs' / 'scanner-planned.jsonl'
 REPORT = STATE / 'query-packs' / 'scanner-planned-report.json'
+ROUTER_STATE = STATE / 'offhours-source-router-state.json'
 CONTRACT = 'query-pack-planner-v1-shadow'
 QUERY_PACK_CONTRACT = 'query-pack-v1'
 LANE_NEWS = 'news_policy_narrative'
@@ -44,6 +45,78 @@ def load_json(path: Path, default: Any = None) -> Any:
         return json.loads(path.read_text(encoding='utf-8'))
     except Exception:
         return default
+
+
+def parse_ts(value: Any) -> datetime | None:
+    if not isinstance(value, str) or not value:
+        return None
+    try:
+        parsed = datetime.fromisoformat(value.replace('Z', '+00:00'))
+    except Exception:
+        return None
+    if parsed.tzinfo is None:
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+def router_is_fresh(router: dict[str, Any], *, generated_at: str, max_age_seconds: int = 1800) -> bool:
+    router_ts = parse_ts(router.get('generated_at'))
+    generated_ts = parse_ts(generated_at)
+    if router_ts is None or generated_ts is None:
+        return False
+    return 0 <= (generated_ts - router_ts).total_seconds() <= max_age_seconds
+
+
+def compact_session_aperture(router: dict[str, Any]) -> dict[str, Any] | None:
+    aperture = router.get('session_aperture') if isinstance(router.get('session_aperture'), dict) else None
+    if not aperture or aperture.get('is_offhours') is not True:
+        return None
+    keys = [
+        'generated_at',
+        'aperture_id',
+        'session_class',
+        'global_liquidity_band',
+        'is_offhours',
+        'is_long_gap',
+        'gap_hours',
+        'discovery_multiplier',
+        'answers_budget_class',
+        'monday_open_risk',
+        'calendar_confidence',
+    ]
+    return {key: aperture.get(key) for key in keys if key in aperture}
+
+
+def budget_request_from_router(router: dict[str, Any], aperture: dict[str, Any] | None) -> dict[str, Any] | None:
+    if not aperture:
+        return None
+    return {
+        'search_units': 1,
+        'answers_units': 0,
+        'llm_context_units': 0,
+        'requires_budget_guard': True,
+        'budget_guard_contract': 'brave-budget-guard-v1',
+        'aperture_id': aperture.get('aperture_id'),
+        'session_class': aperture.get('session_class'),
+        'router_state_path': str(ROUTER_STATE),
+        'budget_state_path': str(STATE / 'brave-budget-state.json'),
+        'budget_guard_not_evidence': True,
+        'last_router_decision': router.get('budget_decision') if isinstance(router.get('budget_decision'), dict) else None,
+    }
+
+
+def offhours_router_metadata(scanner_mode: str, *, generated_at: str, router_state: dict[str, Any] | None = None) -> tuple[dict[str, Any] | None, dict[str, Any] | None, str | None]:
+    if scanner_mode != 'offhours-scan':
+        return None, None, None
+    router = router_state if isinstance(router_state, dict) else load_json(ROUTER_STATE, {}) or {}
+    if not isinstance(router, dict) or router.get('scanner_mode') != 'offhours-scan':
+        return None, None, 'router_state_missing'
+    if not router_is_fresh(router, generated_at=generated_at):
+        return None, None, 'router_state_stale'
+    aperture = compact_session_aperture(router)
+    if not aperture:
+        return None, None, 'session_aperture_missing_or_not_offhours'
+    return aperture, budget_request_from_router(router, aperture), None
 
 
 def write_jsonl(path: Path, rows: list[dict[str, Any]]) -> None:
@@ -95,6 +168,9 @@ def base_query_pack(
     authority_level: str = 'canonical_candidate',
     freshness: str = 'day',
     exclusion_symbols: list[str] | None = None,
+    session_aperture: dict[str, Any] | None = None,
+    budget_request: dict[str, Any] | None = None,
+    activation_mode: str | None = None,
 ) -> dict[str, Any]:
     identity = {
         'purpose': purpose,
@@ -105,7 +181,7 @@ def base_query_pack(
         'authority_level': authority_level,
     }
     pack_id = 'query-pack:' + hashlib.sha1(json.dumps(identity, sort_keys=True, ensure_ascii=False).encode('utf-8')).hexdigest()[:20]
-    return {
+    pack = {
         'contract': QUERY_PACK_CONTRACT,
         'pack_id': pack_id,
         'campaign_id': None,
@@ -131,6 +207,13 @@ def base_query_pack(
         'pack_is_not_authority': True,
         'no_execution': True,
     }
+    if session_aperture:
+        pack['session_aperture'] = session_aperture
+        pack['activation_mode'] = activation_mode or 'budgeted_offhours_search_news'
+    if budget_request:
+        pack['budget_request'] = budget_request
+        pack['budget_guard_not_evidence'] = True
+    return pack
 
 
 def invalidator_query(item: dict[str, Any]) -> str:
@@ -161,8 +244,15 @@ def unknown_discovery_queries(scanner_pack: dict[str, Any]) -> list[str]:
     return seeds[: max(1, int((scanner_pack.get('fixed_search_budget') or {}).get('unknown_discovery_minimum_attempts') or 1))]
 
 
-def build_query_packs(scanner_pack: dict[str, Any], *, generated_at: str | None = None) -> dict[str, Any]:
+def build_query_packs(
+    scanner_pack: dict[str, Any],
+    *,
+    generated_at: str | None = None,
+    scanner_mode: str = 'auto',
+    router_state: dict[str, Any] | None = None,
+) -> dict[str, Any]:
     generated = generated_at or now_iso()
+    session_aperture, budget_request, router_skip_reason = offhours_router_metadata(scanner_mode, generated_at=generated, router_state=router_state)
     known_symbols = scanner_pack.get('known_symbols_must_not_satisfy_unknown_discovery') if isinstance(scanner_pack.get('known_symbols_must_not_satisfy_unknown_discovery'), list) else []
     packs: list[dict[str, Any]] = []
 
@@ -178,6 +268,8 @@ def build_query_packs(scanner_pack: dict[str, Any], *, generated_at: str | None 
             required_entities=entities,
             source_object_refs=[str(item.get('invalidator_id'))] if item.get('invalidator_id') else [],
             max_results=10,
+            session_aperture=session_aperture,
+            budget_request=budget_request,
         ))
 
     for item in scanner_pack.get('top_opportunity_candidates', []) if isinstance(scanner_pack.get('top_opportunity_candidates'), list) else []:
@@ -192,6 +284,8 @@ def build_query_packs(scanner_pack: dict[str, Any], *, generated_at: str | None 
             required_entities=entities,
             source_object_refs=[str(item.get('candidate_id'))] if item.get('candidate_id') else [],
             max_results=10,
+            session_aperture=session_aperture,
+            budget_request=budget_request,
         ))
 
     for item in scanner_pack.get('top_thesis_deltas', []) if isinstance(scanner_pack.get('top_thesis_deltas'), list) else []:
@@ -205,6 +299,8 @@ def build_query_packs(scanner_pack: dict[str, Any], *, generated_at: str | None 
             required_entities=entities,
             source_object_refs=[str(item.get('thesis_id'))] if item.get('thesis_id') else [],
             max_results=8,
+            session_aperture=session_aperture,
+            budget_request=budget_request,
         ))
 
     for query in unknown_discovery_queries(scanner_pack):
@@ -216,6 +312,8 @@ def build_query_packs(scanner_pack: dict[str, Any], *, generated_at: str | None 
             source_object_refs=['unknown_discovery_lane'],
             max_results=12,
             exclusion_symbols=[str(item) for item in known_symbols],
+            session_aperture=session_aperture,
+            budget_request=budget_request,
         ))
 
     dedup: dict[str, dict[str, Any]] = {}
@@ -227,6 +325,9 @@ def build_query_packs(scanner_pack: dict[str, Any], *, generated_at: str | None 
         'status': 'pass',
         'contract': CONTRACT,
         'scanner_pack_id': scanner_pack.get('pack_id'),
+        'scanner_mode': scanner_mode,
+        'session_aperture_attached': session_aperture is not None,
+        'router_skip_reason': router_skip_reason,
         'query_pack_count': len(rows),
         'query_packs': rows,
         'planner_role': 'query_pack_planner_not_evidence',
@@ -242,6 +343,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--scanner-pack', default=str(SCANNER_PACK))
     parser.add_argument('--out', default=str(OUT))
     parser.add_argument('--report', default=str(REPORT))
+    parser.add_argument('--scanner-mode', choices=['auto', 'market-hours-scan', 'offhours-scan'], default='auto')
     args = parser.parse_args(argv)
     out = Path(args.out)
     report_path = Path(args.report)
@@ -249,7 +351,7 @@ def main(argv: list[str] | None = None) -> int:
         print(json.dumps({'status': 'blocked', 'blocking_reasons': ['unsafe_state_path']}, ensure_ascii=False))
         return 2
     scanner_pack = load_json(Path(args.scanner_pack), {}) or {}
-    report = build_query_packs(scanner_pack)
+    report = build_query_packs(scanner_pack, scanner_mode=args.scanner_mode)
     write_jsonl(out, report['query_packs'])
     atomic_write_json(report_path, report)
     print(json.dumps({'status': report['status'], 'query_pack_count': report['query_pack_count'], 'out': str(out), 'report': str(report_path)}, ensure_ascii=False))

@@ -12,6 +12,7 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from atomic_io import atomic_write_json
+from offhours_session_clock import build_state as build_session_aperture
 
 WORKSPACE = Path('/Users/leofitz/.openclaw/workspace')
 FINANCE = WORKSPACE / 'finance'
@@ -57,6 +58,7 @@ def main(argv: list[str]) -> int:
 
     scan_dt = datetime.fromisoformat(args.scan_time.replace('Z', '+00:00')) if args.scan_time else datetime.now(timezone.utc)
     scan_time = scan_dt.isoformat()
+    session_aperture = build_session_aperture(scan_dt)
     window = args.window or current_window(scan_dt.astimezone(TZ_CHI))
 
     output, shadow_report = build_shadow_output(
@@ -86,6 +88,8 @@ def main(argv: list[str]) -> int:
         'status': 'pass',
         'scan_time': scan_time,
         'window': window,
+        'session_aperture': session_aperture,
+        'calendar_aware_offhours': True,
         'output_path': str(output_path),
         'observation_count': len(output.get('observations', [])),
         'decision': output.get('decision'),

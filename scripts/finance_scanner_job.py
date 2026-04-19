@@ -67,14 +67,18 @@ def load_gate_summary() -> dict[str, Any]:
     }
 
 
-def build_steps() -> list[tuple[str, list[str], bool, int]]:
-    return [
+def build_steps(mode: str = 'market-hours-scan') -> list[tuple[str, list[str], bool, int]]:
+    steps: list[tuple[str, list[str], bool, int]] = []
+    if mode == 'offhours-scan':
+        steps.append(('offhours_source_router', [str(PYTHON), 'scripts/offhours_source_router.py'], True, 60))
+    steps.extend([
         ('finance_context_pack', [str(PYTHON), 'scripts/finance_llm_context_pack.py'], True, 120),
-        ('query_pack_planner', [str(PYTHON), 'scripts/query_pack_planner.py'], True, 120),
+        ('query_pack_planner', [str(PYTHON), 'scripts/query_pack_planner.py', '--scanner-mode', mode], True, 120),
         ('finance_worker', [str(PYTHON), 'scripts/finance_worker.py'], True, 120),
-        ('parent_market_ingest_cutover', [str(PYTHON), 'scripts/finance_parent_market_ingest_cutover.py'], True, 240),
+        ('parent_market_ingest_cutover', [str(PYTHON), 'scripts/finance_parent_market_ingest_cutover.py', '--scanner-mode', mode], True, 240),
         ('gate_evaluator', [str(PYTHON), 'scripts/gate_evaluator.py'], True, 240),
-    ]
+    ])
+    return steps
 
 
 def run_chain(mode: str) -> dict[str, Any]:
@@ -82,7 +86,13 @@ def run_chain(mode: str) -> dict[str, Any]:
     status = 'pass'
     error = None
     try:
-        for name, cmd, required, timeout in build_steps():
+        try:
+            step_specs = build_steps(mode)
+        except TypeError:
+            # Preserve compatibility with tests or callers that monkeypatch the
+            # historical zero-arg build_steps() helper.
+            step_specs = build_steps()
+        for name, cmd, required, timeout in step_specs:
             steps.append(run_step(name, cmd, required=required, timeout=timeout))
     except Exception as exc:
         status = 'fail'

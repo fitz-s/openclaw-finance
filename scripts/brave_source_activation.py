@@ -13,6 +13,7 @@ from pathlib import Path
 from typing import Any
 
 from atomic_io import atomic_write_json
+from brave_budget_guard import DEFAULT_STATE as BUDGET_STATE, decide as budget_decide, normalize_state as normalize_budget_state
 from brave_search_fetcher_common import default_out, fetch_from_pack, write_jsonl
 from query_registry_compiler import (
     build_query_run_record,
@@ -60,6 +61,13 @@ def load_jsonl(path: Path) -> list[dict[str, Any]]:
         if isinstance(payload, dict):
             rows.append(payload)
     return rows
+
+
+def load_json(path: Path, default: Any = None) -> Any:
+    try:
+        return json.loads(path.read_text(encoding='utf-8'))
+    except Exception:
+        return default
 
 
 def append_records(path: Path, rows: list[dict[str, Any]], *, keep: int = MAX_RECORDS_PER_ENDPOINT) -> None:
@@ -122,6 +130,29 @@ def selected_packs(packs: list[dict[str, Any]], *, max_packs: int) -> list[dict[
     return sorted(valid, key=pack_priority)[:max(0, max_packs)]
 
 
+def budget_check_for_pack(pack: dict[str, Any], *, dry_run: bool, budget_state_path: Path = BUDGET_STATE) -> tuple[dict[str, Any] | None, dict[str, Any] | None]:
+    request = pack.get('budget_request') if isinstance(pack.get('budget_request'), dict) else None
+    aperture = pack.get('session_aperture') if isinstance(pack.get('session_aperture'), dict) else None
+    if not request or request.get('requires_budget_guard') is not True:
+        return None, None
+    units = max(0, int(request.get('search_units') or 1))
+    aperture_id = str(request.get('aperture_id') or (aperture.get('aperture_id') if aperture else 'unknown'))
+    session_class = str(request.get('session_class') or (aperture.get('session_class') if aperture else 'unknown'))
+    state = normalize_budget_state(
+        load_json(budget_state_path, {}) or {},
+        aperture_id=aperture_id,
+        session_class=session_class,
+        now=datetime.now(timezone.utc),
+    )
+    state, decision = budget_decide(state, kind='search', units=units, dry_run=dry_run)
+    atomic_write_json(budget_state_path, state)
+    decision['budget_guard_contract'] = 'brave-budget-guard-v1'
+    decision['budget_state_path'] = str(budget_state_path)
+    decision['aperture_id'] = aperture_id
+    decision['session_class'] = session_class
+    return decision, state
+
+
 def activate_pack(
     pack: dict[str, Any],
     *,
@@ -130,6 +161,7 @@ def activate_pack(
     force: bool,
     timeout: int,
     recent_registry: list[dict[str, Any]],
+    budget_decision: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     if should_skip_query(pack, recent_registry) and not force:
         return {
@@ -137,6 +169,7 @@ def activate_pack(
             'query': pack.get('query'),
             'status': 'skipped',
             'reason': 'query_registry_cooldown',
+            'budget_decision': budget_decision,
             'records': [],
             'no_execution': True,
         }
@@ -164,6 +197,7 @@ def activate_pack(
         'status': records[-1].get('status') if records else 'skipped',
         'endpoint_count': len(records),
         'fallback_attempted': len(records) > 1,
+        'budget_decision': budget_decision,
         'records': records,
         'no_execution': True,
     }
@@ -234,12 +268,16 @@ def build_report(
         'endpoint_counts': endpoints,
         'fallback_count': sum(1 for result in pack_results if result.get('fallback_attempted')),
         'skipped_count': sum(1 for result in pack_results if result.get('status') == 'skipped'),
+        'budget_blocked_count': sum(1 for result in pack_results if result.get('status') == 'blocked' and result.get('reason') == 'budget_guard_denied'),
+        'budget_checked_count': sum(1 for result in pack_results if isinstance(result.get('budget_decision'), dict)),
         'pack_results': [
             {
                 'pack_id': result.get('pack_id'),
                 'status': result.get('status'),
+                'reason': result.get('reason'),
                 'endpoint_count': result.get('endpoint_count', 0),
                 'fallback_attempted': result.get('fallback_attempted', False),
+                'budget_decision': result.get('budget_decision'),
                 'query': result.get('query'),
             }
             for result in pack_results
@@ -261,16 +299,51 @@ def run_activation(
     dry_run: bool = False,
     force: bool = False,
     timeout: int = 12,
+    budget_state_path: Path = BUDGET_STATE,
 ) -> dict[str, Any]:
-    if not safe_state_path(query_packs_path) or not safe_state_path(registry_path) or not safe_state_path(report_path):
+    if not safe_state_path(query_packs_path) or not safe_state_path(registry_path) or not safe_state_path(report_path) or not safe_state_path(budget_state_path):
         return {'status': 'blocked', 'blocking_reasons': ['unsafe_state_path'], 'no_execution': True}
     packs = load_jsonl(query_packs_path)
     selected = selected_packs(packs, max_packs=max_packs)
     recent_registry = load_registry_jsonl(registry_path)
-    pack_results = [
-        activate_pack(pack, registry_path=registry_path, dry_run=dry_run, force=force, timeout=timeout, recent_registry=recent_registry)
-        for pack in selected
-    ]
+    pack_results = []
+    for pack in selected:
+        if should_skip_query(pack, recent_registry) and not force:
+            pack_results.append({
+                'pack_id': pack.get('pack_id'),
+                'query': pack.get('query'),
+                'status': 'skipped',
+                'reason': 'query_registry_cooldown',
+                'budget_decision': None,
+                'endpoint_count': 0,
+                'fallback_attempted': False,
+                'records': [],
+                'no_execution': True,
+            })
+            continue
+        budget_decision, _budget_state = budget_check_for_pack(pack, dry_run=dry_run, budget_state_path=budget_state_path)
+        if budget_decision is not None and budget_decision.get('allowed') is not True:
+            pack_results.append({
+                'pack_id': pack.get('pack_id'),
+                'query': pack.get('query'),
+                'status': 'blocked',
+                'reason': 'budget_guard_denied',
+                'budget_decision': budget_decision,
+                'endpoint_count': 0,
+                'fallback_attempted': False,
+                'records': [],
+                'no_execution': True,
+            })
+            continue
+        pack_results.append(activate_pack(
+            pack,
+            registry_path=registry_path,
+            dry_run=dry_run,
+            force=force,
+            timeout=timeout,
+            recent_registry=recent_registry,
+            budget_decision=budget_decision,
+        ))
     records = [
         record
         for result in pack_results
@@ -296,6 +369,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--query-packs', default=str(QUERY_PACKS))
     parser.add_argument('--registry', default=str(QUERY_REGISTRY))
     parser.add_argument('--report', default=str(REPORT))
+    parser.add_argument('--budget-state', default=str(BUDGET_STATE))
     parser.add_argument('--max-packs', type=int, default=DEFAULT_MAX_PACKS)
     parser.add_argument('--timeout', type=int, default=12)
     parser.add_argument('--dry-run', action='store_true')
@@ -309,6 +383,7 @@ def main(argv: list[str] | None = None) -> int:
         timeout=args.timeout,
         dry_run=args.dry_run,
         force=args.force,
+        budget_state_path=Path(args.budget_state),
     )
     print(json.dumps({
         'status': report.get('status'),

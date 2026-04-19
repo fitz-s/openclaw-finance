@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-19T05:32:48.600529+00:00",
+  "generated_at": "2026-04-19T09:38:12.104137+00:00",
   "state_boundary": "sanitized_runtime_control_state",
   "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
   "source": "/Users/leofitz/.openclaw/workspace/finance/state/brave-budget-state.json",
@@ -7,20 +7,20 @@
   "payload": {
     "month_key": "2026-04",
     "usage": {
-      "search_month": 0,
+      "search_month": 6,
       "answers_month": 0,
       "llm_context_month": 0,
-      "search_day": 0,
+      "search_day": 6,
       "answers_day": 0,
       "llm_context_day": 0,
-      "search_aperture": 0,
+      "search_aperture": 6,
       "answers_aperture": 0,
       "llm_context_aperture": 0
     },
     "day_key": "2026-04-19",
-    "aperture_id": "p0-weekend-demo",
+    "aperture_id": "aperture:XNYS:2026-04-17:weekend_aperture",
     "contract": "brave-budget-guard-v1",
-    "generated_at": "2026-04-19T05:27:28.429366Z",
+    "generated_at": "2026-04-19T09:37:15.261778Z",
     "monthly_caps": {
       "search": 3000,
       "answers": 300,
@@ -40,14 +40,14 @@
     "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
     "no_execution": true,
     "last_decision": {
-      "allowed": true,
+      "allowed": false,
       "kind": "search",
       "units": 1,
-      "reason": "within_budget",
+      "reason": "aperture_cap_exhausted",
       "remaining": {
-        "month": 2999,
-        "day": 149,
-        "aperture": 5
+        "month": 2994,
+        "day": 144,
+        "aperture": 0
       },
       "dry_run": true,
       "no_execution": true
