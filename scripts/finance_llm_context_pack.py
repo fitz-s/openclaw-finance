@@ -38,6 +38,7 @@ CAPITAL_GRAPH = STATE / 'capital-graph.json'
 CAPITAL_AGENDA = STATE / 'capital-agenda.json'
 DISPLACEMENT_CASES = STATE / 'displacement-cases.json'
 SCENARIO_EXPOSURE = STATE / 'scenario-exposure-matrix.json'
+OPTIONS_IV_SURFACE = STATE / 'options-iv-surface.json'
 
 CANONICAL_AUTHORITY = 'ContextPacket/WakeDecision/JudgmentEnvelope/Thesis Spine state'
 MAX_PACK_CHARS = 30000
@@ -47,6 +48,11 @@ SIDECAR_PACK = OUT_DIR / 'thesis-sidecar.json'
 WEEKLY_PACK = OUT_DIR / 'weekly-learning.json'
 FOLLOWUP_PACK = OUT_DIR / 'report-followup.json'
 READER_BUNDLE_DIR = STATE / 'report-reader'
+CAMPAIGN_BOARD = STATE / 'campaign-board.json'
+CAMPAIGN_CACHE = STATE / 'campaign-cache.json'
+QUERY_PACK_OUT = STATE / 'query-packs' / 'scanner-planned.jsonl'
+QUERY_PACK_REPORT = STATE / 'query-packs' / 'scanner-planned-report.json'
+QUERY_PACK_CONTRACT = FINANCE / 'docs' / 'openclaw-runtime' / 'contracts' / 'query-pack-contract.md'
 
 
 def now_iso() -> str:
@@ -107,6 +113,35 @@ def tail_jsonl(path: Path, limit: int = 5) -> list[dict[str, Any]]:
 def short(value: Any, limit: int = 220) -> str:
     text = ' '.join(str(value or '').split())
     return text if len(text) <= limit else text[:limit - 1].rstrip() + '…'
+
+
+def options_iv_surface_summary(surface: dict[str, Any]) -> dict[str, Any]:
+    summary = surface.get('summary') if isinstance(surface.get('summary'), dict) else {}
+    rows = surface.get('symbols') if isinstance(surface.get('symbols'), list) else []
+    provider_set = sorted({provider for row in rows if isinstance(row, dict) for provider in row.get('provider_set', [])})
+    return {
+        'status': surface.get('status'),
+        'surface_policy_version': surface.get('surface_policy_version') or surface.get('contract'),
+        'generated_at': surface.get('generated_at'),
+        'symbol_count': surface.get('symbol_count') or summary.get('symbol_count') or 0,
+        'provider_set': provider_set[:8],
+        'primary_source_status': surface.get('primary_source_status'),
+        'primary_provider_set': surface.get('primary_provider_set', [])[:8] if isinstance(surface.get('primary_provider_set'), list) else [],
+        'proxy_only_count': summary.get('proxy_only_count'),
+        'missing_iv_count': summary.get('missing_iv_count'),
+        'stale_or_unknown_chain_count': summary.get('stale_or_unknown_chain_count'),
+        'provider_backed_count': summary.get('provider_backed_count'),
+        'provider_confidence': {
+            'min': summary.get('min_provider_confidence'),
+            'max': summary.get('max_provider_confidence'),
+        },
+        'source_health_refs': surface.get('source_health_refs', [])[:12] if isinstance(surface.get('source_health_refs'), list) else [],
+        'rights_policy': surface.get('rights_policy') or 'unknown',
+        'derived_only': surface.get('derived_only') is True,
+        'raw_payload_retained': surface.get('raw_payload_retained') is True,
+        'no_execution': surface.get('no_execution') is True,
+        'authority': 'source_context_only_not_judgment_wake_threshold_or_execution',
+    }
 
 
 def watch_symbols(watchlist: dict[str, Any], portfolio: dict[str, Any]) -> list[str]:
@@ -271,8 +306,10 @@ def build_packs() -> dict[str, dict[str, Any]]:
     capital_agenda = load_json_safe(CAPITAL_AGENDA, {}) or {}
     displacement_cases_data = load_json_safe(DISPLACEMENT_CASES, {}) or {}
     scenario_exposure = load_json_safe(SCENARIO_EXPOSURE, {}) or {}
+    options_iv_surface = load_json_safe(OPTIONS_IV_SURFACE, {}) or {}
+    options_iv_summary = options_iv_surface_summary(options_iv_surface)
 
-    report_sources = [artifact(PACKET, required=True), artifact(WAKE, required=True), artifact(THESIS_REGISTRY), artifact(OPPORTUNITY_QUEUE), artifact(INVALIDATOR_LEDGER)]
+    report_sources = [artifact(PACKET, required=True), artifact(WAKE, required=True), artifact(THESIS_REGISTRY), artifact(OPPORTUNITY_QUEUE), artifact(INVALIDATOR_LEDGER), artifact(OPTIONS_IV_SURFACE)]
     report = base_pack(
         'report_orchestrator',
         report_sources,
@@ -333,17 +370,45 @@ def build_packs() -> dict[str, dict[str, Any]]:
             'hedge_coverage': capital_graph.get('hedge_coverage', {}),
             'bucket_utilization': capital_graph.get('bucket_utilization', {}),
         } if capital_graph.get('graph_hash') else None,
+        'options_iv_surface_summary': options_iv_summary,
+        'options_iv_authority_rule': 'source_context_only; excluded from candidate_contract.required_fields and JudgmentEnvelope evidence authority',
     })
 
     scanner_sources = [artifact(WATCHLIST), artifact(PORTFOLIO), artifact(THESIS_REGISTRY), artifact(OPPORTUNITY_QUEUE), artifact(INVALIDATOR_LEDGER)]
     scanner = base_pack(
         'scanner',
         scanner_sources,
-        job_goal='Find object-linked evidence candidates while preserving a dedicated unknown-discovery lane.',
-        allowed_outputs=['finance/buffer/{YYYY-MM-DD}-scan-{HHMM}.json', 'machine summary only'],
-        forbidden_actions=['user_message', 'delivery', 'held_or_watchlist_as_unknown', 'execution', 'threshold_mutation'],
+        job_goal='Plan bounded QueryPack candidates for deterministic source acquisition; preserve legacy observation output only as a compatibility bridge.',
+        allowed_outputs=[str(QUERY_PACK_OUT), str(QUERY_PACK_REPORT), 'finance/buffer/{YYYY-MM-DD}-scan-{HHMM}.json legacy fallback', 'machine summary only'],
+        forbidden_actions=['user_message', 'delivery', 'held_or_watchlist_as_unknown', 'free_form_web_search_as_canonical_ingestion', 'execution', 'threshold_mutation'],
     )
     scanner.update({
+        'scanner_canonical_role': 'planner_first_legacy_observation_bridge',
+        'planner_prompt_version': 'query-planner-v1',
+        'free_form_web_search_canonical_ingestion': False,
+        'planner_is_not_evidence': True,
+        'planner_output_path': str(QUERY_PACK_OUT),
+        'planner_report_path': str(QUERY_PACK_REPORT),
+        'query_pack_contract_ref': str(QUERY_PACK_CONTRACT),
+        'query_pack_contract': {
+            'contract': 'query-pack-v1',
+            'additional_properties_allowed': False,
+            'required_fields': [
+                'pack_id', 'lane', 'purpose', 'query', 'freshness', 'allowed_domains',
+                'required_entities', 'max_results', 'authority_level', 'forbidden',
+                'planner_not_evidence', 'pack_is_not_authority', 'no_execution',
+            ],
+            'allowed_lanes': ['market_structure', 'corp_filing_ir', 'news_policy_narrative', 'real_economy_alt', 'human_field_private', 'internal_private'],
+            'allowed_purposes': ['source_discovery', 'source_reading', 'claim_closure', 'followup_slice', 'sidecar_synthesis'],
+            'authority_rule': 'QueryPack may request deterministic fetches but cannot satisfy evidence, wake, judgment, delivery, or execution authority.',
+        },
+        'tool_policy': {
+            'planning_only': True,
+            'parallel_tool_calls': False,
+            'allowed_tools': ['read_context_pack', 'emit_query_pack_json'],
+            'forbidden_tools': ['free_form_web_search_as_evidence', 'write_canonical_state', 'mutate_thresholds', 'deliver_discord'],
+            'tool_output_trust': 'untrusted_until_validated_by_deterministic_fetcher',
+        },
         'known_symbols_must_not_satisfy_unknown_discovery': known_symbols[:80],
         'fixed_search_budget': {
             'market_hours': ['invalidator_check', 'opportunity_followup', 'unknown_discovery'],
@@ -362,9 +427,15 @@ def build_packs() -> dict[str, dict[str, Any]]:
         'top_opportunity_candidates': opportunity_rows[:6],
         'top_invalidators': invalidator_rows[:6],
         'required_commands': [
+            '/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/query_pack_planner.py',
             '/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_worker.py',
             '/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/gate_evaluator.py',
         ],
+        'legacy_observation_bridge': {
+            'enabled': True,
+            'status': 'compatibility_only_until_finance_worker_reducer_migration',
+            'observations_are_not_canonical_ingestion': True,
+        },
         'final_output_rule': 'Return empty string or one machine summary line only.',
     })
 
@@ -440,6 +511,8 @@ def build_packs() -> dict[str, dict[str, Any]]:
             'report_handle': latest_bundle.get('report_handle'),
             'handles': first_handles,
             'object_alias_map': latest_bundle.get('object_alias_map', {}),
+            'campaign_alias_map': latest_bundle.get('campaign_alias_map', {}),
+            'followup_digest': latest_bundle.get('followup_digest', []),
             'starter_queries': latest_bundle.get('starter_queries', []),
         }
     followup_sources = [artifact(READER_BUNDLE_DIR / 'latest.json')]
@@ -453,6 +526,8 @@ def build_packs() -> dict[str, dict[str, Any]]:
     followup.update({
         'reader_bundle_summary': bundle_summary,
         'followup_bundle_path': str(READER_BUNDLE_DIR / 'latest.json'),
+        'campaign_board_path': str(CAMPAIGN_BOARD),
+        'campaign_cache_path': str(CAMPAIGN_CACHE),
         'answer_format': {
             'required_sections': ['Fact', 'Interpretation', 'Unknown / To Verify', 'What Would Change My Mind'],
             'interrogation_verbs': ['why', 'challenge', 'compare', 'scenario', 'sources', 'expand'],

@@ -23,6 +23,9 @@ ENVELOPE = STATE / 'finance-decision-report-envelope.json'
 SAFETY = STATE / 'report-delivery-safety-check.json'
 HEALTH_MD = STATE / 'report-delivery-health-only.md'
 CONTEXT_PACK = STATE / 'llm-job-context' / 'report-orchestrator.json'
+BOARD_PACKAGE = STATE / 'discord-campaign-board-package.json'
+BOARD_RUNTIME = STATE / 'discord-campaign-board-runtime.json'
+BOARD_DELIVERY_REPORT = STATE / 'discord-campaign-board-delivery-report.json'
 CT = ZoneInfo('America/Chicago')
 
 
@@ -33,6 +36,18 @@ def run(args: list[str], *, stdout_path: Path | None = None) -> None:
             subprocess.run(args, stdout=out, stderr=subprocess.PIPE, **kwargs)
         return
     subprocess.run(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE, **kwargs)
+
+
+def run_optional(args: list[str]) -> None:
+    subprocess.run(args, cwd=str(FINANCE), check=False, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+
+def board_runtime_enabled() -> bool:
+    try:
+        data = json.loads(BOARD_RUNTIME.read_text(encoding='utf-8'))
+    except (FileNotFoundError, json.JSONDecodeError):
+        return False
+    return bool(data.get('boards_enabled') or data.get('threads_enabled'))
 
 
 def today_ct() -> datetime:
@@ -65,6 +80,17 @@ def has_report_since_today(hour: int, minute: int) -> bool:
 
 
 def run_chain() -> str:
+    # Core reports must refresh the macro triad before rendering so Gold / Bitcoin / SPX
+    # direction is present or explicitly unavailable in the operator surface.
+    run([str(PYTHON), 'scripts/price_fetcher.py'])
+    run([str(PYTHON), 'scripts/broad_market_proxy_fetcher.py'])
+    run_optional([str(PYTHON), 'scripts/options_iv_provider_fetcher.py'])
+    run_optional([str(PYTHON), 'scripts/options_iv_surface_compiler.py'])
+    run_optional([str(PYTHON), 'scripts/opportunity_queue_builder.py'])
+    run_optional([str(PYTHON), 'scripts/source_atom_compiler.py', '--report', str(STATE / 'source-atoms' / 'latest-report.json')])
+    run_optional([str(PYTHON), 'scripts/claim_graph_compiler.py'])
+    run_optional([str(PYTHON), 'scripts/context_gap_compiler.py'])
+    run([str(PYTHON), 'scripts/finance_parent_market_ingest_cutover.py'])
     run([str(PYTHON), 'scripts/finance_llm_context_pack.py'])
     run([
         str(PYTHON), 'scripts/judgment_envelope_gate.py',
@@ -72,6 +98,8 @@ def run_chain() -> str:
         '--adjudication-mode', 'scheduled_context',
         '--context-pack', str(CONTEXT_PACK),
     ])
+    run([str(PYTHON), 'scripts/undercurrent_compiler.py'])
+    run([str(PYTHON), 'scripts/campaign_projection_compiler.py'])
     run([str(PYTHON), 'scripts/finance_decision_report_render.py'])
     run([str(PYTHON), 'scripts/finance_report_product_validator.py'])
     run([str(PYTHON), 'scripts/finance_decision_log_compiler.py'])
@@ -80,8 +108,20 @@ def run_chain() -> str:
     if safety.get('status') != 'pass':
         return HEALTH_MD.read_text(encoding='utf-8').strip() + '\n'
     run([str(PYTHON), 'scripts/finance_report_reader_bundle.py'])
+    run([str(PYTHON), 'scripts/finance_campaign_cache_builder.py'])
+    run([str(PYTHON), 'scripts/finance_discord_campaign_board_package.py', '--out', str(BOARD_PACKAGE)])
+    run_optional([str(PYTHON), 'scripts/finance_report_archive_compiler.py'])
+    run_optional([str(PYTHON), 'scripts/finance_source_to_campaign_cutover_gate.py'])
+    run_optional([str(PYTHON), 'scripts/finance_followup_thread_registry_repair.py', '--quiet'])
+    if board_runtime_enabled():
+        run_optional([str(PYTHON), 'scripts/finance_discord_campaign_board_deliver.py', '--apply', '--report', str(BOARD_DELIVERY_REPORT)])
+        run_optional([str(PYTHON), 'scripts/finance_followup_thread_registry_repair.py', '--quiet'])
     envelope = json.loads(ENVELOPE.read_text(encoding='utf-8'))
-    primary = str(envelope.get('discord_primary_markdown') or envelope.get('markdown') or '').strip()
+    package = json.loads(BOARD_PACKAGE.read_text(encoding='utf-8')) if BOARD_PACKAGE.exists() else {}
+    if board_runtime_enabled():
+        primary = str(package.get('primary_fallback_markdown') or envelope.get('discord_primary_markdown') or envelope.get('markdown') or '').strip()
+    else:
+        primary = str(envelope.get('discord_live_board_markdown') or envelope.get('discord_primary_markdown') or envelope.get('markdown') or '').strip()
     if not primary:
         return 'Finance｜health-only\n\nReport generated but primary markdown was empty. Check finance-decision-report-envelope.json.\n'
     return primary + '\n'

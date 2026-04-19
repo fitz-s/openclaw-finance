@@ -39,6 +39,9 @@ def test_report_pack_has_candidate_contract_and_evidence_boundaries() -> None:
         assert row.get('evidence_id')
         assert row.get('source_artifact')
         assert row.get('source_ref')
+    assert 'options_iv_surface_summary' in report
+    assert report['options_iv_surface_summary']['authority'] == 'source_context_only_not_judgment_wake_threshold_or_execution'
+    assert 'options_iv_surface' not in report['candidate_contract']['required_fields']
 
 
 def test_scanner_pack_has_hard_unknown_discovery_contract() -> None:
@@ -48,6 +51,18 @@ def test_scanner_pack_has_hard_unknown_discovery_contract() -> None:
     assert 'unknown_discovery_exhausted_reason' in scanner['observation_schema_extension']
     assert 'held_or_watchlist_as_unknown' in scanner['forbidden_actions']
     assert isinstance(scanner['known_symbols_must_not_satisfy_unknown_discovery'], list)
+
+
+def test_scanner_pack_is_query_planner_first_not_freeform_ingestion() -> None:
+    scanner = build_packs()['scanner']
+
+    assert scanner['scanner_canonical_role'] == 'planner_first_legacy_observation_bridge'
+    assert scanner['free_form_web_search_canonical_ingestion'] is False
+    assert scanner['planner_is_not_evidence'] is True
+    assert scanner['query_pack_contract']['contract'] == 'query-pack-v1'
+    assert scanner['query_pack_contract']['additional_properties_allowed'] is False
+    assert 'free_form_web_search_as_canonical_ingestion' in scanner['forbidden_actions']
+    assert scanner['legacy_observation_bridge']['observations_are_not_canonical_ingestion'] is True
 
 
 def test_sidecar_and_weekly_packs_cannot_deliver_or_mutate_thresholds() -> None:

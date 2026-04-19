@@ -29,7 +29,26 @@ Convert the internal object graph into navigable handles with starter questions.
   "starter_queries": ["why A1", "compare A1 T1", "challenge A1"],
   "object_alias_map": {"A1": "新机会｜铀服务链", "T1": "现有 Thesis｜能源 beta"},
   "portfolio_attachment": {...},
-  "capital_summary": {...}
+  "capital_summary": {...},
+  "followup_slice_index": {
+    "A1": {
+      "trace": {
+        "evidence_slice_id": "slice:rb:R42:A1:trace",
+        "linked_claims": ["claim:..."],
+        "linked_atoms": ["atom:..."],
+        "linked_context_gaps": ["gap:..."],
+        "lane_coverage": {},
+        "source_health_summary": {},
+        "content_hash": "sha256:...",
+        "retrieval_score": 1.0,
+        "permission_metadata": {
+          "review_only": true,
+          "raw_thread_history_allowed": false,
+          "raw_source_dump_allowed": false
+        }
+      }
+    }
+  }
 }
 ```
 
@@ -85,3 +104,5 @@ The bundle reads from completed pipeline artifacts only:
 ## Authority
 
 The reader bundle is a derived view. It does not replace the core report envelope or decision log as canonical state. It carries `no_execution=true`.
+
+Follow-up answers must rehydrate from `followup_slice_index` and object/campaign handles. Raw Discord thread history is UI, not memory. If a required slice lacks claims/atoms/context gaps/source health coverage, the follow-up path should return insufficient data instead of filling gaps from model memory.

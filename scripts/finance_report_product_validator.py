@@ -70,6 +70,12 @@ PRIMARY_BANNED = {
 THREAD_REQUIRED_TOKENS = ['对象卡', '可直接追问']
 
 
+BOARD_BANNED = {
+    'machine_hashes': re.compile(r'packet_hash|graph_hash|report_hash|judgment_id|model_id', re.I),
+    'raw_evidence_refs': re.compile(r'`?ev:[^`\s]+`?', re.I),
+}
+
+
 def error(code: str, message: str) -> dict[str, str]:
     return {'code': code, 'message': message}
 
@@ -84,6 +90,8 @@ def _validate_artifact_markdown(report: dict[str, Any], packet: dict[str, Any], 
     for section in required_sections:
         if section not in markdown:
             errors.append(error('missing_section', section))
+    if 'Core macro triad' not in markdown:
+        errors.append(error('missing_core_macro_triad', 'artifact markdown must analyze Gold / Bitcoin / SPX direction'))
     for code, pattern in BANNED.items():
         if pattern.search(markdown):
             errors.append(error(code, f'banned text matched: {code}'))
@@ -147,6 +155,10 @@ def _validate_operator_primary(report: dict[str, Any]) -> tuple[list[dict[str, s
         for section in ['Fact', 'Interpretation', 'To Verify', '对象']:
             if section not in primary:
                 errors.append(error('primary_missing_section', section))
+        macro_tokens = ['Macro triad', 'Gold', 'Bitcoin', 'SPX']
+        for token in macro_tokens:
+            if token not in primary:
+                errors.append(error('primary_missing_macro_triad', f'primary must include {token} direction'))
         if not isinstance(report.get('object_alias_map'), dict) or not report.get('object_alias_map'):
             errors.append(error('missing_object_alias_map', 'primary surface requires translated object aliases'))
         if not any(prefix in primary for prefix in ['A1 ', 'T1 ', 'O1 ', 'I1 ']):
@@ -181,12 +193,64 @@ def _validate_thread_seed(report: dict[str, Any]) -> tuple[list[dict[str, str]],
     return errors, warnings
 
 
+def _validate_options_iv_context(report: dict[str, Any]) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
+    errors: list[dict[str, str]] = []
+    warnings: list[dict[str, str]] = []
+    summary = report.get('options_iv_surface_summary')
+    if summary is None:
+        warnings.append(error('options_iv_surface_summary_missing', 'options IV surface is absent from report source context'))
+        return errors, warnings
+    if not isinstance(summary, dict):
+        errors.append(error('options_iv_surface_summary_invalid', 'options IV surface summary must be a compact object'))
+        return errors, warnings
+    if summary.get('raw_payload_retained') is True:
+        errors.append(error('options_iv_raw_payload_retained', 'options IV context must not retain raw vendor payloads'))
+    if summary.get('authority') != 'source_context_only_not_judgment_wake_threshold_or_execution':
+        errors.append(error('options_iv_authority_boundary_missing', 'options IV context must remain source-context-only'))
+    if summary.get('derived_only') is not True and (summary.get('symbol_count') or 0):
+        errors.append(error('options_iv_not_derived_only', 'options IV rows must be derived-only'))
+    if report.get('options_iv_authority') != 'source_context_only_not_judgment_wake_threshold_or_execution':
+        errors.append(error('options_iv_report_authority_boundary_missing', 'report envelope must keep options IV out of judgment/wake/threshold authority'))
+    refs = set(report.get('evidence_refs') or [])
+    iv_refs = {str(ref) for ref in summary.get('source_health_refs', []) if isinstance(ref, str)}
+    if refs & iv_refs:
+        errors.append(error('options_iv_refs_in_judgment_evidence', 'options IV source-health refs must not be JudgmentEnvelope evidence_refs'))
+    return errors, warnings
+
+
+def _validate_campaign_boards(report: dict[str, Any]) -> tuple[list[dict[str, str]], list[dict[str, str]]]:
+    errors: list[dict[str, str]] = []
+    warnings: list[dict[str, str]] = []
+    board_fields = [
+        'discord_live_board_markdown',
+        'discord_scout_board_markdown',
+        'discord_risk_board_markdown',
+    ]
+    present = [field for field in board_fields if str(report.get(field) or '').strip()]
+    if not present:
+        return errors, warnings
+    for field in present:
+        text = str(report.get(field) or '')
+        if not text.startswith('Finance｜'):
+            errors.append(error('campaign_board_bad_title', f'{field} must start with Finance｜'))
+        if field == 'discord_live_board_markdown':
+            for token in ['Macro triad', 'Gold', 'Bitcoin', 'SPX']:
+                if token not in text:
+                    errors.append(error('campaign_board_missing_macro_triad', f'{field} must include {token} direction'))
+        for code, pattern in BOARD_BANNED.items():
+            if pattern.search(text):
+                errors.append(error(code, f'{field} matched banned pattern: {code}'))
+    return errors, warnings
+
+
 def validate_report(report: dict[str, Any], packet: dict[str, Any], judgment: dict[str, Any], judgment_validation: dict[str, Any]) -> dict[str, Any]:
     artifact_errors, artifact_warnings = _validate_artifact_markdown(report, packet, judgment, judgment_validation)
     primary_errors, primary_warnings, primary_text = _validate_operator_primary(report)
     thread_errors, thread_warnings = _validate_thread_seed(report)
-    errors = artifact_errors + primary_errors
-    warnings = artifact_warnings + primary_warnings + thread_errors + thread_warnings
+    board_errors, board_warnings = _validate_campaign_boards(report)
+    options_errors, options_warnings = _validate_options_iv_context(report)
+    errors = artifact_errors + primary_errors + board_errors + options_errors
+    warnings = artifact_warnings + primary_warnings + thread_errors + thread_warnings + board_warnings + options_warnings
     return {
         'errors': errors,
         'warnings': warnings,
@@ -196,8 +260,13 @@ def validate_report(report: dict[str, Any], packet: dict[str, Any], judgment: di
         'operator_warnings': primary_warnings,
         'thread_errors': thread_errors,
         'thread_warnings': thread_warnings,
+        'campaign_board_errors': board_errors,
+        'campaign_board_warnings': board_warnings,
+        'options_iv_errors': options_errors,
+        'options_iv_warnings': options_warnings,
         'discord_primary_ok': not primary_errors,
         'thread_followup_ok': not thread_errors,
+        'campaign_boards_ok': not board_errors,
         'primary_markdown': primary_text,
     }
 
@@ -232,8 +301,13 @@ def main(argv: list[str] | None = None) -> int:
         'operator_warnings': result['operator_warnings'],
         'thread_errors': result['thread_errors'],
         'thread_warnings': result['thread_warnings'],
+        'campaign_board_errors': result['campaign_board_errors'],
+        'campaign_board_warnings': result['campaign_board_warnings'],
+        'options_iv_errors': result['options_iv_errors'],
+        'options_iv_warnings': result['options_iv_warnings'],
         'discord_primary_ok': result['discord_primary_ok'],
         'thread_followup_ok': result['thread_followup_ok'],
+        'campaign_boards_ok': result['campaign_boards_ok'],
         'report_path': str(args.report),
         'packet_hash': packet.get('packet_hash'),
         'judgment_id': judgment.get('judgment_id'),

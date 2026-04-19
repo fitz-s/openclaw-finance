@@ -1,0 +1,534 @@
+{
+  "generated_at": "2026-04-17T12:00:00-06:00",
+  "contract": "ingestion-fabric-phase-ledger-v1",
+  "source_review": "docs/review2-04-17-2026.md",
+  "source_review_sha256": "dffa4c04d0a661b00292c3c85b8d4f6efa93932e3db0213d2d51217da4be4dd0",
+  "north_star": "Finance Intelligence Ingestion Fabric",
+  "subtitle": "Deterministic Source Office -> EvidenceAtom -> ClaimGraph -> ContextGap -> Campaign OS",
+  "design_rule": "Never compress before provenance.",
+  "execution_rule": "Each phase requires RALPLAN, implementation, critic, verification, commit, and push before moving on.",
+  "non_goals": [
+    "do not make Brave Answers canonical authority",
+    "do not keep free-form scanner web_search as canonical ingestion",
+    "do not treat yfinance or Nasdaq proxy as primary truth",
+    "do not deduplicate by theme text as the main novelty mechanism",
+    "do not commit raw licensed snippets or Discord conversations"
+  ],
+  "phases": [
+    {
+      "phase": 0,
+      "name": "Review2 intake and master plan baseline",
+      "status": "completed",
+      "purpose": "Persist the full review2 document and create the controlling implementation ledger.",
+      "touchpoints": [
+        "docs/review2-04-17-2026.md",
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-00-review2-intake-ralplan.md",
+        "docs/openclaw-runtime/ingestion-fabric-phase-ledger.json"
+      ],
+      "acceptance": [
+        "full review2 embedded",
+        "phase ledger covers all major review2 requirements",
+        "tests guard critical concepts"
+      ]
+    },
+    {
+      "phase": 1,
+      "name": "Contracts: QueryPack, SourceFetchRecord, EvidenceAtom bridge",
+      "status": "completed",
+      "purpose": "Define canonical source ingestion contracts before behavior changes.",
+      "required_review2_content": [
+        "QueryPack",
+        "SourceFetchRecord",
+        "EvidenceAtom",
+        "ClaimAtom",
+        "ContextGap",
+        "Never compress before provenance"
+      ],
+      "touchpoints": [
+        "docs/openclaw-runtime/contracts/query-pack-contract.md",
+        "docs/openclaw-runtime/contracts/source-fetch-record-contract.md",
+        "docs/openclaw-runtime/contracts/evidence-atom-contract.md"
+      ],
+      "acceptance": [
+        "contracts exist",
+        "scanner is query planner in contract",
+        "sidecar-only authority is explicit"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-01-contracts-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-01-implementation-critic.md",
+      "implementation": [
+        "docs/openclaw-runtime/contracts/query-pack-contract.md",
+        "docs/openclaw-runtime/contracts/source-fetch-record-contract.md",
+        "docs/openclaw-runtime/contracts/source-atom-contract.md"
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "Brave API capability audit and endpoint inventory",
+      "status": "completed",
+      "purpose": "Record current OpenClaw Brave mode and Brave endpoint capability gaps.",
+      "required_review2_content": [
+        "Brave web/search",
+        "Brave news/search",
+        "Brave llm/context",
+        "Brave Answers",
+        "402 quota",
+        "current OpenClaw web_search abstraction",
+        "official endpoint roles",
+        "Search Result storage boundary"
+      ],
+      "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-02-brave-api-audit-ralplan.md",
+        "tools/export_brave_api_capability_audit.py",
+        "docs/openclaw-runtime/brave-api-capability-audit.json",
+        "tests/test_brave_api_capability_audit_phase02.py"
+      ],
+      "acceptance": [
+        "current mode detected",
+        "missing endpoints documented",
+        "quota failure surfaced",
+        "official Brave docs integrated",
+        "rights/storage boundary documented"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "official Brave API documentation",
+        "result": "Web/News are discovery lanes, LLM Context is selected reading, Answers is sidecar synthesis only, and raw Brave Search Results require storage discipline."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-02-brave-api-audit-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-02-implementation-critic.md",
+      "implementation": [
+        "tools/export_brave_api_capability_audit.py",
+        "docs/openclaw-runtime/brave-api-capability-audit.json"
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "Query registry, lane watermarks, and source memory index",
+      "status": "completed",
+      "purpose": "Stop repeated low-yield queries and old-claim loops at query/claim/source level.",
+      "required_review2_content": [
+        "query_registry",
+        "lane_watermarks",
+        "source_memory_index",
+        "claim novelty",
+        "not theme dedup",
+        "rate-limit aware ingestion metadata",
+        "lane-independent watermarks"
+      ],
+      "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-03-query-memory-ralplan.md",
+        "scripts/query_registry_compiler.py",
+        "scripts/source_memory_index.py",
+        "state/query-registry.jsonl",
+        "state/source-memory-index.json",
+        "state/lane-watermarks.json",
+        "tests/test_query_memory_phase03.py"
+      ],
+      "acceptance": [
+        "zero-yield repeated queries are suppressible",
+        "claim novelty uses subject/predicate/horizon",
+        "legacy theme dedup is not primary",
+        "rate-limit retry metadata captured",
+        "watermarks remain lane-independent"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "canonicalization, indexing, stream watermark, and rate-limit best-practice references",
+        "result": "Use schema-versioned canonical query fingerprints, metadata-only source memory, lane-independent watermarks, and persisted retry/next-eligible metadata."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-03-query-memory-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-03-implementation-critic.md",
+      "implementation": [
+        "scripts/query_registry_compiler.py",
+        "scripts/source_memory_index.py"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "Brave Web and News deterministic fetchers",
+      "status": "completed",
+      "purpose": "Use Brave web/news endpoints as deterministic source discovery lanes with freshness/date/domain controls.",
+      "required_review2_content": [
+        "brave_news_search_fetcher.py",
+        "brave_web_search_fetcher.py",
+        "freshness",
+        "date range",
+        "allowed domains",
+        "extra snippets",
+        "metadata-only persistence",
+        "quota/rate-limit error metadata"
+      ],
+      "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-04-brave-web-news-fetchers-ralplan.md",
+        "scripts/brave_search_fetcher_common.py",
+        "scripts/brave_news_search_fetcher.py",
+        "scripts/brave_web_search_fetcher.py",
+        "state/brave-news-search-results.jsonl",
+        "state/brave-web-search-results.jsonl",
+        "tests/test_brave_web_news_fetchers_phase04.py"
+      ],
+      "acceptance": [
+        "news/web fetchers output SourceFetchRecord-compatible rows",
+        "freshness filters are explicit",
+        "no answer synthesis",
+        "dry-run works without API key or network",
+        "raw snippets and raw response bodies are not persisted"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "official Brave Web/News API and rate-limit documentation",
+        "result": "Separate endpoint wrappers, endpoint-specific count caps, payload-expansion options default off, rate-limit headers captured, and metadata-only retention."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-04-brave-web-news-fetchers-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-04-implementation-critic.md",
+      "implementation": [
+        "scripts/brave_search_fetcher_common.py",
+        "scripts/brave_news_search_fetcher.py",
+        "scripts/brave_web_search_fetcher.py"
+      ]
+    },
+    {
+      "phase": 5,
+      "name": "Brave LLM Context reader lane",
+      "status": "completed",
+      "purpose": "Use llm/context only for selected source reading, not first-pass discovery.",
+      "required_review2_content": [
+        "brave_llm_context_fetcher.py",
+        "source_reading",
+        "selected URL",
+        "freshness limitations",
+        "safe excerpts",
+        "snippet digest not raw snippet persistence",
+        "scoped reader not first-pass discovery"
+      ],
+      "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-05-brave-llm-context-reader-ralplan.md",
+        "scripts/brave_llm_context_fetcher.py",
+        "state/brave-llm-context-results.jsonl",
+        "tests/test_brave_llm_context_phase05.py"
+      ],
+      "acceptance": [
+        "first-pass discovery blocked",
+        "selected URL/topic required",
+        "results become evidence candidates only",
+        "raw context snippets are not persisted",
+        "snippet ceiling remains configurable"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "official Brave LLM Context API and rate-limit documentation",
+        "result": "Use POST-capable scoped reader, indirect source selection via domains/Goggles, metadata-only context refs, configurable snippet ceiling, and explicit rate-limit metadata."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-05-brave-llm-context-reader-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-05-implementation-critic.md",
+      "implementation": [
+        "scripts/brave_llm_context_fetcher.py"
+      ]
+    },
+    {
+      "phase": 6,
+      "name": "Brave Answers sidecar",
+      "status": "completed",
+      "purpose": "Add Answers API as sidecar synthesis with citations only, never canonical evidence.",
+      "required_review2_content": [
+        "brave_answers_sidecar.py",
+        "chat/completions",
+        "citations",
+        "sidecar_only",
+        "not authority",
+        "streaming citation tags",
+        "answer prose as DerivedContext/Hypothesis only"
+      ],
+      "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-06-brave-answers-sidecar-ralplan.md",
+        "scripts/brave_answers_sidecar.py",
+        "state/brave-answer-sidecars",
+        "tests/test_brave_answers_sidecar_phase06.py"
+      ],
+      "acceptance": [
+        "answers without citations cannot promote",
+        "citations convert to evidence candidates",
+        "answer text is DerivedContext/Hypothesis only",
+        "enum and usage stream tags are telemetry only",
+        "raw stream frames and raw citation snippets are not persisted"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "official Brave Answers API and rate-limit documentation",
+        "result": "Use POST chat/completions with model=brave, stream=true for citations, parse citation/enum/usage tags, keep Answers billing separate, and allow only citation URLs to become evidence candidates."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-06-brave-answers-sidecar-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-06-implementation-critic.md",
+      "implementation": [
+        "scripts/brave_answers_sidecar.py"
+      ]
+    },
+    {
+      "phase": 7,
+      "name": "Query planner pack and scanner role downgrade",
+      "status": "completed",
+      "purpose": "Move LLM scanner from canonical ingestion into query planning and anomaly explanation.",
+      "required_review2_content": [
+        "scanner as query planner",
+        "finance_llm_context_pack.py",
+        "QueryPack",
+        "forbidden canonical ingestion",
+        "closed schema planner output",
+        "planning-only tool boundary"
+      ],
+      "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-07-query-planner-pack-ralplan.md",
+        "scripts/finance_llm_context_pack.py",
+        "scripts/query_pack_planner.py",
+        "state/query-packs/scanner-planned.jsonl",
+        "tests/test_query_pack_planner_phase07.py"
+      ],
+      "acceptance": [
+        "scanner pack emits query-pack contract",
+        "free-form web_search is no longer primary ingestion path",
+        "unknown discovery query packs carry known-symbol exclusions",
+        "legacy observation path remains compatibility-only"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "agent safety, structured-output, JSON Schema, and evaluation guidance",
+        "result": "Split scanner planner from deterministic ingestion, use closed structured QueryPack output, keep planning-only tool boundaries, and treat tool/search output as untrusted until validated."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-07-query-planner-pack-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-07-implementation-critic.md",
+      "implementation": [
+        "scripts/query_pack_planner.py",
+        "scripts/finance_llm_context_pack.py"
+      ]
+    },
+    {
+      "phase": 8,
+      "name": "finance_worker reducer migration",
+      "status": "completed",
+      "purpose": "Downgrade finance_worker to compatibility reducer over claims/gaps while preserving legacy observations.",
+      "required_review2_content": [
+        "finance_worker reducer",
+        "legacy observation bridge",
+        "parallel write",
+        "canonical authority removed",
+        "idempotent reducer shadow report",
+        "legacy/new evaluation mode"
+      ],
+      "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-08-finance-worker-reducer-ralplan.md",
+        "scripts/finance_worker.py",
+        "scripts/thesis_state_reducer.py",
+        "state/finance-worker-reducer-report.json",
+        "tests/test_finance_worker_reducer_phase08.py"
+      ],
+      "acceptance": [
+        "claims can reduce to legacy observations",
+        "old consumers survive",
+        "worker no longer sole canonical ingress",
+        "claim graph and context gaps compile in worker closure",
+        "reducer report exposes parity/idempotency metadata"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "event-sourcing, CDC, schema evolution, idempotency, and migration flag guidance",
+        "result": "Use compatibility bridge, shadow writes, idempotent reducer keys, schema-versioned artifacts, and parity/evaluation mode before cutover."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-08-finance-worker-reducer-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-08-implementation-critic.md",
+      "implementation": [
+        "scripts/finance_worker.py"
+      ]
+    },
+    {
+      "phase": 9,
+      "name": "Source health and quota monitor",
+      "status": "completed",
+      "purpose": "Expose Brave quota/rate limit and source health failures as first-class source-health signals.",
+      "required_review2_content": [
+        "402 quota",
+        "source_health_monitor.py",
+        "quota_state",
+        "rate_limited",
+        "failed fetch records",
+        "stale reuse guard",
+        "source health metrics"
+      ],
+      "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-09-source-health-quota-monitor-ralplan.md",
+        "scripts/source_health_monitor.py",
+        "docs/openclaw-runtime/contracts/source-health-contract.md",
+        "state/source-health.json",
+        "tests/test_source_health_monitor_phase09.py"
+      ],
+      "acceptance": [
+        "Brave 402 becomes source health degradation",
+        "reports cannot silently recycle old state",
+        "dry-run records are explicit unknown",
+        "quota/rate-limit fields and problem details are emitted"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "metrics, freshness SLO, rate-limit, circuit breaker, stale marker, and problem-details references",
+        "result": "Use multi-signal source health metrics, freshness lag, quota/rate-limit telemetry, breaker/degraded state, and machine-readable problem details."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-09-source-health-quota-monitor-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-09-implementation-critic.md",
+      "implementation": [
+        "scripts/source_health_monitor.py",
+        "docs/openclaw-runtime/contracts/source-health-contract.md"
+      ]
+    },
+    {
+      "phase": 10,
+      "name": "Event watcher and undercurrent claim-aware migration",
+      "status": "completed",
+      "purpose": "Move watcher semantics from theme/price overlap to claim persistence, source diversity, and context gaps.",
+      "required_review2_content": [
+        "event_watcher.py",
+        "claim persistence",
+        "cross-lane confirmation",
+        "PACKET_UPDATE_ONLY board mutation",
+        "context gap watcher signal",
+        "source health degradation"
+      ],
+      "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-10-claim-aware-undercurrents-ralplan.md",
+        "scripts/event_watcher.py",
+        "scripts/undercurrent_compiler.py",
+        "tests/test_event_watcher_claim_aware_phase10.py"
+      ],
+      "acceptance": [
+        "theme overlap is no longer main trigger",
+        "undercurrents use claim/source/gap evidence",
+        "quota and coverage source health degrade undercurrent confidence",
+        "old watcher fallback remains compatible"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "event graph reasoning, provenance, weak-signal memory, contradiction evidence, and time-aware ranking research",
+        "result": "Use graph-linked claim signals, independent source/lane corroboration, contradiction load, context gaps, and source-health freshness/coverage penalties."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-10-claim-aware-undercurrents-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-10-implementation-critic.md",
+      "implementation": [
+        "scripts/event_watcher.py",
+        "scripts/undercurrent_compiler.py"
+      ]
+    },
+    {
+      "phase": 11,
+      "name": "Reader bundle and follow-up slice indexing",
+      "status": "completed",
+      "purpose": "Make reader bundles carry claim IDs, lane coverage, source health, context gaps, and follow-up slice index.",
+      "required_review2_content": [
+        "finance_report_reader_bundle.py",
+        "claim ids",
+        "lane coverage",
+        "follow-up slices index",
+        "source health in follow-up",
+        "insufficient-data evidence slicing"
+      ],
+      "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-11-reader-bundle-followup-slices-ralplan.md",
+        "scripts/finance_report_reader_bundle.py",
+        "scripts/finance_followup_context_router.py",
+        "docs/openclaw-runtime/contracts/reader-bundle-contract.md",
+        "tests/test_report_reader_bundle.py"
+      ],
+      "acceptance": [
+        "bundle exposes evidence slices",
+        "follow-up no longer depends on raw thread history",
+        "slices include provenance hashes and permission metadata",
+        "router returns bundle slice coverage"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "retrieval, file-search citation, compact session memory, insufficient-context RAG, and retrieval safety guidance",
+        "result": "Treat every bundle slice as a provenance-bearing evidence unit with source metadata, content hash, retrieval score, permissions, and insufficient-data behavior."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-11-reader-bundle-followup-slices-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-11-implementation-critic.md",
+      "implementation": [
+        "scripts/finance_report_reader_bundle.py",
+        "scripts/finance_followup_context_router.py"
+      ]
+    },
+    {
+      "phase": 12,
+      "name": "Parent market-ingest handoff plan",
+      "status": "completed",
+      "purpose": "Prepare parent-side changes without silently modifying external authority chain.",
+      "required_review2_content": [
+        "source_registry",
+        "source_promotion",
+        "semantic_normalizer",
+        "temporal_alignment",
+        "packet_compiler",
+        "wake_policy",
+        "judgment_validator"
+      ],
+      "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-12-parent-handoff-ralplan.md",
+        "docs/openclaw-runtime/parent-ingestion-handoff.md",
+        "docs/openclaw-runtime/parent-ingestion-handoff-contract.json",
+        "tests/test_ingestion_fabric_phase12_parent_handoff.py"
+      ],
+      "acceptance": [
+        "parent files mapped",
+        "blast radius and rollback documented",
+        "no parent mutation without explicit phase",
+        "machine-readable handoff contract exists",
+        "feature flags default off"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "contract testing, API compatibility, rollout gates, feature flags, and protected ownership guidance",
+        "result": "Publish explicit contract, default to additive compatibility, dual-run before cutover, gate promotion on readiness, keep rollback/kill-switches, and preserve parent authority."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-12-parent-handoff-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-12-implementation-critic.md",
+      "implementation": [
+        "docs/openclaw-runtime/parent-ingestion-handoff.md",
+        "docs/openclaw-runtime/parent-ingestion-handoff-contract.json"
+      ]
+    },
+    {
+      "phase": 13,
+      "name": "Rollout, monitoring, and closeout",
+      "status": "completed",
+      "purpose": "Export readiness, monitoring, and rollback evidence for the ingestion fabric.",
+      "required_review2_content": [
+        "rollout",
+        "rollback",
+        "blast radius",
+        "tests",
+        "reviewer replay"
+      ],
+      "touchpoints": [
+        "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-13-closeout-ralplan.md",
+        "tools/export_ingestion_fabric_closeout.py",
+        "docs/openclaw-runtime/ingestion-fabric-closeout.json",
+        "tests/test_ingestion_fabric_closeout_phase13.py"
+      ],
+      "acceptance": [
+        "all phases tracked",
+        "monitoring exists",
+        "rollback explicit",
+        "ORR readiness and operational handoff recorded",
+        "parent runtime residual risks explicit"
+      ],
+      "external_scout": {
+        "used": true,
+        "source_class": "ORR/readiness, rollout monitoring, release evidence, rollback drills, residual risk, and incident handoff guidance",
+        "result": "Closeout must include readiness checklist, go/no-go metrics, acceptance evidence, rollback drills, residual risk tracking, and operational handoff."
+      },
+      "ralplan": "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-13-closeout-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/ingestion-fabric-phase-13-implementation-critic.md",
+      "implementation": [
+        "tools/export_ingestion_fabric_closeout.py",
+        "docs/openclaw-runtime/ingestion-fabric-closeout.json"
+      ]
+    }
+  ]
+}

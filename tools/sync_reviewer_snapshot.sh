@@ -4,6 +4,8 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 python3 tools/export_openclaw_runtime_snapshot.py
+python3 tools/export_source_scout_snapshot.py
+python3 tools/export_reviewer_report_packets.py --limit 5
 python3 tools/audit_operating_model.py
 python3 tools/export_parent_dependency_inventory.py
 python3 tools/audit_parent_dependency_drift.py
@@ -12,6 +14,7 @@ python3 tools/score_report_usefulness.py
 python3 tools/drill_ibkr_watchlist_freshness.py
 python3 tools/audit_benchmark_boundary.py
 python3 tools/review_runtime_gaps.py
+python3 tools/export_source_to_campaign_closeout.py
 
 git add docs/openclaw-runtime
 

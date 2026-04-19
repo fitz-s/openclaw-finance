@@ -32,6 +32,9 @@ WATCHERS_PATH = FINANCE / "state" / "event-watchers.json"
 PRICES_PATH = FINANCE / "state" / "prices.json"
 SCAN_STATE = FINANCE / "state" / "intraday-open-scan-state.json"
 WEIGHTS_PATH = FINANCE / "state" / "signal-weights.json"
+CLAIM_GRAPH = FINANCE / "state" / "claim-graph.json"
+CONTEXT_GAPS = FINANCE / "state" / "context-gaps.json"
+SOURCE_HEALTH = FINANCE / "state" / "source-health.json"
 OPENCLAW = "/Users/leofitz/.npm-global/bin/openclaw"
 
 # Watcher LLM renderer job — only triggered when watcher needs update
@@ -88,6 +91,67 @@ def quote_price_value(quote: dict) -> float | None:
         except (TypeError, ValueError):
             continue
     return None
+
+
+def as_list(value) -> list:
+    return value if isinstance(value, list) else []
+
+
+def claim_matches_watcher(claim: dict, watcher: dict) -> bool:
+    tickers = {str(t).upper() for t in as_list(watcher.get("tickers"))}
+    subject = str(claim.get("subject") or "").upper()
+    if subject and subject in tickers:
+        return True
+    theme = str(watcher.get("theme") or "").lower()
+    if not theme:
+        return False
+    tokens = {token for token in theme.replace("/", " ").replace("|", " ").split() if len(token) >= 3}
+    haystack = " ".join(str(claim.get(key) or "") for key in ["subject", "predicate", "object", "event_class"]).lower()
+    return bool(tokens and any(token in haystack for token in tokens))
+
+
+def claim_signal_for_watcher(watcher: dict, claim_graph: dict, context_gaps: dict, source_health: dict) -> dict:
+    claims = [claim for claim in as_list(claim_graph.get("claims")) if isinstance(claim, dict) and claim.get("claim_id")]
+    matched = [claim for claim in claims if claim_matches_watcher(claim, watcher)]
+    seen = {str(value) for value in as_list(watcher.get("seenClaimIds"))}
+    new_claims = [claim for claim in matched if str(claim.get("claim_id")) not in seen]
+    claim_ids = [str(claim.get("claim_id")) for claim in new_claims if claim.get("claim_id")]
+    gap_rows = [gap for gap in as_list(context_gaps.get("gaps")) if isinstance(gap, dict)]
+    claim_id_set = set(claim_ids)
+    linked_gaps = [
+        gap for gap in gap_rows
+        if str(gap.get("claim_id")) in claim_id_set
+        or bool(claim_id_set & {str(value) for value in as_list(gap.get("weak_claim_ids"))})
+    ]
+    atom_ids = {str(claim.get("atom_id")) for claim in new_claims if claim.get("atom_id")}
+    # Source health is keyed by source id, while watcher claims may only expose source_id.
+    source_ids = {str(claim.get("source_id")) for claim in new_claims if claim.get("source_id")}
+    degraded = []
+    for row in as_list(source_health.get("sources")):
+        if not isinstance(row, dict):
+            continue
+        source_id = str(row.get("source_id") or "")
+        if source_ids and source_id not in source_ids:
+            continue
+        if (
+            row.get("freshness_status") in {"stale", "unknown"}
+            or row.get("coverage_status") == "unavailable"
+            or row.get("quota_status") == "degraded"
+            or row.get("rights_status") in {"restricted", "unknown"}
+        ):
+            degraded.append(source_id)
+    return {
+        "has_new_signal": bool(claim_ids),
+        "claim_ids": claim_ids[:12],
+        "atom_ids": sorted(atom_ids)[:12],
+        "context_gap_ids": [str(gap.get("gap_id")) for gap in linked_gaps if gap.get("gap_id")][:12],
+        "degraded_sources": sorted(set(degraded))[:12],
+        "reason": "; ".join(part for part in [
+            f"claim_graph:{len(claim_ids)} new claims" if claim_ids else "",
+            f"context_gaps:{len(linked_gaps)}" if linked_gaps else "",
+            f"degraded_sources:{len(set(degraded))}" if degraded else "",
+        ] if part),
+    }
 
 
 def canonical_wake_key(watcher: dict) -> str:
@@ -183,6 +247,9 @@ def tick() -> dict:
     watchers = watchers_data.get("watchers", [])
     prices = price_quotes(load_json(PRICES_PATH))
     scan = load_json(SCAN_STATE)
+    claim_graph = load_json(CLAIM_GRAPH)
+    context_gaps = load_json(CONTEXT_GAPS)
+    source_health = load_json(SOURCE_HEALTH)
     accumulated = scan.get("accumulated", [])
     now = datetime.now(timezone.utc)
 
@@ -216,12 +283,17 @@ def tick() -> dict:
 
         # Check if new observations mention this watcher's theme
         new_signal = False
+        theme_signal = False
+        claim_signal = claim_signal_for_watcher(w, claim_graph, context_gaps, source_health)
+        if claim_signal["has_new_signal"]:
+            new_signal = True
         theme_lower = w.get("theme", "").lower()
         theme_words = set(theme_lower.split()[:3])  # first 3 words as matcher
         for obs in accumulated:
             obs_theme = obs.get("theme", "").lower()
             if theme_words and len(theme_words & set(obs_theme.split())) >= 2:
                 new_signal = True
+                theme_signal = True
                 break
 
         # Decide: does this watcher need an LLM update?
@@ -239,13 +311,18 @@ def tick() -> dict:
             reason = []
             if price_moved:
                 reason.append(f"price: {', '.join(move_details)}")
-            if new_signal:
+            if claim_signal["has_new_signal"]:
+                reason.append(claim_signal["reason"] or "new claim graph signal")
+            if theme_signal:
                 reason.append("new observation matches theme")
+            if claim_signal["has_new_signal"]:
+                w["seenClaimIds"] = sorted(set(as_list(w.get("seenClaimIds"))) | set(claim_signal["claim_ids"]))[-100:]
             needs_update.append({
                 "watcherId": w.get("source_uid", w["id"]),
                 "theme": w["theme"],
                 "tickers": w["tickers"],
                 "reason": "; ".join(reason),
+                "claim_signal": claim_signal,
                 "updateCount": w["updateCount"],
             })
         else:

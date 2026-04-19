@@ -1,12 +1,17 @@
 {
-  "generated_at": "2026-04-16T19:39:08.609183+00:00",
+  "generated_at": "2026-04-18T00:10:04.115287+00:00",
   "status": "drift_detected",
-  "changed_count": 1,
+  "changed_count": 2,
   "changed": [
     {
-      "role": "decision_log_schema",
-      "baseline_sha256": "sha256:996b974cfaf512ce36648ef78b8f4c4bbdf2e5f2cabd5feb13e7f7f1749dc9cc",
-      "current_sha256": "sha256:417f43e7fa5186247ddaa8c849dfd94a78bd3b32c9e2fdbbdebb0028c2c4e196"
+      "role": "live_finance_adapter",
+      "baseline_sha256": "sha256:a4588dc81ee5e0628e3651318938414bfa6790dd87dc2ac7741eec1e11cfe573",
+      "current_sha256": "sha256:583a135d0ac533ee0e86b1c01563ac9ed9fbe0fac77f3fb4c30ca28338f44149"
+    },
+    {
+      "role": "source_health_compiler",
+      "baseline_sha256": "sha256:a40fcbb89ce832274604e66a373568f91871f95e7b75f8cf5cd8e1c932ad213f",
+      "current_sha256": "sha256:0fbc1499fd13c1ecae455efcf05c6152b88c22cd4410c82a618c6313b5c96517"
     }
   ],
   "note": "Drift is informational for reviewer visibility; commit the refreshed snapshot after intentional parent dependency changes."

@@ -37,7 +37,8 @@ This structure is inherited from `STYLE_GUIDE.md` `Fact / Interpretation / To Ve
 
 1. Answer must bind to a valid `report_id` + `bundle_id`
 2. Answer must bind to a selected handle from the bundle
-3. Answer must use only evidence available in the bundle, not external/new facts
+3. Answer must bind to an `evidence_slice_id` emitted by the follow-up context router
+4. Answer must use only evidence available in the bundle, campaign board, or selected evidence slice, not external/new facts
 
 ## Forbidden Actions
 
@@ -60,3 +61,22 @@ Thread history is UI only; the bundle is memory.
 ## Authority
 
 Follow-up answers are **derived commentary**, not canonical state. They do not feed back into the thesis spine, capital competition engine, or judgment envelope chain. They are strictly explain-only within the existing review-only boundary.
+
+## Phase 6 Evidence Slice Discipline
+
+The follow-up router must emit:
+
+- `verb`
+- `primary_handle`
+- `resolved_primary_handle`
+- optional `secondary_handle` / `resolved_secondary_handle`
+- `evidence_slice_keys`
+- `evidence_slice_id`
+- `missing_fields`
+- `insufficient_data`
+
+If required slice fields are absent, the answer should return `insufficient_data` with the missing fields instead of generic inference. `insufficient_data` is still review-only and still requires `evidence_slice_id`.
+
+If a route supplies `evidence_slice_coverage.coverage_status=insufficient`, an answer may only pass as `answer_status=insufficient_data`. It must not present itself as fully answered.
+
+Parent Discord thread routing is out of scope for Phase 6; thread history remains UI only.

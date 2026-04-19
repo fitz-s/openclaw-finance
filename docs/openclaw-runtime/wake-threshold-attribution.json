@@ -1,18 +1,18 @@
 {
-  "generated_at": "2026-04-16T19:39:08.631568+00:00",
+  "generated_at": "2026-04-17T22:15:01.507879+00:00",
   "status": "pass",
   "latest": {
-    "attribution": "packet_update_only",
-    "gate_evaluated_at": "2026-04-16T19:21:37.702534+00:00",
-    "gate_should_send": false,
-    "gate_recommended_report_type": "hold",
+    "attribution": "legacy_threshold_bridge",
+    "gate_evaluated_at": "2026-04-17T22:05:04.097493+00:00",
+    "gate_should_send": true,
+    "gate_recommended_report_type": "short",
     "wake_class": "PACKET_UPDATE_ONLY",
     "wake_dispatch_action": "persist_only",
     "wake_dispatched": false,
-    "legacy_threshold_bridge_present": false,
-    "legacy_threshold_bridge_status": null,
-    "legacy_threshold_bridge_action": null,
-    "legacy_threshold_bridge_dispatched": null,
-    "report_class": null
+    "legacy_threshold_bridge_present": true,
+    "legacy_threshold_bridge_status": "pass",
+    "legacy_threshold_bridge_action": "dispatched",
+    "legacy_threshold_bridge_dispatched": true,
+    "report_class": "legacy_threshold"
   }
 }

@@ -187,3 +187,33 @@ def test_health_only_still_delivers_without_followup_router():
         assert result['discord_primary_ok'] is True
         assert result['thread_followup_ok'] is False
         assert 'thread_followup_not_ready' in result['warnings']
+
+
+def test_core_report_requires_macro_triad_in_primary_and_artifact():
+    report = _report()
+    primary = report['discord_primary_markdown']
+    artifact = report['markdown']
+    for token in ['Macro triad', 'Gold', 'Bitcoin', 'SPX']:
+        assert token in primary
+    assert 'Core macro triad' in artifact
+
+
+def test_validator_blocks_primary_without_macro_triad():
+    report = _report()
+    report['discord_primary_markdown'] = report['discord_primary_markdown'].replace('Macro triad', 'Macro removed').replace('Gold', 'Au').replace('Bitcoin', 'Crypto').replace('SPX', 'Index')
+    result = validate_report(report, _packet(), _judgment(), _validation())
+    assert any(item['code'] == 'primary_missing_macro_triad' for item in result['operator_errors'])
+
+
+def test_options_iv_context_cannot_become_judgment_authority():
+    report = _report()
+    report['options_iv_surface_summary']['source_health_refs'] = ['ev:1']
+    result = validate_report(report, _packet(), _judgment(), _validation())
+    assert any(item['code'] == 'options_iv_refs_in_judgment_evidence' for item in result['options_iv_errors'])
+
+
+def test_options_iv_context_rejects_raw_payload_retention():
+    report = _report()
+    report['options_iv_surface_summary']['raw_payload_retained'] = True
+    result = validate_report(report, _packet(), _judgment(), _validation())
+    assert any(item['code'] == 'options_iv_raw_payload_retained' for item in result['options_iv_errors'])

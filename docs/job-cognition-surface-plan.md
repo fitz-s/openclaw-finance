@@ -21,7 +21,7 @@ ContextPacket -> WakeDecision -> JudgmentEnvelope -> product report -> decision 
 | --- | --- | --- | --- | --- |
 | `finance-subagent-scanner` | Find object-linked evidence candidates during market hours | `state/llm-job-context/scanner.json` | buffer JSON observations only | user messages, delivery, held/watchlist-as-unknown |
 | `finance-subagent-scanner-offhours` | Find overnight object-linked evidence candidates | `state/llm-job-context/scanner.json` | buffer JSON observations only | user messages, delivery, stale watchlist substitution |
-| `finance-premarket-brief` | Adjudicate Thesis Spine deltas into a bounded JudgmentEnvelope candidate | `state/llm-job-context/report-orchestrator.json` | `judgment-envelope-candidate.json` then safety-gated final markdown | report prose before safety, invented facts, execution |
+| `finance-premarket-brief` | Run deterministic report closure and print only the final operator surface | internal call from `finance_discord_report_job.py` | stdout: `NO_REPLY`, health-only markdown, or validated operator report | LLM progress text, report prose before safety, invented facts, execution |
 | `finance-thesis-sidecar` | Run bounded research artifact flow | `state/llm-job-context/thesis-sidecar.json` | typed dossiers/scenario/custom metric artifacts | Discord, threshold mutation, execution |
 | `finance-weekly-learning-review` | Review telemetry and recommend system improvements | `state/llm-job-context/weekly-learning.json` | Fact / Interpretation / Recommendation | market advice, automatic threshold mutation |
 
@@ -49,7 +49,7 @@ The pack may summarize existing typed artifacts, but it must not create independ
 
 ## Prompt Contract
 
-Finance cron prompts must be context-pack-first:
+Finance cron prompts that ask an LLM to reason over finance state must be context-pack-first:
 
 1. Run `finance_llm_context_pack.py`.
 2. Read the role-specific context pack.
@@ -59,9 +59,11 @@ Finance cron prompts must be context-pack-first:
 
 Prompt drift tests must fail if:
 
-- an active finance job stops referencing `llm-job-context`
-- the report orchestrator stops writing `judgment-envelope-candidate.json`
+- scanner/sidecar/weekly cognition jobs stop referencing `llm-job-context`
+- the user-visible premarket report job stops using `finance_discord_report_job.py`
+- the user-visible premarket report job permits progress text or a free-form LLM orchestrator prompt
 - scanner prompts allow held/watchlist symbols to satisfy unknown discovery
 - sidecar delivery is enabled
 - weekly learning permits automatic threshold mutation
 
+The user-visible premarket report is intentionally not an LLM orchestrator prompt. It must run the deterministic stdout wrapper so intermediate text such as "Now running..." can never enter Discord.

@@ -1,0 +1,468 @@
+{
+  "generated_at": "2026-04-17T16:45:00Z",
+  "contract": "source-to-campaign-phase-ledger-v1",
+  "source_review": "docs/review-04-17-2026.md",
+  "source_review_sha256": "20017d4522396e9b87ab60eeb8621ba0307df5947a1bee57a544abd18ec41932",
+  "north_star": "OpenClaw Finance Information Dominance Stack / Source-to-Campaign Intelligence Fabric",
+  "design_rule": "Never compress before provenance.",
+  "execution_rule": "Every phase must complete RALPLAN, implementation, critic, verification, commit, and push before moving to the next phase.",
+  "explicit_user_additions": [
+    "scout must search for more information sources",
+    "system is currently insensitive to options volatility and IV",
+    "finance threads inactive for 72 hours should disappear from the active follow-up surface"
+  ],
+  "non_goals": [
+    "standalone terminal",
+    "execution/trading adapter",
+    "HFT/co-location/Level-3 market-making stack",
+    "committing raw licensed snippets",
+    "committing Discord conversations",
+    "turning thread registry into long-term memory"
+  ],
+  "phases": [
+    {
+      "phase": 0,
+      "name": "Review intake and durable baseline",
+      "status": "completed",
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-00-review-intake-ralplan.md",
+      "purpose": "Persist the full review text and create the execution ledger without touching runtime behavior.",
+      "touchpoints": [
+        "docs/review-04-17-2026.md",
+        "docs/openclaw-runtime/ralplan/source-to-campaign-phase-00-review-intake-ralplan.md",
+        "docs/openclaw-runtime/source-to-campaign-phase-ledger.json"
+      ],
+      "acceptance": [
+        "full review embedded",
+        "all review layers mapped",
+        "tests guard critical requirements"
+      ]
+    },
+    {
+      "phase": 1,
+      "name": "Source Office 2.0 and scout expansion",
+      "status": "completed",
+      "purpose": "Create lane-aware source office and source scout candidate evaluation.",
+      "required_review_content": [
+        "six source lanes",
+        "Source Registry 2.0",
+        "lane-specific freshness",
+        "source scout searches more information sources",
+        "rights/compliance discipline"
+      ],
+      "touchpoints": [
+        "docs/openclaw-runtime/contracts/source-registry-v2-contract.md",
+        "docs/openclaw-runtime/contracts/source-health-contract.md",
+        "scripts/source_scout.py",
+        "state/source-scout-candidates.json"
+      ],
+      "acceptance": [
+        "source candidates are lane-classified",
+        "rights and cost are explicit",
+        "unvetted sources do not enter hot path"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-01-source-office-scout-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-01-implementation-critic.md",
+      "implementation": [
+        "scripts/source_scout.py",
+        "tools/export_source_scout_snapshot.py",
+        "docs/openclaw-runtime/source-scout-candidates.json"
+      ]
+    },
+    {
+      "phase": 2,
+      "name": "EvidenceAtom and ClaimAtom canonicalization",
+      "status": "completed",
+      "purpose": "Make provenance-first evidence the canonical substrate while preserving legacy observation compatibility.",
+      "required_review_content": [
+        "EvidenceAtom",
+        "ClaimAtom",
+        "Never compress before provenance",
+        "finance_worker downgraded to aggregator",
+        "parallel-write before cutover"
+      ],
+      "touchpoints": [
+        "scripts/finance_worker.py",
+        "scripts/source_atom_compiler.py",
+        "scripts/claim_graph_compiler.py",
+        "docs/openclaw-runtime/contracts/source-atom-contract.md",
+        "docs/openclaw-runtime/contracts/claim-atom-contract.md"
+      ],
+      "acceptance": [
+        "claims require atom ids",
+        "atoms preserve event/observed/ingested time",
+        "restricted raw snippets stay out of reviewer exports"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-02-evidence-claim-canonicalization-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-02-implementation-critic.md",
+      "implementation": [
+        "scripts/source_atom_compiler.py",
+        "scripts/claim_graph_compiler.py"
+      ]
+    },
+    {
+      "phase": 3,
+      "name": "Options and IV sensitivity upgrade",
+      "status": "completed",
+      "purpose": "Promote options volatility and IV from weak proxy into explicit market_structure.options_iv lane with confidence penalties.",
+      "required_review_content": [
+        "options/IV sensitivity",
+        "IV rank",
+        "IV percentile",
+        "skew",
+        "OI change",
+        "volume/OI",
+        "stale chain penalty",
+        "proxy confidence"
+      ],
+      "touchpoints": [
+        "scripts/options_flow_proxy_fetcher.py",
+        "scripts/options_iv_surface_compiler.py",
+        "state/options-iv-surface.json",
+        "state/options-iv-events.jsonl"
+      ],
+      "acceptance": [
+        "IV anomalies update peacetime board",
+        "stale chain reduces confidence",
+        "non-watchlist IV spike requires cross-lane confirmation"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-03-options-iv-sensitivity-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-03-implementation-critic.md",
+      "implementation": [
+        "scripts/options_iv_surface_compiler.py",
+        "scripts/finance_discord_report_job.py",
+        "docs/openclaw-runtime/contracts/options-iv-surface-contract.md"
+      ]
+    },
+    {
+      "phase": 4,
+      "name": "ContextGap first-class unknowns",
+      "status": "completed",
+      "purpose": "Replace generic To Verify with traceable ContextGap objects.",
+      "required_review_content": [
+        "ContextGap",
+        "missing_lane",
+        "why_load_bearing",
+        "cost_of_ignorance",
+        "suggested_sources"
+      ],
+      "touchpoints": [
+        "scripts/context_gap_compiler.py",
+        "docs/openclaw-runtime/contracts/context-gap-contract.md",
+        "scripts/finance_decision_report_render.py",
+        "scripts/finance_report_reader_bundle.py"
+      ],
+      "acceptance": [
+        "high-impact unknowns have gap ids",
+        "gaps link to weak claims",
+        "gaps can close"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-04-context-gap-first-class-unknowns-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-04-implementation-critic.md",
+      "implementation": [
+        "scripts/context_gap_compiler.py",
+        "docs/openclaw-runtime/contracts/context-gap-contract.md"
+      ]
+    },
+    {
+      "phase": 5,
+      "name": "Report-time archive and exact replay",
+      "status": "completed",
+      "purpose": "Archive report-time envelope, atoms, claims, gaps, source health, campaign board, and line-to-claim refs.",
+      "required_review_content": [
+        "exact historical replay",
+        "report_time_source_health",
+        "line_to_claim_refs",
+        "campaign_trace",
+        "context_gaps_at_report_time"
+      ],
+      "touchpoints": [
+        "state/report-archive/{report_id}",
+        "scripts/finance_decision_report_render.py",
+        "scripts/finance_decision_log_compiler.py",
+        "tools/export_reviewer_report_packets.py"
+      ],
+      "acceptance": [
+        "new reviewer packets can replay report-time state",
+        "operator lines trace to claim ids",
+        "legacy reports are explicitly non-replayable"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-05-report-time-archive-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-05-implementation-critic.md",
+      "implementation": [
+        "scripts/finance_report_archive_compiler.py",
+        "scripts/finance_discord_report_job.py",
+        "docs/openclaw-runtime/contracts/report-time-archive-contract.md"
+      ]
+    },
+    {
+      "phase": 6,
+      "name": "Undercurrent Engine",
+      "status": "completed",
+      "purpose": "Make peacetime and dark undercurrents first-class and not just keyword/price watcher output.",
+      "required_review_content": [
+        "UndercurrentCard",
+        "persistence",
+        "acceleration",
+        "cross_lane_confirmation",
+        "source_diversity",
+        "contradiction_load",
+        "PACKET_UPDATE_ONLY updates peacetime board"
+      ],
+      "touchpoints": [
+        "scripts/event_watcher.py",
+        "scripts/undercurrent_compiler.py",
+        "state/undercurrents.json"
+      ],
+      "acceptance": [
+        "single-lane narrative cannot promote",
+        "packet_update_only mutates peacetime board",
+        "promotion reason is explicit"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-06-undercurrent-engine-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-06-implementation-critic.md",
+      "implementation": [
+        "scripts/undercurrent_compiler.py",
+        "docs/openclaw-runtime/contracts/undercurrent-card-contract.md"
+      ]
+    },
+    {
+      "phase": 7,
+      "name": "Campaign OS board upgrade",
+      "status": "completed",
+      "purpose": "Turn Discord primary product into campaign boards with lane coverage and known unknowns.",
+      "required_review_content": [
+        "CampaignProjection",
+        "Live Board",
+        "Peacetime Board",
+        "Risk / Undercurrent Board",
+        "known_unknowns",
+        "lane_coverage_summary"
+      ],
+      "touchpoints": [
+        "scripts/campaign_projection_compiler.py",
+        "scripts/finance_decision_report_render.py",
+        "scripts/finance_report_product_validator.py"
+      ],
+      "acceptance": [
+        "cards are object-first",
+        "cards disclose source health",
+        "machine footers stay out of operator primary"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-07-campaign-os-board-upgrade-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-07-implementation-critic.md",
+      "implementation": [
+        "scripts/campaign_projection_compiler.py",
+        "docs/openclaw-runtime/contracts/campaign-projection-contract.md"
+      ]
+    },
+    {
+      "phase": 8,
+      "name": "Verb-specific follow-up committee room",
+      "status": "completed",
+      "purpose": "Make why/compare/challenge/scenario/sources/trace use distinct evidence slices.",
+      "required_review_content": [
+        "verb + primary_handle",
+        "secondary_handle",
+        "VERB_SLICES",
+        "insufficient_data",
+        "context_gap",
+        "evidence_slice_id"
+      ],
+      "touchpoints": [
+        "scripts/finance_followup_context_router.py",
+        "scripts/finance_followup_answer_guard.py",
+        "docs/openclaw-runtime/contracts/followup-context-slice-contract.md"
+      ],
+      "acceptance": [
+        "compare requires capital/displacement slice",
+        "sources requires atom lineage",
+        "guard rejects missing evidence coverage"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-08-verb-specific-followup-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-08-implementation-critic.md",
+      "implementation": [
+        "scripts/finance_followup_context_router.py",
+        "scripts/finance_followup_answer_guard.py",
+        "docs/openclaw-runtime/contracts/followup-context-slice-contract.md"
+      ]
+    },
+    {
+      "phase": 9,
+      "name": "Deep-dive cache",
+      "status": "completed",
+      "purpose": "Prebake why/challenge/compare/scenario/sources/trace cards for top campaigns before the user asks.",
+      "required_review_content": [
+        "anticipatory context",
+        "why_now card",
+        "challenge card",
+        "compare current book card",
+        "scenario stress card",
+        "sources freshness card"
+      ],
+      "touchpoints": [
+        "scripts/finance_campaign_cache_builder.py",
+        "scripts/finance_discord_campaign_board_deliver.py",
+        "state/deep-dive-cache"
+      ],
+      "acceptance": [
+        "thread seed includes prepared details",
+        "first follow-up can hit cache",
+        "stale cache is marked"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-09-deep-dive-cache-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-09-implementation-critic.md",
+      "implementation": [
+        "scripts/finance_campaign_cache_builder.py",
+        "scripts/finance_discord_campaign_board_deliver.py"
+      ]
+    },
+    {
+      "phase": 10,
+      "name": "72h inactive finance thread lifecycle",
+      "status": "completed",
+      "purpose": "Remove inactive finance threads from active follow-up and optionally archive/lock them after 72h inactivity.",
+      "required_review_content": [
+        "inactive for 72 hours",
+        "created_at",
+        "last_user_message_at",
+        "last_bot_reply_at",
+        "last_activity_at",
+        "lifecycle_status"
+      ],
+      "touchpoints": [
+        "scripts/finance_followup_thread_registry_repair.py",
+        "scripts/finance_thread_lifecycle_gc.py",
+        "parent Discord inbound handler"
+      ],
+      "acceptance": [
+        "inactive thread exits hot path after 72h",
+        "activity refreshes last_activity_at",
+        "registry remains bounded"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-10-thread-lifecycle-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-10-implementation-critic.md",
+      "implementation": [
+        "scripts/finance_followup_thread_registry_repair.py",
+        "scripts/finance_thread_lifecycle_gc.py",
+        "docs/openclaw-runtime/contracts/finance-thread-lifecycle-contract.md"
+      ]
+    },
+    {
+      "phase": 11,
+      "name": "Reviewer packet exact replay upgrade",
+      "status": "completed",
+      "purpose": "Extend reviewer packets with exact report-time source health, claim lineage, campaign trace, and context gaps.",
+      "required_review_content": [
+        "report_time_source_health",
+        "line_to_claim_refs",
+        "campaign_trace",
+        "context_gaps_at_report_time",
+        "claims_per_1000_chars"
+      ],
+      "touchpoints": [
+        "tools/export_reviewer_report_packets.py",
+        "docs/openclaw-runtime/reviewer-packets"
+      ],
+      "acceptance": [
+        "raw_snippet_export_count remains zero",
+        "new reports exact_replay_available true",
+        "legacy reports flagged"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-11-reviewer-exact-replay-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-11-implementation-critic.md",
+      "implementation": [
+        "tools/export_reviewer_report_packets.py"
+      ]
+    },
+    {
+      "phase": 12,
+      "name": "Source ROI and learning",
+      "status": "completed",
+      "purpose": "Attribute campaign value, follow-up usefulness, gap closure, and false positives back to source lanes.",
+      "required_review_content": [
+        "source ROI",
+        "campaign value",
+        "peacetime_to_live_conversion",
+        "false_positive_rate",
+        "context_gap_closure_time"
+      ],
+      "touchpoints": [
+        "scripts/source_roi_tracker.py",
+        "docs/openclaw-runtime/contracts/source-roi-contract.md",
+        "state/source-roi-history.jsonl"
+      ],
+      "acceptance": [
+        "source contribution is measured",
+        "low-value sources decay",
+        "untrusted sources cannot dominate"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-12-source-roi-learning-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-12-implementation-critic.md",
+      "implementation": [
+        "scripts/source_roi_tracker.py",
+        "docs/openclaw-runtime/contracts/source-roi-contract.md"
+      ]
+    },
+    {
+      "phase": 13,
+      "name": "Final active cutover",
+      "status": "completed",
+      "purpose": "Only after source/evidence/replay/follow-up are stable, allow undercurrent promotion to influence wake and primary campaign boards.",
+      "required_review_content": [
+        "parallel-write before cutover",
+        "rollback",
+        "monitoring",
+        "wake priority"
+      ],
+      "touchpoints": [
+        "scripts/finance_discord_report_job.py",
+        "scripts/finance_report_delivery_safety.py",
+        "scripts/gate_evaluator.py",
+        "OpenClaw parent delivery"
+      ],
+      "acceptance": [
+        "fallbacks work",
+        "no execution authority",
+        "safety remains fail-closed"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-13-active-cutover-gate-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-13-implementation-critic.md",
+      "implementation": [
+        "scripts/finance_source_to_campaign_cutover_gate.py",
+        "scripts/finance_discord_report_job.py",
+        "docs/openclaw-runtime/contracts/source-to-campaign-cutover-gate-contract.md"
+      ]
+    },
+    {
+      "phase": 14,
+      "name": "Monitoring, rollback hardening, and closeout",
+      "status": "completed",
+      "purpose": "Lock operational metrics and close the source-to-campaign stack with documented rollback and reviewer evidence.",
+      "required_review_content": [
+        "source_coverage_score",
+        "freshness_sla_breach_rate",
+        "source_diversity_per_campaign",
+        "followup_grounding_failure_rate",
+        "raw_snippet_export_count",
+        "iv_signal_staleness_rate",
+        "inactive_thread_pruned_count"
+      ],
+      "touchpoints": [
+        "tools/review_runtime_gaps.py",
+        "tools/score_report_usefulness.py",
+        "docs/openclaw-runtime/runtime-gap-review.json"
+      ],
+      "acceptance": [
+        "monitoring metrics are exported",
+        "rollback is documented",
+        "reviewer evidence complete"
+      ],
+      "ralplan": "docs/openclaw-runtime/ralplan/source-to-campaign-phase-14-monitoring-closeout-ralplan.md",
+      "critic": "docs/openclaw-runtime/critics/source-to-campaign-phase-14-implementation-critic.md",
+      "implementation": [
+        "tools/export_source_to_campaign_closeout.py",
+        "docs/openclaw-runtime/source-to-campaign-closeout.json"
+      ]
+    }
+  ]
+}

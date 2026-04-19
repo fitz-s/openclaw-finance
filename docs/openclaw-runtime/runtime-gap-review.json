@@ -1,8 +1,9 @@
 {
-  "generated_at": "2026-04-16T19:39:08.720609+00:00",
+  "generated_at": "2026-04-17T22:15:01.941368+00:00",
   "status": "reviewed",
   "unresolved_gaps": [
     "ibkr_client_portal_watchlist_sync_not_fresh",
+    "legacy_threshold_bridge_still_present",
     "parent_market_ingest_dependency_external_to_repo"
   ],
   "watchlist": {
@@ -10,7 +11,7 @@
     "ibkr_watchlist_fresh": false,
     "portfolio_fresh": false,
     "resolved_data_status": "degraded",
-    "resolved_symbol_count": 15,
+    "resolved_symbol_count": 55,
     "blocking_reasons": [
       "client_portal_not_authenticated",
       "client_portal_unavailable_or_stale; flex_unavailable_or_stale"
@@ -21,41 +22,13 @@
     "delivered_count_in_recent_window": 12,
     "reviewed_recent_delivered_runs": [
       {
-        "runAtMs": 1776273805863,
+        "runAtMs": 1776374653168,
         "status": "ok",
         "deliveryStatus": "delivered",
-        "durationMs": 105861,
+        "durationMs": 162921,
         "quality": {
-          "line_count": 49,
-          "char_count": 2001,
-          "has_opportunity_first_contract": true,
-          "has_unknown_discovery_section": true,
-          "has_holding_section": true,
-          "noise_tokens": []
-        }
-      },
-      {
-        "runAtMs": 1776284702310,
-        "status": "ok",
-        "deliveryStatus": "delivered",
-        "durationMs": 100346,
-        "quality": {
-          "line_count": 48,
-          "char_count": 2001,
-          "has_opportunity_first_contract": true,
-          "has_unknown_discovery_section": true,
-          "has_holding_section": true,
-          "noise_tokens": []
-        }
-      },
-      {
-        "runAtMs": 1776345025592,
-        "status": "ok",
-        "deliveryStatus": "delivered",
-        "durationMs": 147815,
-        "quality": {
-          "line_count": 5,
-          "char_count": 176,
+          "line_count": 28,
+          "char_count": 681,
           "has_opportunity_first_contract": false,
           "has_unknown_discovery_section": false,
           "has_holding_section": false,
@@ -63,13 +36,13 @@
         }
       },
       {
-        "runAtMs": 1776346988364,
+        "runAtMs": 1776431474763,
         "status": "ok",
         "deliveryStatus": "delivered",
-        "durationMs": 123479,
+        "durationMs": 112675,
         "quality": {
-          "line_count": 5,
-          "char_count": 153,
+          "line_count": 28,
+          "char_count": 710,
           "has_opportunity_first_contract": false,
           "has_unknown_discovery_section": false,
           "has_holding_section": false,
@@ -77,13 +50,41 @@
         }
       },
       {
-        "runAtMs": 1776356593565,
+        "runAtMs": 1776440814804,
         "status": "ok",
         "deliveryStatus": "delivered",
-        "durationMs": 101109,
+        "durationMs": 152212,
         "quality": {
-          "line_count": 25,
-          "char_count": 505,
+          "line_count": 28,
+          "char_count": 758,
+          "has_opportunity_first_contract": false,
+          "has_unknown_discovery_section": false,
+          "has_holding_section": false,
+          "noise_tokens": []
+        }
+      },
+      {
+        "runAtMs": 1776447832394,
+        "status": "ok",
+        "deliveryStatus": "delivered",
+        "durationMs": 221248,
+        "quality": {
+          "line_count": 28,
+          "char_count": 758,
+          "has_opportunity_first_contract": false,
+          "has_unknown_discovery_section": false,
+          "has_holding_section": false,
+          "noise_tokens": []
+        }
+      },
+      {
+        "runAtMs": 1776463593243,
+        "status": "ok",
+        "deliveryStatus": "delivered",
+        "durationMs": 200438,
+        "quality": {
+          "line_count": 28,
+          "char_count": 757,
           "has_opportunity_first_contract": false,
           "has_unknown_discovery_section": false,
           "has_holding_section": false,
@@ -92,11 +93,11 @@
       }
     ],
     "latest_product_report": {
-      "generated_at": "2026-04-16T18:25:09.972769Z",
-      "report_hash": "sha256:ef4fc3a2613414f87d6e0f1e6a485306d4fb9927340d36a612e43e97ed57bb66",
+      "generated_at": "2026-04-17T22:08:55.755646Z",
+      "report_hash": "sha256:f8d6475a138a7c5701f98eb244e6c0a111a701ba36f411c1e55af9d0b7c658c6",
       "quality": {
-        "line_count": 53,
-        "char_count": 2185,
+        "line_count": 57,
+        "char_count": 2588,
         "has_opportunity_first_contract": true,
         "has_unknown_discovery_section": true,
         "has_holding_section": true,
@@ -107,10 +108,10 @@
   },
   "wake_threshold_bridge": {
     "current_gate": {
-      "evaluatedAt": "2026-04-16T19:21:37.702534+00:00",
-      "window": "late",
-      "shouldSend": false,
-      "recommendedReportType": "hold",
+      "evaluatedAt": "2026-04-17T22:05:04.097493+00:00",
+      "window": "post",
+      "shouldSend": true,
+      "recommendedReportType": "short",
       "decisionReason_sanitized": "present"
     },
     "current_wake": {
@@ -123,10 +124,10 @@
       "status": "pass"
     },
     "legacy_threshold_bridge_current": {
-      "present": false,
-      "status": null,
-      "action": null,
-      "dispatched": null
+      "present": true,
+      "status": "pass",
+      "action": "dispatched",
+      "dispatched": true
     },
     "telemetry_files": {
       "dispatch_attribution_exists": true,

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-16T19:39:08.571878+00:00",
+  "generated_at": "2026-04-18T00:10:04.073911+00:00",
   "status": "pass",
   "dependency_boundary": "parent_openclaw_workspace",
   "finance_repo_policy": "These files are load-bearing runtime dependencies but are not owned by the finance repository. Reviewers must inspect this inventory when packet/wake/judgment behavior changes.",
@@ -14,7 +14,7 @@
       "role": "decision_log_schema",
       "path": "/Users/leofitz/.openclaw/workspace/schemas/decision-log.schema.json",
       "exists": true,
-      "sha256": "sha256:417f43e7fa5186247ddaa8c849dfd94a78bd3b32c9e2fdbbdebb0028c2c4e196"
+      "sha256": "sha256:a1dbbb2d89c97f76f375946b48aa1de24e036f05f4ce2125d8a6c858a7f60fc0"
     },
     {
       "role": "packet_schema",
@@ -65,16 +65,34 @@
       "sha256": "sha256:2d524f7ae87b638a2a6a7df01797f5191fcf57b32ecb9ef8526881e0cfc3a1aa"
     },
     {
+      "role": "source_registry_schema",
+      "path": "/Users/leofitz/.openclaw/workspace/schemas/source-registry-record.schema.json",
+      "exists": true,
+      "sha256": "sha256:9de62298f0a71b195045acbe905448fa00cea3cef291ca8656f3c11a55bfffcb"
+    },
+    {
+      "role": "source_health_schema",
+      "path": "/Users/leofitz/.openclaw/workspace/schemas/source-health.schema.json",
+      "exists": true,
+      "sha256": "sha256:4b6d835cb767857f8dbc9b4796c2208c1aa2c0e65d066d54b15174a15409b5ed"
+    },
+    {
       "role": "source_registry",
       "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/config/source-registry.json",
       "exists": true,
-      "sha256": "sha256:7ca18942e6b2bb46931c51af79a99ccc4741023cd1f2c677ceb71bffb98275f5"
+      "sha256": "sha256:3355d78ccee6c65774000b13128bb1a3cbb6f788d68e31e748e2b954149cbddc"
+    },
+    {
+      "role": "source_health_compiler",
+      "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/source_health/compiler.py",
+      "exists": true,
+      "sha256": "sha256:0fbc1499fd13c1ecae455efcf05c6152b88c22cd4410c82a618c6313b5c96517"
     },
     {
       "role": "live_finance_adapter",
       "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/adapters/live_finance_adapter.py",
       "exists": true,
-      "sha256": "sha256:a4588dc81ee5e0628e3651318938414bfa6790dd87dc2ac7741eec1e11cfe573"
+      "sha256": "sha256:583a135d0ac533ee0e86b1c01563ac9ed9fbe0fac77f3fb4c30ca28338f44149"
     },
     {
       "role": "source_promotion",
@@ -98,7 +116,7 @@
       "role": "packet_compiler",
       "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/packet_compiler/compiler.py",
       "exists": true,
-      "sha256": "sha256:b9edd03d31365718a9a503541e7aba6f585368d6ed619c00298cc0b4b37340a0"
+      "sha256": "sha256:14fbb1c15eeec1fe016519a034a6e1532408ff27585f3702ad63dc148e1d5f1a"
     },
     {
       "role": "wake_policy",

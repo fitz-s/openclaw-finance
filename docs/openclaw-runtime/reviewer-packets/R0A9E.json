@@ -1,0 +1,1763 @@
+{
+  "generated_at": "2026-04-17T22:15:01.065407Z",
+  "contract": "finance-reviewer-report-packet-v1",
+  "report_id": "R0A9E",
+  "source_file": "<finance>/state/report-reader/R0A9E.json",
+  "sanitization": {
+    "discord_conversation_included": false,
+    "discord_thread_ids_included": false,
+    "account_ids_included": false,
+    "portfolio_raw_state_included": false,
+    "raw_licensed_snippets_included": false
+  },
+  "report_time_replay": {
+    "exact_replay_available": false,
+    "archive_manifest_available": false,
+    "reason": "No report-time archive manifest for this report."
+  },
+  "operator_surface": {
+    "operator_surface_available": false,
+    "surface_source": "reader-bundle-derived-summary",
+    "reason": "Historical per-report Discord primary markdown was not archived before reviewer packet export."
+  },
+  "bundle_summary": {
+    "bundle_id": "rb:R0A9E",
+    "generated_at": "2026-04-17T15:49:03.466593Z",
+    "report_hash_present": true,
+    "object_card_count": 89,
+    "campaign_count": 30,
+    "starter_queries": [
+      "why A1",
+      "challenge A1",
+      "sources A1",
+      "why A2",
+      "challenge A2",
+      "sources A2"
+    ],
+    "followup_digest": [
+      "R0A9E: review-only; explain/compare/challenge/source trace only; no execution.",
+      "A1: 反证升级｜板块方向冲突（16次）",
+      "Top opportunities: O1 BNO: BNO Hormuz physical supply constraints — 496M bbl cumulative loss, Gol；O2 SPY: Macro scenario: SPY invalidator cluster — directional conflict across ；O3 BNO: BNO Hormuz thesis — physical supply constraints decoupled from price; ；O4 SPY: invalidator cluster: SPY packet direction_conflict themes sustained at；O5 USO: Commodity sector extreme dislocation: USO -9.82% / XLE -4.39% vs SPY +",
+      "Main invalidators: I1 direction_conflict:theme:broad_market:sector hit_count=30；I2 direction_conflict:theme:sector_rotation_proxy hit_count=30；I3 direction_conflict:theme:unknown_discovery hit_count=30；I4 source outage hit_count=6；I5 official correction hit_count=6"
+    ],
+    "object_alias_map_sample": {
+      "A1": "反证升级｜板块方向冲突（16次）",
+      "A2": "反证升级｜板块轮动方向冲突（16次）",
+      "A3": "反证升级｜未知发现改道：BNO/SPY/USO（反证升级｜未知发现方向冲突（16次））",
+      "A4": "拥挤预警｜AAPL / ACHR",
+      "A5": "对冲缺口｜macro hedges bucket 对冲未覆盖",
+      "A6": "对冲缺口｜event driven bucket 对冲未覆盖",
+      "T1": "TSLA",
+      "T2": "ORCL",
+      "T3": "NVDA",
+      "T4": "NFLX",
+      "T5": "MSTR",
+      "T6": "MSFT",
+      "T7": "IAU",
+      "T8": "HIMS",
+      "T9": "GOOG",
+      "T10": "XOVR",
+      "T11": "XOM",
+      "T12": "WMT",
+      "T13": "VOO",
+      "T14": "VG",
+      "T15": "UNH",
+      "T16": "TSM",
+      "T17": "TMUS",
+      "T18": "TEM"
+    }
+  },
+  "decision_log_summary": {
+    "available": true,
+    "created_at": "2026-04-17T15:48:50.627135Z",
+    "decision_id": "decision:efec841f2395e0a13244",
+    "report_id": "R0A9E",
+    "operator_action": "logged_no_trade",
+    "execution_decision": "none",
+    "judgment_id": "judgment:packet:market-ingest:SPY:2026-04-17T15:45:14.285704Z:no-trade",
+    "policy_version": "finance-semantic-v1",
+    "wake_class": "PACKET_UPDATE_ONLY",
+    "wake_dispatch_action": "persist_only",
+    "ref_counts": {
+      "thesis_refs": 20,
+      "scenario_refs": 8,
+      "opportunity_candidate_refs": 12,
+      "invalidator_refs": 11,
+      "capital_agenda_refs": 0,
+      "displacement_case_refs": 0
+    },
+    "hashes_present": {
+      "discord_primary_hash": true,
+      "thread_seed_hash": true,
+      "campaign_live_board_hash": true,
+      "campaign_scout_board_hash": true,
+      "campaign_risk_board_hash": true
+    }
+  },
+  "top_object_cards": [
+    {
+      "label": "反证升级｜板块方向冲突（16次）",
+      "handle": "A1",
+      "agenda_type": "invalidator_escalation",
+      "role_text": "需要判断是否值得占用本周注意力",
+      "attention_justification": "invalidator direction_conflict:theme:broad_market:sector has hit 16 times",
+      "type": "agenda",
+      "priority_score": 32.0,
+      "required_questions": [
+        "is thesis packet:market-ingest:SPY:2026-04-16T20:41:58.331334Z still valid after 16 invalidator hits?"
+      ],
+      "related_opportunities": [],
+      "source_refs": []
+    },
+    {
+      "label": "反证升级｜板块轮动方向冲突（16次）",
+      "handle": "A2",
+      "agenda_type": "invalidator_escalation",
+      "role_text": "需要判断是否值得占用本周注意力",
+      "attention_justification": "invalidator direction_conflict:theme:sector_rotation_proxy has hit 16 times",
+      "type": "agenda",
+      "priority_score": 32.0,
+      "required_questions": [
+        "is thesis packet:market-ingest:SPY:2026-04-16T20:41:58.331334Z still valid after 16 invalidator hits?"
+      ],
+      "related_opportunities": [],
+      "source_refs": []
+    },
+    {
+      "label": "反证升级｜未知发现改道：BNO/SPY/USO（反证升级｜未知发现方向冲突（16次））",
+      "handle": "A3",
+      "positive_for": "BNO/油价/霍尔木兹供给风险；SPY 深挖；USO 深挖",
+      "operator_summary": "A1 实际对象：BNO/油价/霍尔木兹供给风险；SPY 深挖；USO 深挖。这是是否切换注意力方向的问题，不是下单信号。",
+      "agenda_type": "invalidator_escalation",
+      "role_text": "判断是否把 attention 分给 BNO/油价/霍尔木兹供给风险；SPY 深挖；USO 深挖",
+      "attention_justification": "invalidator direction_conflict:theme:unknown_discovery has hit 16 times",
+      "not_positive_for": "不是 TSLA 加码信号；也不是立即替代现有 book 的命令",
+      "type": "agenda",
+      "priority_score": 32.0,
+      "required_questions": [
+        "is thesis packet:market-ingest:SPY:2026-04-16T20:41:58.331334Z still valid after 16 invalidator hits?"
+      ],
+      "related_opportunities": [
+        "BNO｜霍尔木兹/原油供给双向风险（score 13.91）",
+        "SPY｜Macro scenario: SPY invalidator cluster — directional conflict across broad market（score 13.04）",
+        "USO｜Commodity sector extreme dislocation: USO -9.82% / XLE -4.39% vs SPY +1.18% — ener（score 7.8）"
+      ],
+      "source_refs": [
+        "https://www.reuters.com/business/energy/oil-prices-fall-second-day-expectations-us-iran-talks-may-resume-2026-04-15/",
+        "https://www.reuters.com/business/energy/goldman-sachs-flags-twoway-risks-their-2026-oil-price-outlook-2026-04-15/",
+        "state:invalidator-ledger.json",
+        "state:broad-market-proxy.json USO -9.82% pressure_score 81.49; XLE -4.39% pressure_score 42.58; SPY +1.18%; XLY +3.02% 2026-04-17T15:26:23Z"
+      ]
+    },
+    {
+      "label": "拥挤预警｜AAPL / ACHR",
+      "handle": "A4",
+      "agenda_type": "exposure_crowding_warning",
+      "role_text": "提示现有 attention slot 可能过度拥挤",
+      "attention_justification": "event_driven at 1250% utilization",
+      "type": "agenda",
+      "priority_score": 25.0,
+      "required_questions": [
+        "should any thesis in event_driven be retired to reduce crowding?"
+      ],
+      "related_opportunities": [],
+      "source_refs": []
+    },
+    {
+      "label": "对冲缺口｜macro hedges bucket 对冲未覆盖",
+      "handle": "A5",
+      "agenda_type": "hedge_gap_alert",
+      "role_text": "提示保护层缺口，不是执行指令",
+      "attention_justification": "macro_hedges bucket has uncovered hedge coverage",
+      "type": "agenda",
+      "priority_score": 3.0,
+      "required_questions": [
+        "what hedge options exist for macro_hedges (uncovered)?"
+      ],
+      "related_opportunities": [],
+      "source_refs": []
+    },
+    {
+      "label": "对冲缺口｜event driven bucket 对冲未覆盖",
+      "handle": "A6",
+      "agenda_type": "hedge_gap_alert",
+      "role_text": "提示保护层缺口，不是执行指令",
+      "attention_justification": "event_driven bucket has uncovered hedge coverage",
+      "type": "agenda",
+      "priority_score": 3.0,
+      "required_questions": [
+        "what hedge options exist for event_driven (uncovered)?"
+      ],
+      "related_opportunities": [],
+      "source_refs": []
+    },
+    {
+      "handle": "T1",
+      "maturity": "seed",
+      "type": "thesis",
+      "status": "active",
+      "instrument": "TSLA",
+      "required_confirmations": [
+        "wake-eligible evidence",
+        "price/flow continuation"
+      ]
+    },
+    {
+      "handle": "T2",
+      "maturity": "seed",
+      "type": "thesis",
+      "status": "active",
+      "instrument": "ORCL",
+      "required_confirmations": [
+        "wake-eligible evidence",
+        "price/flow continuation"
+      ]
+    },
+    {
+      "handle": "T3",
+      "maturity": "seed",
+      "type": "thesis",
+      "status": "active",
+      "instrument": "NVDA",
+      "required_confirmations": [
+        "wake-eligible evidence",
+        "price/flow continuation"
+      ]
+    },
+    {
+      "handle": "T4",
+      "maturity": "seed",
+      "type": "thesis",
+      "status": "active",
+      "instrument": "NFLX",
+      "required_confirmations": [
+        "wake-eligible evidence",
+        "price/flow continuation"
+      ]
+    },
+    {
+      "handle": "T5",
+      "maturity": "seed",
+      "type": "thesis",
+      "status": "active",
+      "instrument": "MSTR",
+      "required_confirmations": [
+        "wake-eligible evidence",
+        "price/flow continuation"
+      ]
+    },
+    {
+      "handle": "T6",
+      "maturity": "seed",
+      "type": "thesis",
+      "status": "active",
+      "instrument": "MSFT",
+      "required_confirmations": [
+        "wake-eligible evidence",
+        "price/flow continuation"
+      ]
+    }
+  ],
+  "top_campaigns": [
+    {
+      "board_class": "live",
+      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
+      "human_title": "sector rotation proxy 冲突（16次）",
+      "why_now_delta": "板块轮动冲突（16次）",
+      "priority_score": 32.0,
+      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
+      "stage": "escalation",
+      "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
+      "campaign_type": "invalidator_cluster",
+      "thread_key": "campaign-thread:3035aaf653eabd8b",
+      "campaign_id": "campaign:3035aaf653eabd8b",
+      "confirmations_needed": [
+        "当前 thesis 在 16 次反证后是否仍成立"
+      ],
+      "kill_switches": [
+        "来源降级或官方修正",
+        "连续两次 watcher update 不再支持",
+        "与现有 book 重叠但无新增边际价值"
+      ],
+      "known_unknowns": []
+    },
+    {
+      "board_class": "live",
+      "directional_implication": "利好/利空还不能定；当前真正影响的是是否把注意力从现有主轴转向 RGTI/BNO/SMR/032C7C3EAC2584EB/14A878B4E1F61258。",
+      "human_title": "未知发现改道｜RGTI｜非 watchlist IV 异动 / BNO｜霍尔木兹/原油供给双向风险 / SMR｜SMR thesis conflict — price -4.56% with elevated volu…",
+      "why_now_delta": "未知发现方向冲突（16次）",
+      "priority_score": 32.0,
+      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
+      "stage": "escalation",
+      "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
+      "campaign_type": "undercurrent_risk",
+      "thread_key": "campaign-thread:cde06f1300433ed0",
+      "campaign_id": "campaign:cde06f1300433ed0",
+      "confirmations_needed": [
+        "当前 thesis 在 16 次反证后是否仍成立"
+      ],
+      "kill_switches": [
+        "来源降级或官方修正",
+        "连续两次 watcher update 不再支持",
+        "与现有 book 重叠但无新增边际价值"
+      ],
+      "known_unknowns": []
+    },
+    {
+      "board_class": "live",
+      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
+      "human_title": "板块方向冲突（16次）",
+      "why_now_delta": "板块方向冲突（16次）",
+      "priority_score": 32.0,
+      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
+      "stage": "escalation",
+      "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
+      "campaign_type": "invalidator_cluster",
+      "thread_key": "campaign-thread:5caa5911dd2ed85b",
+      "campaign_id": "campaign:5caa5911dd2ed85b",
+      "confirmations_needed": [
+        "当前 thesis 在 16 次反证后是否仍成立"
+      ],
+      "kill_switches": [
+        "来源降级或官方修正",
+        "连续两次 watcher update 不再支持",
+        "与现有 book 重叠但无新增边际价值"
+      ],
+      "known_unknowns": []
+    },
+    {
+      "board_class": "live",
+      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
+      "human_title": "event driven at 1250% utilization",
+      "why_now_delta": "event driven at 1250% utilization",
+      "priority_score": 25.0,
+      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
+      "stage": "escalation",
+      "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
+      "campaign_type": "undercurrent_risk",
+      "thread_key": "campaign-thread:9537e4a96b25c0a7",
+      "campaign_id": "campaign:9537e4a96b25c0a7",
+      "confirmations_needed": [
+        "should any thesis in event driven be retired to reduce crowding?"
+      ],
+      "kill_switches": [
+        "来源降级或官方修正",
+        "连续两次 watcher update 不再支持",
+        "与现有 book 重叠但无新增边际价值"
+      ],
+      "known_unknowns": []
+    },
+    {
+      "board_class": "risk",
+      "directional_implication": "利好/利空还不能定；当前真正影响的是是否把注意力从现有主轴转向 BNO/MSTR/SMR。",
+      "human_title": "未知发现｜BNO/MSTR/SMR",
+      "why_now_delta": "未知发现方向冲突（18次） 持续累积，需要判断是否影响 attention slot",
+      "priority_score": 18.0,
+      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
+      "stage": "review",
+      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
+      "campaign_type": "undercurrent_risk",
+      "thread_key": "campaign-thread:b30bef764d904d07",
+      "campaign_id": "campaign:b30bef764d904d07",
+      "confirmations_needed": [
+        "下一次 watcher update 是否同向",
+        "相关 scenario/capital edge 是否增强"
+      ],
+      "kill_switches": [
+        "后续两次扫描不再命中",
+        "相关机会或 thesis 证据被官方修正",
+        "来源新鲜度降为 stale"
+      ],
+      "known_unknowns": [
+        "Issuer/security claim lacks official filing or issuer confirmation.",
+        "Narrative-only claim lacks price/volume confirmation.",
+        "Claim confidence is weak; needs triangulation or contradiction check.",
+        "Claim confidence is weak; needs triangulation or contradiction check."
+      ]
+    },
+    {
+      "board_class": "risk",
+      "directional_implication": "利好/利空还不能定；当前真正影响的是是否把注意力从现有主轴转向 BNO/MSTR/SMR。",
+      "human_title": "板块方向冲突（18次）",
+      "why_now_delta": "板块方向冲突（18次） 持续累积，需要判断是否影响 attention slot",
+      "priority_score": 18.0,
+      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
+      "stage": "review",
+      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
+      "campaign_type": "undercurrent_risk",
+      "thread_key": "campaign-thread:f8d9708f287f19f6",
+      "campaign_id": "campaign:f8d9708f287f19f6",
+      "confirmations_needed": [
+        "下一次 watcher update 是否同向",
+        "相关 scenario/capital edge 是否增强"
+      ],
+      "kill_switches": [
+        "后续两次扫描不再命中",
+        "相关机会或 thesis 证据被官方修正",
+        "来源新鲜度降为 stale"
+      ],
+      "known_unknowns": [
+        "Issuer/security claim lacks official filing or issuer confirmation.",
+        "Narrative-only claim lacks price/volume confirmation.",
+        "Claim confidence is weak; needs triangulation or contradiction check.",
+        "Claim confidence is weak; needs triangulation or contradiction check."
+      ]
+    },
+    {
+      "board_class": "risk",
+      "directional_implication": "利好/利空还不能定；当前真正影响的是是否把注意力从现有主轴转向 BNO/MSTR/SMR。",
+      "human_title": "板块轮动冲突（18次）",
+      "why_now_delta": "板块轮动冲突（18次） 持续累积，需要判断是否影响 attention slot",
+      "priority_score": 18.0,
+      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
+      "stage": "review",
+      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
+      "campaign_type": "undercurrent_risk",
+      "thread_key": "campaign-thread:ae7df128ba2eb679",
+      "campaign_id": "campaign:ae7df128ba2eb679",
+      "confirmations_needed": [
+        "下一次 watcher update 是否同向",
+        "相关 scenario/capital edge 是否增强"
+      ],
+      "kill_switches": [
+        "后续两次扫描不再命中",
+        "相关机会或 thesis 证据被官方修正",
+        "来源新鲜度降为 stale"
+      ],
+      "known_unknowns": [
+        "Issuer/security claim lacks official filing or issuer confirmation.",
+        "Narrative-only claim lacks price/volume confirmation.",
+        "Claim confidence is weak; needs triangulation or contradiction check.",
+        "Claim confidence is weak; needs triangulation or contradiction check."
+      ]
+    },
+    {
+      "board_class": "risk",
+      "directional_implication": "利好/利空还不能定；当前真正影响的是是否把注意力从现有主轴转向 ORCL/ATM。",
+      "human_title": "ORCL 冲突（17次）",
+      "why_now_delta": "ORCL 冲突（17次） 持续累积，需要判断是否影响 attention slot",
+      "priority_score": 17.0,
+      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
+      "stage": "review",
+      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
+      "campaign_type": "undercurrent_risk",
+      "thread_key": "campaign-thread:da9a96febc4ac0b9",
+      "campaign_id": "campaign:da9a96febc4ac0b9",
+      "confirmations_needed": [
+        "下一次 watcher update 是否同向",
+        "相关 scenario/capital edge 是否增强"
+      ],
+      "kill_switches": [
+        "后续两次扫描不再命中",
+        "相关机会或 thesis 证据被官方修正",
+        "来源新鲜度降为 stale"
+      ],
+      "known_unknowns": [
+        "Claim confidence is weak; needs triangulation or contradiction check.",
+        "Claim confidence is weak; needs triangulation or contradiction check."
+      ]
+    }
+  ],
+  "information_acquisition_snapshot": {
+    "generated_at": "2026-04-17T22:15:01.037949Z",
+    "scope": "current sanitized finance/source state; not exact per-report historical replay",
+    "source_health": {
+      "available": true,
+      "generated_at": "2026-04-16T23:16:54.359283Z",
+      "status": "degraded",
+      "source_count": 8,
+      "summary": {
+        "freshness": {
+          "fresh": 1,
+          "aging": 1,
+          "stale": 1,
+          "unknown": 5
+        },
+        "latency": {
+          "ok": 0,
+          "degraded": 0,
+          "breached": 3,
+          "unknown": 5
+        },
+        "rights": {
+          "ok": 1,
+          "restricted": 6,
+          "expired": 0,
+          "unknown": 1
+        }
+      },
+      "sources": [
+        {
+          "source_id": "source:reuters",
+          "freshness_status": "unknown",
+          "latency_status": "unknown",
+          "schema_status": "ok",
+          "validation_status": "pass",
+          "rights_status": "restricted",
+          "coverage_status": "ok",
+          "breach_reasons": [
+            "freshness:unknown",
+            "rights:restricted"
+          ],
+          "last_seen_at_present": false,
+          "last_success_at_present": false
+        },
+        {
+          "source_id": "source:bloomberg",
+          "freshness_status": "unknown",
+          "latency_status": "unknown",
+          "schema_status": "ok",
+          "validation_status": "pass",
+          "rights_status": "restricted",
+          "coverage_status": "ok",
+          "breach_reasons": [
+            "freshness:unknown",
+            "rights:restricted"
+          ],
+          "last_seen_at_present": false,
+          "last_success_at_present": false
+        },
+        {
+          "source_id": "source:sec_edgar",
+          "freshness_status": "aging",
+          "latency_status": "breached",
+          "schema_status": "ok",
+          "validation_status": "pass",
+          "rights_status": "ok",
+          "coverage_status": "ok",
+          "breach_reasons": [
+            "latency:breached"
+          ],
+          "last_seen_at_present": true,
+          "last_success_at_present": true
+        },
+        {
+          "source_id": "source:issuer_press_release",
+          "freshness_status": "unknown",
+          "latency_status": "unknown",
+          "schema_status": "ok",
+          "validation_status": "pass",
+          "rights_status": "restricted",
+          "coverage_status": "ok",
+          "breach_reasons": [
+            "freshness:unknown",
+            "rights:restricted"
+          ],
+          "last_seen_at_present": false,
+          "last_success_at_present": false
+        },
+        {
+          "source_id": "source:portfolio_flex",
+          "freshness_status": "fresh",
+          "latency_status": "breached",
+          "schema_status": "ok",
+          "validation_status": "pass",
+          "rights_status": "restricted",
+          "coverage_status": "ok",
+          "breach_reasons": [
+            "latency:breached",
+            "rights:restricted"
+          ],
+          "last_seen_at_present": true,
+          "last_success_at_present": true
+        },
+        {
+          "source_id": "source:yfinance",
+          "freshness_status": "stale",
+          "latency_status": "breached",
+          "schema_status": "ok",
+          "validation_status": "pass",
+          "rights_status": "restricted",
+          "coverage_status": "ok",
+          "breach_reasons": [
+            "freshness:stale",
+            "latency:breached",
+            "rights:restricted"
+          ],
+          "last_seen_at_present": true,
+          "last_success_at_present": false
+        },
+        {
+          "source_id": "source:low_quality_blocked",
+          "freshness_status": "unknown",
+          "latency_status": "unknown",
+          "schema_status": "ok",
+          "validation_status": "warn",
+          "rights_status": "restricted",
+          "coverage_status": "ok",
+          "breach_reasons": [
+            "freshness:unknown",
+            "rights:restricted"
+          ],
+          "last_seen_at_present": false,
+          "last_success_at_present": false
+        },
+        {
+          "source_id": "source:unknown_web",
+          "freshness_status": "unknown",
+          "latency_status": "unknown",
+          "schema_status": "ok",
+          "validation_status": "pass",
+          "rights_status": "unknown",
+          "coverage_status": "ok",
+          "breach_reasons": [
+            "freshness:unknown",
+            "rights:unknown"
+          ],
+          "last_seen_at_present": true,
+          "last_success_at_present": false
+        }
+      ]
+    },
+    "source_atom_summary": {
+      "available": true,
+      "generated_at": "2026-04-17T22:04:58.777619Z",
+      "status": "pass",
+      "atom_count": 15,
+      "by_source_lane": {
+        "news_policy_narrative": 15
+      },
+      "by_compliance_class": {
+        "unknown": 13,
+        "licensed": 2
+      },
+      "by_candidate_type": {
+        "scenario_update": 1,
+        "thesis_update": 4,
+        "invalidator_check": 3,
+        "unknown_discovery": 3,
+        "opportunity_followup": 4
+      },
+      "atoms": [
+        {
+          "atom_id": "atom:089d17bbad00e06a200e",
+          "source_id": "source:unknown_web",
+          "source_class": "untrusted_web",
+          "source_lane": "news_policy_narrative",
+          "candidate_type": "scenario_update",
+          "discovery_scope": "macro",
+          "published_at": "2026-04-17T22:00:00Z",
+          "observed_at": "2026-04-17T22:00:00Z",
+          "ingested_at": "2026-04-17T22:04:58.777619Z",
+          "event_time": "2026-04-17T22:00:00Z",
+          "symbol_candidates": [
+            "GLD",
+            "IWM",
+            "SPY",
+            "USO",
+            "VIX",
+            "XLE",
+            "XLY"
+          ],
+          "freshness_budget_seconds": 0,
+          "reliability_score": 0.2,
+          "uniqueness_score": 0.1,
+          "compliance_class": "unknown",
+          "raw_ref": "finance-scan:obs:scan:2026-04-17:001",
+          "point_in_time_hash_present": true,
+          "raw_snippet_included": false,
+          "raw_snippet_redaction_reason": "Raw snippets are excluded from reviewer packets, especially for licensed/restricted sources."
+        },
+        {
+          "atom_id": "atom:11634d438b0f1b6729c3",
+          "source_id": "source:unknown_web",
+          "source_class": "untrusted_web",
+          "source_lane": "news_policy_narrative",
+          "candidate_type": "thesis_update",
+          "discovery_scope": "watchlist",
+          "published_at": "2026-04-17T21:00:14Z",
+          "observed_at": "2026-04-17T21:00:14Z",
+          "ingested_at": "2026-04-17T22:04:58.777619Z",
+          "event_time": "2026-04-17T21:00:14Z",
+          "symbol_candidates": [
+            "BTC",
+            "BTC-USD",
+            "MSTR"
+          ],
+          "freshness_budget_seconds": 0,
+          "reliability_score": 0.2,
+          "uniqueness_score": 0.1,
+          "compliance_class": "unknown",
+          "raw_ref": "finance-scan:obs-mstr-thesis-update-001",
+          "point_in_time_hash_present": true,
+          "raw_snippet_included": false,
+          "raw_snippet_redaction_reason": "Raw snippets are excluded from reviewer packets, especially for licensed/restricted sources."
+        },
+        {
+          "atom_id": "atom:33b924dba660a5671f58",
+          "source_id": "source:unknown_web",
+          "source_class": "untrusted_web",
+          "source_lane": "news_policy_narrative",
+          "candidate_type": "invalidator_check",
+          "discovery_scope": "watchlist",
+          "published_at": "2026-04-17T18:00:00Z",
+          "observed_at": "2026-04-17T18:00:00Z",
+          "ingested_at": "2026-04-17T22:04:58.777619Z",
+          "event_time": "2026-04-17T18:00:00Z",
+          "symbol_candidates": [
+            "AAPL",
+            "AMZN",
+            "ORCL",
+            "SPY"
+          ],
+          "freshness_budget_seconds": 0,
+          "reliability_score": 0.2,
+          "uniqueness_score": 0.1,
+          "compliance_class": "unknown",
+          "raw_ref": "finance-scan:obs:scanner:20260417:004",
+          "point_in_time_hash_present": true,
+          "raw_snippet_included": false,
+          "raw_snippet_redaction_reason": "Raw snippets are excluded from reviewer packets, especially for licensed/restricted sources."
+        },
+        {
+          "atom_id": "atom:39ed9de188d79862358d",
+          "source_id": "source:unknown_web",
+          "source_class": "untrusted_web",
+          "source_lane": "news_policy_narrative",
+          "candidate_type": "unknown_discovery",
+          "discovery_scope": "non_watchlist",
+          "published_at": "2026-04-17T19:22:08Z",
+          "observed_at": "2026-04-17T19:22:08Z",
+          "ingested_at": "2026-04-17T22:04:58.777619Z",
+          "event_time": "2026-04-17T19:22:08Z",
+          "symbol_candidates": [
+            "IWM",
+            "USO",
+            "VIX",
+            "XLE"
+          ],
+          "freshness_budget_seconds": 0,
+          "reliability_score": 0.2,
+          "uniqueness_score": 0.1,
+          "compliance_class": "unknown",
+          "raw_ref": "finance-scan:obs-iwm-divergence-001",
+          "point_in_time_hash_present": true,
+          "raw_snippet_included": false,
+          "raw_snippet_redaction_reason": "Raw snippets are excluded from reviewer packets, especially for licensed/restricted sources."
+        },
+        {
+          "atom_id": "atom:482adf9a1026aae04927",
+          "source_id": "source:unknown_web",
+          "source_class": "untrusted_web",
+          "source_lane": "news_policy_narrative",
+          "candidate_type": "opportunity_followup",
+          "discovery_scope": "non_watchlist",
+          "published_at": "2026-04-17T21:22:00Z",
+          "observed_at": "2026-04-17T21:22:00Z",
+          "ingested_at": "2026-04-17T22:04:58.777619Z",
+          "event_time": "2026-04-17T21:22:00Z",
+          "symbol_candidates": [
+            "IWM",
+            "SPY",
+            "VIX",
+            "XLE",
+            "XLY"
+          ],
+          "freshness_budget_seconds": 0,
+          "reliability_score": 0.2,
+          "uniqueness_score": 0.1,
+          "compliance_class": "unknown",
+          "raw_ref": "finance-scan:obs:scanner:opportunity:iwm-smallcap-rotation",
+          "point_in_time_hash_present": true,
+          "raw_snippet_included": false,
+          "raw_snippet_redaction_reason": "Raw snippets are excluded from reviewer packets, especially for licensed/restricted sources."
+        },
+        {
+          "atom_id": "atom:57f71e39c4794ddb2646",
+          "source_id": "source:unknown_web",
+          "source_class": "untrusted_web",
+          "source_lane": "news_policy_narrative",
+          "candidate_type": "thesis_update",
+          "discovery_scope": "watchlist",
+          "published_at": "2026-04-16T13:20:00Z",
+          "observed_at": "2026-04-16T13:20:00Z",
+          "ingested_at": "2026-04-17T22:04:58.777619Z",
+          "event_time": "2026-04-16T13:20:00Z",
+          "symbol_candidates": [
+            "SMR"
+          ],
+          "freshness_budget_seconds": 0,
+          "reliability_score": 0.2,
+          "uniqueness_score": 0.1,
+          "compliance_class": "unknown",
+          "raw_ref": "finance-scan:obs:scanner:3",
+          "point_in_time_hash_present": true,
+          "raw_snippet_included": false,
+          "raw_snippet_redaction_reason": "Raw snippets are excluded from reviewer packets, especially for licensed/restricted sources."
+        },
+        {
+          "atom_id": "atom:5fff77632167d9b06cb3",
+          "source_id": "source:unknown_web",
+          "source_class": "untrusted_web",
+          "source_lane": "news_policy_narrative",
+          "candidate_type": "opportunity_followup",
+          "discovery_scope": "non_watchlist",
+          "published_at": "2026-04-17T21:22:00Z",
+          "observed_at": "2026-04-17T21:22:00Z",
+          "ingested_at": "2026-04-17T22:04:58.777619Z",
+          "event_time": "2026-04-17T21:22:00Z",
+          "symbol_candidates": [
+            "BNO",
+            "DBC",
+            "DBC-USO",
+            "GLD",
+            "USO",
+            "UTC"
+          ],
+          "freshness_budget_seconds": 0,
+          "reliability_score": 0.2,
+          "uniqueness_score": 0.1,
+          "compliance_class": "unknown",
+          "raw_ref": "finance-scan:obs:scanner:opportunity:dbc-usocapitulation",
+          "point_in_time_hash_present": true,
+          "raw_snippet_included": false,
+          "raw_snippet_redaction_reason": "Raw snippets are excluded from reviewer packets, especially for licensed/restricted sources."
+        },
+        {
+          "atom_id": "atom:615f6936066a338ed7dd",
+          "source_id": "source:unknown_web",
+          "source_class": "untrusted_web",
+          "source_lane": "news_policy_narrative",
+          "candidate_type": "invalidator_check",
+          "discovery_scope": "portfolio",
+          "published_at": "2026-04-17T18:40:00Z",
+          "observed_at": "2026-04-17T18:40:00Z",
+          "ingested_at": "2026-04-17T22:04:58.777619Z",
+          "event_time": "2026-04-17T18:40:00Z",
+          "symbol_candidates": [
+            "MSFT",
+            "MSTR",
+            "NFLX",
+            "NVDA",
+            "SPY"
+          ],
+          "freshness_budget_seconds": 0,
+          "reliability_score": 0.2,
+          "uniqueness_score": 0.1,
+          "compliance_class": "unknown",
+          "raw_ref": "finance-scan:obs:scanner:aae14a7459b62c55",
+          "point_in_time_hash_present": true,
+          "raw_snippet_included": false,
+          "raw_snippet_redaction_reason": "Raw snippets are excluded from reviewer packets, especially for licensed/restricted sources."
+        },
+        {
+          "atom_id": "atom:71e820fc77768aad17df",
+          "source_id": "source:unknown_web",
+          "source_class": "untrusted_web",
+          "source_lane": "news_policy_narrative",
+          "candidate_type": "opportunity_followup",
+          "discovery_scope": "non_watchlist",
+          "published_at": "2026-04-17T19:20:00Z",
+          "observed_at": "2026-04-17T19:20:00Z",
+          "ingested_at": "2026-04-17T22:04:58.777619Z",
+          "event_time": "2026-04-17T19:20:00Z",
+          "symbol_candidates": [
+            "DBC",
+            "GLD",
+            "USO",
+            "UTC"
+          ],
+          "freshness_budget_seconds": 0,
+          "reliability_score": 0.2,
+          "uniqueness_score": 0.1,
+          "compliance_class": "unknown",
+          "raw_ref": "finance-scan:obs-20260417-1920-thesis-usofunds-comm-extreme",
+          "point_in_time_hash_present": true,
+          "raw_snippet_included": false,
+          "raw_snippet_redaction_reason": "Raw snippets are excluded from reviewer packets, especially for licensed/restricted sources."
+        },
+        {
+          "atom_id": "atom:73a98da1449ae786c147",
+          "source_id": "source:unknown_web",
+          "source_class": "untrusted_web",
+          "source_lane": "news_policy_narrative",
+          "candidate_type": "invalidator_check",
+          "discovery_scope": "macro",
+          "published_at": "2026-04-17T21:22:00Z",
+          "observed_at": "2026-04-17T21:22:00Z",
+          "ingested_at": "2026-04-17T22:04:58.777619Z",
+          "event_time": "2026-04-17T21:22:00Z",
+          "symbol_candidates": [
+            "DBC",
+            "GLD",
+            "IWM",
+            "QQQ",
+            "SPY",
+            "USO",
+            "UTC",
+            "VIX",
+            "XLE",
+            "XLY",
+            "XOM"
+          ],
+          "freshness_budget_seconds": 0,
+          "reliability_score": 0.2,
+          "uniqueness_score": 0.1,
+          "compliance_class": "unknown",
+          "raw_ref": "finance-scan:obs:scanner:invalidator:spy-dir-conflict",
+          "point_in_time_hash_present": true,
+          "raw_snippet_included": false,
+          "raw_snippet_redaction_reason": "Raw snippets are excluded from reviewer packets, especially for licensed/restricted sources."
+        },
+        {
+          "atom_id": "atom:948c418f5e47276393f8",
+          "source_id": "source:reuters",
+          "source_class": "news_policy",
+          "source_lane": "news_policy_narrative",
+          "candidate_type": "thesis_update",
+          "discovery_scope": "non_watchlist",
+          "published_at": "2026-04-17T16:20:00Z",
+          "observed_at": "2026-04-17T16:20:00Z",
+          "ingested_at": "2026-04-17T22:04:58.777619Z",
+          "event_time": "2026-04-17T16:20:00Z",
+          "symbol_candidates": [
+            "BNO",
+            "US",
+            "USO"
+          ],
+          "freshness_budget_seconds": 1800,
+          "reliability_score": 0.9,
+          "uniqueness_score": 0.55,
+          "compliance_class": "licensed",
+          "raw_ref": "finance-scan:obs-scan-1120-002",
+          "point_in_time_hash_present": true,
+          "raw_snippet_included": false,
+          "raw_snippet_redaction_reason": "Raw snippets are excluded from reviewer packets, especially for licensed/restricted sources."
+        },
+        {
+          "atom_id": "atom:a5452ab3f9876e0bfe99",
+          "source_id": "source:unknown_web",
+          "source_class": "untrusted_web",
+          "source_lane": "news_policy_narrative",
+          "candidate_type": "opportunity_followup",
+          "discovery_scope": "non_watchlist",
+          "published_at": "2026-04-17T19:22:10Z",
+          "observed_at": "2026-04-17T19:22:10Z",
+          "ingested_at": "2026-04-17T22:04:58.777619Z",
+          "event_time": "2026-04-17T19:22:10Z",
+          "symbol_candidates": [
+            "GLD",
+            "IAU",
+            "USO"
+          ],
+          "freshness_budget_seconds": 0,
+          "reliability_score": 0.2,
+          "uniqueness_score": 0.1,
+          "compliance_class": "unknown",
+          "raw_ref": "finance-scan:obs-uso-capitulation-001",
+          "point_in_time_hash_present": true,
+          "raw_snippet_included": false,
+          "raw_snippet_redaction_reason": "Raw snippets are excluded from reviewer packets, especially for licensed/restricted sources."
+        },
+        {
+          "atom_id": "atom:ccb7d3a317f5dcf30a53",
+          "source_id": "source:reuters",
+          "source_class": "news_policy",
+          "source_lane": "news_policy_narrative",
+          "candidate_type": "thesis_update",
+          "discovery_scope": "non_watchlist",
+          "published_at": "2026-04-17T18:20:00Z",
+          "observed_at": "2026-04-17T18:20:00Z",
+          "ingested_at": "2026-04-17T22:04:58.777619Z",
+          "event_time": "2026-04-17T18:20:00Z",
+          "symbol_candidates": [
+            "BNO",
+            "US",
+            "USO"
+          ],
+          "freshness_budget_seconds": 1800,
+          "reliability_score": 0.9,
+          "uniqueness_score": 0.55,
+          "compliance_class": "licensed",
+          "raw_ref": "finance-scan:obs:2-bno-thesis-update",
+          "point_in_time_hash_present": true,
+          "raw_snippet_included": false,
+          "raw_snippet_redaction_reason": "Raw snippets are excluded from reviewer packets, especially for licensed/restricted sources."
+        },
+        {
+          "atom_id": "atom:d40ec0df9d909c18ae16",
+          "source_id": "source:unknown_web",
+          "source_class": "untrusted_web",
+          "source_lane": "news_policy_narrative",
+          "candidate_type": "unknown_discovery",
+          "discovery_scope": "non_watchlist",
+          "published_at": "2026-04-17T21:22:00Z",
+          "observed_at": "2026-04-17T21:22:00Z",
+          "ingested_at": "2026-04-17T22:04:58.777619Z",
+          "event_time": "2026-04-17T21:22:00Z",
+          "symbol_candidates": [
+            "BTC",
+            "BTC-USD",
+            "QQQ",
+            "SPY",
+            "USO"
+          ],
+          "freshness_budget_seconds": 0,
+          "reliability_score": 0.2,
+          "uniqueness_score": 0.1,
+          "compliance_class": "unknown",
+          "raw_ref": "finance-scan:obs:scanner:unknown:btc-USD-risk-asset",
+          "point_in_time_hash_present": true,
+          "raw_snippet_included": false,
+          "raw_snippet_redaction_reason": "Raw snippets are excluded from reviewer packets, especially for licensed/restricted sources."
+        },
+        {
+          "atom_id": "atom:d62e7be3e442f121a6f9",
+          "source_id": "source:unknown_web",
+          "source_class": "untrusted_web",
+          "source_lane": "news_policy_narrative",
+          "candidate_type": "unknown_discovery",
+          "discovery_scope": "non_watchlist",
+          "published_at": "2026-04-17T22:00:00Z",
+          "observed_at": "2026-04-17T22:00:00Z",
+          "ingested_at": "2026-04-17T22:04:58.777619Z",
+          "event_time": "2026-04-17T22:00:00Z",
+          "symbol_candidates": [
+            "BNO",
+            "BNO-DBB",
+            "DBC",
+            "GLD",
+            "USO"
+          ],
+          "freshness_budget_seconds": 0,
+          "reliability_score": 0.2,
+          "uniqueness_score": 0.1,
+          "compliance_class": "unknown",
+          "raw_ref": "finance-scan:obs:scan:2026-04-17:003",
+          "point_in_time_hash_present": true,
+          "raw_snippet_included": false,
+          "raw_snippet_redaction_reason": "Raw snippets are excluded from reviewer packets, especially for licensed/restricted sources."
+        }
+      ]
+    },
+    "claim_graph_summary": {
+      "available": true,
+      "generated_at": "2026-04-17T18:05:31.288235Z",
+      "status": "pass",
+      "claim_count": 19,
+      "by_direction": {
+        "ambiguous": 7,
+        "bearish": 10,
+        "bullish": 2
+      },
+      "by_source_lane": {
+        "news_policy_narrative": 19
+      },
+      "claims": [
+        {
+          "claim_id": "claim:08f053aa2c9696a07a99",
+          "atom_id": "atom:1b079827f89fdba1b0a2",
+          "subject": "DBC",
+          "predicate": "mentions",
+          "direction": "ambiguous",
+          "horizon": "multi_day",
+          "certainty": "weak",
+          "event_class": "narrative",
+          "source_lane": "news_policy_narrative",
+          "why_it_matters_tags": [
+            "narrative",
+            "opportunity_followup"
+          ],
+          "capital_relevance_tags": [
+            "DBC",
+            "SPY",
+            "USO"
+          ],
+          "supports_count": 0,
+          "contradicts_count": 0,
+          "object_preview": "USO -9.9118% and DBC -3.2874% Apr 17 16:09Z with pressure_score 81.49 (extreme commodity pressure). USO volume 25.6M. Extreme commodity sector capitulation vs SPY +1.28%, XLY +3.2…"
+        },
+        {
+          "claim_id": "claim:0b7dc85b11b69c08ae48",
+          "atom_id": "atom:57f71e39c4794ddb2646",
+          "subject": "SMR",
+          "predicate": "shows_flow",
+          "direction": "bearish",
+          "horizon": "unknown",
+          "certainty": "weak",
+          "event_class": "flow",
+          "source_lane": "news_policy_narrative",
+          "why_it_matters_tags": [
+            "flow",
+            "thesis_update"
+          ],
+          "capital_relevance_tags": [
+            "SMR"
+          ],
+          "supports_count": 0,
+          "contradicts_count": 0,
+          "object_preview": "SMR active thesis (7689397304dbfa21) now showing -4.56% decline with 57.9M volume — significant for a small-cap nuclear name. Price $11.71 vs prior $12.27. Direction conflict with…"
+        },
+        {
+          "claim_id": "claim:15cac2845b59be1b7d4e",
+          "atom_id": "atom:5cac03a842154c6141bc",
+          "subject": "BNO",
+          "predicate": "shows_flow",
+          "direction": "bullish",
+          "horizon": "unknown",
+          "certainty": "probable",
+          "event_class": "flow",
+          "source_lane": "news_policy_narrative",
+          "why_it_matters_tags": [
+            "flow",
+            "opportunity_followup"
+          ],
+          "capital_relevance_tags": [
+            "BNO",
+            "BRENT",
+            "US"
+          ],
+          "supports_count": 0,
+          "contradicts_count": 4,
+          "object_preview": "BNO Hormuz physical supply constraints (496M bbl cumulative loss, Hormuz flow at fraction of normal, US Navy blockade active) are not reflected in oil price action — WTI/Brent dow…"
+        },
+        {
+          "claim_id": "claim:189f03d0630057a1f856",
+          "atom_id": "atom:1c390ac21dc80e4278b3",
+          "subject": "DBC",
+          "predicate": "mentions",
+          "direction": "bullish",
+          "horizon": "multi_day",
+          "certainty": "weak",
+          "event_class": "narrative",
+          "source_lane": "news_policy_narrative",
+          "why_it_matters_tags": [
+            "narrative",
+            "unknown_discovery"
+          ],
+          "capital_relevance_tags": [
+            "DBC",
+            "GLD",
+            "USO"
+          ],
+          "supports_count": 0,
+          "contradicts_count": 1,
+          "object_preview": "USO -9.58% on 29.4M vol; pressure_score 81.78 at 17:00 UTC. USO now at $113.73 vs prev $125.78. DBC -3.12%, XLE -3.70% confirm broad commodity/energy distress. GLD +1.63% decouple…"
+        },
+        {
+          "claim_id": "claim:2ebe6ba5c8de0f2bdfe3",
+          "atom_id": "atom:be27d98489b5aceeeab7",
+          "subject": "DBC",
+          "predicate": "conflicts",
+          "direction": "ambiguous",
+          "horizon": "multi_day",
+          "certainty": "weak",
+          "event_class": "narrative",
+          "source_lane": "news_policy_narrative",
+          "why_it_matters_tags": [
+            "narrative",
+            "scenario_update"
+          ],
+          "capital_relevance_tags": [
+            "DBC",
+            "SPY",
+            "USO"
+          ],
+          "supports_count": 0,
+          "contradicts_count": 0,
+          "object_preview": "USO -9.91%, XLE -4.37%, DBC -3.29% while SPY +1.28%, XLY +3.22%, XLK +1.45%. Sector rotation proxy and broad_market:sector invalidators both at 33 hits. Energy commodity complex u…"
+        },
+        {
+          "claim_id": "claim:3a58a996b025f9a69e49",
+          "atom_id": "atom:beb9605c2ce5c87c3c4d",
+          "subject": "DBC",
+          "predicate": "shows_flow",
+          "direction": "bearish",
+          "horizon": "unknown",
+          "certainty": "weak",
+          "event_class": "flow",
+          "source_lane": "news_policy_narrative",
+          "why_it_matters_tags": [
+            "flow",
+            "invalidator_check"
+          ],
+          "capital_relevance_tags": [
+            "DBC",
+            "SPY",
+            "USO"
+          ],
+          "supports_count": 0,
+          "contradicts_count": 1,
+          "object_preview": "SPY packet invalidators show sustained directional conflict: broad_market:sector (35 hits), sector_rotation_proxy (35 hits), unknown_discovery (35 hits) — all hit since Apr 16. Ne…"
+        },
+        {
+          "claim_id": "claim:4eb273af438338a265fd",
+          "atom_id": "atom:d0f6001db6e19ae97712",
+          "subject": "BNO",
+          "predicate": "mentions",
+          "direction": "bearish",
+          "horizon": "multi_day",
+          "certainty": "probable",
+          "event_class": "narrative",
+          "source_lane": "news_policy_narrative",
+          "why_it_matters_tags": [
+            "narrative",
+            "opportunity_followup"
+          ],
+          "capital_relevance_tags": [
+            "BNO",
+            "US",
+            "USO"
+          ],
+          "supports_count": 3,
+          "contradicts_count": 1,
+          "object_preview": "BNO (Brent crude 2x lever) top opportunity candidate (score 13.91). USO -9.82% today (pressure_score 81.49) with Brent crude down -8.42% from prior session. Physical supply pictur…"
+        },
+        {
+          "claim_id": "claim:5b2a4a6177e8bcc4ce34",
+          "atom_id": "atom:52d5e20023577473ba9d",
+          "subject": "BNO",
+          "predicate": "shows_flow",
+          "direction": "bearish",
+          "horizon": "unknown",
+          "certainty": "probable",
+          "event_class": "flow",
+          "source_lane": "news_policy_narrative",
+          "why_it_matters_tags": [
+            "flow",
+            "opportunity_followup"
+          ],
+          "capital_relevance_tags": [
+            "BNO",
+            "BRENT",
+            "US"
+          ],
+          "supports_count": 3,
+          "contradicts_count": 1,
+          "object_preview": "BNO active candidate tied to Hormuz strait supply disruption. Goldman Sachs flagged two-way oil price risks for 2026 with Hormuz at ~10% normal flow. US ended Iran/Russia waivers.…"
+        },
+        {
+          "claim_id": "claim:60964b89ed1563a3cff2",
+          "atom_id": "atom:a3d07205364b5b92e9c8",
+          "subject": "BNO",
+          "predicate": "shows_flow",
+          "direction": "bearish",
+          "horizon": "unknown",
+          "certainty": "probable",
+          "event_class": "flow",
+          "source_lane": "news_policy_narrative",
+          "why_it_matters_tags": [
+            "flow",
+            "opportunity_followup"
+          ],
+          "capital_relevance_tags": [
+            "BNO",
+            "BNO-BNO",
+            "BRT"
+          ],
+          "supports_count": 3,
+          "contradicts_count": 1,
+          "object_preview": "Goldman Sachs Apr 15 note: average 2026 Brent/WTI forecast $83/78, with two-way risks. Upside from Hormuz blockade (Iranian tanker flows most of remaining 10% of strait). Downside…"
+        },
+        {
+          "claim_id": "claim:7314c544c8ebc92c0cd2",
+          "atom_id": "atom:672b452450f19ec06a35",
+          "subject": "ORCL",
+          "predicate": "shows_flow",
+          "direction": "bearish",
+          "horizon": "unknown",
+          "certainty": "weak",
+          "event_class": "flow",
+          "source_lane": "news_policy_narrative",
+          "why_it_matters_tags": [
+            "flow",
+            "scenario_update"
+          ],
+          "capital_relevance_tags": [
+            "ORCL",
+            "SPY"
+          ],
+          "supports_count": 0,
+          "contradicts_count": 0,
+          "object_preview": "SPY packet (2026-04-16T21:23) triggered 6 invalidator hits covering direction_conflict across unknown_discovery, broad_market/sector, sector_rotation_proxy, options_unusual_activi…"
+        },
+        {
+          "claim_id": "claim:773c53edf9133a49b5d6",
+          "atom_id": "atom:1bf4f850406db3eb6a10",
+          "subject": "DBC",
+          "predicate": "mentions",
+          "direction": "ambiguous",
+          "horizon": "multi_day",
+          "certainty": "probable",
+          "event_class": "narrative",
+          "source_lane": "news_policy_narrative",
+          "why_it_matters_tags": [
+            "narrative",
+            "unknown_discovery"
+          ],
+          "capital_relevance_tags": [
+            "DBC",
+            "USO"
+          ],
+          "supports_count": 0,
+          "contradicts_count": 0,
+          "object_preview": "USO -9.91% in a single session represents a historically extreme commodity move. DBC -3.29% confirms broad commodity basket under pressure. This is not a thesis-driven observation…"
+        },
+        {
+          "claim_id": "claim:82a8b26ed28f7333d9d3",
+          "atom_id": "atom:ce091a350196bb50609e",
+          "subject": "SPY",
+          "predicate": "conflicts",
+          "direction": "bearish",
+          "horizon": "multi_day",
+          "certainty": "weak",
+          "event_class": "narrative",
+          "source_lane": "news_policy_narrative",
+          "why_it_matters_tags": [
+            "narrative",
+            "invalidator_check"
+          ],
+          "capital_relevance_tags": [
+            "SPY"
+          ],
+          "supports_count": 0,
+          "contradicts_count": 0,
+          "object_preview": "Three SPY direction_conflict invalidators (unknown_discovery, broad_market:sector, sector_rotation_proxy) all sustained at 33 hits with last_seen within the current scan window. T…"
+        },
+        {
+          "claim_id": "claim:c162e324889e091d1092",
+          "atom_id": "atom:fd9cacc7d68cbb27cffb",
+          "subject": "BTC",
+          "predicate": "mentions",
+          "direction": "ambiguous",
+          "horizon": "multi_day",
+          "certainty": "weak",
+          "event_class": "narrative",
+          "source_lane": "news_policy_narrative",
+          "why_it_matters_tags": [
+            "narrative",
+            "thesis_update"
+          ],
+          "capital_relevance_tags": [
+            "BTC",
+            "BTC-USD",
+            "MSTR"
+          ],
+          "supports_count": 0,
+          "contradicts_count": 0,
+          "object_preview": "MSTR surged +11.05% to $164.70 on 35.8M vol — extraordinary for a stock with ~10-15M typical volume. BTC +3.04% to $77,466 confirms Bitcoin momentum. Active thesis thesis:784cc106…"
+        },
+        {
+          "claim_id": "claim:d62fa0b56279179f0b1b",
+          "atom_id": "atom:1eb21aa2c27c576f16a3",
+          "subject": "IWM",
+          "predicate": "mentions",
+          "direction": "bearish",
+          "horizon": "multi_day",
+          "certainty": "weak",
+          "event_class": "narrative",
+          "source_lane": "news_policy_narrative",
+          "why_it_matters_tags": [
+            "narrative",
+            "scenario_update"
+          ],
+          "capital_relevance_tags": [
+            "IWM",
+            "QQQ",
+            "SPY"
+          ],
+          "supports_count": 1,
+          "contradicts_count": 0,
+          "object_preview": "Broad equity market +risk-on+ with no commodity/energy participation. Sector rotation score: XLE -3.70% vs XLY +3.17% is extreme divergence. VIX dropping to 17.41 confirms low fea…"
+        },
+        {
+          "claim_id": "claim:dc752d3e9f0b1449c1df",
+          "atom_id": "atom:948c418f5e47276393f8",
+          "subject": "BNO",
+          "predicate": "mentions",
+          "direction": "bearish",
+          "horizon": "multi_day",
+          "certainty": "probable",
+          "event_class": "narrative",
+          "source_lane": "news_policy_narrative",
+          "why_it_matters_tags": [
+            "narrative",
+            "thesis_update"
+          ],
+          "capital_relevance_tags": [
+            "BNO",
+            "US",
+            "USO"
+          ],
+          "supports_count": 3,
+          "contradicts_count": 1,
+          "object_preview": "BNO Hormuz physical supply thesis (496M bbl cumulative loss, Goldman two-way 2026 oil risk) faces decoupling risk as geopolitical negotiation premium compresses. USO down -9.91% i…"
+        },
+        {
+          "claim_id": "claim:eb13abc0f31aa4082363",
+          "atom_id": "atom:2f844061b8904806ce6b",
+          "subject": "ORCL",
+          "predicate": "mentions",
+          "direction": "ambiguous",
+          "horizon": "multi_day",
+          "certainty": "weak",
+          "event_class": "narrative",
+          "source_lane": "news_policy_narrative",
+          "why_it_matters_tags": [
+            "narrative",
+            "thesis_update"
+          ],
+          "capital_relevance_tags": [
+            "ORCL"
+          ],
+          "supports_count": 0,
+          "contradicts_count": 0,
+          "object_preview": "ORCL dropped -1.47% to $176.56 on 28.9M vol. Price action broke below the open at $182.93 intraday low $176.25 — breaking the recent momentum structure. Active thesis thesis:12b34…"
+        },
+        {
+          "claim_id": "claim:edfc94f4c265bb2cadda",
+          "atom_id": "atom:4525713dcd238b2628c6",
+          "subject": "BNO",
+          "predicate": "shows_flow",
+          "direction": "ambiguous",
+          "horizon": "unknown",
+          "certainty": "probable",
+          "event_class": "flow",
+          "source_lane": "news_policy_narrative",
+          "why_it_matters_tags": [
+            "flow",
+            "opportunity_followup"
+          ],
+          "capital_relevance_tags": [
+            "BNO",
+            "BRT",
+            "US"
+          ],
+          "supports_count": 0,
+          "contradicts_count": 0,
+          "object_preview": "Confirmed via Reuters Apr 15: 496M bbl cumulative Middle Eastern crude/condensate losses; Hormuz transit 'fraction' of 130+ pre-war daily crossings; US Navy blockade on Iranian-po…"
+        },
+        {
+          "claim_id": "claim:f4c15c14d66d429429b3",
+          "atom_id": "atom:8862b1042f8d4d1fa35b",
+          "subject": "IWM",
+          "predicate": "mentions",
+          "direction": "bearish",
+          "horizon": "multi_day",
+          "certainty": "weak",
+          "event_class": "narrative",
+          "source_lane": "news_policy_narrative",
+          "why_it_matters_tags": [
+            "narrative",
+            "unknown_discovery"
+          ],
+          "capital_relevance_tags": [
+            "IWM",
+            "QQQ",
+            "SPY"
+          ],
+          "supports_count": 1,
+          "contradicts_count": 0,
+          "object_preview": "IWM +2.47% alongside SPY +1.37% / QQQ +1.45% while USO -9.58% / XLE -3.70%. Small-cap rotation confirming risk-on domestic economy narrative. This is an unknown discovery — IWM no…"
+        },
+        {
+          "claim_id": "claim:faa029b9b8bc5d587cdb",
+          "atom_id": "atom:2acfc80d65434c2a7cdd",
+          "subject": "IAU",
+          "predicate": "shows_flow",
+          "direction": "ambiguous",
+          "horizon": "unknown",
+          "certainty": "weak",
+          "event_class": "flow",
+          "source_lane": "news_policy_narrative",
+          "why_it_matters_tags": [
+            "flow",
+            "invalidator_check"
+          ],
+          "capital_relevance_tags": [
+            "IAU",
+            "IVV",
+            "SPY"
+          ],
+          "supports_count": 0,
+          "contradicts_count": 0,
+          "object_preview": "SPY packet invalidator cluster intensifying. Three themes at hit_count 30 (unknown_discovery, broad_market:sector, sector_rotation_proxy) now joined by new hits: commodity_pressur…"
+        }
+      ]
+    },
+    "context_gap_summary": {
+      "available": true,
+      "generated_at": "2026-04-17T18:05:31.331887Z",
+      "status": "pass",
+      "gap_count": 34,
+      "by_missing_lane": {
+        "market_structure": 11,
+        "derived_context": 12,
+        "corp_filing_ir": 11
+      },
+      "gaps": [
+        {
+          "gap_id": "gap:0c426c083641e6a435c7",
+          "campaign_id": null,
+          "claim_id": "claim:c162e324889e091d1092",
+          "subject": "BTC",
+          "missing_lane": "market_structure",
+          "why_load_bearing": "Narrative-only claim lacks price/volume confirmation.",
+          "which_source_could_close_it": [
+            "source:yfinance",
+            "source:exchange_market_data"
+          ],
+          "cost_of_ignorance": "medium"
+        },
+        {
+          "gap_id": "gap:0ca1f21737052ab2e414",
+          "campaign_id": null,
+          "claim_id": "claim:dc752d3e9f0b1449c1df",
+          "subject": "BNO",
+          "missing_lane": "market_structure",
+          "why_load_bearing": "Narrative-only claim lacks price/volume confirmation.",
+          "which_source_could_close_it": [
+            "source:yfinance",
+            "source:exchange_market_data"
+          ],
+          "cost_of_ignorance": "medium"
+        },
+        {
+          "gap_id": "gap:0e1b4d8e22477e727ffa",
+          "campaign_id": null,
+          "claim_id": "claim:4eb273af438338a265fd",
+          "subject": "BNO",
+          "missing_lane": "market_structure",
+          "why_load_bearing": "Narrative-only claim lacks price/volume confirmation.",
+          "which_source_could_close_it": [
+            "source:yfinance",
+            "source:exchange_market_data"
+          ],
+          "cost_of_ignorance": "medium"
+        },
+        {
+          "gap_id": "gap:118c9631358d267277a4",
+          "campaign_id": null,
+          "claim_id": "claim:f4c15c14d66d429429b3",
+          "subject": "IWM",
+          "missing_lane": "derived_context",
+          "why_load_bearing": "Claim confidence is weak; needs triangulation or contradiction check.",
+          "which_source_could_close_it": [
+            "source:capital_graph",
+            "source:scenario_exposure"
+          ],
+          "cost_of_ignorance": "low"
+        },
+        {
+          "gap_id": "gap:1f90b6be91190785b5a9",
+          "campaign_id": null,
+          "claim_id": "claim:c162e324889e091d1092",
+          "subject": "BTC",
+          "missing_lane": "derived_context",
+          "why_load_bearing": "Claim confidence is weak; needs triangulation or contradiction check.",
+          "which_source_could_close_it": [
+            "source:capital_graph",
+            "source:scenario_exposure"
+          ],
+          "cost_of_ignorance": "low"
+        },
+        {
+          "gap_id": "gap:2977da9f98ed87fe4b4f",
+          "campaign_id": null,
+          "claim_id": "claim:2ebe6ba5c8de0f2bdfe3",
+          "subject": "DBC",
+          "missing_lane": "corp_filing_ir",
+          "why_load_bearing": "Issuer/security claim lacks official filing or issuer confirmation.",
+          "which_source_could_close_it": [
+            "source:sec_edgar",
+            "source:issuer_press_release"
+          ],
+          "cost_of_ignorance": "medium"
+        },
+        {
+          "gap_id": "gap:3132fe123ffdbf9701f7",
+          "campaign_id": null,
+          "claim_id": "claim:08f053aa2c9696a07a99",
+          "subject": "DBC",
+          "missing_lane": "corp_filing_ir",
+          "why_load_bearing": "Issuer/security claim lacks official filing or issuer confirmation.",
+          "which_source_could_close_it": [
+            "source:sec_edgar",
+            "source:issuer_press_release"
+          ],
+          "cost_of_ignorance": "medium"
+        },
+        {
+          "gap_id": "gap:324acf043695923c39e8",
+          "campaign_id": null,
+          "claim_id": "claim:82a8b26ed28f7333d9d3",
+          "subject": "SPY",
+          "missing_lane": "derived_context",
+          "why_load_bearing": "Claim confidence is weak; needs triangulation or contradiction check.",
+          "which_source_could_close_it": [
+            "source:capital_graph",
+            "source:scenario_exposure"
+          ],
+          "cost_of_ignorance": "low"
+        },
+        {
+          "gap_id": "gap:3320b1bb6e6fd49c2d41",
+          "campaign_id": null,
+          "claim_id": "claim:dc752d3e9f0b1449c1df",
+          "subject": "BNO",
+          "missing_lane": "corp_filing_ir",
+          "why_load_bearing": "Issuer/security claim lacks official filing or issuer confirmation.",
+          "which_source_could_close_it": [
+            "source:sec_edgar",
+            "source:issuer_press_release"
+          ],
+          "cost_of_ignorance": "medium"
+        },
+        {
+          "gap_id": "gap:3a1960ea53b768124115",
+          "campaign_id": null,
+          "claim_id": "claim:82a8b26ed28f7333d9d3",
+          "subject": "SPY",
+          "missing_lane": "market_structure",
+          "why_load_bearing": "Narrative-only claim lacks price/volume confirmation.",
+          "which_source_could_close_it": [
+            "source:yfinance",
+            "source:exchange_market_data"
+          ],
+          "cost_of_ignorance": "medium"
+        },
+        {
+          "gap_id": "gap:41288f7bfd9268f7caf6",
+          "campaign_id": null,
+          "claim_id": "claim:d62fa0b56279179f0b1b",
+          "subject": "IWM",
+          "missing_lane": "derived_context",
+          "why_load_bearing": "Claim confidence is weak; needs triangulation or contradiction check.",
+          "which_source_could_close_it": [
+            "source:capital_graph",
+            "source:scenario_exposure"
+          ],
+          "cost_of_ignorance": "low"
+        },
+        {
+          "gap_id": "gap:428861bec75fed5b2e8b",
+          "campaign_id": null,
+          "claim_id": "claim:0b7dc85b11b69c08ae48",
+          "subject": "SMR",
+          "missing_lane": "derived_context",
+          "why_load_bearing": "Claim confidence is weak; needs triangulation or contradiction check.",
+          "which_source_could_close_it": [
+            "source:capital_graph",
+            "source:scenario_exposure"
+          ],
+          "cost_of_ignorance": "low"
+        },
+        {
+          "gap_id": "gap:4d1eec538c0980a33597",
+          "campaign_id": null,
+          "claim_id": "claim:08f053aa2c9696a07a99",
+          "subject": "DBC",
+          "missing_lane": "derived_context",
+          "why_load_bearing": "Claim confidence is weak; needs triangulation or contradiction check.",
+          "which_source_could_close_it": [
+            "source:capital_graph",
+            "source:scenario_exposure"
+          ],
+          "cost_of_ignorance": "low"
+        },
+        {
+          "gap_id": "gap:4f02024d7dec16662909",
+          "campaign_id": null,
+          "claim_id": "claim:7314c544c8ebc92c0cd2",
+          "subject": "ORCL",
+          "missing_lane": "derived_context",
+          "why_load_bearing": "Claim confidence is weak; needs triangulation or contradiction check.",
+          "which_source_could_close_it": [
+            "source:capital_graph",
+            "source:scenario_exposure"
+          ],
+          "cost_of_ignorance": "low"
+        },
+        {
+          "gap_id": "gap:4f3f2f3c7d6b680d9153",
+          "campaign_id": null,
+          "claim_id": "claim:189f03d0630057a1f856",
+          "subject": "DBC",
+          "missing_lane": "corp_filing_ir",
+          "why_load_bearing": "Issuer/security claim lacks official filing or issuer confirmation.",
+          "which_source_could_close_it": [
+            "source:sec_edgar",
+            "source:issuer_press_release"
+          ],
+          "cost_of_ignorance": "medium"
+        },
+        {
+          "gap_id": "gap:5237367a9a6f9237b736",
+          "campaign_id": null,
+          "claim_id": "claim:faa029b9b8bc5d587cdb",
+          "subject": "IAU",
+          "missing_lane": "derived_context",
+          "why_load_bearing": "Claim confidence is weak; needs triangulation or contradiction check.",
+          "which_source_could_close_it": [
+            "source:capital_graph",
+            "source:scenario_exposure"
+          ],
+          "cost_of_ignorance": "low"
+        },
+        {
+          "gap_id": "gap:5a810fc4f9bd9b87e3cb",
+          "campaign_id": null,
+          "claim_id": "claim:08f053aa2c9696a07a99",
+          "subject": "DBC",
+          "missing_lane": "market_structure",
+          "why_load_bearing": "Narrative-only claim lacks price/volume confirmation.",
+          "which_source_could_close_it": [
+            "source:yfinance",
+            "source:exchange_market_data"
+          ],
+          "cost_of_ignorance": "medium"
+        },
+        {
+          "gap_id": "gap:65fd400516e4a3b44f5b",
+          "campaign_id": null,
+          "claim_id": "claim:d62fa0b56279179f0b1b",
+          "subject": "IWM",
+          "missing_lane": "corp_filing_ir",
+          "why_load_bearing": "Issuer/security claim lacks official filing or issuer confirmation.",
+          "which_source_could_close_it": [
+            "source:sec_edgar",
+            "source:issuer_press_release"
+          ],
+          "cost_of_ignorance": "medium"
+        },
+        {
+          "gap_id": "gap:679879502dd95656119d",
+          "campaign_id": null,
+          "claim_id": "claim:189f03d0630057a1f856",
+          "subject": "DBC",
+          "missing_lane": "derived_context",
+          "why_load_bearing": "Claim confidence is weak; needs triangulation or contradiction check.",
+          "which_source_could_close_it": [
+            "source:capital_graph",
+            "source:scenario_exposure"
+          ],
+          "cost_of_ignorance": "low"
+        },
+        {
+          "gap_id": "gap:6b3d4fddfa9f98ea5eae",
+          "campaign_id": null,
+          "claim_id": "claim:f4c15c14d66d429429b3",
+          "subject": "IWM",
+          "missing_lane": "corp_filing_ir",
+          "why_load_bearing": "Issuer/security claim lacks official filing or issuer confirmation.",
+          "which_source_could_close_it": [
+            "source:sec_edgar",
+            "source:issuer_press_release"
+          ],
+          "cost_of_ignorance": "medium"
+        }
+      ]
+    },
+    "known_limitations": [
+      "OpenClaw parent-side raw web search logs, Discord logs, and cron run transcripts are not exported.",
+      "Source registry/source health is exported as status metadata, not as raw vendor content.",
+      "Historical per-report source atoms were not versioned before this packet export; this snapshot is current-state evidence coverage."
+    ]
+  },
+  "reviewer_notes": [
+    "This packet is for report quality review, not for trading or execution.",
+    "Uses report-time archive when available; otherwise falls back to current sanitized finance/OpenClaw source state.",
+    "Raw Discord user messages and thread registry are intentionally excluded."
+  ],
+  "no_execution": true
+}

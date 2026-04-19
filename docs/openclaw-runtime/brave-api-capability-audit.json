@@ -1,0 +1,279 @@
+{
+  "generated_at": "2026-04-17T21:00:19.067309Z",
+  "contract": "brave-api-capability-audit-v1",
+  "phase": "ingestion_fabric_phase_02",
+  "reviewed_external_docs_at": "2026-04-17",
+  "external_scout_used": true,
+  "configured_provider": "brave",
+  "configured_mode": "llm-context",
+  "installed_openclaw_provider_dist": "/Users/leofitz/.npm-global/lib/node_modules/openclaw/dist/brave-web-search-provider.runtime-CXY3p9_i.js",
+  "implemented_endpoints": [
+    "brave/web/search",
+    "brave/llm/context"
+  ],
+  "required_endpoints": [
+    "brave/web/search",
+    "brave/news/search",
+    "brave/llm/context",
+    "brave/answers/chat_completions"
+  ],
+  "missing_endpoints": [
+    "brave/news/search",
+    "brave/answers/chat_completions"
+  ],
+  "official_sources": [
+    {
+      "name": "Brave Web Search documentation",
+      "url": "https://api-dashboard.search.brave.com/documentation/services/web-search",
+      "role": "web_source_discovery"
+    },
+    {
+      "name": "Brave News Search documentation",
+      "url": "https://api-dashboard.search.brave.com/documentation/services/news-search",
+      "role": "fresh_news_discovery"
+    },
+    {
+      "name": "Brave LLM Context documentation",
+      "url": "https://api-dashboard.search.brave.com/documentation/services/llm-context",
+      "role": "selected_source_reading"
+    },
+    {
+      "name": "Brave Answers documentation",
+      "url": "https://api-dashboard.search.brave.com/documentation/services/answers",
+      "role": "sidecar_synthesis_only"
+    },
+    {
+      "name": "Brave pricing and rate limits documentation",
+      "url": "https://api-dashboard.search.brave.com/documentation/pricing",
+      "role": "quota_and_plan_boundary"
+    },
+    {
+      "name": "Brave API terms of service",
+      "url": "https://api-dashboard.search.brave.com/documentation/resources/terms-of-service",
+      "role": "storage_and_redistribution_boundary"
+    }
+  ],
+  "endpoint_inventory": {
+    "brave/web/search": {
+      "endpoint": "GET /res/v1/web/search",
+      "authority_boundary": "source_discovery",
+      "best_use": "Broad source discovery across issuer sites, filings, docs, blogs, and general web coverage.",
+      "max_count": 20,
+      "max_offset": 9,
+      "supports_freshness": true,
+      "supports_custom_date_range": true,
+      "supports_extra_snippets": true,
+      "default_safesearch": "moderate",
+      "current_openclaw_provider_status": "implemented",
+      "recommended_phase": "phase_04_brave_web_news_fetchers",
+      "installed_openclaw_detected": true
+    },
+    "brave/news/search": {
+      "endpoint": "GET /res/v1/news/search",
+      "authority_boundary": "fresh_news_discovery",
+      "best_use": "Fresh finance/news discovery for current events and market-moving coverage.",
+      "max_count": 50,
+      "max_offset": 9,
+      "supports_freshness": true,
+      "supports_custom_date_range": true,
+      "supports_extra_snippets": true,
+      "default_safesearch": "strict",
+      "current_openclaw_provider_status": "missing",
+      "recommended_phase": "phase_04_brave_web_news_fetchers",
+      "installed_openclaw_detected": false
+    },
+    "brave/llm/context": {
+      "endpoint": "GET|POST /res/v1/llm/context",
+      "authority_boundary": "selected_source_reading",
+      "best_use": "Grounded reading/extraction for selected source candidates after deterministic discovery.",
+      "query_limits": {
+        "max_chars": 400,
+        "max_words": 50
+      },
+      "count_range": [
+        1,
+        50
+      ],
+      "maximum_number_of_urls_range": [
+        1,
+        50
+      ],
+      "maximum_number_of_tokens_range": [
+        1024,
+        32768
+      ],
+      "default_maximum_number_of_tokens": 8192,
+      "supports_freshness_officially": true,
+      "current_openclaw_provider_status": "implemented",
+      "current_openclaw_mode_gap": "The installed OpenClaw llm-context web_search mode rejects freshness/date_after/date_before at the abstraction boundary.",
+      "recommended_phase": "phase_05_brave_llm_context_reader",
+      "installed_openclaw_detected": true
+    },
+    "brave/answers/chat_completions": {
+      "endpoint": "POST /res/v1/chat/completions",
+      "authority_boundary": "sidecar_synthesis_only",
+      "best_use": "Brave-grounded synthesis for sidecar exploration; citations can seed evidence candidates but answer prose is not canonical evidence.",
+      "model": "brave",
+      "requires_stream_for": [
+        "enable_citations",
+        "enable_entities",
+        "enable_research"
+      ],
+      "current_openclaw_provider_status": "missing",
+      "recommended_phase": "phase_06_brave_answers_sidecar",
+      "promotion_rule": "Never promote answer text directly; only citation URLs may enter EvidenceAtom candidate flow.",
+      "installed_openclaw_detected": false
+    }
+  },
+  "known_mode_limits": {
+    "openclaw_llm_context_rejects_freshness": true,
+    "openclaw_llm_context_rejects_date_after_before": true,
+    "web_mode_supports_freshness_and_date_range": true,
+    "official_llm_context_supports_freshness_but_current_openclaw_abstraction_blocks_it": true
+  },
+  "quota_health": {
+    "status": "degraded_from_logs",
+    "source": "/Users/leofitz/.openclaw/logs/gateway.err.log",
+    "failure_count_exported": 20,
+    "limitation": "Log-derived only; not a live billing API check."
+  },
+  "quota_failures": [
+    {
+      "line_time": "2026-04-17T08:20:47.733-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "oil price today April 17 2026 Hormuz strait Iran US blockade"
+    },
+    {
+      "line_time": "2026-04-17T08:20:47.822-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "AMD options flow April 17 2026 market direction"
+    },
+    {
+      "line_time": "2026-04-17T08:41:03.286-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "oil price BNO Brent Hormuz strait April 2026"
+    },
+    {
+      "line_time": "2026-04-17T08:41:03.374-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "AMD options flow implied volatility April 17 2026"
+    },
+    {
+      "line_time": "2026-04-17T08:41:03.375-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "SMR NuScale small modular reactor stock April 2026"
+    },
+    {
+      "line_time": "2026-04-17T10:23:10.705-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "RGTI Rigetti Computing stock IV options April 2026"
+    },
+    {
+      "line_time": "2026-04-17T10:23:10.727-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "oil price Hormuz Strait Iran April 2026 supply disruption"
+    },
+    {
+      "line_time": "2026-04-17T10:23:10.734-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "TSLA stock news April 17 2026"
+    },
+    {
+      "line_time": "2026-04-17T10:41:10.275-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "BNO crude oil tariff impact supply chain April 2026"
+    },
+    {
+      "line_time": "2026-04-17T10:41:10.285-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "small cap energy stock watchlist IV elevated volume April 2026"
+    },
+    {
+      "line_time": "2026-04-17T10:41:10.321-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "oil price Hormuz Strait Iran blockade April 2026"
+    },
+    {
+      "line_time": "2026-04-17T11:04:38.711-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "oil price crude WTI Brent April 17 2026 Hormuz Iran supply"
+    },
+    {
+      "line_time": "2026-04-17T12:02:59.438-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "oil price crash April 17 2026 Iran nuclear talks OPEC supply"
+    },
+    {
+      "line_time": "2026-04-17T12:02:59.461-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "USO oil ETF capitulation extreme selloff commodity April 2026"
+    },
+    {
+      "line_time": "2026-04-17T12:02:59.496-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "Goldman Sachs oil price 2026 Hormuz supply two-way risk outlook"
+    },
+    {
+      "line_time": "2026-04-17T13:03:37.876-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "TSLA stock news April 17 2026"
+    },
+    {
+      "line_time": "2026-04-17T13:03:37.885-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "oil price WTI Brent April 17 2026 Hormuz Iran supply"
+    },
+    {
+      "line_time": "2026-04-17T13:21:00.216-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "SPY S&P 500 market direction conflict sector rotation options chain April 2026"
+    },
+    {
+      "line_time": "2026-04-17T13:21:00.224-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "oil price crude commodity April 17 2026 Hormuz strait tanker supply disruption"
+    },
+    {
+      "line_time": "2026-04-17T13:21:00.287-0",
+      "error": "USAGE_LIMIT_EXCEEDED",
+      "query": "USO oil ETF collapse capitulation historical extreme 2026"
+    }
+  ],
+  "pricing_and_rate_limit_boundary": {
+    "search_plan_covers": [
+      "web_search",
+      "news_search",
+      "llm_context"
+    ],
+    "answers_is_separate_plan": true,
+    "search_rate_limit_doc": "50 requests/sec on published pricing page as of docs review date; re-check before activation.",
+    "answers_rate_limit_doc": "2 requests/sec on published pricing page as of docs review date; re-check before activation.",
+    "must_use_rate_limit_headers": true
+  },
+  "rights_and_storage_boundary": {
+    "do_not_persist_raw_search_results_as_database": true,
+    "committed_artifacts_must_be_sanitized": true,
+    "search_result_cache_policy": "transient operational cache only unless Brave contract permits persistence",
+    "evidence_policy": "Persist EvidenceAtom/ClaimAtom derived from independently readable source material; do not commit raw Brave snippets.",
+    "api_keys_must_remain_secret": true
+  },
+  "authority_boundaries": {
+    "brave/web/search": "source_discovery",
+    "brave/news/search": "fresh_news_discovery",
+    "brave/llm/context": "selected_source_reading",
+    "brave/answers/chat_completions": "sidecar_synthesis_only"
+  },
+  "recommendation": [
+    "Do not activate Brave Answers in the hot path.",
+    "Implement query registry and lane watermarks before adding high-volume Brave fetchers.",
+    "Use brave/news/search for freshness-sensitive finance discovery.",
+    "Use brave/web/search for domain/date-filtered source discovery.",
+    "Use brave/llm/context only for selected reading after source discovery.",
+    "Use Brave Answers only as sidecar synthesis with citation extraction.",
+    "Treat 402 quota failures as source-health degradation instead of recycling stale narratives."
+  ],
+  "no_secrets_exported": true,
+  "no_api_calls_made_by_exporter": true,
+  "no_runtime_config_change": true,
+  "no_execution": true
+}

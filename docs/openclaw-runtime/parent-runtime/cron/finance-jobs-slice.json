@@ -1,0 +1,110 @@
+{
+  "generated_at": "2026-04-19T04:32:50.254115Z",
+  "source_path": "/Users/leofitz/.openclaw/cron/jobs.json",
+  "jobs": [
+    {
+      "id": "finance-midday-operator-review-v1",
+      "name": "finance-midday-operator-review",
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "30 11 * * 1-5",
+        "tz": "America/Chicago"
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "discord",
+        "to": "channel:1479790104490016808"
+      },
+      "sessionTarget": "isolated",
+      "payload": {
+        "kind": "agentTurn",
+        "model": "minimax-portal/MiniMax-M2.7",
+        "message": "【OpenClaw Finance Deterministic Report Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_discord_report_job.py --mode marketday-review\n\nOutput discipline:\n- Return stdout exactly.\n- If stdout is NO_REPLY, return only NO_REPLY.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; OpenClaw delivery handles Discord.\n- Review-only; no execution."
+      }
+    },
+    {
+      "id": "b2c3d4e5-f6a7-8901-bcde-f01234567890",
+      "name": "finance-premarket-brief",
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "10 8 * * 1-5",
+        "tz": "America/Chicago"
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "discord",
+        "to": "channel:1479790104490016808"
+      },
+      "sessionTarget": "isolated",
+      "payload": {
+        "kind": "agentTurn",
+        "model": "minimax-portal/MiniMax-M2.7",
+        "message": "【OpenClaw Finance Deterministic Report Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_discord_report_job.py --mode marketday-review\n\nOutput discipline:\n- Return stdout exactly.\n- If stdout is NO_REPLY, return only NO_REPLY.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; OpenClaw delivery handles Discord.\n- Review-only; no execution."
+      }
+    },
+    {
+      "id": "finance-premarket-delivery-watchdog-v1",
+      "name": "finance-premarket-delivery-watchdog",
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "25 8 * * 1-5",
+        "tz": "America/Chicago"
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "discord",
+        "to": "channel:1479790104490016808"
+      },
+      "sessionTarget": "isolated",
+      "payload": {
+        "kind": "agentTurn",
+        "model": "minimax-portal/MiniMax-M2.7",
+        "message": "【OpenClaw Finance Deterministic Report Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_discord_report_job.py --mode morning-watchdog\n\nOutput discipline:\n- Return stdout exactly.\n- If stdout is NO_REPLY, return only NO_REPLY.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; OpenClaw delivery handles Discord.\n- Review-only; no execution."
+      }
+    },
+    {
+      "id": "c031f32c-0392-45bb-ae1a-ad7e7aec6938",
+      "name": "finance-subagent-scanner",
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "*/20 8-16 * * 1-5",
+        "tz": "America/Chicago"
+      },
+      "delivery": {
+        "mode": "none",
+        "channel": "last"
+      },
+      "sessionTarget": "isolated",
+      "payload": {
+        "kind": "agentTurn",
+        "model": "google-gemini-cli/gemini-3-flash",
+        "message": "【OpenClaw Finance Deterministic Scanner Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_scanner_job.py --mode market-hours-scan\n\nContract markers:\n- finance_scanner_job.py runs finance_llm_context_pack.py, query_pack_planner.py, finance_worker.py, finance_parent_market_ingest_cutover.py, and gate_evaluator.py.\n- Read-only scanner context is /Users/leofitz/.openclaw/workspace/finance/state/llm-job-context/scanner.json.\n- Context pack is a view cache and must have pack_is_not_authority=true.\n- QueryPack is not evidence; object_links and unknown_discovery_exhausted_reason remain required contract fields.\n- unknown_discovery cannot be satisfied by held/watchlist tickers.\n- unknown_discovery_minimum_attempts remains enforced by scanner.json/query_pack_planner.py.\n- 不得把已在 watchlist/held 的标的当作 unknown_discovery。\n\nOutput discipline:\n- Return stdout exactly.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; delivery.mode is none.\n- No execution; review-only."
+      }
+    },
+    {
+      "id": "f57c165f-7683-4816-ab2c-10abda099b9f",
+      "name": "finance-subagent-scanner-offhours",
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "0 0,4,7,17,20 * * 1-5",
+        "tz": "America/Chicago"
+      },
+      "delivery": {
+        "mode": "none",
+        "channel": "last"
+      },
+      "sessionTarget": "isolated",
+      "payload": {
+        "kind": "agentTurn",
+        "model": "google-gemini-cli/gemini-3-flash",
+        "message": "【OpenClaw Finance Deterministic Scanner Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_scanner_job.py --mode offhours-scan\n\nContract markers:\n- finance_scanner_job.py runs finance_llm_context_pack.py, query_pack_planner.py, finance_worker.py, finance_parent_market_ingest_cutover.py, and gate_evaluator.py.\n- Read-only scanner context is /Users/leofitz/.openclaw/workspace/finance/state/llm-job-context/scanner.json.\n- Context pack is a view cache and must have pack_is_not_authority=true.\n- QueryPack is not evidence; object_links and unknown_discovery_exhausted_reason remain required contract fields.\n- unknown_discovery cannot be satisfied by held/watchlist tickers.\n- unknown_discovery_minimum_attempts remains enforced by scanner.json/query_pack_planner.py.\n- 不得把已在 watchlist/held 的标的当作 unknown_discovery。\n\nOutput discipline:\n- Return stdout exactly.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; delivery.mode is none.\n- No execution; review-only."
+      }
+    }
+  ],
+  "no_execution": true
+}

@@ -1,0 +1,42 @@
+{
+  "generated_at": "2026-04-17T22:15:02.084582Z",
+  "contract": "source-to-campaign-closeout-v1",
+  "phase_summary": {
+    "phase_count": 15,
+    "completed_count": 15,
+    "pending": []
+  },
+  "cutover_gate": {
+    "status": "hold",
+    "blocking_reasons": [
+      "followup_route_has_coverage",
+      "thread_registry_lifecycle_present"
+    ],
+    "readiness_is_authority": false
+  },
+  "metrics": {
+    "source_count": 8,
+    "freshness_sla_breach_rate": 0.75,
+    "source_health_status": "degraded",
+    "campaign_count": 29,
+    "source_diversity_per_campaign": 0.5172,
+    "context_gap_rate": 0.6207,
+    "followup_grounding_failure_rate": 1.0,
+    "latest_route_status": "pass",
+    "latest_route_has_coverage": false,
+    "iv_signal_staleness_rate": 1.0,
+    "options_iv_status": "pass",
+    "options_iv_proxy_only_count": 4,
+    "raw_snippet_export_count": 0,
+    "inactive_thread_pruned_count": null
+  },
+  "rollback": [
+    "Ignore source-to-campaign cutover gate output; current report path remains intact.",
+    "Disable optional report archive / cutover gate / IV surface calls without affecting primary report generation.",
+    "Use existing discord_primary_markdown fallback if board/package surfaces degrade."
+  ],
+  "no_execution": true,
+  "no_wake_mutation": true,
+  "no_delivery_mutation": true,
+  "no_threshold_mutation": true
+}

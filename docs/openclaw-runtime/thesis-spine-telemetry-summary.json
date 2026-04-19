@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-16T19:39:08.520605+00:00",
+  "generated_at": "2026-04-19T04:32:50.298201+00:00",
   "state_boundary": "sanitized_summary_only",
   "note": "Full finance/state JSONL files remain local runtime state. This summary exposes counts and bounded latest rows for GitHub review.",
   "files": {

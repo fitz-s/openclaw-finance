@@ -116,7 +116,11 @@ def build_report() -> dict:
         prompt_contract = {}
     jobs = prompt_contract.get('jobs') if isinstance(prompt_contract.get('jobs'), dict) else {}
     prompt_expectations = {
-        'finance-premarket-brief': ['contains_context_pack', 'contains_non_authority_boundary', 'contains_candidate_path'],
+        'finance-premarket-brief': [
+            'contains_deterministic_report_job',
+            'runs_finance_discord_report_job',
+            'forbids_progress_text',
+        ],
         'finance-subagent-scanner': ['contains_context_pack', 'contains_non_authority_boundary', 'contains_unknown_discovery_contract'],
         'finance-subagent-scanner-offhours': ['contains_context_pack', 'contains_non_authority_boundary', 'contains_unknown_discovery_contract'],
         'finance-weekly-learning-review': ['contains_context_pack', 'contains_non_authority_boundary', 'contains_threshold_mutation_ban'],

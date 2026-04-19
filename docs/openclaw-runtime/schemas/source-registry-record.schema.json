@@ -1,0 +1,153 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "workspace/schemas/source-registry-record.schema.json",
+  "title": "SourceRegistryRecord",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source_id",
+    "source_kind",
+    "layer_hint",
+    "reliability_tier",
+    "latency_class",
+    "license_usage",
+    "domain_patterns",
+    "raw_capture_policy",
+    "title_only_policy",
+    "eligible_for_wake",
+    "eligible_for_judgment_support",
+    "source_class",
+    "source_lane",
+    "modality",
+    "asset_horizon",
+    "freshness_budget_seconds",
+    "expected_latency_seconds",
+    "coverage_universe",
+    "reliability_prior",
+    "uniqueness_prior",
+    "lineage_policy",
+    "point_in_time_policy",
+    "compliance_class",
+    "redistribution_policy",
+    "cost_class",
+    "promotion_policy"
+  ],
+  "properties": {
+    "source_id": { "type": "string", "minLength": 1 },
+    "source_kind": { "type": "string", "minLength": 1 },
+    "layer_hint": {
+      "type": "string",
+      "enum": [
+        "L0_raw_observation",
+        "L1_derived_transform",
+        "L2_public_narrative_event",
+        "L3_flow_positioning",
+        "L4_actor_intent"
+      ]
+    },
+    "reliability_tier": {
+      "type": "string",
+      "enum": [
+        "T0_official_or_exchange",
+        "T1_primary_wire_or_regulator",
+        "T2_reputable_secondary",
+        "T3_untrusted_or_syndicated",
+        "T4_blocked_or_low_quality"
+      ]
+    },
+    "latency_class": {
+      "type": "string",
+      "enum": ["realtime", "near_realtime", "delayed", "batch", "unknown"]
+    },
+    "license_usage": {
+      "type": "string",
+      "enum": ["allowed", "summary_only", "unknown", "blocked"]
+    },
+    "domain_patterns": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "raw_capture_policy": {
+      "type": "string",
+      "enum": ["required", "hash_only", "not_allowed"]
+    },
+    "title_only_policy": {
+      "type": "string",
+      "enum": ["allow_if_confirmed", "context_only", "quarantine"]
+    },
+    "eligible_for_wake": { "type": "boolean" },
+    "eligible_for_judgment_support": { "type": "boolean" },
+    "source_class": {
+      "type": "string",
+      "enum": ["market_tape", "filings_ir", "corporate_calendar", "news_policy", "alt_data", "field_research", "internal_private", "derived_context", "blocked_or_low_quality", "untrusted_web"]
+    },
+    "source_lane": {
+      "type": "string",
+      "enum": ["market_structure", "corporate_filing", "real_economy_alt_data", "news_policy_narrative", "human_field", "internal_private", "derived_context"]
+    },
+    "modality": {
+      "type": "string",
+      "enum": ["text", "tabular", "event", "image", "transcript", "time_series", "mixed"]
+    },
+    "asset_horizon": {
+      "type": "string",
+      "enum": ["intraday", "multi_day", "quarterly", "structural"]
+    },
+    "freshness_budget_seconds": { "type": "integer", "minimum": 0 },
+    "expected_latency_seconds": { "type": "integer", "minimum": 0 },
+    "evaluation_schedule": { "type": "string" },
+    "change_window_seconds": { "type": "integer", "minimum": 0 },
+    "change_source": {
+      "type": "string",
+      "enum": ["audit_log", "information_schema", "last_modified_column", "file_mtime", "api_observed_at", "manual_attestation", "unknown"]
+    },
+    "coverage_universe": { "type": "array", "items": { "type": "string" } },
+    "coverage_regions": { "type": "array", "items": { "type": "string" } },
+    "coverage_asset_classes": { "type": "array", "items": { "type": "string" } },
+    "reliability_prior": { "type": "number", "minimum": 0, "maximum": 1 },
+    "uniqueness_prior": { "type": "number", "minimum": 0, "maximum": 1 },
+    "redundancy_group": { "type": "string" },
+    "substitutability_score": { "type": "number", "minimum": 0, "maximum": 1 },
+    "lineage_policy": {
+      "type": "string",
+      "enum": ["required", "best_effort", "source_declared", "not_available"]
+    },
+    "upstream_refs": { "type": "array", "items": { "type": "string" } },
+    "downstream_refs": { "type": "array", "items": { "type": "string" } },
+    "point_in_time_policy": {
+      "type": "string",
+      "enum": ["event_time_required", "observed_time", "ingested_time_only", "not_applicable", "unknown"]
+    },
+    "event_time_field": { "type": "string" },
+    "ttl_seconds": { "type": ["integer", "null"], "minimum": 0 },
+    "versioning_mode": {
+      "type": "string",
+      "enum": ["snapshot", "append_only", "state_latest", "none", "unknown"]
+    },
+    "snapshot_retention_days": { "type": ["integer", "null"], "minimum": 0 },
+    "replay_supported": { "type": "boolean" },
+    "compliance_class": {
+      "type": "string",
+      "enum": ["public", "licensed", "internal_private", "human_field_compliant", "restricted", "blocked", "unknown"]
+    },
+    "redistribution_policy": {
+      "type": "string",
+      "enum": ["public_allowed", "summary_only", "internal_only", "blocked", "unknown"]
+    },
+    "allowed_uses": { "type": "array", "items": { "type": "string" } },
+    "attribution_required": { "type": "boolean" },
+    "rate_limit_policy": { "type": "object" },
+    "declared_user_agent_required": { "type": "boolean" },
+    "contract_source_ref": { "type": ["string", "null"] },
+    "cost_class": {
+      "type": "string",
+      "enum": ["free", "low", "medium", "high", "unknown"]
+    },
+    "promotion_policy": {
+      "type": "string",
+      "enum": ["wake_eligible_if_confirmed", "judgment_support_only", "context_only", "quarantine", "blocked"]
+    },
+    "notes": { "type": "string" }
+  }
+}

@@ -1,97 +1,340 @@
 {
-  "version": 1,
-  "description": "Core watchlist template (v0).",
+  "version": 2,
+  "description": "User-confirmed full core watchlist, refreshed 2026-04-16.",
   "tickers": [
     {
-      "symbol": "AAPL",
+      "symbol": "NFLX",
       "market": "US",
-      "sector": "Tech",
-      "notes": ""
-    },
-    {
-      "symbol": "MSFT",
-      "market": "US",
-      "sector": "Tech",
-      "notes": ""
-    },
-    {
-      "symbol": "NVDA",
-      "market": "US",
-      "sector": "Tech",
-      "notes": ""
+      "sector": "Media",
+      "notes": "user-confirmed core watchlist 2026-04-16"
     },
     {
       "symbol": "TSLA",
       "market": "US",
       "sector": "Auto",
-      "notes": ""
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "LUMN",
+      "market": "US",
+      "sector": "Telecom",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "NVDA",
+      "market": "US",
+      "sector": "Semiconductors",
+      "notes": "user-confirmed core watchlist 2026-04-16"
     },
     {
       "symbol": "GOOG",
       "market": "US",
-      "sector": "",
-      "notes": "auto-added from IBKR 2026-03-27"
-    },
-    {
-      "symbol": "HIMS",
-      "market": "US",
-      "sector": "",
-      "notes": "auto-added from IBKR 2026-03-27"
+      "sector": "Tech",
+      "notes": "user-confirmed core watchlist 2026-04-16"
     },
     {
       "symbol": "IAU",
       "market": "US",
-      "sector": "",
-      "notes": "auto-added from IBKR 2026-03-27"
+      "sector": "Gold ETF",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "VOO",
+      "market": "US",
+      "sector": "S&P 500 ETF",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "MSFT",
+      "market": "US",
+      "sector": "Tech",
+      "notes": "user-confirmed core watchlist 2026-04-16"
     },
     {
       "symbol": "MSTR",
       "market": "US",
-      "sector": "",
-      "notes": "auto-added from IBKR 2026-03-27"
-    },
-    {
-      "symbol": "NFLX",
-      "market": "US",
-      "sector": "",
-      "notes": "auto-added from IBKR 2026-03-27"
+      "sector": "Bitcoin proxy",
+      "notes": "user-confirmed core watchlist 2026-04-16"
     },
     {
       "symbol": "ORCL",
       "market": "US",
-      "sector": "",
-      "notes": "auto-added from IBKR 2026-03-27"
+      "sector": "Software",
+      "notes": "user-confirmed core watchlist 2026-04-16"
     },
     {
-      "symbol": "SMR",
+      "symbol": "HIMS",
       "market": "US",
-      "sector": "",
-      "notes": "auto-added from IBKR 2026-03-27"
+      "sector": "Healthcare",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "AAPL",
+      "market": "US",
+      "sector": "Tech",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "AMZN",
+      "market": "US",
+      "sector": "Consumer/Cloud",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "META",
+      "market": "US",
+      "sector": "Tech",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "TSM",
+      "market": "US",
+      "sector": "Semiconductors",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "LLY",
+      "market": "US",
+      "sector": "Healthcare",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "WMT",
+      "market": "US",
+      "sector": "Consumer Staples",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "JPM",
+      "market": "US",
+      "sector": "Financials",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "IVV",
+      "market": "US",
+      "sector": "S&P 500 ETF",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "XOM",
+      "market": "US",
+      "sector": "Energy",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "UNH",
+      "market": "US",
+      "sector": "Healthcare",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "MA",
+      "market": "US",
+      "sector": "Financials",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "COST",
+      "market": "US",
+      "sector": "Consumer Staples",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "JNJ",
+      "market": "US",
+      "sector": "Healthcare",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "PG",
+      "market": "US",
+      "sector": "Consumer Staples",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "KO",
+      "market": "US",
+      "sector": "Consumer Staples",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "TMUS",
+      "market": "US",
+      "sector": "Telecom",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "AMD",
+      "market": "US",
+      "sector": "Semiconductors",
+      "notes": "user-confirmed core watchlist 2026-04-16"
     },
     {
       "symbol": "INTC",
       "market": "US",
       "sector": "Semiconductors",
-      "notes": "user-confirmed core watchlist 2026-04-14"
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "PLTR",
+      "market": "US",
+      "sector": "Software",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "JOBY",
+      "market": "US",
+      "sector": "Aerospace",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "ASML",
+      "market": "US",
+      "sector": "Semiconductors",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "RDDT",
+      "market": "US",
+      "sector": "Media",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "ACHR",
+      "market": "US",
+      "sector": "Aerospace",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "SOFI",
+      "market": "US",
+      "sector": "Financials",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "GE",
+      "market": "US",
+      "sector": "Industrials",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "ACM",
+      "market": "US",
+      "sector": "Industrials",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "J",
+      "market": "US",
+      "sector": "Industrials",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "PANW",
+      "market": "US",
+      "sector": "Cybersecurity",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "QRVO",
+      "market": "US",
+      "sector": "Semiconductors",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "VG",
+      "market": "US",
+      "sector": "Telecom",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "SPOT",
+      "market": "US",
+      "sector": "Media",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "TEM",
+      "market": "US",
+      "sector": "Healthcare AI",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "DIS",
+      "market": "US",
+      "sector": "Media",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "XOVR",
+      "market": "US",
+      "sector": "ETF",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "DASH",
+      "market": "US",
+      "sector": "Consumer/Services",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "LULU",
+      "market": "US",
+      "sector": "Consumer",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "CRCL",
+      "market": "US",
+      "sector": "Crypto infrastructure",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "MP",
+      "market": "US",
+      "sector": "Materials",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "SGOV",
+      "market": "US",
+      "sector": "T-bill ETF",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "ILMN",
+      "market": "US",
+      "sector": "Healthcare",
+      "notes": "user-confirmed core watchlist 2026-04-16"
+    },
+    {
+      "symbol": "FNGS",
+      "market": "US",
+      "sector": "Tech basket ETN",
+      "notes": "user-confirmed core watchlist 2026-04-16"
     }
   ],
   "indexes": [
     {
-      "symbol": "SPY",
+      "symbol": "SPX",
+      "provider_symbol": "^GSPC",
       "market": "US",
-      "notes": ""
+      "notes": "user watchlist alias; yfinance provider ^GSPC"
     },
     {
       "symbol": "QQQ",
       "market": "US",
-      "notes": ""
+      "notes": "user watchlist benchmark ETF"
+    },
+    {
+      "symbol": "VIX",
+      "provider_symbol": "^VIX",
+      "market": "US",
+      "notes": "user watchlist volatility index; yfinance provider ^VIX"
     }
   ],
   "fx": [],
-  "crypto": [
-    {
-      "symbol": "BTC/USD",
-      "notes": ""
-    }
-  ]
+  "crypto": [],
+  "source_note": "SPX and VIX are stored with provider_symbol for yfinance fetch while preserving user-facing alias."
 }

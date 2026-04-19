@@ -21,24 +21,22 @@ def message(job: dict) -> str:
     return str(payload.get('message') or '')
 
 
-def test_report_orchestrator_prompt_is_context_pack_first() -> None:
+def test_premarket_report_job_is_deterministic_stdout_only() -> None:
     job = jobs_by_name()['finance-premarket-brief']
     text = message(job)
 
     assert job['enabled'] is True
     assert job['delivery']['mode'] == 'announce'
-    assert 'finance_llm_context_pack.py' in text
-    assert 'llm-job-context/report-orchestrator.json' in text
-    assert 'pack_is_not_authority' in text
-    assert 'judgment-envelope-candidate.json' in text
-    assert '--context-pack /Users/leofitz/.openclaw/workspace/finance/state/llm-job-context/report-orchestrator.json' in text
-    assert 'no_trade|watch' in text
-    assert 'allowed_evidence_refs' in text
-    assert 'delivery safety' in text or 'Delivery safety' in text
-    assert 'finance-decision-report-envelope.json' in text
-    assert 'discord_primary_markdown' in text
-    assert 'discord_thread_seed_markdown' in text
-    assert 'route card 只能去 thread' in text or 'route card' in text
+    assert job['sessionKey'] == 'agent:main:cron:finance-premarket-brief'
+    assert job['sessionTarget'] == 'isolated'
+    assert 'OpenClaw Finance Deterministic Report Job' in text
+    assert 'finance_discord_report_job.py --mode marketday-review' in text
+    assert 'Return stdout exactly' in text
+    assert 'Do not emit progress text' in text
+    assert 'Do not summarize' in text
+    assert 'Do not send messages yourself' in text
+    assert 'OpenClaw Finance Report Orchestrator' not in text
+    assert "Now I'll" not in text
 
 
 def test_scanner_prompts_have_object_link_and_unknown_discovery_contract() -> None:

@@ -56,6 +56,8 @@ SCHEMA_DOCS = [
     WORKSPACE / 'schemas' / 'wake-decision.schema.json',
     WORKSPACE / 'schemas' / 'judgment-envelope.schema.json',
     WORKSPACE / 'schemas' / 'decision-log.schema.json',
+    WORKSPACE / 'schemas' / 'source-registry-record.schema.json',
+    WORKSPACE / 'schemas' / 'source-health.schema.json',
 ]
 
 
@@ -117,6 +119,9 @@ def finance_job_prompt_contract(jobs: list[dict[str, Any]]) -> dict[str, Any]:
             'schedule': job.get('schedule'),
             'delivery': job.get('delivery'),
             'prompt_sha256': 'sha256:' + hashlib.sha256(message.encode('utf-8')).hexdigest(),
+            'contains_deterministic_report_job': 'OpenClaw Finance Deterministic Report Job' in message,
+            'runs_finance_discord_report_job': 'finance_discord_report_job.py' in message,
+            'forbids_progress_text': 'Do not emit progress text' in message or 'Do not summarize' in message,
             'contains_context_pack': 'llm-job-context' in message,
             'contains_non_authority_boundary': (
                 'pack_is_not_authority' in message
@@ -255,10 +260,31 @@ def copy_schemas() -> list[str]:
     return copied
 
 
+def copy_parent_runtime_mirror() -> list[str]:
+    mirror_out = OUT / 'parent-runtime'
+    files = [
+        WORKSPACE / 'services' / 'market-ingest' / 'adapters' / 'live_finance_adapter.py',
+        WORKSPACE / 'services' / 'market-ingest' / 'source_health' / 'compiler.py',
+        WORKSPACE / 'services' / 'market-ingest' / 'packet_compiler' / 'compiler.py',
+        WORKSPACE / 'services' / 'market-ingest' / 'wake_policy' / 'policy.py',
+    ]
+    copied: list[str] = []
+    for source in files:
+        if not source.exists():
+            continue
+        rel = source.relative_to(WORKSPACE)
+        target = mirror_out / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(source, target)
+        copied.append(str(target.relative_to(FINANCE)))
+    return copied
+
+
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
     contracts = copy_contracts()
     schemas = copy_schemas()
+    parent_runtime = copy_parent_runtime_mirror()
     jobs = finance_jobs()
     write_json(OUT / 'finance-cron-jobs.json', {
         'generated_at': now_iso(),
@@ -275,6 +301,60 @@ def main() -> int:
         'openclaw_home': str(OPENCLAW_HOME),
         'finance_repo': str(FINANCE),
         'snapshot_files': [
+            'docs/openclaw-runtime/information-dominance-stack-plan.md',
+            'docs/openclaw-runtime/information-dominance-stack-map.json',
+            'docs/openclaw-runtime/ralplan/ingestion-fabric-phase-00-review2-intake-ralplan.md',
+            'docs/openclaw-runtime/ralplan/ingestion-fabric-phase-01-contracts-ralplan.md',
+            'docs/openclaw-runtime/ralplan/ingestion-fabric-phase-02-brave-api-audit-ralplan.md',
+            'docs/openclaw-runtime/ralplan/ingestion-fabric-phase-03-query-memory-ralplan.md',
+            'docs/openclaw-runtime/ralplan/ingestion-fabric-phase-04-brave-web-news-fetchers-ralplan.md',
+            'docs/openclaw-runtime/ralplan/ingestion-fabric-phase-05-brave-llm-context-reader-ralplan.md',
+            'docs/openclaw-runtime/ralplan/ingestion-fabric-phase-06-brave-answers-sidecar-ralplan.md',
+            'docs/openclaw-runtime/ralplan/ingestion-fabric-phase-07-query-planner-pack-ralplan.md',
+            'docs/openclaw-runtime/ralplan/ingestion-fabric-phase-08-finance-worker-reducer-ralplan.md',
+            'docs/openclaw-runtime/ralplan/ingestion-fabric-phase-09-source-health-quota-monitor-ralplan.md',
+            'docs/openclaw-runtime/ralplan/ingestion-fabric-phase-10-claim-aware-undercurrents-ralplan.md',
+            'docs/openclaw-runtime/ralplan/ingestion-fabric-phase-11-reader-bundle-followup-slices-ralplan.md',
+            'docs/openclaw-runtime/ralplan/ingestion-fabric-phase-12-parent-handoff-ralplan.md',
+            'docs/openclaw-runtime/ralplan/ingestion-fabric-phase-13-closeout-ralplan.md',
+            'docs/openclaw-runtime/ingestion-fabric-phase-ledger.json',
+            'docs/openclaw-runtime/ingestion-fabric-closeout.json',
+            'docs/openclaw-runtime/parent-ingestion-handoff.md',
+            'docs/openclaw-runtime/parent-ingestion-handoff-contract.json',
+            'docs/openclaw-runtime/brave-api-capability-audit.json',
+            'docs/openclaw-runtime/critics/ingestion-fabric-phase-00-implementation-critic.md',
+            'docs/openclaw-runtime/critics/ingestion-fabric-phase-01-implementation-critic.md',
+            'docs/openclaw-runtime/critics/ingestion-fabric-phase-02-implementation-critic.md',
+            'docs/openclaw-runtime/critics/ingestion-fabric-phase-03-implementation-critic.md',
+            'docs/openclaw-runtime/critics/ingestion-fabric-phase-04-implementation-critic.md',
+            'docs/openclaw-runtime/critics/ingestion-fabric-phase-05-implementation-critic.md',
+            'docs/openclaw-runtime/critics/ingestion-fabric-phase-06-implementation-critic.md',
+            'docs/openclaw-runtime/critics/ingestion-fabric-phase-07-implementation-critic.md',
+            'docs/openclaw-runtime/critics/ingestion-fabric-phase-08-implementation-critic.md',
+            'docs/openclaw-runtime/critics/ingestion-fabric-phase-09-implementation-critic.md',
+            'docs/openclaw-runtime/critics/ingestion-fabric-phase-10-implementation-critic.md',
+            'docs/openclaw-runtime/critics/ingestion-fabric-phase-11-implementation-critic.md',
+            'docs/openclaw-runtime/critics/ingestion-fabric-phase-12-implementation-critic.md',
+            'docs/openclaw-runtime/critics/ingestion-fabric-phase-13-implementation-critic.md',
+            'docs/openclaw-runtime/ralplan/source-to-campaign-phase-00-review-intake-ralplan.md',
+            'docs/openclaw-runtime/ralplan/source-to-campaign-phase-01-source-office-scout-ralplan.md',
+            'docs/openclaw-runtime/ralplan/source-to-campaign-phase-02-evidence-claim-canonicalization-ralplan.md',
+            'docs/openclaw-runtime/ralplan/source-to-campaign-phase-03-options-iv-sensitivity-ralplan.md',
+            'docs/openclaw-runtime/ralplan/source-to-campaign-phase-04-context-gap-first-class-unknowns-ralplan.md',
+            'docs/openclaw-runtime/ralplan/source-to-campaign-phase-05-report-time-archive-ralplan.md',
+            'docs/openclaw-runtime/ralplan/source-to-campaign-phase-06-undercurrent-engine-ralplan.md',
+            'docs/openclaw-runtime/ralplan/source-to-campaign-phase-07-campaign-os-board-upgrade-ralplan.md',
+            'docs/openclaw-runtime/ralplan/source-to-campaign-phase-08-verb-specific-followup-ralplan.md',
+            'docs/openclaw-runtime/ralplan/source-to-campaign-phase-09-deep-dive-cache-ralplan.md',
+            'docs/openclaw-runtime/ralplan/source-to-campaign-phase-10-thread-lifecycle-ralplan.md',
+            'docs/openclaw-runtime/ralplan/source-to-campaign-phase-11-reviewer-exact-replay-ralplan.md',
+            'docs/openclaw-runtime/ralplan/source-to-campaign-phase-12-source-roi-learning-ralplan.md',
+            'docs/openclaw-runtime/ralplan/source-to-campaign-phase-13-active-cutover-gate-ralplan.md',
+            'docs/openclaw-runtime/ralplan/source-to-campaign-phase-14-monitoring-closeout-ralplan.md',
+            'docs/openclaw-runtime/ralplan/source-freshness-hotfix-2026-04-17-ralplan.md',
+            'docs/openclaw-runtime/source-to-campaign-phase-ledger.json',
+            'docs/openclaw-runtime/source-to-campaign-closeout.json',
+            'docs/openclaw-runtime/source-scout-candidates.json',
             'docs/openclaw-runtime/finance-cron-jobs.json',
             'docs/openclaw-runtime/finance-crontab.txt',
             'docs/openclaw-runtime/finance-model-roles.json',
@@ -282,14 +362,62 @@ def main() -> int:
             'docs/openclaw-runtime/operating-model-audit.json',
             'docs/openclaw-runtime/parent-dependency-inventory.json',
             'docs/openclaw-runtime/parent-dependency-drift.json',
+            'docs/openclaw-runtime/parent-runtime/manifest.json',
+            'docs/openclaw-runtime/parent-runtime/cron/finance-jobs-slice.json',
             'docs/openclaw-runtime/wake-threshold-attribution.json',
             'docs/openclaw-runtime/report-usefulness-score.json',
+            'docs/openclaw-runtime/reviewer-packets/index.json',
+            'docs/openclaw-runtime/reviewer-packets/README.md',
+            'docs/openclaw-runtime/context-coverage-audit.json',
+            'docs/openclaw-runtime/active-campaign-board-cutover.json',
             'docs/openclaw-runtime/thesis-spine-telemetry-summary.json',
             'docs/openclaw-runtime/ibkr-watchlist-freshness-drill.json',
             'docs/openclaw-runtime/benchmark-boundary-audit.json',
             'docs/openclaw-runtime/runtime-gap-review.json',
+            'docs/openclaw-runtime/contracts/campaign-projection-contract.md',
+            'docs/openclaw-runtime/contracts/undercurrent-card-contract.md',
+            'docs/openclaw-runtime/contracts/source-registry-v2-contract.md',
+            'docs/openclaw-runtime/contracts/source-health-contract.md',
+            'docs/openclaw-runtime/contracts/source-scout-contract.md',
+            'docs/openclaw-runtime/contracts/options-iv-surface-contract.md',
+            'docs/openclaw-runtime/contracts/report-time-archive-contract.md',
+            'docs/openclaw-runtime/contracts/followup-context-slice-contract.md',
+            'docs/openclaw-runtime/contracts/finance-thread-lifecycle-contract.md',
+            'docs/openclaw-runtime/contracts/source-roi-contract.md',
+            'docs/openclaw-runtime/contracts/source-to-campaign-cutover-gate-contract.md',
+            'docs/openclaw-runtime/contracts/query-pack-contract.md',
+            'docs/openclaw-runtime/contracts/source-fetch-record-contract.md',
+            'docs/openclaw-runtime/contracts/source-atom-contract.md',
+            'docs/openclaw-runtime/contracts/claim-atom-contract.md',
+            'docs/openclaw-runtime/contracts/context-gap-contract.md',
+            'docs/openclaw-runtime/contracts/discord-campaign-board-package-contract.md',
+            'docs/openclaw-runtime/critics/source-to-campaign-phase-00-implementation-critic.md',
+            'docs/openclaw-runtime/critics/source-to-campaign-phase-01-implementation-critic.md',
+            'docs/openclaw-runtime/critics/source-to-campaign-phase-02-implementation-critic.md',
+            'docs/openclaw-runtime/critics/source-to-campaign-phase-03-implementation-critic.md',
+            'docs/openclaw-runtime/critics/source-to-campaign-phase-04-implementation-critic.md',
+            'docs/openclaw-runtime/critics/source-to-campaign-phase-05-implementation-critic.md',
+            'docs/openclaw-runtime/critics/source-to-campaign-phase-06-implementation-critic.md',
+            'docs/openclaw-runtime/critics/source-to-campaign-phase-07-implementation-critic.md',
+            'docs/openclaw-runtime/critics/source-to-campaign-phase-08-implementation-critic.md',
+            'docs/openclaw-runtime/critics/source-to-campaign-phase-09-implementation-critic.md',
+            'docs/openclaw-runtime/critics/source-to-campaign-phase-10-implementation-critic.md',
+            'docs/openclaw-runtime/critics/source-to-campaign-phase-11-implementation-critic.md',
+            'docs/openclaw-runtime/critics/source-to-campaign-phase-12-implementation-critic.md',
+            'docs/openclaw-runtime/critics/source-to-campaign-phase-13-implementation-critic.md',
+            'docs/openclaw-runtime/critics/source-to-campaign-phase-14-implementation-critic.md',
+            'docs/openclaw-runtime/critics/source-freshness-hotfix-2026-04-17-critic.md',
+            'docs/openclaw-runtime/critics/phase-2-implementation-critic.md',
+            'docs/openclaw-runtime/critics/phase-3-implementation-critic.md',
+            'docs/openclaw-runtime/critics/phase-4-implementation-critic.md',
+            'docs/openclaw-runtime/critics/phase-5-implementation-critic.md',
+            'docs/openclaw-runtime/critics/phase-6-implementation-critic.md',
+            'docs/openclaw-runtime/critics/phase-7-implementation-critic.md',
+            'docs/openclaw-runtime/critics/phase-8-implementation-critic.md',
+            'docs/openclaw-runtime/critics/phase-9-implementation-critic.md',
             *contracts,
             *schemas,
+            *parent_runtime,
         ],
         'note': 'Generated from the local OpenClaw runtime. State files and secrets are intentionally excluded.',
     })

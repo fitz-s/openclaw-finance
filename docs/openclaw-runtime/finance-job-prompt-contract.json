@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-16T19:39:08.520326+00:00",
+  "generated_at": "2026-04-19T04:32:50.297785+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "note": "Prompt hashes let GitHub reviewers see live OpenClaw job prompt drift without exposing secrets.",
   "jobs": {
@@ -15,7 +15,10 @@
         "channel": "discord",
         "to": "channel:1479790104490016808"
       },
-      "prompt_sha256": "sha256:bcfc4339f4e6c10edfb6766b7af3321afe8f8b409d20e89e77901cf2f036e5a8",
+      "prompt_sha256": "sha256:75eeebb31eb825a81b5bbca93d5835c4bbdf79f76e1bcd027d3fab1628d2313e",
+      "contains_deterministic_report_job": true,
+      "runs_finance_discord_report_job": true,
+      "forbids_progress_text": true,
       "contains_context_pack": false,
       "contains_non_authority_boundary": false,
       "contains_candidate_path": false,
@@ -35,13 +38,16 @@
         "channel": "discord",
         "to": "channel:1479790104490016808"
       },
-      "prompt_sha256": "sha256:f15e953e5d75683c8f556e2296305e16e30de49f56b9ca84d11ee0b34c554a26",
-      "contains_context_pack": true,
-      "contains_non_authority_boundary": true,
-      "contains_candidate_path": true,
+      "prompt_sha256": "sha256:75eeebb31eb825a81b5bbca93d5835c4bbdf79f76e1bcd027d3fab1628d2313e",
+      "contains_deterministic_report_job": true,
+      "runs_finance_discord_report_job": true,
+      "forbids_progress_text": true,
+      "contains_context_pack": false,
+      "contains_non_authority_boundary": false,
+      "contains_candidate_path": false,
       "contains_unknown_discovery_contract": false,
-      "contains_threshold_mutation_ban": true,
-      "message_preview": "【OpenClaw Finance Report Orchestrator｜context-pack-first】\n你是 finance report adjudicator，不是 renderer，不是 scanner，不是 risk engine。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 只把 /Users"
+      "contains_threshold_mutation_ban": false,
+      "message_preview": "【OpenClaw Finance Deterministic Report Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_discord_report_job.py --mode marketday-review\n\nOutput discipline:\n- Return stdout exactly.\n- If stdout is NO_REPLY, re"
     },
     "finance-premarket-delivery-watchdog": {
       "enabled": true,
@@ -55,7 +61,10 @@
         "channel": "discord",
         "to": "channel:1479790104490016808"
       },
-      "prompt_sha256": "sha256:37169ed3f56af52bbf01caad6cd23d0f128d8236d8121bb3f2af1ae7e3dc2a39",
+      "prompt_sha256": "sha256:9b71e5fc83a276b8c759a542305349051999cfb62ab1d8de73c09c4a9899a14b",
+      "contains_deterministic_report_job": true,
+      "runs_finance_discord_report_job": true,
+      "forbids_progress_text": true,
       "contains_context_pack": false,
       "contains_non_authority_boundary": false,
       "contains_candidate_path": false,
@@ -74,6 +83,9 @@
         "to": "channel:1479790104490016808"
       },
       "prompt_sha256": "sha256:868fd39708b39b91379c0735cbb13278b6559bc94f89ce8c1d199e4ee71d65ea",
+      "contains_deterministic_report_job": false,
+      "runs_finance_discord_report_job": false,
+      "forbids_progress_text": false,
       "contains_context_pack": false,
       "contains_non_authority_boundary": false,
       "contains_candidate_path": false,
@@ -92,13 +104,16 @@
         "mode": "none",
         "channel": "last"
       },
-      "prompt_sha256": "sha256:b4004765c563876859c140a12980e576af63d1a4cb6a76a3ca44641eb7a7272c",
+      "prompt_sha256": "sha256:682452528b768e774b6473baa27e5895dcd6d2815394395d6f406d7cca122bb8",
+      "contains_deterministic_report_job": false,
+      "runs_finance_discord_report_job": false,
+      "forbids_progress_text": true,
       "contains_context_pack": true,
       "contains_non_authority_boundary": true,
       "contains_candidate_path": false,
       "contains_unknown_discovery_contract": true,
       "contains_threshold_mutation_ban": false,
-      "message_preview": "【finance market-hours scanner｜context-pack-first】\n你是 finance scanner。不要发用户消息。你的任务是找 object-linked evidence candidates，不是写报告。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 读取 /Users/l"
+      "message_preview": "【OpenClaw Finance Deterministic Scanner Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_scanner_job.py --mode market-hours-scan\n\nContract markers:\n- finance_scanner_job.py runs finance_llm_context_pack.py,"
     },
     "finance-subagent-scanner-offhours": {
       "enabled": true,
@@ -111,13 +126,16 @@
         "mode": "none",
         "channel": "last"
       },
-      "prompt_sha256": "sha256:a4d765a1cbeb541ab1dfe9a8dd64e2b634f6fe03ff529f78da39d54eac5c6c61",
+      "prompt_sha256": "sha256:44fa8c8909d43bed724c73c6e2347cf10f4d1855a75da3bfe7e815a6cfc743d1",
+      "contains_deterministic_report_job": false,
+      "runs_finance_discord_report_job": false,
+      "forbids_progress_text": true,
       "contains_context_pack": true,
       "contains_non_authority_boundary": true,
       "contains_candidate_path": false,
       "contains_unknown_discovery_contract": true,
       "contains_threshold_mutation_ban": false,
-      "message_preview": "【finance offhours scanner｜context-pack-first】\n你是 finance scanner。不要发用户消息。你的任务是找 object-linked evidence candidates，不是写报告。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 读取 /Users/leofi"
+      "message_preview": "【OpenClaw Finance Deterministic Scanner Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_scanner_job.py --mode offhours-scan\n\nContract markers:\n- finance_scanner_job.py runs finance_llm_context_pack.py, que"
     },
     "finance-thesis-sidecar": {
       "enabled": false,
@@ -129,6 +147,9 @@
         "channel": "last"
       },
       "prompt_sha256": "sha256:f98665017dbc44f6f234a330621b5505827ec40c7fae02e333f6154297d750cf",
+      "contains_deterministic_report_job": false,
+      "runs_finance_discord_report_job": false,
+      "forbids_progress_text": false,
       "contains_context_pack": true,
       "contains_non_authority_boundary": true,
       "contains_candidate_path": false,
@@ -147,6 +168,9 @@
         "to": "channel:1479790104490016808"
       },
       "prompt_sha256": "sha256:4e597a83008dc223fedec1d95d845a09aaeca96bb632bf1be29882eaf4eecca1",
+      "contains_deterministic_report_job": false,
+      "runs_finance_discord_report_job": false,
+      "forbids_progress_text": false,
       "contains_context_pack": false,
       "contains_non_authority_boundary": false,
       "contains_candidate_path": false,
@@ -167,6 +191,9 @@
         "to": "channel:1479790104490016808"
       },
       "prompt_sha256": "sha256:26b0f0dc2e0f7d020ddc0d3d4cfaec40ac404fb0f3e6877992099b2910edf251",
+      "contains_deterministic_report_job": false,
+      "runs_finance_discord_report_job": false,
+      "forbids_progress_text": false,
       "contains_context_pack": true,
       "contains_non_authority_boundary": true,
       "contains_candidate_path": false,
