@@ -26,6 +26,7 @@ CONTEXT_PACK = STATE / 'llm-job-context' / 'report-orchestrator.json'
 BOARD_PACKAGE = STATE / 'discord-campaign-board-package.json'
 BOARD_RUNTIME = STATE / 'discord-campaign-board-runtime.json'
 BOARD_DELIVERY_REPORT = STATE / 'discord-campaign-board-delivery-report.json'
+MARKETDAY_CORE_POLICY = STATE / 'marketday-core-review-policy.json'
 CT = ZoneInfo('America/Chicago')
 
 
@@ -40,6 +41,13 @@ def run(args: list[str], *, stdout_path: Path | None = None) -> None:
 
 def run_optional(args: list[str]) -> None:
     subprocess.run(args, cwd=str(FINANCE), check=False, text=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+
+
+def write_json(path: Path, payload: dict) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    tmp = path.with_name(f'{path.name}.tmp')
+    tmp.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+    tmp.replace(path)
 
 
 def board_runtime_enabled() -> bool:
@@ -79,7 +87,7 @@ def has_report_since_today(hour: int, minute: int) -> bool:
     return False
 
 
-def run_chain() -> str:
+def run_chain(*, fast_core: bool = False) -> str:
     # Core reports must refresh the macro triad before rendering so Gold / Bitcoin / SPX
     # direction is present or explicitly unavailable in the operator surface.
     run([str(PYTHON), 'scripts/price_fetcher.py'])
@@ -90,7 +98,21 @@ def run_chain() -> str:
     run_optional([str(PYTHON), 'scripts/source_atom_compiler.py', '--report', str(STATE / 'source-atoms' / 'latest-report.json')])
     run_optional([str(PYTHON), 'scripts/claim_graph_compiler.py'])
     run_optional([str(PYTHON), 'scripts/context_gap_compiler.py'])
-    run([str(PYTHON), 'scripts/finance_parent_market_ingest_cutover.py'])
+    if fast_core:
+        write_json(MARKETDAY_CORE_POLICY, {
+            'generated_at': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
+            'mode': 'marketday-core-review',
+            'fast_core': True,
+            'live_parent_ingest_skipped': True,
+            'reason': 'fixed_second_core_report_timeliness',
+            'review_source': '/Users/leofitz/Downloads/review 2026-04-18.md',
+            'no_delivery_mutation': True,
+            'no_wake_mutation': True,
+            'no_threshold_mutation': True,
+            'no_execution': True,
+        })
+    else:
+        run([str(PYTHON), 'scripts/finance_parent_market_ingest_cutover.py'])
     run([str(PYTHON), 'scripts/finance_llm_context_pack.py'])
     run([
         str(PYTHON), 'scripts/judgment_envelope_gate.py',
@@ -127,10 +149,10 @@ def run_chain() -> str:
     return primary + '\n'
 
 
-def main() -> int:
+def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument('--mode', choices=['morning-watchdog', 'marketday-review'], required=True)
-    args = parser.parse_args()
+    parser.add_argument('--mode', choices=['morning-watchdog', 'marketday-review', 'marketday-core-review'], required=True)
+    args = parser.parse_args(argv)
 
     now = today_ct()
     if now.weekday() >= 5:
@@ -139,7 +161,7 @@ def main() -> int:
     if args.mode == 'morning-watchdog' and has_report_since_today(7, 30):
         print('NO_REPLY')
         return 0
-    sys.stdout.write(run_chain())
+    sys.stdout.write(run_chain(fast_core=args.mode == 'marketday-core-review'))
     return 0
 
 

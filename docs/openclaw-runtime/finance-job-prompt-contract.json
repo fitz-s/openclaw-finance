@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-19T10:23:09.522759+00:00",
+  "generated_at": "2026-04-19T18:17:42.433324+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "note": "Prompt hashes let GitHub reviewers see live OpenClaw job prompt drift without exposing secrets.",
   "jobs": {
@@ -7,7 +7,7 @@
       "enabled": true,
       "schedule": {
         "kind": "cron",
-        "expr": "30 11 * * 1-5",
+        "expr": "15 13 * * 1-5",
         "tz": "America/Chicago"
       },
       "delivery": {
@@ -15,7 +15,7 @@
         "channel": "discord",
         "to": "channel:1479790104490016808"
       },
-      "prompt_sha256": "sha256:75eeebb31eb825a81b5bbca93d5835c4bbdf79f76e1bcd027d3fab1628d2313e",
+      "prompt_sha256": "sha256:fbbccff4b31513b7cd84a597b0997c4ca9f4d7100ca1bbc125dee6d8c0d2de95",
       "contains_deterministic_report_job": true,
       "runs_finance_discord_report_job": true,
       "forbids_progress_text": true,
@@ -24,7 +24,7 @@
       "contains_candidate_path": false,
       "contains_unknown_discovery_contract": false,
       "contains_threshold_mutation_ban": false,
-      "message_preview": "【OpenClaw Finance Deterministic Report Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_discord_report_job.py --mode marketday-review\n\nOutput discipline:\n- Return stdout exactly.\n- If stdout is NO_REPLY, re"
+      "message_preview": "【OpenClaw Finance Deterministic Report Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_discord_report_job.py --mode marketday-core-review\n\nContract markers:\n- This is the fixed second marketday core review"
     },
     "finance-premarket-brief": {
       "enabled": true,
@@ -126,7 +126,7 @@
         "mode": "none",
         "channel": "last"
       },
-      "prompt_sha256": "sha256:aadc462355b3dfd43ff4551d3d7f79f8ed0e8d1ede505e717be3b4b20571adaf",
+      "prompt_sha256": "sha256:44fa8c8909d43bed724c73c6e2347cf10f4d1855a75da3bfe7e815a6cfc743d1",
       "contains_deterministic_report_job": false,
       "runs_finance_discord_report_job": false,
       "forbids_progress_text": true,
