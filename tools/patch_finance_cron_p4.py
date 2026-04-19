@@ -71,7 +71,12 @@ def patch_jobs(payload: dict[str, Any]) -> tuple[dict[str, Any], list[str]]:
             job['timeout'] = 300
             changed.append(name)
         elif name in {'finance-premarket-brief', 'finance-midday-operator-review', 'finance-premarket-delivery-watchdog'}:
-            mode = 'morning-watchdog' if name == 'finance-premarket-delivery-watchdog' else 'marketday-review'
+            if name == 'finance-premarket-delivery-watchdog':
+                mode = 'morning-watchdog'
+            elif name == 'finance-midday-operator-review':
+                mode = 'marketday-core-review'
+            else:
+                mode = 'marketday-review'
             jpayload['message'] = report_prompt(mode)
             jpayload['lightContext'] = True
             jpayload['timeoutSeconds'] = 420

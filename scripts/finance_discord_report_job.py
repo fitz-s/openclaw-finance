@@ -15,6 +15,9 @@ from datetime import datetime, time, timezone
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
+from atomic_io import atomic_write_json
+from offhours_session_clock import build_state as build_session_aperture
+
 FINANCE = Path('/Users/leofitz/.openclaw/workspace/finance')
 PYTHON = Path('/opt/homebrew/bin/python3')
 STATE = FINANCE / 'state'
@@ -27,6 +30,7 @@ BOARD_PACKAGE = STATE / 'discord-campaign-board-package.json'
 BOARD_RUNTIME = STATE / 'discord-campaign-board-runtime.json'
 BOARD_DELIVERY_REPORT = STATE / 'discord-campaign-board-delivery-report.json'
 MARKETDAY_CORE_POLICY = STATE / 'marketday-core-review-policy.json'
+REPORT_CALENDAR_GUARD = STATE / 'marketday-report-calendar-guard.json'
 CT = ZoneInfo('America/Chicago')
 
 
@@ -85,6 +89,32 @@ def has_report_since_today(hour: int, minute: int) -> bool:
         if updated and updated >= cutoff:
             return True
     return False
+
+
+def report_calendar_guard(now: datetime, mode: str) -> dict:
+    aperture = build_session_aperture(now.astimezone(timezone.utc))
+    session_class = str(aperture.get('session_class') or '')
+    should_run = True
+    skip_reason = None
+    if session_class in {'weekend_aperture', 'holiday_aperture'}:
+        should_run = False
+        skip_reason = session_class
+    elif mode == 'marketday-core-review' and aperture.get('early_close') is True and session_class != 'rth':
+        should_run = False
+        skip_reason = 'halfday_core_review_after_close'
+    guard = {
+        'generated_at': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
+        'mode': mode,
+        'should_run': should_run,
+        'skip_reason': skip_reason,
+        'session_aperture': aperture,
+        'review_source': '/Users/leofitz/Downloads/review 2026-04-18.md',
+        'no_delivery_mutation': True,
+        'no_wake_mutation': True,
+        'no_threshold_mutation': True,
+        'no_execution': True,
+    }
+    return guard
 
 
 def run_chain(*, fast_core: bool = False) -> str:
@@ -155,7 +185,9 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     now = today_ct()
-    if now.weekday() >= 5:
+    guard = report_calendar_guard(now, args.mode)
+    atomic_write_json(REPORT_CALENDAR_GUARD, guard)
+    if guard.get('should_run') is not True:
         print('NO_REPLY')
         return 0
     if args.mode == 'morning-watchdog' and has_report_since_today(7, 30):

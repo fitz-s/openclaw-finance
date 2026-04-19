@@ -51,3 +51,7 @@ def test_patch_finance_cron_report_jobs_are_light_context() -> None:
         assert 'Do not emit progress text' in msg
         assert job['payload']['lightContext'] is True
         assert job['payload']['timeoutSeconds'] == 420
+    by_name = {job['name']: job for job in patched['jobs']}
+    assert 'finance_discord_report_job.py --mode marketday-core-review' in by_name['finance-midday-operator-review']['payload']['message']
+    assert 'finance_discord_report_job.py --mode marketday-review' in by_name['finance-premarket-brief']['payload']['message']
+    assert 'finance_discord_report_job.py --mode morning-watchdog' in by_name['finance-premarket-delivery-watchdog']['payload']['message']
