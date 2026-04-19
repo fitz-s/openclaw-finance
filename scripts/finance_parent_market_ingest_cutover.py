@@ -48,6 +48,7 @@ def write_json(path: Path, payload: dict[str, Any]) -> None:
 def build_steps(*, dry_run: bool = False, scanner_mode: str = 'auto') -> list[tuple[str, list[str], bool]]:
     query_planner = [str(PYTHON), str(FINANCE / 'scripts' / 'query_pack_planner.py'), '--scanner-mode', scanner_mode]
     brave_activation = [str(PYTHON), str(FINANCE / 'scripts' / 'brave_source_activation.py')]
+    compression_activation = [str(PYTHON), str(FINANCE / 'scripts' / 'brave_compression_activation.py')]
     source_health = [str(PYTHON), str(FINANCE / 'scripts' / 'source_health_monitor.py')]
     if scanner_mode == 'offhours-scan':
         source_health.append('--include-runtime-control-state')
@@ -60,6 +61,10 @@ def build_steps(*, dry_run: bool = False, scanner_mode: str = 'auto') -> list[tu
         ('finance_context_pack', [str(PYTHON), str(FINANCE / 'scripts' / 'finance_llm_context_pack.py')], True),
         ('query_pack_planner', query_planner, True),
         ('brave_source_activation', brave_activation, True),
+    ])
+    if scanner_mode == 'offhours-scan':
+        steps.append(('brave_compression_activation', compression_activation, True))
+    steps.extend([
         ('finance_source_health', source_health, True),
         ('parent_live_finance_adapter', [str(PYTHON), str(MARKET_INGEST / 'adapters' / 'live_finance_adapter.py')], True),
         (

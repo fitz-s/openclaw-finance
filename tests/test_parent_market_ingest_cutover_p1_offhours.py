@@ -26,3 +26,8 @@ def test_parent_cutover_includes_runtime_control_state_only_for_offhours() -> No
 def test_parent_cutover_runs_router_only_for_offhours() -> None:
     assert 'offhours_source_router' in [name for name, _cmd, _required in build_steps(dry_run=True, scanner_mode='offhours-scan')]
     assert 'offhours_source_router' not in [name for name, _cmd, _required in build_steps(dry_run=True, scanner_mode='market-hours-scan')]
+
+
+def test_parent_cutover_runs_compression_activation_only_for_offhours() -> None:
+    assert 'brave_compression_activation' in [name for name, _cmd, _required in build_steps(dry_run=True, scanner_mode='offhours-scan')]
+    assert 'brave_compression_activation' not in [name for name, _cmd, _required in build_steps(dry_run=True, scanner_mode='market-hours-scan')]
