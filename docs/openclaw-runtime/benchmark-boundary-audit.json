@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-19T04:10:57.700474+00:00",
+  "generated_at": "2026-04-19T04:33:04.076596+00:00",
   "status": "pass",
   "checks": {
     "contains:OpenClaw-embedded": true,

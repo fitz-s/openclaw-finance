@@ -152,7 +152,7 @@ watch_intent_compiler  (capital_bucket_hint)
 
 ## Job Rules
 
-**Scanner** (`finance-subagent-scanner*`): No user messages. Read `scanner.json` first. Write to `buffer/*.json`. Run only `finance_worker.py` and `gate_evaluator.py`. Don't treat held/watchlist symbols as `unknown_discovery`.
+**Scanner** (`finance-subagent-scanner*`): No user messages. The active cron entry must call `finance_scanner_job.py`, which runs the deterministic scanner chain and returns one machine stdout line. Read `scanner.json` first. QueryPack is not evidence. Don't treat held/watchlist symbols as `unknown_discovery`.
 
 **Report Orchestrator** (`finance-premarket-brief`): Run `finance_llm_context_pack.py`. LLM writes only `judgment-envelope-candidate.json`. Context pack includes `capital_agenda_items`, `displacement_cases`, `capital_graph_summary`. Do not bypass the deterministic renderer.
 
@@ -169,6 +169,21 @@ For capital competition changes, also read: `capital-graph-contract.md`, `capita
 ## Canonical State
 
 `state/llm-job-context/*.json` is a **non-authoritative view cache**. Canonical state = typed packets, wake decisions, judgment envelopes, Thesis Spine objects, capital competition objects, validators, decision logs, safety gates.
+
+## Parent Runtime Mirrors
+
+Finance work often requires edits in the parent OpenClaw workspace outside this repo, for example:
+- `/Users/leofitz/.openclaw/cron/jobs.json`
+- `/Users/leofitz/.openclaw/workspace/services/market-ingest/**`
+- `/Users/leofitz/.openclaw/workspace/ops/**`
+- `/Users/leofitz/.openclaw/workspace/systems/**`
+- `/Users/leofitz/.openclaw/workspace/skills/**`
+
+Whenever a task changes parent workspace files that affect finance behavior, the finance repo must also be updated with reviewer-visible mirrors before commit/push:
+- Run `python3 tools/export_parent_runtime_mirror.py` for parent runtime source/cron mirrors.
+- Run `python3 tools/export_openclaw_runtime_snapshot.py` for finance cron/model/prompt/runtime snapshots.
+- Run the relevant audits (`audit_operating_model.py`, `audit_parent_dependency_drift.py`) when parent dependencies or contracts changed.
+- Commit the mirror/snapshot diffs in this repo with the implementation. Do not leave parent-only finance behavior changes invisible to remote reviewers.
 
 ## Verification
 
@@ -202,6 +217,7 @@ After runtime changes, refresh snapshots:
 
 ```bash
 python3 tools/export_openclaw_runtime_snapshot.py
+python3 tools/export_parent_runtime_mirror.py
 python3 tools/export_parent_dependency_inventory.py
 python3 tools/audit_operating_model.py
 python3 tools/audit_parent_dependency_drift.py

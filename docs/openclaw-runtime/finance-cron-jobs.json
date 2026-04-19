@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-19T04:10:57.621909+00:00",
+  "generated_at": "2026-04-19T04:32:50.297376+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "jobs": [
     {
@@ -68,7 +68,8 @@
         "lastStatus": "ok",
         "lastDurationMs": 87863,
         "lastDelivered": false,
-        "nextRunAtMs": 1776690600000
+        "nextRunAtMs": 1776690600000,
+        "runningAtMs": 1776573073669
       }
     },
     {

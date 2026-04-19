@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-19T04:10:57.686701Z",
+  "generated_at": "2026-04-19T04:32:50.329417Z",
   "contract": "ingestion-fabric-closeout-v1",
   "status": "complete",
   "north_star": "Finance Intelligence Ingestion Fabric",
@@ -92,20 +92,20 @@
     "source_health": {
       "path": "/Users/leofitz/.openclaw/workspace/finance/state/source-health.json",
       "exists": true,
-      "size": 17485
+      "size": 17648
     },
     "latest_reader_bundle": {
       "path": "/Users/leofitz/.openclaw/workspace/finance/state/report-reader/latest.json",
       "exists": true,
-      "size": 640664
+      "size": 656511
     }
   },
   "monitoring": {
     "source_health_status": "degraded",
     "source_count": 9,
     "stale_reuse_guard": "active",
-    "source_health_history_count": 21,
-    "query_registry_count": 9,
+    "source_health_history_count": 23,
+    "query_registry_count": 11,
     "reader_bundle_has_slice_index": true,
     "reader_bundle_slice_handles": 74,
     "monitoring_artifacts": {
