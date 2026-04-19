@@ -1,0 +1,81 @@
+{
+  "generated_at": "2026-04-19T18:44:11.991278+00:00",
+  "state_boundary": "sanitized_runtime_control_state",
+  "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
+  "source": "/Users/leofitz/.openclaw/workspace/finance/state/exchange-calendar-provider-report.json",
+  "exists": true,
+  "payload": {
+    "contract": "exchange-calendar-provider-v1",
+    "supported_years": [
+      2026,
+      2027,
+      2028
+    ],
+    "source_urls": [
+      "https://www.nyse.com/markets/hours-calendars",
+      "https://www.businesswire.com/news/home/20241108580933/en/NYSE-Group-Announces-2025-2026-and-2027-Holiday-and-Early-Closings-Calendar",
+      "https://www.morningstar.com/news/business-wire/20251223981478/nyse-group-announces-2026-2027-and-2028-holiday-and-early-closings-calendar"
+    ],
+    "holiday_counts": {
+      "2026": 10,
+      "2027": 10,
+      "2028": 9
+    },
+    "early_close_counts": {
+      "2026": 2,
+      "2027": 1,
+      "2028": 2
+    },
+    "holidays": {
+      "2026": {
+        "2026-01-01": "New Years Day",
+        "2026-01-19": "Martin Luther King Jr. Day",
+        "2026-02-16": "Washingtons Birthday",
+        "2026-04-03": "Good Friday",
+        "2026-05-25": "Memorial Day",
+        "2026-06-19": "Juneteenth National Independence Day",
+        "2026-07-03": "Independence Day Observed",
+        "2026-09-07": "Labor Day",
+        "2026-11-26": "Thanksgiving Day",
+        "2026-12-25": "Christmas Day"
+      },
+      "2027": {
+        "2027-01-01": "New Years Day",
+        "2027-01-18": "Martin Luther King Jr. Day",
+        "2027-02-15": "Washingtons Birthday",
+        "2027-03-26": "Good Friday",
+        "2027-05-31": "Memorial Day",
+        "2027-06-18": "Juneteenth National Independence Day Observed",
+        "2027-07-05": "Independence Day Observed",
+        "2027-09-06": "Labor Day",
+        "2027-11-25": "Thanksgiving Day",
+        "2027-12-24": "Christmas Day Observed"
+      },
+      "2028": {
+        "2028-01-17": "Martin Luther King Jr. Day",
+        "2028-02-21": "Washingtons Birthday",
+        "2028-04-14": "Good Friday",
+        "2028-05-29": "Memorial Day",
+        "2028-06-19": "Juneteenth National Independence Day",
+        "2028-07-04": "Independence Day",
+        "2028-09-04": "Labor Day",
+        "2028-11-23": "Thanksgiving Day",
+        "2028-12-25": "Christmas Day"
+      }
+    },
+    "early_closes": {
+      "2026": {
+        "2026-11-27": "Day After Thanksgiving",
+        "2026-12-24": "Christmas Eve"
+      },
+      "2027": {
+        "2027-11-26": "Day After Thanksgiving"
+      },
+      "2028": {
+        "2028-07-03": "Day Before Independence Day",
+        "2028-11-24": "Day After Thanksgiving"
+      }
+    },
+    "no_execution": true
+  }
+}

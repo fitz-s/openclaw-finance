@@ -12,6 +12,14 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from atomic_io import atomic_write_json
+from exchange_calendar_provider import (
+    calendar_confidence,
+    early_close_name,
+    holiday_name,
+    is_trading_day,
+    is_weekend,
+    rth_close_time as provider_rth_close_time,
+)
 
 
 FINANCE = Path('/Users/leofitz/.openclaw/workspace/finance')
@@ -24,25 +32,6 @@ RTH_OPEN = time(9, 30)
 RTH_CLOSE = time(16, 0)
 HALFDAY_CLOSE = time(13, 0)
 
-HOLIDAYS_2026 = {
-    date(2026, 1, 1): 'New Years Day',
-    date(2026, 1, 19): 'Martin Luther King Jr. Day',
-    date(2026, 2, 16): 'Washingtons Birthday',
-    date(2026, 4, 3): 'Good Friday',
-    date(2026, 5, 25): 'Memorial Day',
-    date(2026, 6, 19): 'Juneteenth National Independence Day',
-    date(2026, 7, 3): 'Independence Day Observed',
-    date(2026, 9, 7): 'Labor Day',
-    date(2026, 11, 26): 'Thanksgiving Day',
-    date(2026, 12, 25): 'Christmas Day',
-}
-
-EARLY_CLOSES_2026 = {
-    date(2026, 11, 27): 'Day After Thanksgiving',
-    date(2026, 12, 24): 'Christmas Eve',
-}
-
-
 def parse_now(value: str | None) -> datetime:
     if not value:
         return datetime.now(timezone.utc)
@@ -52,16 +41,8 @@ def parse_now(value: str | None) -> datetime:
     return parsed.astimezone(timezone.utc)
 
 
-def is_weekend(day: date) -> bool:
-    return day.weekday() >= 5
-
-
 def rth_close_time(day: date) -> time:
-    return HALFDAY_CLOSE if day in EARLY_CLOSES_2026 else RTH_CLOSE
-
-
-def is_trading_day(day: date) -> bool:
-    return not is_weekend(day) and day not in HOLIDAYS_2026
+    return provider_rth_close_time(day)
 
 
 def rth_open_dt(day: date) -> datetime:
@@ -120,11 +101,12 @@ def session_class_for(now_et: datetime) -> tuple[str, datetime, datetime, dateti
         close_dt = rth_close_dt(day)
         if open_dt <= now_et < close_dt:
             prev_close = rth_close_dt(previous_trading_day(day))
-            return 'rth', prev_close, open_dt, open_dt, None, day in EARLY_CLOSES_2026
+            return 'rth', prev_close, open_dt, open_dt, None, early_close_name(day) is not None
         if now_et >= close_dt:
             nxt = next_trading_day(day)
-            session = 'halfday_postclose_aperture' if day in EARLY_CLOSES_2026 else 'post_close_gap' if (now_et - close_dt) <= timedelta(hours=2) else 'overnight_session'
-            return session, close_dt, rth_open_dt(nxt), close_dt, None, day in EARLY_CLOSES_2026
+            is_early = early_close_name(day) is not None
+            session = 'halfday_postclose_aperture' if is_early else 'post_close_gap' if (now_et - close_dt) <= timedelta(hours=2) else 'overnight_session'
+            return session, close_dt, rth_open_dt(nxt), close_dt, None, is_early
         # before open
         prev = previous_trading_day(day)
         session = 'pre_open_gap' if (open_dt - now_et) <= timedelta(hours=3) else 'overnight_session'
@@ -132,7 +114,7 @@ def session_class_for(now_et: datetime) -> tuple[str, datetime, datetime, dateti
         return session, prev_close, open_dt, prev_close, None, False
     prev = previous_trading_day(day)
     nxt = next_trading_day(day)
-    holiday = HOLIDAYS_2026.get(day)
+    holiday = holiday_name(day)
     session = 'weekend_aperture' if is_weekend(day) else 'holiday_aperture'
     prev_close = rth_close_dt(prev)
     return session, prev_close, rth_open_dt(nxt), prev_close, holiday, False
@@ -162,7 +144,7 @@ def build_state(now: datetime | None = None) -> dict:
         'discovery_multiplier': mult,
         'answers_budget_class': answers_class,
         'monday_open_risk': monday_risk,
-        'calendar_confidence': 'ok' if now_et.year == 2026 else 'degraded',
+        'calendar_confidence': calendar_confidence(now_et.date()),
         'review_source': '/Users/leofitz/Downloads/review 2026-04-18.md',
         'no_execution': True,
     }

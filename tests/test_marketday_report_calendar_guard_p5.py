@@ -44,6 +44,31 @@ def test_halfday_postclose_core_review_returns_no_reply(monkeypatch, capsys, tmp
     assert guard['skip_reason'] == 'halfday_core_review_after_close'
 
 
+def test_2027_holiday_weekday_returns_no_reply(monkeypatch, capsys, tmp_path: Path) -> None:
+    calls = []
+    monkeypatch.setattr(job, 'REPORT_CALENDAR_GUARD', tmp_path / 'guard.json')
+    monkeypatch.setattr(job, 'today_ct', lambda: job.datetime(2027, 1, 1, 8, 10, tzinfo=job.CT))
+    monkeypatch.setattr(job, 'run_chain', lambda *, fast_core=False: calls.append(fast_core) or 'SHOULD NOT RUN\n')
+    assert job.main(['--mode', 'marketday-review']) == 0
+    assert capsys.readouterr().out.strip() == 'NO_REPLY'
+    assert calls == []
+    guard = json.loads((tmp_path / 'guard.json').read_text(encoding='utf-8'))
+    assert guard['skip_reason'] == 'holiday_aperture'
+    assert guard['session_aperture']['calendar_confidence'] == 'ok'
+
+
+def test_2027_halfday_postclose_core_review_returns_no_reply(monkeypatch, capsys, tmp_path: Path) -> None:
+    calls = []
+    monkeypatch.setattr(job, 'REPORT_CALENDAR_GUARD', tmp_path / 'guard.json')
+    monkeypatch.setattr(job, 'today_ct', lambda: job.datetime(2027, 11, 26, 13, 15, tzinfo=job.CT))
+    monkeypatch.setattr(job, 'run_chain', lambda *, fast_core=False: calls.append(fast_core) or 'SHOULD NOT RUN\n')
+    assert job.main(['--mode', 'marketday-core-review']) == 0
+    assert capsys.readouterr().out.strip() == 'NO_REPLY'
+    assert calls == []
+    guard = json.loads((tmp_path / 'guard.json').read_text(encoding='utf-8'))
+    assert guard['skip_reason'] == 'halfday_core_review_after_close'
+
+
 def test_regular_rth_core_review_runs_fast_chain(monkeypatch, capsys, tmp_path: Path) -> None:
     calls = []
     monkeypatch.setattr(job, 'REPORT_CALENDAR_GUARD', tmp_path / 'guard.json')

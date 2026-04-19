@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-19T18:25:12.947278+00:00",
+  "generated_at": "2026-04-19T18:44:11.990521+00:00",
   "state_boundary": "sanitized_runtime_control_state",
   "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
   "source": "/Users/leofitz/.openclaw/workspace/finance/state/brave-budget-state.json",
@@ -20,7 +20,7 @@
     "day_key": "2026-04-19",
     "aperture_id": "aperture:XNYS:2026-04-17:weekend_aperture",
     "contract": "brave-budget-guard-v1",
-    "generated_at": "2026-04-19T10:16:53.771550Z",
+    "generated_at": "2026-04-19T18:43:23.129798Z",
     "monthly_caps": {
       "search": 3000,
       "answers": 300,
