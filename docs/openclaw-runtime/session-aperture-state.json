@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-04-19T10:04:54.459815+00:00",
+  "generated_at": "2026-04-19T10:23:09.521245+00:00",
   "state_boundary": "sanitized_runtime_control_state",
   "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
   "source": "/Users/leofitz/.openclaw/workspace/finance/state/session-aperture-state.json",
   "exists": true,
   "payload": {
-    "generated_at": "2026-04-19T09:53:17.125682Z",
+    "generated_at": "2026-04-19T10:16:53.771550Z",
     "contract": "offhours-aperture-v1",
     "aperture_id": "aperture:XNYS:2026-04-17:weekend_aperture",
     "market": "XNYS",
@@ -16,7 +16,7 @@
     "previous_rth_close_at": "2026-04-17T20:00:00Z",
     "next_rth_open_at": "2026-04-20T13:30:00Z",
     "gap_open_at": "2026-04-17T20:00:00Z",
-    "gap_hours": 37.89,
+    "gap_hours": 38.28,
     "holiday_name": null,
     "early_close": false,
     "discovery_multiplier": 1.8,

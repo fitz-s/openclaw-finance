@@ -67,10 +67,25 @@ def load_gate_summary() -> dict[str, Any]:
     }
 
 
+def load_governor_summary() -> dict[str, Any]:
+    path = STATE / 'offhours-cadence-governor-state.json'
+    try:
+        governor = json.loads(path.read_text(encoding='utf-8'))
+    except Exception:
+        return {}
+    return {
+        'should_run': governor.get('should_run'),
+        'skip_reason': governor.get('skip_reason'),
+        'session_class': governor.get('session_class'),
+        'min_spacing_minutes': governor.get('min_spacing_minutes'),
+    }
+
+
 def build_steps(mode: str = 'market-hours-scan') -> list[tuple[str, list[str], bool, int]]:
     steps: list[tuple[str, list[str], bool, int]] = []
     if mode == 'offhours-scan':
         steps.append(('offhours_source_router', [str(PYTHON), 'scripts/offhours_source_router.py'], True, 60))
+        steps.append(('offhours_cadence_governor', [str(PYTHON), 'scripts/offhours_cadence_governor.py'], True, 60))
     steps.extend([
         ('finance_context_pack', [str(PYTHON), 'scripts/finance_llm_context_pack.py'], True, 120),
         ('query_pack_planner', [str(PYTHON), 'scripts/query_pack_planner.py', '--scanner-mode', mode], True, 120),
@@ -94,6 +109,21 @@ def run_chain(mode: str) -> dict[str, Any]:
             step_specs = build_steps()
         for name, cmd, required, timeout in step_specs:
             steps.append(run_step(name, cmd, required=required, timeout=timeout))
+            if mode == 'offhours-scan' and name == 'offhours_cadence_governor':
+                governor = load_governor_summary()
+                if governor.get('should_run') is False:
+                    payload = {
+                        'status': status,
+                        'mode': mode,
+                        'steps': steps,
+                        'gate': {},
+                        'governor': governor,
+                        'skipped': True,
+                        'error': None,
+                        'no_execution': True,
+                    }
+                    write_report(payload)
+                    return payload
     except Exception as exc:
         status = 'fail'
         error = str(exc)[:1200]
@@ -116,6 +146,15 @@ def main(argv: list[str] | None = None) -> int:
     report = run_chain(args.mode)
     gate = report.get('gate') or {}
     if report.get('status') == 'pass':
+        if report.get('skipped') is True:
+            governor = report.get('governor') or {}
+            print(
+                'scanner=skip'
+                f" mode={args.mode}"
+                f" reason={governor.get('skip_reason') or 'unknown'}"
+                f" session={governor.get('session_class') or 'unknown'}"
+            )
+            return 0
         print(
             'scanner=ok'
             f" mode={args.mode}"

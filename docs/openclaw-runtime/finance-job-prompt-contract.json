@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-19T10:04:54.461181+00:00",
+  "generated_at": "2026-04-19T10:23:09.522759+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "note": "Prompt hashes let GitHub reviewers see live OpenClaw job prompt drift without exposing secrets.",
   "jobs": {
@@ -119,14 +119,14 @@
       "enabled": true,
       "schedule": {
         "kind": "cron",
-        "expr": "0 0,4,7,17,20 * * 1-5",
+        "expr": "0 0,4,7,17,20 * * *",
         "tz": "America/Chicago"
       },
       "delivery": {
         "mode": "none",
         "channel": "last"
       },
-      "prompt_sha256": "sha256:44fa8c8909d43bed724c73c6e2347cf10f4d1855a75da3bfe7e815a6cfc743d1",
+      "prompt_sha256": "sha256:aadc462355b3dfd43ff4551d3d7f79f8ed0e8d1ede505e717be3b4b20571adaf",
       "contains_deterministic_report_job": false,
       "runs_finance_discord_report_job": false,
       "forbids_progress_text": true,
