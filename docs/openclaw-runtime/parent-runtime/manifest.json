@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-19T18:44:11.953511Z",
+  "generated_at": "2026-04-19T19:10:13.875090Z",
   "contract": "parent-runtime-mirror-v1",
   "status": "pass",
   "purpose": "Reviewer-visible mirror of parent runtime files relevant to finance cutover.",

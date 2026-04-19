@@ -16,6 +16,8 @@ from pathlib import Path
 from zoneinfo import ZoneInfo
 
 from atomic_io import atomic_write_json
+from finance_delivery_observed_audit import build_audit as build_delivery_audit
+from finance_delivery_observed_audit import observed_delivered_since
 from offhours_session_clock import build_state as build_session_aperture
 
 FINANCE = Path('/Users/leofitz/.openclaw/workspace/finance')
@@ -31,6 +33,7 @@ BOARD_RUNTIME = STATE / 'discord-campaign-board-runtime.json'
 BOARD_DELIVERY_REPORT = STATE / 'discord-campaign-board-delivery-report.json'
 MARKETDAY_CORE_POLICY = STATE / 'marketday-core-review-policy.json'
 REPORT_CALENDAR_GUARD = STATE / 'marketday-report-calendar-guard.json'
+DELIVERY_OBSERVED_AUDIT = STATE / 'finance-delivery-observed-audit.json'
 CT = ZoneInfo('America/Chicago')
 
 
@@ -190,9 +193,12 @@ def main(argv: list[str] | None = None) -> int:
     if guard.get('should_run') is not True:
         print('NO_REPLY')
         return 0
-    if args.mode == 'morning-watchdog' and has_report_since_today(7, 30):
-        print('NO_REPLY')
-        return 0
+    if args.mode == 'morning-watchdog':
+        audit = build_delivery_audit(now=now)
+        atomic_write_json(DELIVERY_OBSERVED_AUDIT, audit)
+        if has_report_since_today(7, 30) or observed_delivered_since(audit, hour=7, minute=30, now=now):
+            print('NO_REPLY')
+            return 0
     sys.stdout.write(run_chain(fast_core=args.mode == 'marketday-core-review'))
     return 0
 
