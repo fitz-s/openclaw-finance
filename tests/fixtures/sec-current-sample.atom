@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <entry>
+    <title>Example Corp (0001234567) (8-K)</title>
+    <updated>2026-04-19T12:00:00-04:00</updated>
+    <category term="8-K" />
+    <link href="https://www.sec.gov/Archives/edgar/data/1234567/000123456726000001/example-8k.htm" />
+    <company-name>Example Corp</company-name>
+    <cik>0001234567</cik>
+    <accession-number>0001234567-26-000001</accession-number>
+    <filing-date>2026-04-19</filing-date>
+  </entry>
+</feed>

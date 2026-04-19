@@ -45,10 +45,11 @@ def write_json(path: Path, payload: dict[str, Any]) -> None:
     tmp.replace(path)
 
 
-def build_steps(*, dry_run: bool = False, scanner_mode: str = 'auto') -> list[tuple[str, list[str], bool]]:
+def build_steps(*, dry_run: bool = False, scanner_mode: str = 'auto', include_sec_fallback: bool = False) -> list[tuple[str, list[str], bool]]:
     query_planner = [str(PYTHON), str(FINANCE / 'scripts' / 'query_pack_planner.py'), '--scanner-mode', scanner_mode]
     brave_activation = [str(PYTHON), str(FINANCE / 'scripts' / 'brave_source_activation.py')]
     compression_activation = [str(PYTHON), str(FINANCE / 'scripts' / 'brave_compression_activation.py')]
+    sec_fallback_activation = [str(PYTHON), str(FINANCE / 'scripts' / 'sec_fallback_activation.py')]
     source_health = [str(PYTHON), str(FINANCE / 'scripts' / 'source_health_monitor.py')]
     if scanner_mode == 'offhours-scan':
         source_health.append('--include-runtime-control-state')
@@ -62,6 +63,8 @@ def build_steps(*, dry_run: bool = False, scanner_mode: str = 'auto') -> list[tu
         ('query_pack_planner', query_planner, True),
         ('brave_source_activation', brave_activation, True),
     ])
+    if include_sec_fallback or scanner_mode == 'offhours-scan':
+        steps.append(('sec_fallback_activation', sec_fallback_activation, False))
     if scanner_mode == 'offhours-scan':
         steps.append(('brave_compression_activation', compression_activation, True))
     steps.extend([
@@ -114,12 +117,13 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument('--dry-run', action='store_true')
     parser.add_argument('--scanner-mode', choices=['auto', 'market-hours-scan', 'offhours-scan'], default='auto')
+    parser.add_argument('--include-sec-fallback', action='store_true')
     parser.add_argument('--report', default=str(REPORT))
     args = parser.parse_args(argv)
     results = []
     status = 'pass'
     try:
-        for name, cmd, required in build_steps(dry_run=args.dry_run, scanner_mode=args.scanner_mode):
+        for name, cmd, required in build_steps(dry_run=args.dry_run, scanner_mode=args.scanner_mode, include_sec_fallback=args.include_sec_fallback):
             results.append(run_step(name, cmd, required=required))
     except Exception as exc:
         status = 'fail'

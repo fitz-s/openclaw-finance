@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-19T19:17:24.068973+00:00",
+  "generated_at": "2026-04-19T19:27:09.763458+00:00",
   "subsystem": "finance",
   "openclaw_home": "/Users/leofitz/.openclaw",
   "finance_repo": "/Users/leofitz/.openclaw/workspace/finance",
@@ -64,6 +64,7 @@
     "docs/openclaw-runtime/ralplan/exchange-calendar-provider-p6-ralplan.md",
     "docs/openclaw-runtime/ralplan/delivery-observed-audit-p7-ralplan.md",
     "docs/openclaw-runtime/ralplan/brave-source-recovery-p8-ralplan.md",
+    "docs/openclaw-runtime/ralplan/sec-fallback-activation-p9-ralplan.md",
     "docs/openclaw-runtime/scouts/offhours-intelligence-p1-internal-explorer.md",
     "docs/openclaw-runtime/scouts/offhours-intelligence-p1-external-scout.md",
     "docs/openclaw-runtime/scouts/offhours-intelligence-p2-internal-explorer.md",
@@ -80,6 +81,8 @@
     "docs/openclaw-runtime/scouts/delivery-observed-audit-p7-external-scout.md",
     "docs/openclaw-runtime/scouts/brave-source-recovery-p8-internal-explorer.md",
     "docs/openclaw-runtime/scouts/brave-source-recovery-p8-external-scout.md",
+    "docs/openclaw-runtime/scouts/sec-fallback-activation-p9-internal-explorer.md",
+    "docs/openclaw-runtime/scouts/sec-fallback-activation-p9-external-scout.md",
     "docs/openclaw-runtime/source-to-campaign-phase-ledger.json",
     "docs/openclaw-runtime/source-to-campaign-closeout.json",
     "docs/openclaw-runtime/source-scout-candidates.json",
@@ -109,6 +112,7 @@
     "docs/openclaw-runtime/exchange-calendar-provider-report.json",
     "docs/openclaw-runtime/finance-delivery-observed-audit.json",
     "docs/openclaw-runtime/brave-source-recovery-policy.json",
+    "docs/openclaw-runtime/sec-fallback-activation-report.json",
     "docs/openclaw-runtime/ibkr-watchlist-freshness-drill.json",
     "docs/openclaw-runtime/benchmark-boundary-audit.json",
     "docs/openclaw-runtime/runtime-gap-review.json",
@@ -156,6 +160,7 @@
     "docs/openclaw-runtime/critics/exchange-calendar-provider-p6-implementation-critic.md",
     "docs/openclaw-runtime/critics/delivery-observed-audit-p7-implementation-critic.md",
     "docs/openclaw-runtime/critics/brave-source-recovery-p8-implementation-critic.md",
+    "docs/openclaw-runtime/critics/sec-fallback-activation-p9-implementation-critic.md",
     "docs/openclaw-runtime/cleanup/offhours-intelligence-p0-20260419.md",
     "docs/openclaw-runtime/cleanup/offhours-intelligence-p1-20260419.md",
     "docs/openclaw-runtime/cleanup/offhours-intelligence-p2-20260419.md",
@@ -165,6 +170,7 @@
     "docs/openclaw-runtime/cleanup/exchange-calendar-provider-p6-20260419.md",
     "docs/openclaw-runtime/cleanup/delivery-observed-audit-p7-20260419.md",
     "docs/openclaw-runtime/cleanup/brave-source-recovery-p8-20260419.md",
+    "docs/openclaw-runtime/cleanup/sec-fallback-activation-p9-20260419.md",
     "docs/openclaw-runtime/critics/phase-2-implementation-critic.md",
     "docs/openclaw-runtime/critics/phase-3-implementation-critic.md",
     "docs/openclaw-runtime/critics/phase-4-implementation-critic.md",
@@ -208,7 +214,8 @@
     "docs/openclaw-runtime/marketday-report-calendar-guard.json",
     "docs/openclaw-runtime/exchange-calendar-provider-report.json",
     "docs/openclaw-runtime/finance-delivery-observed-audit.json",
-    "docs/openclaw-runtime/brave-source-recovery-policy.json"
+    "docs/openclaw-runtime/brave-source-recovery-policy.json",
+    "docs/openclaw-runtime/sec-fallback-activation-report.json"
   ],
   "note": "Generated from the local OpenClaw runtime. State files and secrets are intentionally excluded."
 }
