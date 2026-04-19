@@ -34,6 +34,7 @@ SOURCE_IDS_BY_ENDPOINT = {
     'polygon/options/snapshot': 'source:polygon_options_iv',
     'thetadata/option/snapshot/greeks/implied_volatility': 'source:thetadata_options_iv',
     'tradier/markets/options/chains': 'source:tradier_options_iv',
+    'ibkr/tws/reqMktData/model_option_computation': 'source:ibkr_options_iv',
 }
 
 
@@ -250,6 +251,12 @@ def merge_fetch_record(rows: dict[str, dict[str, Any]], record: dict[str, Any], 
         elif error_class == 'network_error':
             row['degraded_state'] = 'network_error'
             row['breach_reasons'].append('network_fetch_failed')
+        elif error_class == 'broker_session_unavailable':
+            row['degraded_state'] = 'broker_session_unavailable'
+            row['breach_reasons'].append('broker_session_unavailable')
+        elif error_class == 'missing_dependency':
+            row['degraded_state'] = 'missing_dependency'
+            row['breach_reasons'].append('missing_dependency')
         else:
             row['degraded_state'] = 'fetch_failed'
             row['breach_reasons'].append('fetch_failed')
@@ -269,6 +276,8 @@ def merge_fetch_record(rows: dict[str, dict[str, Any]], record: dict[str, Any], 
     row['validation_status'] = 'warn' if row.get('breach_reasons') else 'pass'
     row['schema_status'] = 'ok'
     row['rights_status'] = 'restricted' if source_id.startswith('source:brave') or source_id.endswith('_options_iv') else row.get('rights_status') or 'unknown'
+    if source_id == 'source:ibkr_options_iv':
+        row['rights_status'] = 'ok'
     row['metric_refs'].append(str(record.get('_source_path') or 'fetch_record'))
     if record.get('fetch_id') or record.get('answer_id'):
         row['source_refs'].append(str(record.get('fetch_id') or record.get('answer_id')))

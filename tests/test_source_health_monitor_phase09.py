@@ -131,6 +131,25 @@ def test_source_health_ingests_options_iv_fetch_records() -> None:
     assert report['stale_reuse_guard']['source_lane_unavailable_reasons']['source:polygon_options_iv'] == 'missing_credentials'
 
 
+def test_source_health_marks_ibkr_broker_session_unavailable() -> None:
+    record = {
+        'fetch_id': 'fetch:ibkr',
+        'source_id': 'source:ibkr_options_iv',
+        'endpoint': 'ibkr/tws/reqMktData/model_option_computation',
+        'status': 'failed',
+        'fetched_at': '2026-04-17T21:59:00Z',
+        'application_error_code': 'ibkr_options_iv_disabled',
+        'error_class': 'broker_session_unavailable',
+        'quota_state': {},
+    }
+    report = shm.build_report(fetch_records=[record], generated_at='2026-04-17T22:00:00Z')
+    row = report['sources'][0]
+    assert row['source_id'] == 'source:ibkr_options_iv'
+    assert row['rights_status'] == 'ok'
+    assert row['degraded_state'] == 'broker_session_unavailable'
+    assert 'broker_session_unavailable' in row['breach_reasons']
+
+
 def test_source_health_atoms_contribute_freshness_and_rights() -> None:
     atoms = [
         {

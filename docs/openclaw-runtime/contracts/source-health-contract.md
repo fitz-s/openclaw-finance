@@ -57,7 +57,7 @@ Source Health is a shadow audit surface in Phase 1. It does not change wake, jud
   "quota_reset_at": null,
   "retry_after_seconds": null,
   "breaker_state": "closed|open|half_open|unknown",
-  "degraded_state": "quota_limited|fetch_failed|missing_credentials|network_error|subscription_denied|stale|partial_data|null",
+  "degraded_state": "quota_limited|fetch_failed|missing_credentials|missing_dependency|network_error|broker_session_unavailable|subscription_denied|stale|partial_data|null",
   "source_lane_unavailable_reason": null,
   "health_score": 1.0,
   "breach_reasons": [],
@@ -87,6 +87,8 @@ Provider diagnostics:
 - `missing_credentials`: credential or local terminal/API token is absent.
 - `network_error`: DNS, connection, timeout, or local terminal reachability failed.
 - `subscription_denied`: provider plan lacks requested data, greeks, IV, or realtime permission.
+- `broker_session_unavailable`: broker-local gateway/TWS session is disabled, unavailable, or not authenticated.
+- `missing_dependency`: required local SDK/runtime dependency is not installed.
 - `fetch_failed`: provider returned an application/schema error not covered by the above.
 
 ## Required Invariants

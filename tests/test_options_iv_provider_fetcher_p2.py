@@ -70,6 +70,36 @@ def test_snapshot_no_credentials_degrades_without_raw_payload(monkeypatch) -> No
     assert {record['error_class'] for record in records} == {'missing_credentials'}
 
 
+def test_ibkr_disabled_records_broker_session_unavailable(monkeypatch) -> None:
+    monkeypatch.delenv('IBKR_OPTIONS_IV_ENABLED', raising=False)
+    rows, record = fetcher.fetch_ibkr('TSLA', timeout=1)
+    assert rows == []
+    assert record['status'] == 'failed'
+    assert record['source_id'] == 'source:ibkr_options_iv'
+    assert record['error_class'] == 'broker_session_unavailable'
+    assert record['application_error_code'] == 'ibkr_options_iv_disabled'
+
+
+def test_ibkr_normalization_uses_model_option_computation_fields() -> None:
+    rows = fetcher.normalize_ibkr('TSLA', [{
+        'underlying': 'TSLA',
+        'expiration': '20260117',
+        'strike': 400,
+        'right': 'C',
+        'implied_volatility': 0.62,
+        'delta': 0.45,
+        'gamma': 0.01,
+        'vega': 0.2,
+        'theta': -0.02,
+    }], observed_at='2026-04-18T15:00:00Z')
+    assert len(rows) == 1
+    row = rows[0]
+    assert row['provider'] == 'ibkr'
+    assert row['source_id'] == 'source:ibkr_options_iv'
+    assert row['implied_volatility'] == 0.62
+    assert 'broker_session_required' in row['confidence_penalties']
+
+
 def test_cli_blocks_unsafe_paths(tmp_path: Path) -> None:
     code = fetcher.main(['--out', str(tmp_path / 'outside.json')])
     assert code == 2

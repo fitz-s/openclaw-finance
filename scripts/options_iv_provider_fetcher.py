@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any
 
 from atomic_io import atomic_write_json, load_json_safe
+import ibkr_options_iv_adapter as ibkr_adapter
 from options_flow_proxy_fetcher import watchlist_symbols
 
 
@@ -29,7 +30,7 @@ CONTRACT = 'options-iv-provider-snapshot-v1'
 FETCH_CONTRACT = 'source-fetch-record-v1'
 DEFAULT_SYMBOL_LIMIT = 12
 DEFAULT_TIMEOUT = 8
-PROVIDERS = ('thetadata', 'polygon', 'tradier')
+PROVIDERS = ('thetadata', 'polygon', 'tradier', 'ibkr')
 
 
 PROVIDER_META = {
@@ -61,6 +62,15 @@ PROVIDER_META = {
         'point_in_time_replay_supported': False,
         'provider_confidence_base': 0.58,
         'confidence_penalties': ['courtesy_orats_greeks_hourly'],
+    },
+    'ibkr': {
+        'source_id': 'source:ibkr_options_iv',
+        'endpoint': 'ibkr/tws/reqMktData/model_option_computation',
+        'rights_policy': 'internal_private',
+        'latency_class': 'intraday',
+        'point_in_time_replay_supported': False,
+        'provider_confidence_base': 0.68,
+        'confidence_penalties': ['broker_session_required', 'held_contracts_only'],
     },
 }
 
@@ -298,6 +308,28 @@ def normalize_tradier(symbol: str, payload: dict[str, Any], *, observed_at: str)
     return [row for row in out if row.get('implied_volatility') is not None]
 
 
+def normalize_ibkr(symbol: str, rows: list[dict[str, Any]], *, observed_at: str) -> list[dict[str, Any]]:
+    out: list[dict[str, Any]] = []
+    for row in rows:
+        if not isinstance(row, dict):
+            continue
+        out.append(observation(
+            provider='ibkr',
+            symbol=symbol,
+            expiration=row.get('expiration'),
+            strike=number(row.get('strike')),
+            call_put='call' if row.get('right') == 'C' else 'put' if row.get('right') == 'P' else row.get('right'),
+            observed_at=observed_at,
+            implied_volatility=number(row.get('implied_volatility')),
+            delta=number(row.get('delta')),
+            gamma=number(row.get('gamma')),
+            theta=number(row.get('theta')),
+            vega=number(row.get('vega')),
+            raw_ref=row.get('raw_ref'),
+        ))
+    return [row for row in out if row.get('implied_volatility') is not None]
+
+
 def get_json(url: str, *, headers: dict[str, str] | None = None, timeout: int = DEFAULT_TIMEOUT) -> tuple[int, dict[str, Any], dict[str, str]]:
     request = urllib.request.Request(url, headers=headers or {'Accept': 'application/json'})
     with urllib.request.urlopen(request, timeout=timeout) as response:
@@ -356,6 +388,62 @@ def fetch_tradier(symbol: str, *, timeout: int) -> tuple[list[dict[str, Any]], d
     return rows, source_fetch_record(provider='tradier', symbol=symbol, status='ok' if rows else 'partial', fetched_at=fetched, result_count=len(rows), quota_state={'status_code': status, 'x_ratelimit_remaining': headers_out.get('X-RateLimit-Remaining')})
 
 
+def fetch_ibkr(symbol: str, *, timeout: int) -> tuple[list[dict[str, Any]], dict[str, Any]]:
+    fetched = now_iso()
+    if not ibkr_adapter.enabled():
+        return [], source_fetch_record(
+            provider='ibkr',
+            symbol=symbol,
+            status='failed',
+            fetched_at=fetched,
+            error_class='broker_session_unavailable',
+            application_error_code='ibkr_options_iv_disabled',
+            request_params={'enabled_env': 'IBKR_OPTIONS_IV_ENABLED', 'symbol': symbol},
+        )
+    if not ibkr_adapter.dependency_available():
+        return [], source_fetch_record(
+            provider='ibkr',
+            symbol=symbol,
+            status='failed',
+            fetched_at=fetched,
+            error_class='missing_dependency',
+            application_error_code='ibapi_not_installed',
+        )
+    contracts = ibkr_adapter.known_option_contracts(ibkr_adapter.load_portfolio(), [symbol])
+    if not contracts:
+        return [], source_fetch_record(
+            provider='ibkr',
+            symbol=symbol,
+            status='partial',
+            fetched_at=fetched,
+            result_count=0,
+            error_class='no_matching_contracts',
+            application_error_code='no_known_option_contracts',
+            request_params={'source': 'portfolio_options_only', 'symbol': symbol},
+        )
+    try:
+        raw_rows = ibkr_adapter.fetch_contract_greeks(contracts, timeout=timeout)
+    except Exception as exc:
+        return [], source_fetch_record(
+            provider='ibkr',
+            symbol=symbol,
+            status='failed',
+            fetched_at=fetched,
+            error_class='broker_session_unavailable',
+            application_error_code=exc.__class__.__name__,
+            request_params={'contract_count': len(contracts), 'symbol': symbol},
+        )
+    rows = normalize_ibkr(symbol, raw_rows, observed_at=fetched)
+    return rows, source_fetch_record(
+        provider='ibkr',
+        symbol=symbol,
+        status='ok' if rows else 'partial',
+        fetched_at=fetched,
+        result_count=len(rows),
+        request_params={'contract_count': len(contracts), 'symbol': symbol},
+    )
+
+
 def fetch_provider(provider: str, symbol: str, *, timeout: int) -> tuple[list[dict[str, Any]], dict[str, Any]]:
     if provider == 'polygon':
         return fetch_polygon(symbol, timeout=timeout)
@@ -363,6 +451,8 @@ def fetch_provider(provider: str, symbol: str, *, timeout: int) -> tuple[list[di
         return fetch_thetadata(symbol, timeout=timeout)
     if provider == 'tradier':
         return fetch_tradier(symbol, timeout=timeout)
+    if provider == 'ibkr':
+        return fetch_ibkr(symbol, timeout=timeout)
     fetched = now_iso()
     return [], source_fetch_record(provider='polygon', symbol=symbol, status='failed', fetched_at=fetched, error_class='application_error', application_error_code='unknown_provider')
 
@@ -401,7 +491,7 @@ def build_snapshot(symbols: list[str], providers: list[str], *, timeout: int = D
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description='Fetch normalized derived-only options IV provider observations.')
     parser.add_argument('--symbols', default=None)
-    parser.add_argument('--providers', default='polygon,thetadata,tradier')
+    parser.add_argument('--providers', default='polygon,thetadata,tradier,ibkr')
     parser.add_argument('--symbol-limit', type=int, default=DEFAULT_SYMBOL_LIMIT)
     parser.add_argument('--timeout', type=int, default=DEFAULT_TIMEOUT)
     parser.add_argument('--out', default=str(OUT))
