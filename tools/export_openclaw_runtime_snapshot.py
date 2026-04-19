@@ -19,6 +19,7 @@ CONTRACTS_OUT = OUT / 'contracts'
 CRON_JOBS = OPENCLAW_HOME / 'cron' / 'jobs.json'
 MODEL_ROLES = WORKSPACE / 'ops' / 'model-roles.json'
 STATE = FINANCE / 'state'
+REVIEW_2026_04_18 = '/Users/leofitz/Downloads/review 2026-04-18.md'
 
 FINANCE_JOB_NAMES = {
     'finance-subagent-scanner',
@@ -235,6 +236,26 @@ def telemetry_summary() -> dict[str, Any]:
     return summary
 
 
+def runtime_control_state_snapshots() -> list[str]:
+    snapshots = {
+        'session-aperture-state.json': STATE / 'session-aperture-state.json',
+        'brave-budget-state.json': STATE / 'brave-budget-state.json',
+    }
+    copied: list[str] = []
+    for target_name, source in snapshots.items():
+        payload = load_json(source, None)
+        write_json(OUT / target_name, {
+            'generated_at': now_iso(),
+            'state_boundary': 'sanitized_runtime_control_state',
+            'review_source': REVIEW_2026_04_18,
+            'source': str(source),
+            'exists': source.exists(),
+            'payload': payload if isinstance(payload, dict) else None,
+        })
+        copied.append(str((OUT / target_name).relative_to(FINANCE)))
+    return copied
+
+
 def copy_contracts() -> list[str]:
     CONTRACTS_OUT.mkdir(parents=True, exist_ok=True)
     copied: list[str] = []
@@ -285,6 +306,7 @@ def main() -> int:
     contracts = copy_contracts()
     schemas = copy_schemas()
     parent_runtime = copy_parent_runtime_mirror()
+    runtime_control_state = runtime_control_state_snapshots()
     jobs = finance_jobs()
     write_json(OUT / 'finance-cron-jobs.json', {
         'generated_at': now_iso(),
@@ -352,6 +374,7 @@ def main() -> int:
             'docs/openclaw-runtime/ralplan/source-to-campaign-phase-13-active-cutover-gate-ralplan.md',
             'docs/openclaw-runtime/ralplan/source-to-campaign-phase-14-monitoring-closeout-ralplan.md',
             'docs/openclaw-runtime/ralplan/source-freshness-hotfix-2026-04-17-ralplan.md',
+            'docs/openclaw-runtime/ralplan/offhours-intelligence-p0-ralplan.md',
             'docs/openclaw-runtime/source-to-campaign-phase-ledger.json',
             'docs/openclaw-runtime/source-to-campaign-closeout.json',
             'docs/openclaw-runtime/source-scout-candidates.json',
@@ -371,6 +394,8 @@ def main() -> int:
             'docs/openclaw-runtime/context-coverage-audit.json',
             'docs/openclaw-runtime/active-campaign-board-cutover.json',
             'docs/openclaw-runtime/thesis-spine-telemetry-summary.json',
+            'docs/openclaw-runtime/session-aperture-state.json',
+            'docs/openclaw-runtime/brave-budget-state.json',
             'docs/openclaw-runtime/ibkr-watchlist-freshness-drill.json',
             'docs/openclaw-runtime/benchmark-boundary-audit.json',
             'docs/openclaw-runtime/runtime-gap-review.json',
@@ -385,6 +410,8 @@ def main() -> int:
             'docs/openclaw-runtime/contracts/finance-thread-lifecycle-contract.md',
             'docs/openclaw-runtime/contracts/source-roi-contract.md',
             'docs/openclaw-runtime/contracts/source-to-campaign-cutover-gate-contract.md',
+            'docs/openclaw-runtime/contracts/offhours-aperture-contract.md',
+            'docs/openclaw-runtime/contracts/brave-budget-guard-contract.md',
             'docs/openclaw-runtime/contracts/query-pack-contract.md',
             'docs/openclaw-runtime/contracts/source-fetch-record-contract.md',
             'docs/openclaw-runtime/contracts/source-atom-contract.md',
@@ -407,6 +434,8 @@ def main() -> int:
             'docs/openclaw-runtime/critics/source-to-campaign-phase-13-implementation-critic.md',
             'docs/openclaw-runtime/critics/source-to-campaign-phase-14-implementation-critic.md',
             'docs/openclaw-runtime/critics/source-freshness-hotfix-2026-04-17-critic.md',
+            'docs/openclaw-runtime/critics/offhours-intelligence-p0-implementation-critic.md',
+            'docs/openclaw-runtime/cleanup/offhours-intelligence-p0-20260419.md',
             'docs/openclaw-runtime/critics/phase-2-implementation-critic.md',
             'docs/openclaw-runtime/critics/phase-3-implementation-critic.md',
             'docs/openclaw-runtime/critics/phase-4-implementation-critic.md',
@@ -418,6 +447,7 @@ def main() -> int:
             *contracts,
             *schemas,
             *parent_runtime,
+            *runtime_control_state,
         ],
         'note': 'Generated from the local OpenClaw runtime. State files and secrets are intentionally excluded.',
     })
