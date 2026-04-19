@@ -185,6 +185,17 @@ Whenever a task changes parent workspace files that affect finance behavior, the
 - Run the relevant audits (`audit_operating_model.py`, `audit_parent_dependency_drift.py`) when parent dependencies or contracts changed.
 - Commit the mirror/snapshot diffs in this repo with the implementation. Do not leave parent-only finance behavior changes invisible to remote reviewers.
 
+## AI Handoff Exoskeleton
+
+This repo includes an AI handoff layer for medium/large future work. It is an exoskeleton, not a replacement for this OpenClaw Finance contract.
+
+- Read `START_HERE.md`, `docs/01_reality_check.md`, and `docs/02_end_to_end_workflow.md` before using the handoff workflow.
+- Treat `templates/PROJECT_BRIEF.md`, `templates/PRD.md`, `templates/ARCHITECTURE.md`, `templates/IMPLEMENTATION_PLAN.md`, `templates/VERIFICATION_PLAN.md`, `templates/DECISIONS.md`, `templates/NOT_NOW.md`, `OPEN_QUESTIONS.md`, and `RISKS.md` as the current handoff truth surfaces.
+- Use `prompts/01_claude_code_requirements.txt` for requirement-tribunal work and `prompts/02_chatgpt_pro_finalize.txt` for final requirements/architecture lock.
+- Use `scripts/build_handoff_zip.py` only to package the guidance/docs/prompts layer. It is not a full source snapshot and must not include raw `state/`, secrets, raw Flex XML, broker account identifiers, or raw licensed/vendor payloads.
+- The copied starter-kit `AGENTS.md` is stored at `docs/ai-handoff-starter-AGENTS.md` for reference only. This root `AGENTS.md` remains authoritative.
+- Repo-specific integration notes live in `docs/ai-handoff-current-repo-config.md`.
+
 ## Verification
 
 ```bash

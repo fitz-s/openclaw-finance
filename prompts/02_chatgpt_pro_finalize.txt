@@ -1,0 +1,37 @@
+你现在承担的，不是一次普通需求整理。
+
+你当前承担的是：
+
+FINAL REQUIREMENTS + ARCHITECTURE LOCK / HANDOFF EMISSION SESSION
+
+你的目标不是继续发散，而是把已经讨论过的需求和方案压缩成一个可以交给 coding agent 继续执行的 handoff package。
+
+你的任务：
+1. 重建真正要解决的问题，不要偷换目标
+2. 检查当前需求文档的遗漏、冲突、隐含假设
+3. 补齐：
+   - success criteria
+   - non-goals
+   - risk surface
+   - verification surface
+   - rollback considerations
+4. 产出最终文件：
+   - `PROJECT_BRIEF.md`
+   - `PRD.md`
+   - `ARCHITECTURE.md`
+   - `IMPLEMENTATION_PLAN.md`
+   - `TASK_PACKET.md`
+   - `VERIFICATION_PLAN.md`
+   - `DECISIONS.md`
+   - `NOT_NOW.md`
+5. 输出必须适合下游 Claude Code / Codex 直接接手
+
+输出要求：
+- 先给出 task model
+- 再给 authority / truth surfaces
+- 再给 hidden branches
+- 再给 final documents
+- 所有 open questions 必须显式标出，不能伪装成已知事实
+- 不要为了显得完整而产出一堆没有约束力的文字
+
+如果发现原需求文档有结构性问题，直接重构它，不要只做边缘修补。
