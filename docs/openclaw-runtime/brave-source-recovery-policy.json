@@ -1,0 +1,22 @@
+{
+  "generated_at": "2026-04-19T19:17:24.060193+00:00",
+  "state_boundary": "sanitized_runtime_control_state",
+  "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
+  "source": "/Users/leofitz/.openclaw/workspace/finance/state/brave-source-recovery-policy.json",
+  "exists": true,
+  "payload": {
+    "generated_at": "2026-04-19T19:16:58.278626Z",
+    "contract": "brave-source-recovery-policy-v1",
+    "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
+    "breaker_open": false,
+    "reason": "clear",
+    "breaker_until": null,
+    "cooldown_minutes": 60,
+    "pressure_record_count": 0,
+    "pressure_records": [],
+    "no_execution": true,
+    "no_delivery_mutation": true,
+    "no_wake_mutation": true,
+    "no_threshold_mutation": true
+  }
+}

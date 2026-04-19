@@ -247,6 +247,7 @@ def runtime_control_state_snapshots() -> list[str]:
         'marketday-report-calendar-guard.json': STATE / 'marketday-report-calendar-guard.json',
         'exchange-calendar-provider-report.json': STATE / 'exchange-calendar-provider-report.json',
         'finance-delivery-observed-audit.json': STATE / 'finance-delivery-observed-audit.json',
+        'brave-source-recovery-policy.json': STATE / 'brave-source-recovery-policy.json',
     }
     copied: list[str] = []
     for target_name, source in snapshots.items():
@@ -389,6 +390,7 @@ def main() -> int:
             'docs/openclaw-runtime/ralplan/marketday-report-calendar-p5-ralplan.md',
             'docs/openclaw-runtime/ralplan/exchange-calendar-provider-p6-ralplan.md',
             'docs/openclaw-runtime/ralplan/delivery-observed-audit-p7-ralplan.md',
+            'docs/openclaw-runtime/ralplan/brave-source-recovery-p8-ralplan.md',
             'docs/openclaw-runtime/scouts/offhours-intelligence-p1-internal-explorer.md',
             'docs/openclaw-runtime/scouts/offhours-intelligence-p1-external-scout.md',
             'docs/openclaw-runtime/scouts/offhours-intelligence-p2-internal-explorer.md',
@@ -403,6 +405,8 @@ def main() -> int:
             'docs/openclaw-runtime/scouts/exchange-calendar-provider-p6-external-scout.md',
             'docs/openclaw-runtime/scouts/delivery-observed-audit-p7-internal-explorer.md',
             'docs/openclaw-runtime/scouts/delivery-observed-audit-p7-external-scout.md',
+            'docs/openclaw-runtime/scouts/brave-source-recovery-p8-internal-explorer.md',
+            'docs/openclaw-runtime/scouts/brave-source-recovery-p8-external-scout.md',
             'docs/openclaw-runtime/source-to-campaign-phase-ledger.json',
             'docs/openclaw-runtime/source-to-campaign-closeout.json',
             'docs/openclaw-runtime/source-scout-candidates.json',
@@ -431,6 +435,7 @@ def main() -> int:
             'docs/openclaw-runtime/marketday-report-calendar-guard.json',
             'docs/openclaw-runtime/exchange-calendar-provider-report.json',
             'docs/openclaw-runtime/finance-delivery-observed-audit.json',
+            'docs/openclaw-runtime/brave-source-recovery-policy.json',
             'docs/openclaw-runtime/ibkr-watchlist-freshness-drill.json',
             'docs/openclaw-runtime/benchmark-boundary-audit.json',
             'docs/openclaw-runtime/runtime-gap-review.json',
@@ -477,6 +482,7 @@ def main() -> int:
             'docs/openclaw-runtime/critics/marketday-report-calendar-p5-implementation-critic.md',
             'docs/openclaw-runtime/critics/exchange-calendar-provider-p6-implementation-critic.md',
             'docs/openclaw-runtime/critics/delivery-observed-audit-p7-implementation-critic.md',
+            'docs/openclaw-runtime/critics/brave-source-recovery-p8-implementation-critic.md',
             'docs/openclaw-runtime/cleanup/offhours-intelligence-p0-20260419.md',
             'docs/openclaw-runtime/cleanup/offhours-intelligence-p1-20260419.md',
             'docs/openclaw-runtime/cleanup/offhours-intelligence-p2-20260419.md',
@@ -485,6 +491,7 @@ def main() -> int:
             'docs/openclaw-runtime/cleanup/marketday-report-calendar-p5-20260419.md',
             'docs/openclaw-runtime/cleanup/exchange-calendar-provider-p6-20260419.md',
             'docs/openclaw-runtime/cleanup/delivery-observed-audit-p7-20260419.md',
+            'docs/openclaw-runtime/cleanup/brave-source-recovery-p8-20260419.md',
             'docs/openclaw-runtime/critics/phase-2-implementation-critic.md',
             'docs/openclaw-runtime/critics/phase-3-implementation-critic.md',
             'docs/openclaw-runtime/critics/phase-4-implementation-critic.md',

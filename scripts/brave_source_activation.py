@@ -15,6 +15,8 @@ from typing import Any
 from atomic_io import atomic_write_json
 from brave_budget_guard import DEFAULT_STATE as BUDGET_STATE, decide as budget_decide, normalize_state as normalize_budget_state
 from brave_search_fetcher_common import default_out, fetch_from_pack, write_jsonl
+from brave_source_recovery_policy import OUT as RECOVERY_POLICY_STATE
+from brave_source_recovery_policy import build_policy as build_recovery_policy
 from query_registry_compiler import (
     build_query_run_record,
     load_jsonl as load_registry_jsonl,
@@ -300,12 +302,15 @@ def run_activation(
     force: bool = False,
     timeout: int = 12,
     budget_state_path: Path = BUDGET_STATE,
+    recovery_policy_path: Path = RECOVERY_POLICY_STATE,
 ) -> dict[str, Any]:
-    if not safe_state_path(query_packs_path) or not safe_state_path(registry_path) or not safe_state_path(report_path) or not safe_state_path(budget_state_path):
+    if not safe_state_path(query_packs_path) or not safe_state_path(registry_path) or not safe_state_path(report_path) or not safe_state_path(budget_state_path) or not safe_state_path(recovery_policy_path):
         return {'status': 'blocked', 'blocking_reasons': ['unsafe_state_path'], 'no_execution': True}
     packs = load_jsonl(query_packs_path)
     selected = selected_packs(packs, max_packs=max_packs)
     recent_registry = load_registry_jsonl(registry_path)
+    recovery_policy = build_recovery_policy()
+    atomic_write_json(recovery_policy_path, recovery_policy)
     pack_results = []
     for pack in selected:
         if should_skip_query(pack, recent_registry) and not force:
@@ -314,6 +319,24 @@ def run_activation(
                 'query': pack.get('query'),
                 'status': 'skipped',
                 'reason': 'query_registry_cooldown',
+                'budget_decision': None,
+                'endpoint_count': 0,
+                'fallback_attempted': False,
+                'records': [],
+                'no_execution': True,
+            })
+            continue
+        if not dry_run and recovery_policy.get('breaker_open') is True:
+            pack_results.append({
+                'pack_id': pack.get('pack_id'),
+                'query': pack.get('query'),
+                'status': 'skipped',
+                'reason': 'source_recovery_deferred',
+                'recovery_policy': {
+                    'breaker_open': True,
+                    'breaker_until': recovery_policy.get('breaker_until'),
+                    'reason': recovery_policy.get('reason'),
+                },
                 'budget_decision': None,
                 'endpoint_count': 0,
                 'fallback_attempted': False,
@@ -360,6 +383,13 @@ def run_activation(
         registry_update=registry_update,
         dry_run=dry_run,
     )
+    report['recovery_policy'] = {
+        'path': str(recovery_policy_path),
+        'breaker_open': recovery_policy.get('breaker_open'),
+        'reason': recovery_policy.get('reason'),
+        'breaker_until': recovery_policy.get('breaker_until'),
+    }
+    report['source_recovery_deferred_count'] = sum(1 for result in pack_results if result.get('reason') == 'source_recovery_deferred')
     atomic_write_json(report_path, report)
     return report
 
@@ -370,6 +400,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--registry', default=str(QUERY_REGISTRY))
     parser.add_argument('--report', default=str(REPORT))
     parser.add_argument('--budget-state', default=str(BUDGET_STATE))
+    parser.add_argument('--recovery-policy', default=str(RECOVERY_POLICY_STATE))
     parser.add_argument('--max-packs', type=int, default=DEFAULT_MAX_PACKS)
     parser.add_argument('--timeout', type=int, default=12)
     parser.add_argument('--dry-run', action='store_true')
@@ -384,6 +415,7 @@ def main(argv: list[str] | None = None) -> int:
         dry_run=args.dry_run,
         force=args.force,
         budget_state_path=Path(args.budget_state),
+        recovery_policy_path=Path(args.recovery_policy),
     )
     print(json.dumps({
         'status': report.get('status'),
