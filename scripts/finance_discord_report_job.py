@@ -35,6 +35,9 @@ MARKETDAY_CORE_POLICY = STATE / 'marketday-core-review-policy.json'
 REPORT_CALENDAR_GUARD = STATE / 'marketday-report-calendar-guard.json'
 DELIVERY_OBSERVED_AUDIT = STATE / 'finance-delivery-observed-audit.json'
 CT = ZoneInfo('America/Chicago')
+FOLLOWUP_REGISTRY_WARNING = (
+    'followup_registry_updated_after_cutoff_is_warning_only_not_delivery_proof'
+)
 
 
 def run(args: list[str], *, stdout_path: Path | None = None) -> None:
@@ -78,20 +81,41 @@ def parse_iso(value: str) -> datetime | None:
         return None
 
 
-def has_report_since_today(hour: int, minute: int) -> bool:
-    now = today_ct()
-    cutoff = datetime.combine(now.date(), time(hour, minute), tzinfo=CT)
+def followup_registry_activity_since_today(
+    hour: int, minute: int, *, now: datetime | None = None
+) -> dict[str, object]:
+    now_value = now or today_ct()
+    cutoff = datetime.combine(now_value.date(), time(hour, minute), tzinfo=CT)
+    latest_updated: datetime | None = None
+    matching_thread_count = 0
     try:
         data = json.loads(REGISTRY.read_text(encoding='utf-8'))
     except (FileNotFoundError, json.JSONDecodeError):
-        return False
+        data = {}
     for record in (data.get('threads') or {}).values():
         if not isinstance(record, dict):
             continue
         updated = parse_iso(str(record.get('updated_at') or ''))
-        if updated and updated >= cutoff:
-            return True
-    return False
+        if not updated or updated < cutoff:
+            continue
+        matching_thread_count += 1
+        if latest_updated is None or updated > latest_updated:
+            latest_updated = updated
+    observed_since_cutoff = matching_thread_count > 0
+    return {
+        'boundary': 'followup_thread_registry',
+        'authoritative_delivery_proof': False,
+        'observed_since_cutoff': observed_since_cutoff,
+        'cutoff': cutoff.isoformat(),
+        'matching_thread_count': matching_thread_count,
+        'latest_updated_at': latest_updated.isoformat() if latest_updated else None,
+        'warning': FOLLOWUP_REGISTRY_WARNING if observed_since_cutoff else None,
+    }
+
+
+def has_report_since_today(hour: int, minute: int) -> bool:
+    activity = followup_registry_activity_since_today(hour, minute)
+    return bool(activity.get('observed_since_cutoff'))
 
 
 def report_calendar_guard(now: datetime, mode: str) -> dict:
@@ -195,8 +219,18 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.mode == 'morning-watchdog':
         audit = build_delivery_audit(now=now)
+        followup_registry_activity = followup_registry_activity_since_today(7, 30, now=now)
+        audit['watchdog_duplicate_suppression_boundary'] = 'observed_parent_delivery_only'
+        audit['followup_registry_activity'] = followup_registry_activity
+        if followup_registry_activity.get('observed_since_cutoff'):
+            warnings = audit.get('warnings')
+            if not isinstance(warnings, list):
+                warnings = []
+            if FOLLOWUP_REGISTRY_WARNING not in warnings:
+                warnings.append(FOLLOWUP_REGISTRY_WARNING)
+            audit['warnings'] = warnings
         atomic_write_json(DELIVERY_OBSERVED_AUDIT, audit)
-        if has_report_since_today(7, 30) or observed_delivered_since(audit, hour=7, minute=30, now=now):
+        if observed_delivered_since(audit, hour=7, minute=30, now=now):
             print('NO_REPLY')
             return 0
     sys.stdout.write(run_chain(fast_core=args.mode == 'marketday-core-review'))

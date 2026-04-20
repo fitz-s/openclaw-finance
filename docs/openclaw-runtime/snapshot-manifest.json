@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-19T19:27:09.763458+00:00",
+  "generated_at": "2026-04-20T01:27:24.343260+00:00",
   "subsystem": "finance",
   "openclaw_home": "/Users/leofitz/.openclaw",
   "finance_repo": "/Users/leofitz/.openclaw/workspace/finance",
@@ -63,6 +63,7 @@
     "docs/openclaw-runtime/ralplan/marketday-report-calendar-p5-ralplan.md",
     "docs/openclaw-runtime/ralplan/exchange-calendar-provider-p6-ralplan.md",
     "docs/openclaw-runtime/ralplan/delivery-observed-audit-p7-ralplan.md",
+    "docs/openclaw-runtime/ralplan/watchdog-delivery-proof-hardening-p7-followup-ralplan.md",
     "docs/openclaw-runtime/ralplan/brave-source-recovery-p8-ralplan.md",
     "docs/openclaw-runtime/ralplan/sec-fallback-activation-p9-ralplan.md",
     "docs/openclaw-runtime/scouts/offhours-intelligence-p1-internal-explorer.md",
@@ -159,6 +160,7 @@
     "docs/openclaw-runtime/critics/marketday-report-calendar-p5-implementation-critic.md",
     "docs/openclaw-runtime/critics/exchange-calendar-provider-p6-implementation-critic.md",
     "docs/openclaw-runtime/critics/delivery-observed-audit-p7-implementation-critic.md",
+    "docs/openclaw-runtime/critics/watchdog-delivery-proof-hardening-p7-followup-critic.md",
     "docs/openclaw-runtime/critics/brave-source-recovery-p8-implementation-critic.md",
     "docs/openclaw-runtime/critics/sec-fallback-activation-p9-implementation-critic.md",
     "docs/openclaw-runtime/cleanup/offhours-intelligence-p0-20260419.md",

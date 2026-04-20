@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-19T19:27:09.756993+00:00",
+  "generated_at": "2026-04-20T01:27:24.333541+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "jobs": [
     {
@@ -29,12 +29,12 @@
         "consecutiveErrors": 1,
         "lastDeliveryStatus": "unknown",
         "nextRunAtMs": 1776702600000,
-        "lastError": "cron: job execution timed out",
         "lastRunAtMs": 1776444382205,
         "lastRunStatus": "error",
         "lastStatus": "error",
         "lastDurationMs": 900104,
-        "lastErrorReason": "timeout"
+        "lastErrorReason": "timeout",
+        "runningAtMs": 1776648143916
       }
     },
     {
@@ -63,10 +63,10 @@
       "state": {
         "consecutiveErrors": 0,
         "lastDeliveryStatus": "not-delivered",
-        "lastRunAtMs": 1776609074032,
+        "lastRunAtMs": 1776630683813,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 88050,
+        "lastDurationMs": 78087,
         "lastDelivered": false,
         "nextRunAtMs": 1776690600000
       }
@@ -200,8 +200,8 @@
         "lastDeliveryStatus": "not-requested",
         "consecutiveErrors": 1,
         "nextRunAtMs": 1776661200000,
-        "lastError": "cron: job execution timed out",
-        "lastErrorReason": "timeout"
+        "lastErrorReason": "timeout",
+        "runningAtMs": 1776648143916
       }
     },
     {
