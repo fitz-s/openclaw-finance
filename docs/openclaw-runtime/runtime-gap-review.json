@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-20T14:15:02.748863+00:00",
+  "generated_at": "2026-04-20T22:15:01.824420+00:00",
   "status": "reviewed",
   "unresolved_gaps": [
     "ibkr_client_portal_watchlist_sync_not_fresh",
@@ -21,20 +21,6 @@
     "delivered_count_in_recent_window": 2,
     "reviewed_recent_delivered_runs": [
       {
-        "runAtMs": 1776493884488,
-        "status": "ok",
-        "deliveryStatus": "delivered",
-        "durationMs": 535940,
-        "quality": {
-          "line_count": 19,
-          "char_count": 445,
-          "has_opportunity_first_contract": false,
-          "has_unknown_discovery_section": false,
-          "has_holding_section": false,
-          "noise_tokens": []
-        }
-      },
-      {
         "runAtMs": 1776515491832,
         "status": "ok",
         "deliveryStatus": "delivered",
@@ -47,14 +33,28 @@
           "has_holding_section": false,
           "noise_tokens": []
         }
+      },
+      {
+        "runAtMs": 1776701949649,
+        "status": "ok",
+        "deliveryStatus": "delivered",
+        "durationMs": 115167,
+        "quality": {
+          "line_count": 25,
+          "char_count": 557,
+          "has_opportunity_first_contract": false,
+          "has_unknown_discovery_section": false,
+          "has_holding_section": false,
+          "noise_tokens": []
+        }
       }
     ],
     "latest_product_report": {
-      "generated_at": "2026-04-20T13:48:23.333478Z",
-      "report_hash": "sha256:89ff7f0804bb7db35fe2265490a04b1f088426a30f744b01524d974eed71707b",
+      "generated_at": "2026-04-20T18:18:18.459855Z",
+      "report_hash": "sha256:64b479cf4c170f3e87cc6d22c36378d2bc7c393c874a2351fbdf7c1b94cdf1a5",
       "quality": {
         "line_count": 55,
-        "char_count": 1874,
+        "char_count": 1839,
         "has_opportunity_first_contract": true,
         "has_unknown_discovery_section": true,
         "has_holding_section": true,
@@ -65,8 +65,8 @@
   },
   "wake_threshold_bridge": {
     "current_gate": {
-      "evaluatedAt": "2026-04-20T14:03:48.123503+00:00",
-      "window": "open",
+      "evaluatedAt": "2026-04-20T22:03:07.424530+00:00",
+      "window": "post",
       "shouldSend": false,
       "recommendedReportType": "hold",
       "decisionReason_sanitized": "present"

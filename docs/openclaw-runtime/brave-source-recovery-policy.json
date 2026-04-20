@@ -1,44 +1,19 @@
 {
-  "generated_at": "2026-04-20T16:17:14.592113+00:00",
+  "generated_at": "2026-04-20T22:15:00.737785+00:00",
   "state_boundary": "sanitized_runtime_control_state",
   "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
   "source": "/Users/leofitz/.openclaw/workspace/finance/state/brave-source-recovery-policy.json",
   "exists": true,
   "payload": {
-    "generated_at": "2026-04-20T16:17:14.550720Z",
+    "generated_at": "2026-04-20T22:03:05.567086Z",
     "contract": "brave-source-recovery-policy-v1",
     "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
-    "breaker_open": true,
-    "reason": "recent_brave_quota_or_rate_limit",
-    "breaker_until": "2026-04-20T16:41:57.695422Z",
+    "breaker_open": false,
+    "reason": "clear",
+    "breaker_until": null,
     "cooldown_minutes": 60,
-    "pressure_record_count": 3,
-    "pressure_records": [
-      {
-        "endpoint": "brave/news/search",
-        "status": "rate_limited",
-        "error_class": "throttle_or_quota",
-        "application_error_code": "ErrorResponse",
-        "fetched_at": "2026-04-20T15:41:55.198079Z",
-        "breaker_until": "2026-04-20T16:41:55.198079Z"
-      },
-      {
-        "endpoint": "brave/news/search",
-        "status": "rate_limited",
-        "error_class": "throttle_or_quota",
-        "application_error_code": "ErrorResponse",
-        "fetched_at": "2026-04-20T15:41:56.387444Z",
-        "breaker_until": "2026-04-20T16:41:56.387444Z"
-      },
-      {
-        "endpoint": "brave/news/search",
-        "status": "rate_limited",
-        "error_class": "throttle_or_quota",
-        "application_error_code": "ErrorResponse",
-        "fetched_at": "2026-04-20T15:41:57.695422Z",
-        "breaker_until": "2026-04-20T16:41:57.695422Z"
-      }
-    ],
+    "pressure_record_count": 0,
+    "pressure_records": [],
     "no_execution": true,
     "no_delivery_mutation": true,
     "no_wake_mutation": true,

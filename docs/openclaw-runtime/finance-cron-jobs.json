@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-20T16:17:14.592784+00:00",
+  "generated_at": "2026-04-20T22:15:00.741376+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "jobs": [
     {
@@ -27,13 +27,13 @@
       },
       "state": {
         "consecutiveErrors": 0,
-        "lastDeliveryStatus": "not-delivered",
-        "nextRunAtMs": 1776708900000,
-        "lastRunAtMs": 1776648443940,
+        "lastDeliveryStatus": "delivered",
+        "nextRunAtMs": 1776795300000,
+        "lastRunAtMs": 1776708998867,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 143049,
-        "lastDelivered": false
+        "lastDurationMs": 131168,
+        "lastDelivered": true
       }
     },
     {
@@ -60,15 +60,14 @@
         "message": "【OpenClaw Finance Deterministic Report Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_discord_report_job.py --mode marketday-review\n\nOutput discipline:\n- Return stdout exactly.\n- If stdout is NO_REPLY, return only NO_REPLY.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; OpenClaw delivery handles Discord.\n- Review-only; no execution."
       },
       "state": {
-        "consecutiveErrors": 2,
-        "lastDeliveryStatus": "unknown",
-        "lastRunAtMs": 1776690799838,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 419995,
+        "consecutiveErrors": 0,
+        "lastDeliveryStatus": "delivered",
+        "lastRunAtMs": 1776701949649,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 115167,
         "nextRunAtMs": 1776777000000,
-        "lastErrorReason": "timeout",
-        "lastError": "cron: job execution timed out"
+        "lastDelivered": true
       }
     },
     {
@@ -160,13 +159,13 @@
         "message": "【OpenClaw Finance Deterministic Scanner Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_scanner_job.py --mode market-hours-scan\n\nContract markers:\n- finance_scanner_job.py runs finance_llm_context_pack.py, query_pack_planner.py, finance_worker.py, finance_parent_market_ingest_cutover.py, and gate_evaluator.py.\n- Read-only scanner context is /Users/leofitz/.openclaw/workspace/finance/state/llm-job-context/scanner.json.\n- Context pack is a view cache and must have pack_is_not_authority=true.\n- QueryPack is not evidence; object_links and unknown_discovery_exhausted_reason remain required contract fields.\n- unknown_discovery cannot be satisfied by held/watchlist tickers.\n- unknown_discovery_minimum_attempts remains enforced by scanner.json/query_pack_planner.py.\n- 不得把已在 watchlist/held 的标的当作 unknown_discovery。\n\nOutput discipline:\n- Return stdout exactly.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; delivery.mode is none.\n- No execution; review-only."
       },
       "state": {
-        "lastRunAtMs": 1776700800023,
+        "lastRunAtMs": 1776721200025,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 249661,
+        "lastDurationMs": 92244,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
-        "nextRunAtMs": 1776702000000,
+        "nextRunAtMs": 1776776400000,
         "lastDelivered": false
       }
     },
@@ -193,15 +192,14 @@
         "message": "【OpenClaw Finance Deterministic Scanner Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_scanner_job.py --mode offhours-scan\n\nContract markers:\n- finance_scanner_job.py runs finance_llm_context_pack.py, query_pack_planner.py, finance_worker.py, finance_parent_market_ingest_cutover.py, and gate_evaluator.py.\n- Read-only scanner context is /Users/leofitz/.openclaw/workspace/finance/state/llm-job-context/scanner.json.\n- Context pack is a view cache and must have pack_is_not_authority=true.\n- QueryPack is not evidence; object_links and unknown_discovery_exhausted_reason remain required contract fields.\n- unknown_discovery cannot be satisfied by held/watchlist tickers.\n- unknown_discovery_minimum_attempts remains enforced by scanner.json/query_pack_planner.py.\n- 不得把已在 watchlist/held 的标的当作 unknown_discovery。\n\nOutput discipline:\n- Return stdout exactly.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; delivery.mode is none.\n- No execution; review-only."
       },
       "state": {
-        "lastRunAtMs": 1776686400025,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 300014,
-        "lastDeliveryStatus": "not-requested",
-        "consecutiveErrors": 1,
-        "nextRunAtMs": 1776722400000,
-        "lastError": "cron: job execution timed out",
-        "lastErrorReason": "timeout"
+        "lastRunAtMs": 1776722400018,
+        "lastRunStatus": "ok",
+        "lastStatus": "ok",
+        "lastDurationMs": 257276,
+        "lastDeliveryStatus": "not-delivered",
+        "consecutiveErrors": 0,
+        "nextRunAtMs": 1776733200000,
+        "lastDelivered": false
       }
     },
     {

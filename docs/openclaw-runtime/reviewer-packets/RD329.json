@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-04-20T22:15:01.110324Z",
+  "generated_at": "2026-04-20T22:15:01.074438Z",
   "contract": "finance-reviewer-report-packet-v1",
-  "report_id": "R6A07",
-  "source_file": "<finance>/state/report-reader/R6A07.json",
+  "report_id": "RD329",
+  "source_file": "<finance>/state/report-reader/RD329.json",
   "sanitization": {
     "discord_conversation_included": false,
     "discord_thread_ids_included": false,
@@ -28,26 +28,26 @@
     },
     "line_to_claim_refs": {
       "available": true,
-      "line_count": 144,
-      "matched_line_count": 15,
+      "line_count": 143,
+      "matched_line_count": 0,
       "match_method": "heuristic_subject_match"
     }
   },
   "operator_surface": {
     "operator_surface_available": true,
     "surface_source": "state/finance-decision-report-envelope.json",
-    "discord_primary_markdown": "Finance｜资本议程 | 09:25 ET | R6A07\n\n这次只看 1 件事：\n- A1 反证升级｜板块方向冲突（16次），先判断值不值得进入深挖；不是下单建议。\n\nFact\n- 当前资本议程共有 6 项，A1 优先级最高：板块方向冲突（16次）。\n- T1 当前仍是 TSLA；本轮判断仍是 review-only，不触发新动作。\n- Macro triad：Gold +0.47%(risk-on/up) / Bitcoin +1.72%(risk-on/up) / SPX +1.20%(risk-on/up)。\n- I1 板块方向冲突；命中 39 次。\n\nInterpretation\n- 这是 attention allocation 问题，不是执行问题。\n- 更像“本周该不该占用注意力”，不是“现有 book 该不该立刻替代”。\n\nTo Verify\n- 当前 thesis 在 16 次反证后是否仍成立\n\n对象\n- A1 反证升级｜板块方向冲突（16次）\n- T1 现有 Thesis｜TSLA\n- I1 反证｜板块方向冲突\n- I2 反证｜期权/持仓数据不新鲜\n\n追问：why A1 / compare A1 T1 / challenge A1 / sources A1 / expand R6A07",
-    "discord_thread_seed_markdown": "R6A07｜深挖入口\n\n对象卡\n- A1 反证升级｜板块方向冲突（16次）\n  作用：本周需要判断是否值得占用 attention slot\n- T1 现有 Thesis｜TSLA\n  作用：当前主轴；状态=活跃\n- I1 反证｜板块方向冲突\n  作用：削弱当前证据强度；hit_count=39\n- I2 反证｜期权/持仓数据不新鲜\n  作用：限制当前结论置信度\n\n可直接追问\n- why A1\n- compare A1 T1\n- challenge A1\n- sources A1\n- expand R6A07",
-    "discord_live_board_markdown": "Finance｜Live Board\n\n1) sector rotation proxy 冲突（16次） | escalation\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：板块轮动冲突（16次）\nEvidence：lanes=0; sources=0; blocker=none\nVerify：当前 thesis 在 16 次反证后是否仍成立\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:3035aaf653eabd8b / challenge / sources\n\n2) 未知发现改道 | escalation\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：未知发现方向冲突（16次）\nEvidence：lanes=0; sources=0; blocker=none\nVerify：当前 thesis 在 16 次反证后是否仍成立\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:cc363e8dcf2b8bad / challenge / sources\n\n3) 板块方向冲突（16次） | escalation\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：板块方向冲突（16次）\nEvidence：lanes=0; sources=0; blocker=none\nVerify：当前 thesis 在 16 次反证后是否仍成立\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:5caa5911dd2ed85b / challenge / sources\n\n还有 1 个 campaign；在线程问 expand board。\n\nMacro triad：Gold +0.47%(risk-on/up) / Bitcoin +1.72%(risk-on/up) / SPX +1.20%(risk-on/up)。",
-    "discord_scout_board_markdown": "Finance｜Peacetime Board\n\n当前没有 scout campaign。\n\nMacro triad：Gold +0.47%(risk-on/up) / Bitcoin +1.72%(risk-on/up) / SPX +1.20%(risk-on/up)。",
-    "discord_risk_board_markdown": "Finance｜Risk / Undercurrent Board\n\n1) 未知发现｜CNBC/US | review\nImplication：利好/利空还不能定；当前真正影响的是是否把注意力从现有主轴转向 CNBC/US。\nWhy：未知发现方向冲突（39次） 连续命中，正在挑战当前注意力分配；涉及 CNBC/US；source diversity=1, contradiction_load=0\nEvidence：lanes=1; sources=1; score=0.642; degraded_sources=1; blocker=source_diversity_lt_2\nVerify：先看 CNBC/US 的价格/量能是否二次确认; 下一次 watcher update 是否同向\nUnknown：缺价格/量能确认：Narrative-only claim lacks price/volume confirmation.\nAsk：why campaign:8e4fd77c9ebd287d / challenge / sources\n\n2) 板块方向冲突（39次） | review\nImplication：利好/利空还不能定；当前真正影响的是是否把注意力从现有主轴转向 CNBC/US。\nWhy：板块方向冲突（39次） 连续命中，正在挑战当前注意力分配；涉及 CNBC/US；source diversity=1, contradiction_load=0\nEvidence：lanes=1; sources=1; score=0.642; degraded_sources=1; blocker=source_diversity_lt_2\nVerify：先看 CNBC/US 的价格/量能是否二次确认; 下一次 watcher update 是否同向\nUnknown：缺价格/量能确认：Narrative-only claim lacks price/volume confirmation.\nAsk：why campaign:d49391509e7af2d3 / challenge / sources\n\n3) 板块轮动冲突（39次） | review\nImplication：利好/利空还不能定；当前真正影响的是是否把注意力从现有主轴转向 CNBC/US。\nWhy：板块轮动冲突（39次） 连续命中，正在挑战当前注意力分配；涉及 CNBC/US；source diversity=1, contradiction_load=0\nEvidence：lanes=1; sources=1; score=0.642; degraded_sources=1; blocker=source_diversity_lt_2\nVerify：先看 CNBC/US 的价格/量能是否二次确认; 下一次 watcher update 是否同向\nUnknown：缺价格/量能确认：Narrative-only claim lacks price/volume confirmation.\nAsk：why campaign:460809ba4f043f3e / challenge / sources\n\n还有 5 个 campaign；在线程问 expand board。\n\nMacro triad：Gold +0.47%(risk-on/up) / Bitcoin +1.72%(risk-on/up) / SPX +1.20%(risk-on/up)。"
+    "discord_primary_markdown": "Finance｜资本议程 | 12:20 ET | RD329\n\n这次只看 1 件事：\n- A1 反证升级｜板块方向冲突（16次），先判断值不值得进入深挖；不是下单建议。\n\nFact\n- 当前资本议程共有 6 项，A1 优先级最高：板块方向冲突（16次）。\n- T1 当前仍是 TSLA；本轮判断仍是 review-only，不触发新动作。\n- Macro triad：Gold -0.73%(down/risk-off) / Bitcoin +2.26%(risk-on/up) / SPX -0.35%(flat)。\n- I1 数据源中断；命中 6 次。\n\nInterpretation\n- 这是 attention allocation 问题，不是执行问题。\n- 更像“本周该不该占用注意力”，不是“现有 book 该不该立刻替代”。\n\nTo Verify\n- 当前 thesis 在 16 次反证后是否仍成立\n\n对象\n- A1 反证升级｜板块方向冲突（16次）\n- T1 现有 Thesis｜TSLA\n- I1 反证｜数据源中断\n- I2 反证｜期权/持仓数据不新鲜\n\n追问：why A1 / compare A1 T1 / challenge A1 / sources A1 / expand RD329",
+    "discord_thread_seed_markdown": "RD329｜深挖入口\n\n对象卡\n- A1 反证升级｜板块方向冲突（16次）\n  作用：本周需要判断是否值得占用 attention slot\n- T1 现有 Thesis｜TSLA\n  作用：当前主轴；状态=活跃\n- I1 反证｜数据源中断\n  作用：削弱当前证据强度；hit_count=6\n- I2 反证｜期权/持仓数据不新鲜\n  作用：限制当前结论置信度\n\n可直接追问\n- why A1\n- compare A1 T1\n- challenge A1\n- sources A1\n- expand RD329",
+    "discord_live_board_markdown": "Finance｜Live Board\n\n1) sector rotation proxy 冲突（16次） | escalation\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：板块轮动冲突（16次）\nEvidence：lanes=0; sources=0; blocker=none\nVerify：当前 thesis 在 16 次反证后是否仍成立\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:3035aaf653eabd8b / challenge / sources\n\n2) 未知发现改道 | escalation\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：未知发现方向冲突（16次）\nEvidence：lanes=0; sources=0; blocker=none\nVerify：当前 thesis 在 16 次反证后是否仍成立\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:cc363e8dcf2b8bad / challenge / sources\n\n3) 板块方向冲突（16次） | escalation\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：板块方向冲突（16次）\nEvidence：lanes=0; sources=0; blocker=none\nVerify：当前 thesis 在 16 次反证后是否仍成立\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:5caa5911dd2ed85b / challenge / sources\n\n还有 1 个 campaign；在线程问 expand board。\n\nMacro triad：Gold -0.73%(down/risk-off) / Bitcoin +2.26%(risk-on/up) / SPX -0.35%(flat)。",
+    "discord_scout_board_markdown": "Finance｜Peacetime Board\n\n当前没有 scout campaign。\n\nMacro triad：Gold -0.73%(down/risk-off) / Bitcoin +2.26%(risk-on/up) / SPX -0.35%(flat)。",
+    "discord_risk_board_markdown": "Finance｜Risk / Undercurrent Board\n\n1) Packet 新鲜度反证（6次） | accumulating\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：Packet 新鲜度反证（6次） 连续命中，正在挑战当前注意力分配\nEvidence：lanes=0; sources=0; score=0.322; blocker=source_diversity_lt_2\nVerify：下一次 watcher update 是否同向; 相关 scenario/capital edge 是否增强\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:63f81d72aeba6d14 / challenge / sources\n\n2) 官方修正反证（6次） | accumulating\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：官方修正反证（6次） 连续命中，正在挑战当前注意力分配\nEvidence：lanes=0; sources=0; score=0.322; blocker=source_diversity_lt_2\nVerify：下一次 watcher update 是否同向; 相关 scenario/capital edge 是否增强\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:1be3c7c5dd5f2914 / challenge / sources\n\n3) 数据源中断（6次） | accumulating\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：数据源中断（6次） 连续命中，正在挑战当前注意力分配\nEvidence：lanes=0; sources=0; score=0.322; blocker=source_diversity_lt_2\nVerify：下一次 watcher update 是否同向; 相关 scenario/capital edge 是否增强\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:b68715f3e5c89c69 / challenge / sources\n\n还有 2 个 campaign；在线程问 expand board。\n\nMacro triad：Gold -0.73%(down/risk-off) / Bitcoin +2.26%(risk-on/up) / SPX -0.35%(flat)。"
   },
   "bundle_summary": {
-    "bundle_id": "rb:R6A07",
-    "generated_at": "2026-04-20T13:25:41.356476Z",
+    "bundle_id": "rb:RD329",
+    "generated_at": "2026-04-20T16:20:40.881667Z",
     "report_hash_present": true,
-    "object_card_count": 73,
-    "campaign_count": 12,
+    "object_card_count": 70,
+    "campaign_count": 9,
     "starter_queries": [
       "why A1",
       "challenge A1",
@@ -57,9 +57,9 @@
       "sources A2"
     ],
     "followup_digest": [
-      "R6A07: review-only; explain/compare/challenge/source trace only; no execution.",
+      "RD329: review-only; explain/compare/challenge/source trace only; no execution.",
       "A1: 反证升级｜板块方向冲突（16次）",
-      "Main invalidators: I1 direction_conflict:theme:broad_market:sector hit_count=39；I2 direction_conflict:theme:sector_rotation_proxy hit_count=39；I3 direction_conflict:theme:unknown_discovery hit_count=39；I4 source outage hit_count=34；I5 official correction hit_count=34"
+      "Main invalidators: I1 source outage hit_count=6；I2 official correction hit_count=6；I3 packet staleness hit_count=6"
     ],
     "object_alias_map_sample": {
       "A1": "反证升级｜板块方向冲突（16次）",
@@ -90,12 +90,12 @@
   },
   "decision_log_summary": {
     "available": true,
-    "created_at": "2026-04-20T13:25:41.263014Z",
-    "decision_id": "decision:a7e670ae92c78b04eda4",
-    "report_id": "R6A07",
+    "created_at": "2026-04-20T16:20:40.788023Z",
+    "decision_id": "decision:df0f1c842c2605b7b6bd",
+    "report_id": "RD329",
     "operator_action": "logged_no_trade",
     "execution_decision": "none",
-    "judgment_id": "judgment:packet:market-ingest:SPY:2026-04-20T13:24:44.825513Z:no-trade",
+    "judgment_id": "judgment:packet:market-ingest:SPY:2026-04-20T15:42:07.971410Z:no-trade",
     "policy_version": "finance-semantic-v1",
     "wake_class": "PACKET_UPDATE_ONLY",
     "wake_dispatch_action": "persist_only",
@@ -103,7 +103,7 @@
       "thesis_refs": 20,
       "scenario_refs": 8,
       "opportunity_candidate_refs": 0,
-      "invalidator_refs": 6,
+      "invalidator_refs": 3,
       "capital_agenda_refs": 0,
       "displacement_case_refs": 0
     },
@@ -360,17 +360,17 @@
       "known_unknowns": []
     },
     {
-      "directional_implication": "利好/利空还不能定；当前真正影响的是是否把注意力从现有主轴转向 CNBC/US。",
-      "stage": "review",
+      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
+      "stage": "accumulating",
       "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
       "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
-      "human_title": "未知发现｜CNBC/US",
-      "thread_key": "campaign-thread:8e4fd77c9ebd287d",
-      "campaign_id": "campaign:8e4fd77c9ebd287d",
-      "why_now_delta": "未知发现方向冲突（39次） 持续累积，需要判断是否影响 attention slot",
+      "human_title": "Packet 新鲜度反证（6次）",
+      "thread_key": "campaign-thread:63f81d72aeba6d14",
+      "campaign_id": "campaign:63f81d72aeba6d14",
+      "why_now_delta": "Packet 新鲜度反证（6次） 持续累积，需要判断是否影响 attention slot",
       "campaign_type": "undercurrent_risk",
       "board_class": "risk",
-      "priority_score": 39.0,
+      "priority_score": 6.0,
       "confirmations_needed": [
         "下一次 watcher update 是否同向",
         "相关 scenario/capital edge 是否增强"
@@ -380,26 +380,20 @@
         "相关机会或 thesis 证据被官方修正",
         "来源新鲜度降为 stale"
       ],
-      "known_unknowns": [
-        "Narrative-only claim lacks price/volume confirmation.",
-        "Issuer/security claim lacks official filing or issuer confirmation.",
-        "Claim confidence is weak; needs triangulation or contradiction check.",
-        "Claim confidence is weak; needs triangulation or contradiction check.",
-        "Issuer/security claim lacks official filing or issuer confirmation."
-      ]
+      "known_unknowns": []
     },
     {
-      "directional_implication": "利好/利空还不能定；当前真正影响的是是否把注意力从现有主轴转向 CNBC/US。",
-      "stage": "review",
+      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
+      "stage": "accumulating",
       "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
       "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
-      "human_title": "板块方向冲突（39次）",
-      "thread_key": "campaign-thread:d49391509e7af2d3",
-      "campaign_id": "campaign:d49391509e7af2d3",
-      "why_now_delta": "板块方向冲突（39次） 持续累积，需要判断是否影响 attention slot",
+      "human_title": "官方修正反证（6次）",
+      "thread_key": "campaign-thread:1be3c7c5dd5f2914",
+      "campaign_id": "campaign:1be3c7c5dd5f2914",
+      "why_now_delta": "官方修正反证（6次） 持续累积，需要判断是否影响 attention slot",
       "campaign_type": "undercurrent_risk",
       "board_class": "risk",
-      "priority_score": 39.0,
+      "priority_score": 6.0,
       "confirmations_needed": [
         "下一次 watcher update 是否同向",
         "相关 scenario/capital edge 是否增强"
@@ -409,26 +403,20 @@
         "相关机会或 thesis 证据被官方修正",
         "来源新鲜度降为 stale"
       ],
-      "known_unknowns": [
-        "Narrative-only claim lacks price/volume confirmation.",
-        "Issuer/security claim lacks official filing or issuer confirmation.",
-        "Claim confidence is weak; needs triangulation or contradiction check.",
-        "Claim confidence is weak; needs triangulation or contradiction check.",
-        "Issuer/security claim lacks official filing or issuer confirmation."
-      ]
+      "known_unknowns": []
     },
     {
-      "directional_implication": "利好/利空还不能定；当前真正影响的是是否把注意力从现有主轴转向 CNBC/US。",
-      "stage": "review",
+      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
+      "stage": "accumulating",
       "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
       "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
-      "human_title": "板块轮动冲突（39次）",
-      "thread_key": "campaign-thread:460809ba4f043f3e",
-      "campaign_id": "campaign:460809ba4f043f3e",
-      "why_now_delta": "板块轮动冲突（39次） 持续累积，需要判断是否影响 attention slot",
+      "human_title": "数据源中断（6次）",
+      "thread_key": "campaign-thread:b68715f3e5c89c69",
+      "campaign_id": "campaign:b68715f3e5c89c69",
+      "why_now_delta": "数据源中断（6次） 持续累积，需要判断是否影响 attention slot",
       "campaign_type": "undercurrent_risk",
       "board_class": "risk",
-      "priority_score": 39.0,
+      "priority_score": 6.0,
       "confirmations_needed": [
         "下一次 watcher update 是否同向",
         "相关 scenario/capital edge 是否增强"
@@ -438,58 +426,45 @@
         "相关机会或 thesis 证据被官方修正",
         "来源新鲜度降为 stale"
       ],
-      "known_unknowns": [
-        "Narrative-only claim lacks price/volume confirmation.",
-        "Issuer/security claim lacks official filing or issuer confirmation.",
-        "Claim confidence is weak; needs triangulation or contradiction check.",
-        "Claim confidence is weak; needs triangulation or contradiction check.",
-        "Issuer/security claim lacks official filing or issuer confirmation."
-      ]
+      "known_unknowns": []
     },
     {
-      "directional_implication": "利好/利空还不能定；当前真正影响的是是否把注意力从现有主轴转向 CNBC/US。",
-      "stage": "review",
-      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
-      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
-      "human_title": "Packet 新鲜度反证（34次）",
-      "thread_key": "campaign-thread:bdb4fc54781b1d92",
-      "campaign_id": "campaign:bdb4fc54781b1d92",
-      "why_now_delta": "Packet 新鲜度反证（34次） 持续累积，需要判断是否影响 attention slot",
-      "campaign_type": "undercurrent_risk",
+      "directional_implication": "影响是候选议程的优先级变化；方向结论需要验证。",
+      "stage": "scout",
+      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
+      "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
+      "human_title": "event driven bucket has uncovered hedge coverage",
+      "thread_key": "campaign-thread:54d438c528ec3820",
+      "campaign_id": "campaign:54d438c528ec3820",
+      "why_now_delta": "event driven bucket has uncovered hedge coverage",
+      "campaign_type": "hedge_gap",
       "board_class": "risk",
-      "priority_score": 34.0,
+      "priority_score": 3.0,
       "confirmations_needed": [
-        "下一次 watcher update 是否同向",
-        "相关 scenario/capital edge 是否增强"
+        "what hedge options exist for event driven (uncovered)?"
       ],
       "kill_switches": [
-        "后续两次扫描不再命中",
-        "相关机会或 thesis 证据被官方修正",
-        "来源新鲜度降为 stale"
+        "来源降级或官方修正",
+        "连续两次 watcher update 不再支持",
+        "与现有 book 重叠但无新增边际价值"
       ],
-      "known_unknowns": [
-        "Narrative-only claim lacks price/volume confirmation.",
-        "Issuer/security claim lacks official filing or issuer confirmation.",
-        "Claim confidence is weak; needs triangulation or contradiction check.",
-        "Claim confidence is weak; needs triangulation or contradiction check.",
-        "Issuer/security claim lacks official filing or issuer confirmation."
-      ]
+      "known_unknowns": []
     }
   ],
   "information_acquisition_snapshot": {
-    "generated_at": "2026-04-20T22:15:01.109773Z",
+    "generated_at": "2026-04-20T22:15:01.074130Z",
     "scope": "exact report-time archive snapshot",
     "source_health": {
       "available": true,
-      "generated_at": "2026-04-20T13:25:40.746810Z",
-      "status": "degraded",
+      "generated_at": "2026-04-20T15:41:57.916255Z",
+      "status": "pass",
       "source_count": 16,
       "summary": {
         "freshness": {
           "fresh": 8,
           "aging": 0,
-          "stale": 1,
-          "unknown": 7
+          "stale": 0,
+          "unknown": 8
         },
         "latency": {
           "ok": 1,
@@ -538,12 +513,14 @@
         {
           "source_id": "source:sec_edgar",
           "freshness_status": "fresh",
-          "latency_status": "degraded",
+          "latency_status": "breached",
           "schema_status": "ok",
           "validation_status": "pass",
           "rights_status": "ok",
           "coverage_status": "ok",
-          "breach_reasons": [],
+          "breach_reasons": [
+            "latency:breached"
+          ],
           "last_seen_at_present": true,
           "last_success_at_present": true
         },
@@ -564,19 +541,17 @@
         },
         {
           "source_id": "source:portfolio_flex",
-          "freshness_status": "stale",
-          "latency_status": "breached",
+          "freshness_status": "fresh",
+          "latency_status": "degraded",
           "schema_status": "ok",
           "validation_status": "pass",
           "rights_status": "restricted",
           "coverage_status": "ok",
           "breach_reasons": [
-            "freshness:stale",
-            "latency:breached",
             "rights:restricted"
           ],
           "last_seen_at_present": true,
-          "last_success_at_present": false
+          "last_success_at_present": true
         },
         {
           "source_id": "source:yfinance",
@@ -609,16 +584,17 @@
         },
         {
           "source_id": "source:unknown_web",
-          "freshness_status": "fresh",
+          "freshness_status": "unknown",
           "latency_status": "unknown",
           "schema_status": "ok",
           "validation_status": "pass",
           "rights_status": "unknown",
           "coverage_status": "ok",
           "breach_reasons": [
-            "rights_unknown"
+            "freshness:unknown",
+            "rights:unknown"
           ],
-          "last_seen_at_present": true,
+          "last_seen_at_present": false,
           "last_success_at_present": false
         },
         {
@@ -676,7 +652,9 @@
           "validation_status": "pass",
           "rights_status": "ok",
           "coverage_status": "ok",
-          "breach_reasons": [],
+          "breach_reasons": [
+            "no_source_atoms_in_reducer"
+          ],
           "last_seen_at_present": true,
           "last_success_at_present": true
         },
@@ -740,215 +718,30 @@
     },
     "source_atom_summary": {
       "available": true,
-      "generated_at": "2026-04-20T13:25:40.328133Z",
+      "generated_at": "2026-04-20T16:20:40.362847Z",
       "status": "pass",
-      "atom_count": 2,
-      "by_source_lane": {
-        "news_policy_narrative": 2
-      },
-      "by_compliance_class": {
-        "unknown": 2
-      },
-      "by_candidate_type": {
-        "unknown": 2
-      },
-      "atoms": [
-        {
-          "atom_id": "atom:12436ab7e8b64017707e",
-          "source_id": "source:unknown_web",
-          "source_class": "untrusted_web",
-          "source_lane": "news_policy_narrative",
-          "candidate_type": null,
-          "discovery_scope": null,
-          "published_at": "2026-04-19T22:07:43Z",
-          "observed_at": "2026-04-19T22:07:43Z",
-          "ingested_at": "2026-04-20T13:09:12.720076Z",
-          "event_time": "2026-04-19T22:07:43Z",
-          "symbol_candidates": [
-            "CNBC",
-            "S",
-            "U"
-          ],
-          "freshness_budget_seconds": 0,
-          "reliability_score": 0.2,
-          "uniqueness_score": 0.1,
-          "compliance_class": "unknown",
-          "raw_ref": "finance-scan:emergency-news-5e779b4253da4b60",
-          "point_in_time_hash_present": true,
-          "raw_snippet_included": false,
-          "raw_snippet_redaction_reason": "Raw snippets are excluded from reviewer packets, especially for licensed/restricted sources."
-        },
-        {
-          "atom_id": "atom:c6f7292386e2907c1bb8",
-          "source_id": "source:unknown_web",
-          "source_class": "untrusted_web",
-          "source_lane": "news_policy_narrative",
-          "candidate_type": null,
-          "discovery_scope": null,
-          "published_at": "2026-04-19T23:02:54Z",
-          "observed_at": "2026-04-19T23:02:54Z",
-          "ingested_at": "2026-04-20T13:09:12.720076Z",
-          "event_time": "2026-04-19T23:02:54Z",
-          "symbol_candidates": [
-            "US"
-          ],
-          "freshness_budget_seconds": 0,
-          "reliability_score": 0.2,
-          "uniqueness_score": 0.1,
-          "compliance_class": "unknown",
-          "raw_ref": "finance-scan:emergency-news-87b7d5836c64d16c",
-          "point_in_time_hash_present": true,
-          "raw_snippet_included": false,
-          "raw_snippet_redaction_reason": "Raw snippets are excluded from reviewer packets, especially for licensed/restricted sources."
-        }
-      ]
+      "atom_count": 0,
+      "by_source_lane": {},
+      "by_compliance_class": {},
+      "by_candidate_type": {},
+      "atoms": []
     },
     "claim_graph_summary": {
       "available": true,
-      "generated_at": "2026-04-20T13:25:40.370246Z",
+      "generated_at": "2026-04-20T16:20:40.405158Z",
       "status": "pass",
-      "claim_count": 2,
-      "by_direction": {
-        "ambiguous": 2
-      },
-      "by_source_lane": {
-        "news_policy_narrative": 2
-      },
-      "claims": [
-        {
-          "claim_id": "claim:75cb2e4986c791b5654c",
-          "atom_id": "atom:12436ab7e8b64017707e",
-          "subject": "CNBC",
-          "predicate": "mentions",
-          "direction": "ambiguous",
-          "horizon": "multi_day",
-          "certainty": "weak",
-          "event_class": "narrative",
-          "source_lane": "news_policy_narrative",
-          "why_it_matters_tags": [
-            "narrative"
-          ],
-          "capital_relevance_tags": [
-            "CNBC",
-            "S",
-            "U"
-          ],
-          "supports_count": 0,
-          "contradicts_count": 0,
-          "object_preview": "Oil prices jump 7% after Iran and U.S. attack ships as tensions escalate over Strait of Hormuz - CNBC"
-        },
-        {
-          "claim_id": "claim:ab84ca7b9de4b3ae78e9",
-          "atom_id": "atom:c6f7292386e2907c1bb8",
-          "subject": "US",
-          "predicate": "mentions",
-          "direction": "ambiguous",
-          "horizon": "multi_day",
-          "certainty": "weak",
-          "event_class": "narrative",
-          "source_lane": "news_policy_narrative",
-          "why_it_matters_tags": [
-            "narrative"
-          ],
-          "capital_relevance_tags": [
-            "US"
-          ],
-          "supports_count": 0,
-          "contradicts_count": 0,
-          "object_preview": "Trump says US seized Iranian ship trying to get past blockade near Hormuz - Al Jazeera"
-        }
-      ]
+      "claim_count": 0,
+      "by_direction": {},
+      "by_source_lane": {},
+      "claims": []
     },
     "context_gap_summary": {
       "available": true,
-      "generated_at": "2026-04-20T13:25:40.407528Z",
+      "generated_at": "2026-04-20T16:20:40.447462Z",
       "status": "pass",
-      "gap_count": 6,
-      "by_missing_lane": {
-        "derived_context": 2,
-        "corp_filing_ir": 2,
-        "market_structure": 2
-      },
-      "gaps": [
-        {
-          "gap_id": "gap:2b1d6ad5fad515b37381",
-          "campaign_id": null,
-          "claim_id": "claim:ab84ca7b9de4b3ae78e9",
-          "subject": "US",
-          "missing_lane": "derived_context",
-          "why_load_bearing": "Claim confidence is weak; needs triangulation or contradiction check.",
-          "which_source_could_close_it": [
-            "source:capital_graph",
-            "source:scenario_exposure"
-          ],
-          "cost_of_ignorance": "low"
-        },
-        {
-          "gap_id": "gap:709c83a1fea117a07608",
-          "campaign_id": null,
-          "claim_id": "claim:ab84ca7b9de4b3ae78e9",
-          "subject": "US",
-          "missing_lane": "corp_filing_ir",
-          "why_load_bearing": "Issuer/security claim lacks official filing or issuer confirmation.",
-          "which_source_could_close_it": [
-            "source:sec_edgar",
-            "source:issuer_press_release"
-          ],
-          "cost_of_ignorance": "medium"
-        },
-        {
-          "gap_id": "gap:9812286baedc596e2d5c",
-          "campaign_id": null,
-          "claim_id": "claim:75cb2e4986c791b5654c",
-          "subject": "CNBC",
-          "missing_lane": "market_structure",
-          "why_load_bearing": "Narrative-only claim lacks price/volume confirmation.",
-          "which_source_could_close_it": [
-            "source:yfinance",
-            "source:exchange_market_data"
-          ],
-          "cost_of_ignorance": "medium"
-        },
-        {
-          "gap_id": "gap:b5f5a626f1920fc8fb41",
-          "campaign_id": null,
-          "claim_id": "claim:75cb2e4986c791b5654c",
-          "subject": "CNBC",
-          "missing_lane": "corp_filing_ir",
-          "why_load_bearing": "Issuer/security claim lacks official filing or issuer confirmation.",
-          "which_source_could_close_it": [
-            "source:sec_edgar",
-            "source:issuer_press_release"
-          ],
-          "cost_of_ignorance": "medium"
-        },
-        {
-          "gap_id": "gap:dc5a4415d78bf11aae1b",
-          "campaign_id": null,
-          "claim_id": "claim:75cb2e4986c791b5654c",
-          "subject": "CNBC",
-          "missing_lane": "derived_context",
-          "why_load_bearing": "Claim confidence is weak; needs triangulation or contradiction check.",
-          "which_source_could_close_it": [
-            "source:capital_graph",
-            "source:scenario_exposure"
-          ],
-          "cost_of_ignorance": "low"
-        },
-        {
-          "gap_id": "gap:e2fdfc2a5f899498fa5f",
-          "campaign_id": null,
-          "claim_id": "claim:ab84ca7b9de4b3ae78e9",
-          "subject": "US",
-          "missing_lane": "market_structure",
-          "why_load_bearing": "Narrative-only claim lacks price/volume confirmation.",
-          "which_source_could_close_it": [
-            "source:yfinance",
-            "source:exchange_market_data"
-          ],
-          "cost_of_ignorance": "medium"
-        }
-      ]
+      "gap_count": 0,
+      "by_missing_lane": {},
+      "gaps": []
     },
     "known_limitations": [
       "Snapshot came from local report-time archive when available.",
@@ -957,7 +750,7 @@
     ],
     "options_iv_surface_summary": {
       "available": true,
-      "generated_at": "2026-04-20T13:25:40.244647Z",
+      "generated_at": "2026-04-20T16:20:40.274661Z",
       "status": "degraded",
       "summary": {
         "symbol_count": 0,
