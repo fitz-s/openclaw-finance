@@ -1,9 +1,8 @@
 {
-  "generated_at": "2026-04-17T22:15:01.941368+00:00",
+  "generated_at": "2026-04-20T14:15:02.748863+00:00",
   "status": "reviewed",
   "unresolved_gaps": [
     "ibkr_client_portal_watchlist_sync_not_fresh",
-    "legacy_threshold_bridge_still_present",
     "parent_market_ingest_dependency_external_to_repo"
   ],
   "watchlist": {
@@ -19,16 +18,16 @@
     "review": "IBKR Client Portal watchlist sync is best-effort and currently depends on local Client Portal authentication. Flex holdings and local pinned symbols keep the universe usable when IBKR watchlist fetch is unavailable."
   },
   "report_usefulness": {
-    "delivered_count_in_recent_window": 12,
+    "delivered_count_in_recent_window": 2,
     "reviewed_recent_delivered_runs": [
       {
-        "runAtMs": 1776374653168,
+        "runAtMs": 1776493884488,
         "status": "ok",
         "deliveryStatus": "delivered",
-        "durationMs": 162921,
+        "durationMs": 535940,
         "quality": {
-          "line_count": 28,
-          "char_count": 681,
+          "line_count": 19,
+          "char_count": 445,
           "has_opportunity_first_contract": false,
           "has_unknown_discovery_section": false,
           "has_holding_section": false,
@@ -36,55 +35,13 @@
         }
       },
       {
-        "runAtMs": 1776431474763,
+        "runAtMs": 1776515491832,
         "status": "ok",
         "deliveryStatus": "delivered",
-        "durationMs": 112675,
+        "durationMs": 132158,
         "quality": {
-          "line_count": 28,
-          "char_count": 710,
-          "has_opportunity_first_contract": false,
-          "has_unknown_discovery_section": false,
-          "has_holding_section": false,
-          "noise_tokens": []
-        }
-      },
-      {
-        "runAtMs": 1776440814804,
-        "status": "ok",
-        "deliveryStatus": "delivered",
-        "durationMs": 152212,
-        "quality": {
-          "line_count": 28,
-          "char_count": 758,
-          "has_opportunity_first_contract": false,
-          "has_unknown_discovery_section": false,
-          "has_holding_section": false,
-          "noise_tokens": []
-        }
-      },
-      {
-        "runAtMs": 1776447832394,
-        "status": "ok",
-        "deliveryStatus": "delivered",
-        "durationMs": 221248,
-        "quality": {
-          "line_count": 28,
-          "char_count": 758,
-          "has_opportunity_first_contract": false,
-          "has_unknown_discovery_section": false,
-          "has_holding_section": false,
-          "noise_tokens": []
-        }
-      },
-      {
-        "runAtMs": 1776463593243,
-        "status": "ok",
-        "deliveryStatus": "delivered",
-        "durationMs": 200438,
-        "quality": {
-          "line_count": 28,
-          "char_count": 757,
+          "line_count": 27,
+          "char_count": 686,
           "has_opportunity_first_contract": false,
           "has_unknown_discovery_section": false,
           "has_holding_section": false,
@@ -93,11 +50,11 @@
       }
     ],
     "latest_product_report": {
-      "generated_at": "2026-04-17T22:08:55.755646Z",
-      "report_hash": "sha256:f8d6475a138a7c5701f98eb244e6c0a111a701ba36f411c1e55af9d0b7c658c6",
+      "generated_at": "2026-04-20T13:48:23.333478Z",
+      "report_hash": "sha256:89ff7f0804bb7db35fe2265490a04b1f088426a30f744b01524d974eed71707b",
       "quality": {
-        "line_count": 57,
-        "char_count": 2588,
+        "line_count": 55,
+        "char_count": 1874,
         "has_opportunity_first_contract": true,
         "has_unknown_discovery_section": true,
         "has_holding_section": true,
@@ -108,10 +65,10 @@
   },
   "wake_threshold_bridge": {
     "current_gate": {
-      "evaluatedAt": "2026-04-17T22:05:04.097493+00:00",
-      "window": "post",
-      "shouldSend": true,
-      "recommendedReportType": "short",
+      "evaluatedAt": "2026-04-20T14:03:48.123503+00:00",
+      "window": "open",
+      "shouldSend": false,
+      "recommendedReportType": "hold",
       "decisionReason_sanitized": "present"
     },
     "current_wake": {
@@ -124,10 +81,10 @@
       "status": "pass"
     },
     "legacy_threshold_bridge_current": {
-      "present": true,
-      "status": "pass",
-      "action": "dispatched",
-      "dispatched": true
+      "present": false,
+      "status": null,
+      "action": null,
+      "dispatched": null
     },
     "telemetry_files": {
       "dispatch_attribution_exists": true,

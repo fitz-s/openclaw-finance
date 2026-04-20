@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-04-17T22:15:00.839726Z",
+  "generated_at": "2026-04-20T14:15:01.558725Z",
   "status": "pass",
   "contract": "source-scout-candidates-v1",
   "summary": {
-    "candidate_count": 12,
+    "candidate_count": 14,
     "lanes": {
-      "market_structure": 5,
+      "market_structure": 7,
       "corp_filing_ir": 2,
       "real_economy_alt": 2,
       "news_policy_narrative": 1,
@@ -13,7 +13,7 @@
       "internal_private": 1
     },
     "sublanes": {
-      "options_iv": 3,
+      "options_iv": 5,
       "options_flow_proxy": 1,
       "price_volume": 1,
       "sec_filings": 1,
@@ -24,8 +24,9 @@
       "expert_transcript": 1,
       "thread_unknowns": 1
     },
-    "options_iv_candidate_count": 3,
-    "promotion_ready_count": 6
+    "options_iv_candidate_count": 5,
+    "primary_options_iv_candidate_count": 1,
+    "promotion_ready_count": 5
   },
   "candidates": [
     {
@@ -59,11 +60,18 @@
         "provider_confidence",
         "point_in_time_replay_supported"
       ],
+      "credential_ref": "ORATS_API_KEY",
+      "activation_mode": "credential_gated",
+      "source_health_id": "source:orats_options_iv",
+      "primary_eligible": false,
       "risks": [
         "paid vendor",
         "redistribution must remain derived-only"
       ],
-      "promotion_blockers": [],
+      "promotion_blockers": [
+        "live_agreement_not_verified",
+        "primary_eligibility_blocked"
+      ],
       "status": "shadow_candidate",
       "eligible_for_wake": false,
       "eligible_for_judgment_support": false,
@@ -100,6 +108,10 @@
         "provider_confidence",
         "point_in_time_replay_supported"
       ],
+      "credential_ref": "THETADATA_BASE_URL",
+      "activation_mode": "local_terminal",
+      "source_health_id": "source:thetadata_options_iv",
+      "primary_eligible": true,
       "risks": [
         "license terms must be checked",
         "local storage volume risk"
@@ -140,11 +152,117 @@
         "provider_confidence",
         "point_in_time_replay_supported"
       ],
+      "credential_ref": "POLYGON_API_KEY",
+      "activation_mode": "credential_gated",
+      "source_health_id": "source:polygon_options_iv",
+      "primary_eligible": false,
       "risks": [
         "plan-dependent greeks/IV coverage",
         "rate limits"
       ],
       "promotion_blockers": [
+        "point_in_time_support_not_proven"
+      ],
+      "status": "shadow_candidate",
+      "eligible_for_wake": false,
+      "eligible_for_judgment_support": false,
+      "no_execution": true
+    },
+    {
+      "source_candidate_id": "source-scout:8f604ce8bb7a2fbe",
+      "lane": "market_structure",
+      "sublane": "options_iv",
+      "provider": "Tradier Options",
+      "coverage": [
+        "option chains",
+        "courtesy ORATS greeks/IV when greeks=true",
+        "realtime options for brokerage accounts"
+      ],
+      "latency_class": "intraday",
+      "cost_class": "brokerage_or_paid",
+      "rights_policy": "derived_only",
+      "api_available": true,
+      "historical_depth": "limited",
+      "point_in_time_support": false,
+      "implementation_complexity": "medium",
+      "expected_value": "Constrained fallback for live chain greeks/IV when dedicated IV vendors are unavailable.",
+      "required_metrics": [
+        "iv_rank",
+        "iv_percentile",
+        "iv_term_structure",
+        "skew",
+        "open_interest_change",
+        "volume_open_interest_ratio",
+        "unusual_contract_concentration",
+        "chain_snapshot_age_seconds",
+        "provider_confidence",
+        "point_in_time_replay_supported"
+      ],
+      "credential_ref": "TRADIER_ACCESS_TOKEN",
+      "activation_mode": "credential_gated",
+      "source_health_id": "source:tradier_options_iv",
+      "primary_eligible": false,
+      "risks": [
+        "greeks are courtesy data",
+        "hourly greeks cadence",
+        "brokerage/account entitlement constraints"
+      ],
+      "promotion_blockers": [
+        "courtesy_greeks_not_primary_iv_truth",
+        "point_in_time_support_not_proven"
+      ],
+      "status": "shadow_candidate",
+      "eligible_for_wake": false,
+      "eligible_for_judgment_support": false,
+      "no_execution": true
+    },
+    {
+      "source_candidate_id": "source-scout:24420323c11676dd",
+      "lane": "market_structure",
+      "sublane": "options_iv",
+      "provider": "IBKR TWS/Gateway",
+      "coverage": [
+        "held option contracts",
+        "model option computation ticks",
+        "model IV",
+        "delta",
+        "gamma",
+        "vega",
+        "theta"
+      ],
+      "latency_class": "intraday",
+      "cost_class": "brokerage_session",
+      "rights_policy": "derived_only",
+      "api_available": true,
+      "historical_depth": "session_snapshot_only",
+      "point_in_time_support": false,
+      "implementation_complexity": "medium",
+      "expected_value": "Fallback/private source for held-contract Greeks and model IV when a read-only TWS/Gateway session is already active.",
+      "required_metrics": [
+        "iv_rank",
+        "iv_percentile",
+        "iv_term_structure",
+        "skew",
+        "open_interest_change",
+        "volume_open_interest_ratio",
+        "unusual_contract_concentration",
+        "chain_snapshot_age_seconds",
+        "provider_confidence",
+        "point_in_time_replay_supported"
+      ],
+      "credential_ref": "IBKR_OPTIONS_IV_ENABLED",
+      "activation_mode": "broker_session_local_gateway",
+      "source_health_id": "source:ibkr_options_iv",
+      "primary_eligible": false,
+      "risks": [
+        "requires active broker session",
+        "market data subscriptions required",
+        "must not place orders or claim brokerage authority"
+      ],
+      "promotion_blockers": [
+        "broker_session_required",
+        "held_contracts_only",
+        "not_primary_iv_truth",
         "point_in_time_support_not_proven"
       ],
       "status": "shadow_candidate",
@@ -175,6 +293,10 @@
         "chain_snapshot_age_seconds",
         "provider_confidence"
       ],
+      "credential_ref": null,
+      "activation_mode": "proxy_fallback",
+      "source_health_id": "source:nasdaq_options_flow_proxy",
+      "primary_eligible": false,
       "risks": [
         "not a primary IV source",
         "fragile endpoint",
@@ -207,6 +329,10 @@
       "implementation_complexity": "medium",
       "expected_value": "Upgrade yfinance fallback into point-in-time market tape for campaign replay.",
       "required_metrics": [],
+      "credential_ref": null,
+      "activation_mode": "candidate_only",
+      "source_health_id": "source:polygon_aggregates_price_volume",
+      "primary_eligible": false,
       "risks": [
         "paid plan",
         "rate limits",
@@ -239,6 +365,10 @@
       "implementation_complexity": "low",
       "expected_value": "Close issuer-confirmation gaps and prevent narrative-only promotion.",
       "required_metrics": [],
+      "credential_ref": null,
+      "activation_mode": "candidate_only",
+      "source_health_id": "source:sec_submissions_companyfacts_apis_sec_filings",
+      "primary_eligible": false,
       "risks": [
         "fair access and user-agent compliance required"
       ],
@@ -267,6 +397,10 @@
       "implementation_complexity": "high",
       "expected_value": "Adds primary issuer confirmation for campaign claims where SEC is too slow or incomplete.",
       "required_metrics": [],
+      "credential_ref": null,
+      "activation_mode": "candidate_only",
+      "source_health_id": "source:issuer_ir_rss___press_release_pages_issuer_ir",
+      "primary_eligible": false,
       "risks": [
         "site-specific scraping",
         "robots/terms review required"
@@ -298,6 +432,10 @@
       "implementation_complexity": "high",
       "expected_value": "Add peacetime demand/capex hints for company campaigns.",
       "required_metrics": [],
+      "credential_ref": null,
+      "activation_mode": "candidate_only",
+      "source_health_id": "source:company_careers___job_posting_aggregations_jobs",
+      "primary_eligible": false,
       "risks": [
         "anti-scraping",
         "entity matching noise"
@@ -330,6 +468,10 @@
       "implementation_complexity": "low",
       "expected_value": "Cross-check BNO/oil/Hormuz narratives with official supply data when available.",
       "required_metrics": [],
+      "credential_ref": null,
+      "activation_mode": "candidate_only",
+      "source_health_id": "source:eia___public_energy_datasets_energy_supply",
+      "primary_eligible": false,
       "risks": [
         "release lag",
         "macro not single-name specific"
@@ -360,6 +502,10 @@
       "implementation_complexity": "high",
       "expected_value": "Replace generic news summaries with entity/event/novelty intelligence.",
       "required_metrics": [],
+      "credential_ref": null,
+      "activation_mode": "candidate_only",
+      "source_health_id": "source:ravenpack___structured_news_analytics_entity_event",
+      "primary_eligible": false,
       "risks": [
         "premium vendor",
         "strict redistribution controls"
@@ -389,6 +535,10 @@
       "implementation_complexity": "medium",
       "expected_value": "Adds compliant private research lane without exposing raw content to reviewer packets.",
       "required_metrics": [],
+      "credential_ref": null,
+      "activation_mode": "candidate_only",
+      "source_health_id": "source:licensed_expert_transcript_import_expert_transcript",
+      "primary_eligible": false,
       "risks": [
         "MNPI exclusion required",
         "raw redistribution forbidden"
@@ -420,6 +570,10 @@
       "implementation_complexity": "medium",
       "expected_value": "Turns repeated user questions and unresolved unknowns into source scouting demand.",
       "required_metrics": [],
+      "credential_ref": null,
+      "activation_mode": "candidate_only",
+      "source_health_id": "source:openclaw_finance_thread_ledger_thread_unknowns",
+      "primary_eligible": false,
       "risks": [
         "Discord conversation must not be committed",
         "privacy boundary"

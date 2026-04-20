@@ -1,19 +1,28 @@
 {
-  "generated_at": "2026-04-20T01:27:24.332821+00:00",
+  "generated_at": "2026-04-20T14:15:01.446135+00:00",
   "state_boundary": "sanitized_runtime_control_state",
   "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
   "source": "/Users/leofitz/.openclaw/workspace/finance/state/brave-source-recovery-policy.json",
   "exists": true,
   "payload": {
-    "generated_at": "2026-04-20T01:27:09.523647Z",
+    "generated_at": "2026-04-20T14:03:47.783640Z",
     "contract": "brave-source-recovery-policy-v1",
     "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
-    "breaker_open": false,
-    "reason": "clear",
-    "breaker_until": null,
+    "breaker_open": true,
+    "reason": "recent_brave_quota_or_rate_limit",
+    "breaker_until": "2026-04-20T14:09:16.084816Z",
     "cooldown_minutes": 60,
-    "pressure_record_count": 0,
-    "pressure_records": [],
+    "pressure_record_count": 1,
+    "pressure_records": [
+      {
+        "endpoint": "brave/news/search",
+        "status": "rate_limited",
+        "error_class": "throttle_or_quota",
+        "application_error_code": "ErrorResponse",
+        "fetched_at": "2026-04-20T13:09:16.084816Z",
+        "breaker_until": "2026-04-20T14:09:16.084816Z"
+      }
+    ],
     "no_execution": true,
     "no_delivery_mutation": true,
     "no_wake_mutation": true,

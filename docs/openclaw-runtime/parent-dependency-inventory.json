@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-18T00:10:04.073911+00:00",
+  "generated_at": "2026-04-20T14:15:02.078308+00:00",
   "status": "pass",
   "dependency_boundary": "parent_openclaw_workspace",
   "finance_repo_policy": "These files are load-bearing runtime dependencies but are not owned by the finance repository. Reviewers must inspect this inventory when packet/wake/judgment behavior changes.",
@@ -92,19 +92,19 @@
       "role": "live_finance_adapter",
       "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/adapters/live_finance_adapter.py",
       "exists": true,
-      "sha256": "sha256:583a135d0ac533ee0e86b1c01563ac9ed9fbe0fac77f3fb4c30ca28338f44149"
+      "sha256": "sha256:b55b05027e77b0afc6de4230a87ca0badf0294bb2350fb44cb7f7acc3ad593de"
     },
     {
       "role": "source_promotion",
       "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/normalizer/source_promotion.py",
       "exists": true,
-      "sha256": "sha256:d4376057df0bd6644a591a362da0448de62685b663ae1e67822829cfda0730bd"
+      "sha256": "sha256:8465685a0e5edf537dc1dd88040436a7d5eb9fe1d3df33a3a4f19443ab15269a"
     },
     {
       "role": "semantic_normalizer",
       "path": "/Users/leofitz/.openclaw/workspace/services/market-ingest/normalizer/semantic_normalizer.py",
       "exists": true,
-      "sha256": "sha256:635ff5ce00d015d0a9d84db7ae82ed4036f552a39921c7dada9026f8b98ca361"
+      "sha256": "sha256:58468785f65d5cf537c7d9c0dd9e4cbf3392a7b1d1cacfddf62c6bbb86e988e9"
     },
     {
       "role": "temporal_alignment",

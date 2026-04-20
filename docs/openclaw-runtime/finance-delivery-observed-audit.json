@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-04-20T01:27:24.332526+00:00",
+  "generated_at": "2026-04-20T14:15:01.444764+00:00",
   "state_boundary": "sanitized_runtime_control_state",
   "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
   "source": "/Users/leofitz/.openclaw/workspace/finance/state/finance-delivery-observed-audit.json",
   "exists": true,
   "payload": {
-    "generated_at": "2026-04-19T19:09:24.163872Z",
+    "generated_at": "2026-04-20T13:43:56.023952Z",
     "contract": "finance-delivery-observed-audit-v1",
     "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
     "jobs": {
@@ -13,52 +13,19 @@
         "job_id": "b2c3d4e5-f6a7-8901-bcde-f01234567890",
         "run_file": "/Users/leofitz/.openclaw/cron/runs/b2c3d4e5-f6a7-8901-bcde-f01234567890.jsonl",
         "row_count": 50,
-        "delivered_count": 39,
+        "delivered_count": 36,
         "latest": {
-          "ts": "2026-04-19T09:32:42.083000-05:00",
+          "ts": "2026-04-20T08:29:23.396000-05:00",
           "jobId": "b2c3d4e5-f6a7-8901-bcde-f01234567890",
           "action": "finished",
-          "status": "ok",
-          "delivered": false,
-          "deliveryStatus": "not-delivered",
-          "durationMs": 88050,
-          "sessionKey": "agent:main:cron:b2c3d4e5-f6a7-8901-bcde-f01234567890:run:f78b5599-fb88-472a-8e21-57f729fa34e4",
-          "error": null
+          "status": "error",
+          "delivered": null,
+          "deliveryStatus": "unknown",
+          "durationMs": 419995,
+          "sessionKey": null,
+          "error": "cron: job execution timed out"
         },
         "recent": [
-          {
-            "ts": "2026-04-18T12:35:07.614000-05:00",
-            "jobId": "b2c3d4e5-f6a7-8901-bcde-f01234567890",
-            "action": "finished",
-            "status": "ok",
-            "delivered": false,
-            "deliveryStatus": "not-delivered",
-            "durationMs": 219978,
-            "sessionKey": "agent:main:cron:b2c3d4e5-f6a7-8901-bcde-f01234567890:run:0d8e337b-b050-453e-9f9e-8ef09831aa3f",
-            "error": null
-          },
-          {
-            "ts": "2026-04-18T17:32:40.094000-05:00",
-            "jobId": "b2c3d4e5-f6a7-8901-bcde-f01234567890",
-            "action": "finished",
-            "status": "ok",
-            "delivered": false,
-            "deliveryStatus": "not-delivered",
-            "durationMs": 87863,
-            "sessionKey": "agent:main:cron:b2c3d4e5-f6a7-8901-bcde-f01234567890:run:501a85e3-e270-4a21-b9d5-ae6e3a6dc78f",
-            "error": null
-          },
-          {
-            "ts": "2026-04-18T23:33:35.755000-05:00",
-            "jobId": "b2c3d4e5-f6a7-8901-bcde-f01234567890",
-            "action": "finished",
-            "status": "ok",
-            "delivered": false,
-            "deliveryStatus": "not-delivered",
-            "durationMs": 142083,
-            "sessionKey": "agent:main:cron:b2c3d4e5-f6a7-8901-bcde-f01234567890:run:7d13399e-dd78-410d-9782-8078c46fd313",
-            "error": null
-          },
           {
             "ts": "2026-04-19T04:24:47.195000-05:00",
             "jobId": "b2c3d4e5-f6a7-8901-bcde-f01234567890",
@@ -80,24 +47,57 @@
             "durationMs": 88050,
             "sessionKey": "agent:main:cron:b2c3d4e5-f6a7-8901-bcde-f01234567890:run:f78b5599-fb88-472a-8e21-57f729fa34e4",
             "error": null
+          },
+          {
+            "ts": "2026-04-19T15:32:41.902000-05:00",
+            "jobId": "b2c3d4e5-f6a7-8901-bcde-f01234567890",
+            "action": "finished",
+            "status": "ok",
+            "delivered": false,
+            "deliveryStatus": "not-delivered",
+            "durationMs": 78087,
+            "sessionKey": "agent:main:cron:b2c3d4e5-f6a7-8901-bcde-f01234567890:run:64aee802-4c35-4e3a-9095-65777e202a3f",
+            "error": null
+          },
+          {
+            "ts": "2026-04-19T20:38:40.163000-05:00",
+            "jobId": "b2c3d4e5-f6a7-8901-bcde-f01234567890",
+            "action": "finished",
+            "status": "error",
+            "delivered": null,
+            "deliveryStatus": "unknown",
+            "durationMs": 420018,
+            "sessionKey": null,
+            "error": "cron: job execution timed out"
+          },
+          {
+            "ts": "2026-04-20T08:29:23.396000-05:00",
+            "jobId": "b2c3d4e5-f6a7-8901-bcde-f01234567890",
+            "action": "finished",
+            "status": "error",
+            "delivered": null,
+            "deliveryStatus": "unknown",
+            "durationMs": 419995,
+            "sessionKey": null,
+            "error": "cron: job execution timed out"
           }
         ]
       },
       "finance-premarket-delivery-watchdog": {
         "job_id": "finance-premarket-delivery-watchdog-v1",
         "run_file": "/Users/leofitz/.openclaw/cron/runs/finance-premarket-delivery-watchdog-v1.jsonl",
-        "row_count": 1,
+        "row_count": 2,
         "delivered_count": 0,
         "latest": {
-          "ts": "2026-04-17T08:25:17.575000-05:00",
+          "ts": "2026-04-20T08:43:03.615000-05:00",
           "jobId": "finance-premarket-delivery-watchdog-v1",
           "action": "finished",
-          "status": "ok",
-          "delivered": false,
-          "deliveryStatus": "not-delivered",
-          "durationMs": 17545,
-          "sessionKey": "agent:main:cron:finance-premarket-delivery-watchdog-v1:run:3491e69f-2545-43cf-8869-729a4b52c8cb",
-          "error": null
+          "status": "error",
+          "delivered": null,
+          "deliveryStatus": "unknown",
+          "durationMs": 420171,
+          "sessionKey": null,
+          "error": "cron: job execution timed out"
         },
         "recent": [
           {
@@ -110,24 +110,35 @@
             "durationMs": 17545,
             "sessionKey": "agent:main:cron:finance-premarket-delivery-watchdog-v1:run:3491e69f-2545-43cf-8869-729a4b52c8cb",
             "error": null
+          },
+          {
+            "ts": "2026-04-20T08:43:03.615000-05:00",
+            "jobId": "finance-premarket-delivery-watchdog-v1",
+            "action": "finished",
+            "status": "error",
+            "delivered": null,
+            "deliveryStatus": "unknown",
+            "durationMs": 420171,
+            "sessionKey": null,
+            "error": "cron: job execution timed out"
           }
         ]
       },
       "finance-midday-operator-review": {
         "job_id": "finance-midday-operator-review-v1",
         "run_file": "/Users/leofitz/.openclaw/cron/runs/finance-midday-operator-review-v1.jsonl",
-        "row_count": 1,
+        "row_count": 2,
         "delivered_count": 0,
         "latest": {
-          "ts": "2026-04-17T12:08:22.593000-05:00",
+          "ts": "2026-04-19T20:29:46.994000-05:00",
           "jobId": "finance-midday-operator-review-v1",
           "action": "finished",
-          "status": "error",
-          "delivered": null,
-          "deliveryStatus": "unknown",
-          "durationMs": 900104,
-          "sessionKey": null,
-          "error": "cron: job execution timed out"
+          "status": "ok",
+          "delivered": false,
+          "deliveryStatus": "not-delivered",
+          "durationMs": 143049,
+          "sessionKey": "agent:main:cron:finance-midday-operator-review-v1:run:486d3aef-ec22-44a4-b6e8-24f99971d766",
+          "error": null
         },
         "recent": [
           {
@@ -140,11 +151,22 @@
             "durationMs": 900104,
             "sessionKey": null,
             "error": "cron: job execution timed out"
+          },
+          {
+            "ts": "2026-04-19T20:29:46.994000-05:00",
+            "jobId": "finance-midday-operator-review-v1",
+            "action": "finished",
+            "status": "ok",
+            "delivered": false,
+            "deliveryStatus": "not-delivered",
+            "durationMs": 143049,
+            "sessionKey": "agent:main:cron:finance-midday-operator-review-v1:run:486d3aef-ec22-44a4-b6e8-24f99971d766",
+            "error": null
           }
         ]
       }
     },
-    "delivered_count": 39,
+    "delivered_count": 36,
     "delivered_recent": [
       {
         "ts": "2026-04-16T08:15:52.434000-05:00",
@@ -261,6 +283,19 @@
     "no_direct_discord_send": true,
     "no_delivery_mutation": true,
     "no_wake_mutation": true,
-    "no_execution": true
+    "no_execution": true,
+    "watchdog_duplicate_suppression_boundary": "observed_parent_delivery_only",
+    "followup_registry_activity": {
+      "boundary": "followup_thread_registry",
+      "authoritative_delivery_proof": false,
+      "observed_since_cutoff": true,
+      "cutoff": "2026-04-20T07:30:00-05:00",
+      "matching_thread_count": 4,
+      "latest_updated_at": "2026-04-20T08:26:13.344111-05:00",
+      "warning": "followup_registry_updated_after_cutoff_is_warning_only_not_delivery_proof"
+    },
+    "warnings": [
+      "followup_registry_updated_after_cutoff_is_warning_only_not_delivery_proof"
+    ]
   }
 }

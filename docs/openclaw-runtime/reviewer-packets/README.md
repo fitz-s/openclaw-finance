@@ -8,10 +8,10 @@ Boundary:
 - Information acquisition snapshot is current sanitized finance/OpenClaw source state, not exact historical replay for older reports.
 
 Reports:
-- `RFE05`: objects=91 campaigns=29 operator_surface_available=True
-- `R935E`: objects=94 campaigns=29 operator_surface_available=False
-- `RD697`: objects=87 campaigns=29 operator_surface_available=True
-- `R0A9E`: objects=89 campaigns=30 operator_surface_available=False
-- `RF63A`: objects=84 campaigns=30 operator_surface_available=False
+- `R1550`: objects=74 campaigns=13 operator_surface_available=True
+- `R6A07`: objects=73 campaigns=12 operator_surface_available=True
+- `R12F8`: objects=74 campaigns=31 operator_surface_available=False
+- `R4734`: objects=74 campaigns=31 operator_surface_available=True
+- `RC482`: objects=70 campaigns=31 operator_surface_available=False
 
 Use the per-report JSON files for detailed review.

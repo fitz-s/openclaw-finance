@@ -1,46 +1,46 @@
 {
-  "generated_at": "2026-04-17T22:15:01.098871Z",
+  "generated_at": "2026-04-20T14:15:01.809825Z",
   "contract": "finance-reviewer-report-packet-index-v1",
   "packet_count": 5,
   "reports": [
     {
-      "report_id": "RFE05",
-      "file": "RFE05.json",
+      "report_id": "R1550",
+      "file": "R1550.json",
       "operator_surface_available": true,
-      "object_card_count": 91,
-      "campaign_count": 29,
-      "exact_replay_available": false
-    },
-    {
-      "report_id": "R935E",
-      "file": "R935E.json",
-      "operator_surface_available": false,
-      "object_card_count": 94,
-      "campaign_count": 29,
-      "exact_replay_available": false
-    },
-    {
-      "report_id": "RD697",
-      "file": "RD697.json",
-      "operator_surface_available": true,
-      "object_card_count": 87,
-      "campaign_count": 29,
+      "object_card_count": 74,
+      "campaign_count": 13,
       "exact_replay_available": true
     },
     {
-      "report_id": "R0A9E",
-      "file": "R0A9E.json",
+      "report_id": "R6A07",
+      "file": "R6A07.json",
+      "operator_surface_available": true,
+      "object_card_count": 73,
+      "campaign_count": 12,
+      "exact_replay_available": true
+    },
+    {
+      "report_id": "R12F8",
+      "file": "R12F8.json",
       "operator_surface_available": false,
-      "object_card_count": 89,
-      "campaign_count": 30,
+      "object_card_count": 74,
+      "campaign_count": 31,
       "exact_replay_available": false
     },
     {
-      "report_id": "RF63A",
-      "file": "RF63A.json",
+      "report_id": "R4734",
+      "file": "R4734.json",
+      "operator_surface_available": true,
+      "object_card_count": 74,
+      "campaign_count": 31,
+      "exact_replay_available": true
+    },
+    {
+      "report_id": "RC482",
+      "file": "RC482.json",
       "operator_surface_available": false,
-      "object_card_count": 84,
-      "campaign_count": 30,
+      "object_card_count": 70,
+      "campaign_count": 31,
       "exact_replay_available": false
     }
   ],
@@ -51,10 +51,10 @@
     "account_ids_included": false
   },
   "written_files": [
-    "docs/openclaw-runtime/reviewer-packets/RFE05.json",
-    "docs/openclaw-runtime/reviewer-packets/R935E.json",
-    "docs/openclaw-runtime/reviewer-packets/RD697.json",
-    "docs/openclaw-runtime/reviewer-packets/R0A9E.json",
-    "docs/openclaw-runtime/reviewer-packets/RF63A.json"
+    "docs/openclaw-runtime/reviewer-packets/R1550.json",
+    "docs/openclaw-runtime/reviewer-packets/R6A07.json",
+    "docs/openclaw-runtime/reviewer-packets/R12F8.json",
+    "docs/openclaw-runtime/reviewer-packets/R4734.json",
+    "docs/openclaw-runtime/reviewer-packets/RC482.json"
   ]
 }
