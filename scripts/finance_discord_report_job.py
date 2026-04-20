@@ -233,7 +233,7 @@ def main(argv: list[str] | None = None) -> int:
         if observed_delivered_since(audit, hour=7, minute=30, now=now):
             print('NO_REPLY')
             return 0
-    sys.stdout.write(run_chain(fast_core=args.mode == 'marketday-core-review'))
+    sys.stdout.write(run_chain(fast_core=args.mode in {'morning-watchdog', 'marketday-review', 'marketday-core-review'}))
     return 0
 
 

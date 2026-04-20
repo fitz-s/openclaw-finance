@@ -9,6 +9,7 @@ SCRIPTS = Path('/Users/leofitz/.openclaw/workspace/finance/scripts')
 sys.path.insert(0, str(SCRIPTS))
 
 from brave_budget_guard import normalize_state
+import brave_source_activation as activation
 from brave_source_activation import run_activation
 
 STATE = Path('/Users/leofitz/.openclaw/workspace/finance/state')
@@ -39,7 +40,8 @@ def _pack() -> dict:
     }
 
 
-def test_brave_source_activation_blocks_budget_denied_pack_without_fetch() -> None:
+def test_brave_source_activation_blocks_budget_denied_pack_without_fetch(monkeypatch) -> None:
+    monkeypatch.setattr(activation, 'build_recovery_policy', lambda: {'breaker_open': False, 'reason': 'clear'})
     query_packs = STATE / 'test-p1-query-packs-denied.jsonl'
     registry = STATE / 'test-p1-query-registry-denied.jsonl'
     report = STATE / 'test-p1-brave-activation-denied.json'
@@ -59,7 +61,8 @@ def test_brave_source_activation_blocks_budget_denied_pack_without_fetch() -> No
     assert result['pack_results'][0]['reason'] == 'budget_guard_denied'
 
 
-def test_brave_source_activation_dry_run_budget_does_not_consume() -> None:
+def test_brave_source_activation_dry_run_budget_does_not_consume(monkeypatch) -> None:
+    monkeypatch.setattr(activation, 'build_recovery_policy', lambda: {'breaker_open': False, 'reason': 'clear'})
     query_packs = STATE / 'test-p1-query-packs-dry.jsonl'
     registry = STATE / 'test-p1-query-registry-dry.jsonl'
     report = STATE / 'test-p1-brave-activation-dry.json'
@@ -78,7 +81,8 @@ def test_brave_source_activation_dry_run_budget_does_not_consume() -> None:
     assert saved['usage']['search_aperture'] == 0
 
 
-def test_query_registry_skip_does_not_consume_budget() -> None:
+def test_query_registry_skip_does_not_consume_budget(monkeypatch) -> None:
+    monkeypatch.setattr(activation, 'build_recovery_policy', lambda: {'breaker_open': False, 'reason': 'clear'})
     query_packs = STATE / 'test-p1-query-packs-skip.jsonl'
     registry = STATE / 'test-p1-query-registry-skip.jsonl'
     report = STATE / 'test-p1-brave-activation-skip.json'

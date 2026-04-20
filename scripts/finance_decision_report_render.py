@@ -142,6 +142,13 @@ def humanize_invalidator_desc(value: Any) -> str:
     text = str(value or '').strip()
     if not text:
         return '反证'
+    exact = {
+        'source outage': '数据源中断',
+        'official correction': '官方更正',
+        'packet staleness': '数据包过旧',
+    }
+    if text in exact:
+        return exact[text]
     if text.startswith('price_vs_negative_upstream:'):
         return f"{text.split(':', 1)[1].upper()} 负面上游反证"
     if text.startswith('direction_conflict:theme:'):

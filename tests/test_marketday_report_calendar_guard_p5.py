@@ -29,7 +29,7 @@ def test_regular_trading_day_premarket_runs_chain(monkeypatch, capsys, tmp_path:
     monkeypatch.setattr(job, 'run_chain', lambda *, fast_core=False: calls.append(fast_core) or 'REPORT\n')
     assert job.main(['--mode', 'marketday-review']) == 0
     assert capsys.readouterr().out == 'REPORT\n'
-    assert calls == [False]
+    assert calls == [True]
 
 
 def test_halfday_postclose_core_review_returns_no_reply(monkeypatch, capsys, tmp_path: Path) -> None:

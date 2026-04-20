@@ -50,7 +50,7 @@ def test_morning_watchdog_runs_when_no_observed_delivery(monkeypatch, capsys, tm
     calls = _patch_common(monkeypatch, tmp_path, delivered=False, registry_activity=False)
     assert job.main(['--mode', 'morning-watchdog']) == 0
     assert capsys.readouterr().out == 'WATCHDOG REPORT\n'
-    assert calls == [False]
+    assert calls == [True]
     audit = json.loads((tmp_path / 'delivery-audit.json').read_text(encoding='utf-8'))
     assert audit['followup_registry_activity']['observed_since_cutoff'] is False
     assert audit.get('warnings') is None
@@ -60,7 +60,7 @@ def test_morning_watchdog_runs_when_only_followup_registry_activity_exists(monke
     calls = _patch_common(monkeypatch, tmp_path, delivered=False, registry_activity=True)
     assert job.main(['--mode', 'morning-watchdog']) == 0
     assert capsys.readouterr().out == 'WATCHDOG REPORT\n'
-    assert calls == [False]
+    assert calls == [True]
     audit = json.loads((tmp_path / 'delivery-audit.json').read_text(encoding='utf-8'))
     assert audit['followup_registry_activity']['observed_since_cutoff'] is True
     assert audit['warnings'] == [job.FOLLOWUP_REGISTRY_WARNING]

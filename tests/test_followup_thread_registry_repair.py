@@ -72,7 +72,7 @@ def test_repair_registry_updates_old_parent_created_thread(tmp_path) -> None:
     }))
     envelope = tmp_path / 'envelope.json'
     envelope.write_text(json.dumps({'report_id': 'R1'}))
-    report = repair_registry(registry, envelope_path=envelope)
+    report = repair_registry(registry, envelope_path=envelope, now=datetime(2026, 4, 18, tzinfo=timezone.utc))
     payload = json.loads(registry.read_text())
     assert report['changed_count'] == 1
     assert payload['owner_account_id'] == 'default'

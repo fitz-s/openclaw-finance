@@ -19,11 +19,11 @@ def test_marketday_core_review_mode_uses_fast_chain(monkeypatch, capsys) -> None
     assert capsys.readouterr().out == 'CORE REPORT\n'
 
 
-def test_marketday_review_mode_keeps_full_chain(monkeypatch, capsys) -> None:
+def test_marketday_review_mode_uses_fast_chain(monkeypatch, capsys) -> None:
     calls = []
     monkeypatch.setattr(job, 'today_ct', lambda: job.datetime(2026, 4, 20, 8, 10, tzinfo=job.CT))
-    monkeypatch.setattr(job, 'run_chain', lambda *, fast_core=False: calls.append(fast_core) or 'FULL REPORT\n')
+    monkeypatch.setattr(job, 'run_chain', lambda *, fast_core=False: calls.append(fast_core) or 'FAST REPORT\n')
     code = job.main(['--mode', 'marketday-review'])
     assert code == 0
-    assert calls == [False]
-    assert capsys.readouterr().out == 'FULL REPORT\n'
+    assert calls == [True]
+    assert capsys.readouterr().out == 'FAST REPORT\n'

@@ -1,8 +1,19 @@
 {
-  "generated_at": "2026-04-20T14:15:01.442270+00:00",
+  "generated_at": "2026-04-20T16:17:14.591563+00:00",
   "state_boundary": "sanitized_runtime_control_state",
   "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
   "source": "/Users/leofitz/.openclaw/workspace/finance/state/marketday-core-review-policy.json",
-  "exists": false,
-  "payload": null
+  "exists": true,
+  "payload": {
+    "generated_at": "2026-04-20T16:14:30.149464Z",
+    "mode": "marketday-core-review",
+    "fast_core": true,
+    "live_parent_ingest_skipped": true,
+    "reason": "fixed_second_core_report_timeliness",
+    "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
+    "no_delivery_mutation": true,
+    "no_wake_mutation": true,
+    "no_threshold_mutation": true,
+    "no_execution": true
+  }
 }
