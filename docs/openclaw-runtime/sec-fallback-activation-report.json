@@ -1,26 +1,45 @@
 {
-  "generated_at": "2026-04-21T14:15:01.351080+00:00",
+  "generated_at": "2026-04-21T22:15:00.930727+00:00",
   "state_boundary": "sanitized_runtime_control_state",
   "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
   "source": "/Users/leofitz/.openclaw/workspace/finance/state/sec-fallback-activation-report.json",
   "exists": true,
   "payload": {
     "contract": "sec-fallback-activation-v1",
-    "status": "skipped",
-    "reason": "brave_recovery_breaker_closed",
+    "status": "pass",
+    "reason": "brave_recovery_breaker_open",
     "force": false,
     "recovery_policy": {
-      "breaker_open": false,
-      "reason": "clear",
-      "breaker_until": null
+      "breaker_open": true,
+      "reason": "recent_brave_quota_or_rate_limit",
+      "breaker_until": "2026-04-21T22:03:30.904655Z"
     },
-    "steps": [],
+    "steps": [
+      {
+        "name": "sec_discovery_fetcher",
+        "ok": true,
+        "returncode": 0,
+        "stdout_tail": [
+          "{\"status\": \"pass\", \"discovery_count\": 40, \"fetch_errors\": 0, \"out\": \"/Users/leofitz/.openclaw/workspace/finance/state/sec-discovery.json\"}"
+        ],
+        "stderr_tail": []
+      },
+      {
+        "name": "sec_filing_semantics",
+        "ok": true,
+        "returncode": 0,
+        "stdout_tail": [
+          "{\"status\": \"pass\", \"semantic_count\": 40, \"wake_candidate_count\": 0, \"out\": \"/Users/leofitz/.openclaw/workspace/finance/state/sec-filing-semantics.json\"}"
+        ],
+        "stderr_tail": []
+      }
+    ],
     "discovery_path": "/Users/leofitz/.openclaw/workspace/finance/state/sec-discovery.json",
     "semantics_path": "/Users/leofitz/.openclaw/workspace/finance/state/sec-filing-semantics.json",
-    "discovery_count": 20,
-    "semantic_count": 20,
+    "discovery_count": 40,
+    "semantic_count": 40,
     "wake_candidate_count": 0,
-    "support_only_count": 20,
+    "support_only_count": 40,
     "records_are_not_evidence": true,
     "fallback_lane": "sec_current_filings_metadata_only",
     "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
