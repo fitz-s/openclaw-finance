@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-20T22:15:01.921572Z",
+  "generated_at": "2026-04-21T14:15:02.859334Z",
   "contract": "source-to-campaign-closeout-v1",
   "phase_summary": {
     "phase_count": 15,
@@ -14,10 +14,10 @@
     "readiness_is_authority": false
   },
   "metrics": {
-    "source_count": 17,
-    "freshness_sla_breach_rate": 0.4706,
+    "source_count": 16,
+    "freshness_sla_breach_rate": 0.5,
     "source_health_status": "pass",
-    "campaign_count": 9,
+    "campaign_count": 12,
     "source_diversity_per_campaign": 0.0,
     "context_gap_rate": 0.0,
     "followup_grounding_failure_rate": 1.0,

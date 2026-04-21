@@ -1,8 +1,16 @@
 {
-  "generated_at": "2026-04-20T22:15:01.127719Z",
+  "generated_at": "2026-04-21T14:15:01.789546Z",
   "contract": "finance-reviewer-report-packet-index-v1",
   "packet_count": 5,
   "reports": [
+    {
+      "report_id": "R019B",
+      "file": "R019B.json",
+      "operator_surface_available": true,
+      "object_card_count": 73,
+      "campaign_count": 12,
+      "exact_replay_available": true
+    },
     {
       "report_id": "RC4D6",
       "file": "RC4D6.json",
@@ -34,14 +42,6 @@
       "object_card_count": 73,
       "campaign_count": 12,
       "exact_replay_available": true
-    },
-    {
-      "report_id": "R12F8",
-      "file": "R12F8.json",
-      "operator_surface_available": false,
-      "object_card_count": 74,
-      "campaign_count": 31,
-      "exact_replay_available": false
     }
   ],
   "sanitization": {
@@ -51,10 +51,10 @@
     "account_ids_included": false
   },
   "written_files": [
+    "docs/openclaw-runtime/reviewer-packets/R019B.json",
     "docs/openclaw-runtime/reviewer-packets/RC4D6.json",
     "docs/openclaw-runtime/reviewer-packets/RD329.json",
     "docs/openclaw-runtime/reviewer-packets/R1550.json",
-    "docs/openclaw-runtime/reviewer-packets/R6A07.json",
-    "docs/openclaw-runtime/reviewer-packets/R12F8.json"
+    "docs/openclaw-runtime/reviewer-packets/R6A07.json"
   ]
 }

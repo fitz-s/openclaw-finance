@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-20T22:15:01.074438Z",
+  "generated_at": "2026-04-21T14:15:01.730192Z",
   "contract": "finance-reviewer-report-packet-v1",
   "report_id": "RD329",
   "source_file": "<finance>/state/report-reader/RD329.json",
@@ -117,13 +117,13 @@
   },
   "top_object_cards": [
     {
+      "label": "反证升级｜板块方向冲突（16次）",
+      "priority_score": 32.0,
       "handle": "A1",
       "type": "agenda",
-      "agenda_type": "invalidator_escalation",
-      "label": "反证升级｜板块方向冲突（16次）",
-      "attention_justification": "invalidator direction_conflict:theme:broad_market:sector has hit 16 times",
-      "priority_score": 32.0,
       "role_text": "需要判断是否值得占用本周注意力",
+      "agenda_type": "invalidator_escalation",
+      "attention_justification": "invalidator direction_conflict:theme:broad_market:sector has hit 16 times",
       "required_questions": [
         "is thesis packet:market-ingest:SPY:2026-04-16T20:41:58.331334Z still valid after 16 invalidator hits?"
       ],
@@ -131,30 +131,13 @@
       "source_refs": []
     },
     {
+      "label": "反证升级｜板块轮动方向冲突（16次）",
+      "priority_score": 32.0,
       "handle": "A2",
       "type": "agenda",
-      "agenda_type": "invalidator_escalation",
-      "label": "反证升级｜板块轮动方向冲突（16次）",
-      "attention_justification": "invalidator direction_conflict:theme:sector_rotation_proxy has hit 16 times",
-      "priority_score": 32.0,
       "role_text": "需要判断是否值得占用本周注意力",
-      "required_questions": [
-        "is thesis packet:market-ingest:SPY:2026-04-16T20:41:58.331334Z still valid after 16 invalidator hits?"
-      ],
-      "related_opportunities": [],
-      "source_refs": []
-    },
-    {
-      "handle": "A3",
-      "type": "agenda",
-      "operator_summary": "A1 实际对象：未知发现候选。这是是否切换注意力方向的问题，不是下单信号。",
       "agenda_type": "invalidator_escalation",
-      "not_positive_for": "不是 TSLA 加码信号；也不是立即替代现有 book 的命令",
-      "label": "反证升级｜未知发现改道（反证升级｜未知发现方向冲突（16次））",
-      "attention_justification": "invalidator direction_conflict:theme:unknown_discovery has hit 16 times",
-      "priority_score": 32.0,
-      "positive_for": "未知发现候选",
-      "role_text": "判断是否把 attention 分给 未知发现候选",
+      "attention_justification": "invalidator direction_conflict:theme:sector_rotation_proxy has hit 16 times",
       "required_questions": [
         "is thesis packet:market-ingest:SPY:2026-04-16T20:41:58.331334Z still valid after 16 invalidator hits?"
       ],
@@ -162,13 +145,30 @@
       "source_refs": []
     },
     {
+      "label": "反证升级｜未知发现改道（反证升级｜未知发现方向冲突（16次））",
+      "positive_for": "未知发现候选",
+      "not_positive_for": "不是 TSLA 加码信号；也不是立即替代现有 book 的命令",
+      "priority_score": 32.0,
+      "handle": "A3",
+      "operator_summary": "A1 实际对象：未知发现候选。这是是否切换注意力方向的问题，不是下单信号。",
+      "type": "agenda",
+      "role_text": "判断是否把 attention 分给 未知发现候选",
+      "agenda_type": "invalidator_escalation",
+      "attention_justification": "invalidator direction_conflict:theme:unknown_discovery has hit 16 times",
+      "required_questions": [
+        "is thesis packet:market-ingest:SPY:2026-04-16T20:41:58.331334Z still valid after 16 invalidator hits?"
+      ],
+      "related_opportunities": [],
+      "source_refs": []
+    },
+    {
+      "label": "拥挤预警｜AAPL / ACHR",
+      "priority_score": 25.0,
       "handle": "A4",
       "type": "agenda",
-      "agenda_type": "exposure_crowding_warning",
-      "label": "拥挤预警｜AAPL / ACHR",
-      "attention_justification": "event_driven at 1250% utilization",
-      "priority_score": 25.0,
       "role_text": "提示现有 attention slot 可能过度拥挤",
+      "agenda_type": "exposure_crowding_warning",
+      "attention_justification": "event_driven at 1250% utilization",
       "required_questions": [
         "should any thesis in event_driven be retired to reduce crowding?"
       ],
@@ -176,13 +176,13 @@
       "source_refs": []
     },
     {
+      "label": "对冲缺口｜macro hedges bucket 对冲未覆盖",
+      "priority_score": 3.0,
       "handle": "A5",
       "type": "agenda",
-      "agenda_type": "hedge_gap_alert",
-      "label": "对冲缺口｜macro hedges bucket 对冲未覆盖",
-      "attention_justification": "macro_hedges bucket has uncovered hedge coverage",
-      "priority_score": 3.0,
       "role_text": "提示保护层缺口，不是执行指令",
+      "agenda_type": "hedge_gap_alert",
+      "attention_justification": "macro_hedges bucket has uncovered hedge coverage",
       "required_questions": [
         "what hedge options exist for macro_hedges (uncovered)?"
       ],
@@ -190,13 +190,13 @@
       "source_refs": []
     },
     {
+      "label": "对冲缺口｜event driven bucket 对冲未覆盖",
+      "priority_score": 3.0,
       "handle": "A6",
       "type": "agenda",
-      "agenda_type": "hedge_gap_alert",
-      "label": "对冲缺口｜event driven bucket 对冲未覆盖",
-      "attention_justification": "event_driven bucket has uncovered hedge coverage",
-      "priority_score": 3.0,
       "role_text": "提示保护层缺口，不是执行指令",
+      "agenda_type": "hedge_gap_alert",
+      "attention_justification": "event_driven bucket has uncovered hedge coverage",
       "required_questions": [
         "what hedge options exist for event_driven (uncovered)?"
       ],
@@ -204,10 +204,10 @@
       "source_refs": []
     },
     {
-      "handle": "T1",
-      "type": "thesis",
       "status": "active",
+      "handle": "T1",
       "maturity": "seed",
+      "type": "thesis",
       "instrument": "TSLA",
       "required_confirmations": [
         "wake-eligible evidence",
@@ -215,10 +215,10 @@
       ]
     },
     {
-      "handle": "T2",
-      "type": "thesis",
       "status": "active",
+      "handle": "T2",
       "maturity": "seed",
+      "type": "thesis",
       "instrument": "ORCL",
       "required_confirmations": [
         "wake-eligible evidence",
@@ -226,10 +226,10 @@
       ]
     },
     {
-      "handle": "T3",
-      "type": "thesis",
       "status": "active",
+      "handle": "T3",
       "maturity": "seed",
+      "type": "thesis",
       "instrument": "NVDA",
       "required_confirmations": [
         "wake-eligible evidence",
@@ -237,10 +237,10 @@
       ]
     },
     {
-      "handle": "T4",
-      "type": "thesis",
       "status": "active",
+      "handle": "T4",
       "maturity": "seed",
+      "type": "thesis",
       "instrument": "NFLX",
       "required_confirmations": [
         "wake-eligible evidence",
@@ -248,10 +248,10 @@
       ]
     },
     {
-      "handle": "T5",
-      "type": "thesis",
       "status": "active",
+      "handle": "T5",
       "maturity": "seed",
+      "type": "thesis",
       "instrument": "MSTR",
       "required_confirmations": [
         "wake-eligible evidence",
@@ -259,10 +259,10 @@
       ]
     },
     {
-      "handle": "T6",
-      "type": "thesis",
       "status": "active",
+      "handle": "T6",
       "maturity": "seed",
+      "type": "thesis",
       "instrument": "MSFT",
       "required_confirmations": [
         "wake-eligible evidence",
@@ -272,17 +272,17 @@
   ],
   "top_campaigns": [
     {
-      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
-      "stage": "escalation",
-      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
-      "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
-      "human_title": "sector rotation proxy 冲突（16次）",
-      "thread_key": "campaign-thread:3035aaf653eabd8b",
-      "campaign_id": "campaign:3035aaf653eabd8b",
       "why_now_delta": "板块轮动冲突（16次）",
-      "campaign_type": "invalidator_cluster",
-      "board_class": "live",
+      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
+      "campaign_id": "campaign:3035aaf653eabd8b",
       "priority_score": 32.0,
+      "human_title": "sector rotation proxy 冲突（16次）",
+      "stage": "escalation",
+      "campaign_type": "invalidator_cluster",
+      "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
+      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
+      "board_class": "live",
+      "thread_key": "campaign-thread:3035aaf653eabd8b",
       "confirmations_needed": [
         "当前 thesis 在 16 次反证后是否仍成立"
       ],
@@ -294,17 +294,17 @@
       "known_unknowns": []
     },
     {
-      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
-      "stage": "escalation",
-      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
-      "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
-      "human_title": "未知发现改道",
-      "thread_key": "campaign-thread:cc363e8dcf2b8bad",
-      "campaign_id": "campaign:cc363e8dcf2b8bad",
       "why_now_delta": "未知发现方向冲突（16次）",
-      "campaign_type": "undercurrent_risk",
-      "board_class": "live",
+      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
+      "campaign_id": "campaign:cc363e8dcf2b8bad",
       "priority_score": 32.0,
+      "human_title": "未知发现改道",
+      "stage": "escalation",
+      "campaign_type": "undercurrent_risk",
+      "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
+      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
+      "board_class": "live",
+      "thread_key": "campaign-thread:cc363e8dcf2b8bad",
       "confirmations_needed": [
         "当前 thesis 在 16 次反证后是否仍成立"
       ],
@@ -316,17 +316,17 @@
       "known_unknowns": []
     },
     {
-      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
-      "stage": "escalation",
-      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
-      "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
-      "human_title": "板块方向冲突（16次）",
-      "thread_key": "campaign-thread:5caa5911dd2ed85b",
-      "campaign_id": "campaign:5caa5911dd2ed85b",
       "why_now_delta": "板块方向冲突（16次）",
-      "campaign_type": "invalidator_cluster",
-      "board_class": "live",
+      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
+      "campaign_id": "campaign:5caa5911dd2ed85b",
       "priority_score": 32.0,
+      "human_title": "板块方向冲突（16次）",
+      "stage": "escalation",
+      "campaign_type": "invalidator_cluster",
+      "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
+      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
+      "board_class": "live",
+      "thread_key": "campaign-thread:5caa5911dd2ed85b",
       "confirmations_needed": [
         "当前 thesis 在 16 次反证后是否仍成立"
       ],
@@ -338,17 +338,17 @@
       "known_unknowns": []
     },
     {
-      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
-      "stage": "escalation",
-      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
-      "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
-      "human_title": "event driven at 1250% utilization",
-      "thread_key": "campaign-thread:9537e4a96b25c0a7",
-      "campaign_id": "campaign:9537e4a96b25c0a7",
       "why_now_delta": "event driven at 1250% utilization",
-      "campaign_type": "undercurrent_risk",
-      "board_class": "live",
+      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
+      "campaign_id": "campaign:9537e4a96b25c0a7",
       "priority_score": 25.0,
+      "human_title": "event driven at 1250% utilization",
+      "stage": "escalation",
+      "campaign_type": "undercurrent_risk",
+      "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
+      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
+      "board_class": "live",
+      "thread_key": "campaign-thread:9537e4a96b25c0a7",
       "confirmations_needed": [
         "should any thesis in event driven be retired to reduce crowding?"
       ],
@@ -360,17 +360,17 @@
       "known_unknowns": []
     },
     {
-      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
-      "stage": "accumulating",
-      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
-      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
-      "human_title": "Packet 新鲜度反证（6次）",
-      "thread_key": "campaign-thread:63f81d72aeba6d14",
-      "campaign_id": "campaign:63f81d72aeba6d14",
       "why_now_delta": "Packet 新鲜度反证（6次） 持续累积，需要判断是否影响 attention slot",
-      "campaign_type": "undercurrent_risk",
-      "board_class": "risk",
+      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
+      "campaign_id": "campaign:63f81d72aeba6d14",
       "priority_score": 6.0,
+      "human_title": "Packet 新鲜度反证（6次）",
+      "stage": "accumulating",
+      "campaign_type": "undercurrent_risk",
+      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
+      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
+      "board_class": "risk",
+      "thread_key": "campaign-thread:63f81d72aeba6d14",
       "confirmations_needed": [
         "下一次 watcher update 是否同向",
         "相关 scenario/capital edge 是否增强"
@@ -383,40 +383,17 @@
       "known_unknowns": []
     },
     {
-      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
-      "stage": "accumulating",
-      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
-      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
-      "human_title": "官方修正反证（6次）",
-      "thread_key": "campaign-thread:1be3c7c5dd5f2914",
-      "campaign_id": "campaign:1be3c7c5dd5f2914",
       "why_now_delta": "官方修正反证（6次） 持续累积，需要判断是否影响 attention slot",
-      "campaign_type": "undercurrent_risk",
-      "board_class": "risk",
-      "priority_score": 6.0,
-      "confirmations_needed": [
-        "下一次 watcher update 是否同向",
-        "相关 scenario/capital edge 是否增强"
-      ],
-      "kill_switches": [
-        "后续两次扫描不再命中",
-        "相关机会或 thesis 证据被官方修正",
-        "来源新鲜度降为 stale"
-      ],
-      "known_unknowns": []
-    },
-    {
-      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
-      "stage": "accumulating",
       "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
-      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
-      "human_title": "数据源中断（6次）",
-      "thread_key": "campaign-thread:b68715f3e5c89c69",
-      "campaign_id": "campaign:b68715f3e5c89c69",
-      "why_now_delta": "数据源中断（6次） 持续累积，需要判断是否影响 attention slot",
-      "campaign_type": "undercurrent_risk",
-      "board_class": "risk",
+      "campaign_id": "campaign:1be3c7c5dd5f2914",
       "priority_score": 6.0,
+      "human_title": "官方修正反证（6次）",
+      "stage": "accumulating",
+      "campaign_type": "undercurrent_risk",
+      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
+      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
+      "board_class": "risk",
+      "thread_key": "campaign-thread:1be3c7c5dd5f2914",
       "confirmations_needed": [
         "下一次 watcher update 是否同向",
         "相关 scenario/capital edge 是否增强"
@@ -429,17 +406,40 @@
       "known_unknowns": []
     },
     {
-      "directional_implication": "影响是候选议程的优先级变化；方向结论需要验证。",
-      "stage": "scout",
-      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
-      "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
-      "human_title": "event driven bucket has uncovered hedge coverage",
-      "thread_key": "campaign-thread:54d438c528ec3820",
-      "campaign_id": "campaign:54d438c528ec3820",
-      "why_now_delta": "event driven bucket has uncovered hedge coverage",
-      "campaign_type": "hedge_gap",
+      "why_now_delta": "数据源中断（6次） 持续累积，需要判断是否影响 attention slot",
+      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
+      "campaign_id": "campaign:b68715f3e5c89c69",
+      "priority_score": 6.0,
+      "human_title": "数据源中断（6次）",
+      "stage": "accumulating",
+      "campaign_type": "undercurrent_risk",
+      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
+      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
       "board_class": "risk",
+      "thread_key": "campaign-thread:b68715f3e5c89c69",
+      "confirmations_needed": [
+        "下一次 watcher update 是否同向",
+        "相关 scenario/capital edge 是否增强"
+      ],
+      "kill_switches": [
+        "后续两次扫描不再命中",
+        "相关机会或 thesis 证据被官方修正",
+        "来源新鲜度降为 stale"
+      ],
+      "known_unknowns": []
+    },
+    {
+      "why_now_delta": "event driven bucket has uncovered hedge coverage",
+      "capital_relevance": "attention/capital slot 竞争；需要比较当前 book 与候选主题的机会成本",
+      "campaign_id": "campaign:54d438c528ec3820",
       "priority_score": 3.0,
+      "human_title": "event driven bucket has uncovered hedge coverage",
+      "stage": "scout",
+      "campaign_type": "hedge_gap",
+      "why_not_now": "review-only；还缺确认，不是执行或仓位调整命令",
+      "directional_implication": "影响是候选议程的优先级变化；方向结论需要验证。",
+      "board_class": "risk",
+      "thread_key": "campaign-thread:54d438c528ec3820",
       "confirmations_needed": [
         "what hedge options exist for event driven (uncovered)?"
       ],
@@ -452,7 +452,7 @@
     }
   ],
   "information_acquisition_snapshot": {
-    "generated_at": "2026-04-20T22:15:01.074130Z",
+    "generated_at": "2026-04-21T14:15:01.729871Z",
     "scope": "exact report-time archive snapshot",
     "source_health": {
       "available": true,
