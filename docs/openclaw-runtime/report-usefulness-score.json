@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-04-22T13:15:02.376478+00:00",
+  "generated_at": "2026-04-22T21:15:02.006464+00:00",
   "status": "pass",
   "latest_product_report": {
-    "generated_at": "2026-04-22T13:12:15.572786Z",
-    "report_hash": "sha256:81d8fa69ec5482cc6457ee34f593d14bfbc3e66d56cf2bae9fb6e3a5c7f294d3",
+    "generated_at": "2026-04-22T18:16:57.399327Z",
+    "report_hash": "sha256:fc71db699908acb8daef70e3c8acb78339486a1d8728ce3ae0bc02e6c5b181a1",
     "quality": {
       "score": 100,
       "noise_tokens": [],
       "line_count": 55,
-      "char_count": 1855,
+      "char_count": 1927,
       "has_opportunity_first_contract": true,
       "has_next_step": true,
       "has_holding_section": true
@@ -57,6 +57,20 @@
         "noise_tokens": [],
         "line_count": 25,
         "char_count": 543,
+        "has_opportunity_first_contract": false,
+        "has_next_step": false,
+        "has_holding_section": false
+      }
+    },
+    {
+      "runAtMs": 1776863463765,
+      "durationMs": 111232,
+      "deliveryStatus": "delivered",
+      "quality": {
+        "score": 70,
+        "noise_tokens": [],
+        "line_count": 25,
+        "char_count": 566,
         "has_opportunity_first_contract": false,
         "has_next_step": false,
         "has_holding_section": false

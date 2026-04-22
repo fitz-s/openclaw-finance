@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-22T13:15:01.441391+00:00",
+  "generated_at": "2026-04-22T21:15:01.106808+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "jobs": [
     {
@@ -28,11 +28,11 @@
       "state": {
         "consecutiveErrors": 0,
         "lastDeliveryStatus": "delivered",
-        "nextRunAtMs": 1776881700000,
-        "lastRunAtMs": 1776795358926,
+        "nextRunAtMs": 1776968100000,
+        "lastRunAtMs": 1776881747765,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 106028,
+        "lastDurationMs": 104598,
         "lastDelivered": true
       }
     },
@@ -62,13 +62,12 @@
       "state": {
         "consecutiveErrors": 0,
         "lastDeliveryStatus": "delivered",
-        "lastRunAtMs": 1776777135467,
+        "lastRunAtMs": 1776863463765,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 112133,
-        "nextRunAtMs": 1776863400000,
-        "lastDelivered": true,
-        "runningAtMs": 1776863463763
+        "lastDurationMs": 111232,
+        "nextRunAtMs": 1776949800000,
+        "lastDelivered": true
       }
     },
     {
@@ -97,11 +96,11 @@
       "state": {
         "consecutiveErrors": 0,
         "lastDeliveryStatus": "not-delivered",
-        "nextRunAtMs": 1776864300000,
-        "lastRunAtMs": 1776777900020,
+        "nextRunAtMs": 1776950700000,
+        "lastRunAtMs": 1776864300006,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 57234,
+        "lastDurationMs": 53281,
         "lastDelivered": false
       }
     },
@@ -159,13 +158,13 @@
         "message": "【OpenClaw Finance Deterministic Scanner Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_scanner_job.py --mode market-hours-scan\n\nContract markers:\n- finance_scanner_job.py runs finance_llm_context_pack.py, query_pack_planner.py, finance_worker.py, finance_parent_market_ingest_cutover.py, and gate_evaluator.py.\n- Read-only scanner context is /Users/leofitz/.openclaw/workspace/finance/state/llm-job-context/scanner.json.\n- Context pack is a view cache and must have pack_is_not_authority=true.\n- QueryPack is not evidence; object_links and unknown_discovery_exhausted_reason remain required contract fields.\n- unknown_discovery cannot be satisfied by held/watchlist tickers.\n- unknown_discovery_minimum_attempts remains enforced by scanner.json/query_pack_planner.py.\n- 不得把已在 watchlist/held 的标的当作 unknown_discovery。\n\nOutput discipline:\n- Return stdout exactly.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; delivery.mode is none.\n- No execution; review-only."
       },
       "state": {
-        "lastRunAtMs": 1776863137367,
+        "lastRunAtMs": 1776891600024,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 192650,
+        "lastDurationMs": 78136,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
-        "nextRunAtMs": 1776864000000,
+        "nextRunAtMs": 1776892800000,
         "lastDelivered": false
       }
     },

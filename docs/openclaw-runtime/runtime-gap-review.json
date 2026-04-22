@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-22T13:15:02.684133+00:00",
+  "generated_at": "2026-04-22T21:15:02.275445+00:00",
   "status": "reviewed",
   "unresolved_gaps": [
     "ibkr_client_portal_watchlist_sync_not_fresh",
@@ -18,7 +18,7 @@
     "review": "IBKR Client Portal watchlist sync is best-effort and currently depends on local Client Portal authentication. Flex holdings and local pinned symbols keep the universe usable when IBKR watchlist fetch is unavailable."
   },
   "report_usefulness": {
-    "delivered_count_in_recent_window": 2,
+    "delivered_count_in_recent_window": 3,
     "reviewed_recent_delivered_runs": [
       {
         "runAtMs": 1776701949649,
@@ -47,14 +47,28 @@
           "has_holding_section": false,
           "noise_tokens": []
         }
+      },
+      {
+        "runAtMs": 1776863463765,
+        "status": "ok",
+        "deliveryStatus": "delivered",
+        "durationMs": 111232,
+        "quality": {
+          "line_count": 25,
+          "char_count": 566,
+          "has_opportunity_first_contract": false,
+          "has_unknown_discovery_section": false,
+          "has_holding_section": false,
+          "noise_tokens": []
+        }
       }
     ],
     "latest_product_report": {
-      "generated_at": "2026-04-22T13:12:15.572786Z",
-      "report_hash": "sha256:81d8fa69ec5482cc6457ee34f593d14bfbc3e66d56cf2bae9fb6e3a5c7f294d3",
+      "generated_at": "2026-04-22T18:16:57.399327Z",
+      "report_hash": "sha256:fc71db699908acb8daef70e3c8acb78339486a1d8728ce3ae0bc02e6c5b181a1",
       "quality": {
         "line_count": 55,
-        "char_count": 1855,
+        "char_count": 1927,
         "has_opportunity_first_contract": true,
         "has_unknown_discovery_section": true,
         "has_holding_section": true,
@@ -65,8 +79,8 @@
   },
   "wake_threshold_bridge": {
     "current_gate": {
-      "evaluatedAt": "2026-04-22T13:07:46.245824+00:00",
-      "window": "pre",
+      "evaluatedAt": "2026-04-22T20:40:52.774657+00:00",
+      "window": "post",
       "shouldSend": false,
       "recommendedReportType": "hold",
       "decisionReason_sanitized": "present"
