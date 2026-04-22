@@ -1,14 +1,14 @@
 {
-  "generated_at": "2026-04-21T22:15:01.853513+00:00",
+  "generated_at": "2026-04-22T13:15:02.376478+00:00",
   "status": "pass",
   "latest_product_report": {
-    "generated_at": "2026-04-21T18:17:20.881719Z",
-    "report_hash": "sha256:e4f5537370182f838c9002f85abe5acca29fe7141af59c1677596b4745b7e828",
+    "generated_at": "2026-04-22T13:12:15.572786Z",
+    "report_hash": "sha256:81d8fa69ec5482cc6457ee34f593d14bfbc3e66d56cf2bae9fb6e3a5c7f294d3",
     "quality": {
       "score": 100,
       "noise_tokens": [],
       "line_count": 55,
-      "char_count": 1850,
+      "char_count": 1855,
       "has_opportunity_first_contract": true,
       "has_next_step": true,
       "has_holding_section": true

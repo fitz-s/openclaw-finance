@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-04-21T22:15:00.919471+00:00",
+  "generated_at": "2026-04-22T13:15:01.427731+00:00",
   "state_boundary": "sanitized_runtime_control_state",
   "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
   "source": "/Users/leofitz/.openclaw/workspace/finance/state/brave-compression-activation-report.json",
   "exists": true,
   "payload": {
-    "generated_at": "2026-04-21T22:01:34.218987Z",
+    "generated_at": "2026-04-22T12:04:31.540649Z",
     "status": "pass",
     "contract": "brave-compression-activation-v1",
     "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",

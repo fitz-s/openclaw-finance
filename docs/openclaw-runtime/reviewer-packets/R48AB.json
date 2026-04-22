@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-04-22T13:15:01.812740Z",
+  "generated_at": "2026-04-22T13:15:01.780143Z",
   "contract": "finance-reviewer-report-packet-v1",
-  "report_id": "R019B",
-  "source_file": "<finance>/state/report-reader/R019B.json",
+  "report_id": "R48AB",
+  "source_file": "<finance>/state/report-reader/R48AB.json",
   "sanitization": {
     "discord_conversation_included": false,
     "discord_thread_ids_included": false,
@@ -36,18 +36,18 @@
   "operator_surface": {
     "operator_surface_available": true,
     "surface_source": "state/finance-decision-report-envelope.json",
-    "discord_primary_markdown": "Finance｜资本议程 | 09:13 ET | R019B\n\n这次只看 1 件事：\n- A1 反证升级｜板块方向冲突（16次），先判断值不值得进入深挖；不是下单建议。\n\nFact\n- 当前资本议程共有 6 项，A1 优先级最高：板块方向冲突（16次）。\n- T1 当前仍是 TSLA；本轮判断仍是 review-only，不触发新动作。\n- Macro triad：Gold -0.13%(flat) / Bitcoin +0.20%(flat) / SPX -0.24%(flat)。\n- I1 数据源中断；命中 12 次。\n\nInterpretation\n- 这是 attention allocation 问题，不是执行问题。\n- 更像“本周该不该占用注意力”，不是“现有 book 该不该立刻替代”。\n\nTo Verify\n- 当前 thesis 在 16 次反证后是否仍成立\n\n对象\n- A1 反证升级｜板块方向冲突（16次）\n- T1 现有 Thesis｜TSLA\n- I1 反证｜数据源中断\n- I2 反证｜期权/持仓数据不新鲜\n\n追问：why A1 / compare A1 T1 / challenge A1 / sources A1 / expand R019B",
-    "discord_thread_seed_markdown": "R019B｜深挖入口\n\n对象卡\n- A1 反证升级｜板块方向冲突（16次）\n  作用：本周需要判断是否值得占用 attention slot\n- T1 现有 Thesis｜TSLA\n  作用：当前主轴；状态=活跃\n- I1 反证｜数据源中断\n  作用：削弱当前证据强度；hit_count=12\n- I2 反证｜期权/持仓数据不新鲜\n  作用：限制当前结论置信度\n\n可直接追问\n- why A1\n- compare A1 T1\n- challenge A1\n- sources A1\n- expand R019B",
-    "discord_live_board_markdown": "Finance｜Live Board\n\n1) sector rotation proxy 冲突（16次） | escalation\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：板块轮动冲突（16次）\nEvidence：lanes=0; sources=0; blocker=none\nVerify：当前 thesis 在 16 次反证后是否仍成立\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:3035aaf653eabd8b / challenge / sources\n\n2) 未知发现改道 | escalation\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：未知发现方向冲突（16次）\nEvidence：lanes=0; sources=0; blocker=none\nVerify：当前 thesis 在 16 次反证后是否仍成立\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:cc363e8dcf2b8bad / challenge / sources\n\n3) 板块方向冲突（16次） | escalation\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：板块方向冲突（16次）\nEvidence：lanes=0; sources=0; blocker=none\nVerify：当前 thesis 在 16 次反证后是否仍成立\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:5caa5911dd2ed85b / challenge / sources\n\n还有 1 个 campaign；在线程问 expand board。\n\nMacro triad：Gold -0.13%(flat) / Bitcoin +0.20%(flat) / SPX -0.24%(flat)。",
-    "discord_scout_board_markdown": "Finance｜Peacetime Board\n\n当前没有 scout campaign。\n\nMacro triad：Gold -0.13%(flat) / Bitcoin +0.20%(flat) / SPX -0.24%(flat)。",
-    "discord_risk_board_markdown": "Finance｜Risk / Undercurrent Board\n\n1) Packet 新鲜度反证（12次） | review\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：Packet 新鲜度反证（12次） 连续命中，正在挑战当前注意力分配\nEvidence：lanes=0; sources=0; score=0.478; blocker=source_diversity_lt_2\nVerify：下一次 watcher update 是否同向; 相关 scenario/capital edge 是否增强\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:f10a783e9803dacc / challenge / sources\n\n2) 官方修正反证（12次） | review\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：官方修正反证（12次） 连续命中，正在挑战当前注意力分配\nEvidence：lanes=0; sources=0; score=0.478; blocker=source_diversity_lt_2\nVerify：下一次 watcher update 是否同向; 相关 scenario/capital edge 是否增强\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:b633128959cb4799 / challenge / sources\n\n3) 数据源中断（12次） | review\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：数据源中断（12次） 连续命中，正在挑战当前注意力分配\nEvidence：lanes=0; sources=0; score=0.478; blocker=source_diversity_lt_2\nVerify：下一次 watcher update 是否同向; 相关 scenario/capital edge 是否增强\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:8016786c43ee0fff / challenge / sources\n\n还有 5 个 campaign；在线程问 expand board。\n\nMacro triad：Gold -0.13%(flat) / Bitcoin +0.20%(flat) / SPX -0.24%(flat)。"
+    "discord_primary_markdown": "Finance｜资本议程 | 09:12 ET | R48AB\n\n这次只看 1 件事：\n- A1 反证升级｜板块方向冲突（16次），先判断值不值得进入深挖；不是下单建议。\n\nFact\n- 当前资本议程共有 6 项，A1 优先级最高：板块方向冲突（16次）。\n- T1 当前仍是 TSLA；本轮判断仍是 review-only，不触发新动作。\n- Macro triad：Gold -1.27%(down/risk-off) / Bitcoin +2.64%(risk-on/up) / SPX -0.63%(down/risk-off)。\n- I1 数据源中断；命中 7 次。\n\nInterpretation\n- 这是 attention allocation 问题，不是执行问题。\n- 更像“本周该不该占用注意力”，不是“现有 book 该不该立刻替代”。\n\nTo Verify\n- 当前 thesis 在 16 次反证后是否仍成立\n\n对象\n- A1 反证升级｜板块方向冲突（16次）\n- T1 现有 Thesis｜TSLA\n- I1 反证｜数据源中断\n- I2 反证｜期权/持仓数据不新鲜\n\n追问：why A1 / compare A1 T1 / challenge A1 / sources A1 / expand R48AB",
+    "discord_thread_seed_markdown": "R48AB｜深挖入口\n\n对象卡\n- A1 反证升级｜板块方向冲突（16次）\n  作用：本周需要判断是否值得占用 attention slot\n- T1 现有 Thesis｜TSLA\n  作用：当前主轴；状态=活跃\n- I1 反证｜数据源中断\n  作用：削弱当前证据强度；hit_count=7\n- I2 反证｜期权/持仓数据不新鲜\n  作用：限制当前结论置信度\n\n可直接追问\n- why A1\n- compare A1 T1\n- challenge A1\n- sources A1\n- expand R48AB",
+    "discord_live_board_markdown": "Finance｜Live Board\n\n1) sector rotation proxy 冲突（16次） | escalation\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：板块轮动冲突（16次）\nEvidence：lanes=0; sources=0; blocker=none\nVerify：当前 thesis 在 16 次反证后是否仍成立\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:3035aaf653eabd8b / challenge / sources\n\n2) 未知发现改道 | escalation\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：未知发现方向冲突（16次）\nEvidence：lanes=0; sources=0; blocker=none\nVerify：当前 thesis 在 16 次反证后是否仍成立\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:cc363e8dcf2b8bad / challenge / sources\n\n3) 板块方向冲突（16次） | escalation\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：板块方向冲突（16次）\nEvidence：lanes=0; sources=0; blocker=none\nVerify：当前 thesis 在 16 次反证后是否仍成立\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:5caa5911dd2ed85b / challenge / sources\n\n还有 1 个 campaign；在线程问 expand board。\n\nMacro triad：Gold -1.27%(down/risk-off) / Bitcoin +2.64%(risk-on/up) / SPX -0.63%(down/risk-off)。",
+    "discord_scout_board_markdown": "Finance｜Peacetime Board\n\n当前没有 scout campaign。\n\nMacro triad：Gold -1.27%(down/risk-off) / Bitcoin +2.64%(risk-on/up) / SPX -0.63%(down/risk-off)。",
+    "discord_risk_board_markdown": "Finance｜Risk / Undercurrent Board\n\n1) Packet 新鲜度反证（7次） | accumulating\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：Packet 新鲜度反证（7次） 连续命中，正在挑战当前注意力分配\nEvidence：lanes=0; sources=0; score=0.354; blocker=source_diversity_lt_2\nVerify：下一次 watcher update 是否同向; 相关 scenario/capital edge 是否增强\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:7109e5974eed8b3f / challenge / sources\n\n2) 商品压力冲突（7次） | accumulating\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：商品压力冲突（7次） 连续命中，正在挑战当前注意力分配\nEvidence：lanes=0; sources=0; score=0.354; blocker=source_diversity_lt_2\nVerify：下一次 watcher update 是否同向; 相关 scenario/capital edge 是否增强\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:77d007aba4060011 / challenge / sources\n\n3) 商品方向冲突（7次） | accumulating\nImplication：利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。\nWhy：商品方向冲突（7次） 连续命中，正在挑战当前注意力分配\nEvidence：lanes=0; sources=0; score=0.354; blocker=source_diversity_lt_2\nVerify：下一次 watcher update 是否同向; 相关 scenario/capital edge 是否增强\nUnknown：暂无明确 context gap；先看价格/量能与来源新鲜度。\nAsk：why campaign:ab493b072fcbab1b / challenge / sources\n\n还有 7 个 campaign；在线程问 expand board。\n\nMacro triad：Gold -1.27%(down/risk-off) / Bitcoin +2.64%(risk-on/up) / SPX -0.63%(down/risk-off)。"
   },
   "bundle_summary": {
-    "bundle_id": "rb:R019B",
-    "generated_at": "2026-04-21T13:13:40.782833Z",
+    "bundle_id": "rb:R48AB",
+    "generated_at": "2026-04-22T13:12:15.809733Z",
     "report_hash_present": true,
-    "object_card_count": 73,
-    "campaign_count": 12,
+    "object_card_count": 75,
+    "campaign_count": 14,
     "starter_queries": [
       "why A1",
       "challenge A1",
@@ -57,9 +57,9 @@
       "sources A2"
     ],
     "followup_digest": [
-      "R019B: review-only; explain/compare/challenge/source trace only; no execution.",
+      "R48AB: review-only; explain/compare/challenge/source trace only; no execution.",
       "A1: 反证升级｜板块方向冲突（16次）",
-      "Main invalidators: I1 source outage hit_count=12；I2 official correction hit_count=12；I3 packet staleness hit_count=12；I4 direction_conflict:theme:broad_market:sector hit_count=7；I5 direction_conflict:theme:sector_rotation_proxy hit_count=7"
+      "Main invalidators: I1 source outage hit_count=7；I2 official correction hit_count=7；I3 packet staleness hit_count=7；I4 direction_conflict:theme:broad_market:commodity hit_count=7；I5 direction_conflict:theme:broad_market:sector hit_count=7"
     ],
     "object_alias_map_sample": {
       "A1": "反证升级｜板块方向冲突（16次）",
@@ -90,12 +90,12 @@
   },
   "decision_log_summary": {
     "available": true,
-    "created_at": "2026-04-21T13:13:40.674062Z",
-    "decision_id": "decision:d5d3dc1ce18970d5a2b3",
-    "report_id": "R019B",
+    "created_at": "2026-04-22T13:12:15.692935Z",
+    "decision_id": "decision:6b8eaefdd2518efc0d0d",
+    "report_id": "R48AB",
     "operator_action": "logged_no_trade",
     "execution_decision": "none",
-    "judgment_id": "judgment:packet:market-ingest:SPY:2026-04-21T12:01:03.523414Z:no-trade",
+    "judgment_id": "judgment:packet:market-ingest:SPY:2026-04-22T13:07:50.868210Z:no-trade",
     "policy_version": "finance-semantic-v1",
     "wake_class": "PACKET_UPDATE_ONLY",
     "wake_dispatch_action": "persist_only",
@@ -103,7 +103,7 @@
       "thesis_refs": 20,
       "scenario_refs": 8,
       "opportunity_candidate_refs": 0,
-      "invalidator_refs": 6,
+      "invalidator_refs": 8,
       "capital_agenda_refs": 0,
       "displacement_case_refs": 0
     },
@@ -363,83 +363,83 @@
       "board_class": "risk",
       "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
       "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
-      "why_now_delta": "Packet 新鲜度反证（12次） 持续累积，需要判断是否影响 attention slot",
+      "why_now_delta": "Packet 新鲜度反证（7次） 持续累积，需要判断是否影响 attention slot",
       "campaign_type": "undercurrent_risk",
       "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
-      "thread_key": "campaign-thread:f10a783e9803dacc",
-      "priority_score": 12.0,
-      "human_title": "Packet 新鲜度反证（12次）",
-      "stage": "review",
-      "campaign_id": "campaign:f10a783e9803dacc",
-      "confirmations_needed": [
-        "下一次 watcher update 是否同向",
-        "相关 scenario/capital edge 是否增强"
-      ],
-      "kill_switches": [
-        "后续两次扫描不再命中",
-        "相关机会或 thesis 证据被官方修正",
-        "来源新鲜度降为 stale"
-      ],
-      "known_unknowns": []
-    },
-    {
-      "board_class": "risk",
-      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
-      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
-      "why_now_delta": "官方修正反证（12次） 持续累积，需要判断是否影响 attention slot",
-      "campaign_type": "undercurrent_risk",
-      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
-      "thread_key": "campaign-thread:b633128959cb4799",
-      "priority_score": 12.0,
-      "human_title": "官方修正反证（12次）",
-      "stage": "review",
-      "campaign_id": "campaign:b633128959cb4799",
-      "confirmations_needed": [
-        "下一次 watcher update 是否同向",
-        "相关 scenario/capital edge 是否增强"
-      ],
-      "kill_switches": [
-        "后续两次扫描不再命中",
-        "相关机会或 thesis 证据被官方修正",
-        "来源新鲜度降为 stale"
-      ],
-      "known_unknowns": []
-    },
-    {
-      "board_class": "risk",
-      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
-      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
-      "why_now_delta": "数据源中断（12次） 持续累积，需要判断是否影响 attention slot",
-      "campaign_type": "undercurrent_risk",
-      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
-      "thread_key": "campaign-thread:8016786c43ee0fff",
-      "priority_score": 12.0,
-      "human_title": "数据源中断（12次）",
-      "stage": "review",
-      "campaign_id": "campaign:8016786c43ee0fff",
-      "confirmations_needed": [
-        "下一次 watcher update 是否同向",
-        "相关 scenario/capital edge 是否增强"
-      ],
-      "kill_switches": [
-        "后续两次扫描不再命中",
-        "相关机会或 thesis 证据被官方修正",
-        "来源新鲜度降为 stale"
-      ],
-      "known_unknowns": []
-    },
-    {
-      "board_class": "risk",
-      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
-      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
-      "why_now_delta": "未知发现方向冲突（7次） 持续累积，需要判断是否影响 attention slot",
-      "campaign_type": "undercurrent_risk",
-      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
-      "thread_key": "campaign-thread:928065197b6440a6",
+      "thread_key": "campaign-thread:7109e5974eed8b3f",
       "priority_score": 7.0,
-      "human_title": "未知发现方向冲突（7次）",
+      "human_title": "Packet 新鲜度反证（7次）",
       "stage": "accumulating",
-      "campaign_id": "campaign:928065197b6440a6",
+      "campaign_id": "campaign:7109e5974eed8b3f",
+      "confirmations_needed": [
+        "下一次 watcher update 是否同向",
+        "相关 scenario/capital edge 是否增强"
+      ],
+      "kill_switches": [
+        "后续两次扫描不再命中",
+        "相关机会或 thesis 证据被官方修正",
+        "来源新鲜度降为 stale"
+      ],
+      "known_unknowns": []
+    },
+    {
+      "board_class": "risk",
+      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
+      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
+      "why_now_delta": "商品压力冲突（7次） 持续累积，需要判断是否影响 attention slot",
+      "campaign_type": "undercurrent_risk",
+      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
+      "thread_key": "campaign-thread:77d007aba4060011",
+      "priority_score": 7.0,
+      "human_title": "商品压力冲突（7次）",
+      "stage": "accumulating",
+      "campaign_id": "campaign:77d007aba4060011",
+      "confirmations_needed": [
+        "下一次 watcher update 是否同向",
+        "相关 scenario/capital edge 是否增强"
+      ],
+      "kill_switches": [
+        "后续两次扫描不再命中",
+        "相关机会或 thesis 证据被官方修正",
+        "来源新鲜度降为 stale"
+      ],
+      "known_unknowns": []
+    },
+    {
+      "board_class": "risk",
+      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
+      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
+      "why_now_delta": "商品方向冲突（7次） 持续累积，需要判断是否影响 attention slot",
+      "campaign_type": "undercurrent_risk",
+      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
+      "thread_key": "campaign-thread:ab493b072fcbab1b",
+      "priority_score": 7.0,
+      "human_title": "商品方向冲突（7次）",
+      "stage": "accumulating",
+      "campaign_id": "campaign:ab493b072fcbab1b",
+      "confirmations_needed": [
+        "下一次 watcher update 是否同向",
+        "相关 scenario/capital edge 是否增强"
+      ],
+      "kill_switches": [
+        "后续两次扫描不再命中",
+        "相关机会或 thesis 证据被官方修正",
+        "来源新鲜度降为 stale"
+      ],
+      "known_unknowns": []
+    },
+    {
+      "board_class": "risk",
+      "capital_relevance": "peacetime/risk board 可见；用于避免暗流完全沉入后台",
+      "why_not_now": "暗流仍在积累；未形成 isolated wake 或执行结论",
+      "why_now_delta": "官方修正反证（7次） 持续累积，需要判断是否影响 attention slot",
+      "campaign_type": "undercurrent_risk",
+      "directional_implication": "利好/利空还不能定；当前影响的是注意力分配，而不是执行方向。",
+      "thread_key": "campaign-thread:d37033e0410d69db",
+      "priority_score": 7.0,
+      "human_title": "官方修正反证（7次）",
+      "stage": "accumulating",
+      "campaign_id": "campaign:d37033e0410d69db",
       "confirmations_needed": [
         "下一次 watcher update 是否同向",
         "相关 scenario/capital edge 是否增强"
@@ -453,28 +453,28 @@
     }
   ],
   "information_acquisition_snapshot": {
-    "generated_at": "2026-04-22T13:15:01.812353Z",
+    "generated_at": "2026-04-22T13:15:01.779749Z",
     "scope": "exact report-time archive snapshot",
     "source_health": {
       "available": true,
-      "generated_at": "2026-04-21T12:00:59.716042Z",
-      "status": "degraded",
-      "source_count": 17,
+      "generated_at": "2026-04-22T13:07:45.992524Z",
+      "status": "pass",
+      "source_count": 16,
       "summary": {
         "freshness": {
-          "fresh": 6,
+          "fresh": 7,
           "aging": 1,
-          "stale": 2,
+          "stale": 0,
           "unknown": 8
         },
         "latency": {
-          "ok": 0,
+          "ok": 2,
           "degraded": 0,
-          "breached": 3,
-          "unknown": 14
+          "breached": 1,
+          "unknown": 13
         },
         "rights": {
-          "ok": 4,
+          "ok": 3,
           "restricted": 12,
           "expired": 0,
           "unknown": 1
@@ -513,18 +513,17 @@
         },
         {
           "source_id": "source:sec_edgar",
-          "freshness_status": "stale",
+          "freshness_status": "aging",
           "latency_status": "breached",
           "schema_status": "ok",
           "validation_status": "pass",
           "rights_status": "ok",
           "coverage_status": "ok",
           "breach_reasons": [
-            "freshness:stale",
             "latency:breached"
           ],
           "last_seen_at_present": true,
-          "last_success_at_present": false
+          "last_success_at_present": true
         },
         {
           "source_id": "source:issuer_press_release",
@@ -543,14 +542,13 @@
         },
         {
           "source_id": "source:portfolio_flex",
-          "freshness_status": "aging",
-          "latency_status": "breached",
+          "freshness_status": "fresh",
+          "latency_status": "ok",
           "schema_status": "ok",
           "validation_status": "pass",
           "rights_status": "restricted",
           "coverage_status": "ok",
           "breach_reasons": [
-            "latency:breached",
             "rights:restricted"
           ],
           "last_seen_at_present": true,
@@ -558,19 +556,17 @@
         },
         {
           "source_id": "source:yfinance",
-          "freshness_status": "stale",
-          "latency_status": "breached",
+          "freshness_status": "fresh",
+          "latency_status": "ok",
           "schema_status": "ok",
           "validation_status": "pass",
           "rights_status": "restricted",
           "coverage_status": "ok",
           "breach_reasons": [
-            "freshness:stale",
-            "latency:breached",
             "rights:restricted"
           ],
           "last_seen_at_present": true,
-          "last_success_at_present": false
+          "last_success_at_present": true
         },
         {
           "source_id": "source:low_quality_blocked",
@@ -615,21 +611,6 @@
           ],
           "last_seen_at_present": true,
           "last_success_at_present": false
-        },
-        {
-          "source_id": "source:brave_budget_guard",
-          "freshness_status": "fresh",
-          "latency_status": "unknown",
-          "schema_status": "ok",
-          "validation_status": "pass",
-          "rights_status": "ok",
-          "coverage_status": "ok",
-          "breach_reasons": [
-            "aperture_cap_exhausted",
-            "finance_quota_degraded"
-          ],
-          "last_seen_at_present": true,
-          "last_success_at_present": true
         },
         {
           "source_id": "source:brave_llm_context",
@@ -738,7 +719,7 @@
     },
     "source_atom_summary": {
       "available": true,
-      "generated_at": "2026-04-21T13:13:40.205216Z",
+      "generated_at": "2026-04-22T13:12:15.130221Z",
       "status": "pass",
       "atom_count": 0,
       "by_source_lane": {},
@@ -748,7 +729,7 @@
     },
     "claim_graph_summary": {
       "available": true,
-      "generated_at": "2026-04-21T13:13:40.250636Z",
+      "generated_at": "2026-04-22T13:12:15.188967Z",
       "status": "pass",
       "claim_count": 0,
       "by_direction": {},
@@ -757,7 +738,7 @@
     },
     "context_gap_summary": {
       "available": true,
-      "generated_at": "2026-04-21T13:13:40.300405Z",
+      "generated_at": "2026-04-22T13:12:15.247045Z",
       "status": "pass",
       "gap_count": 0,
       "by_missing_lane": {},
@@ -770,7 +751,7 @@
     ],
     "options_iv_surface_summary": {
       "available": true,
-      "generated_at": "2026-04-21T13:13:40.118026Z",
+      "generated_at": "2026-04-22T13:12:15.005814Z",
       "status": "degraded",
       "summary": {
         "symbol_count": 0,
