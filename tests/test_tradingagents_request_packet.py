@@ -66,11 +66,28 @@ def test_build_request_raises_when_no_target_exists() -> None:
             report_envelope={},
             decision_log={},
             packet={},
+            thesis_registry={'theses': []},
         )
     except ValueError as exc:
         assert 'no TradingAgents target instrument available' in str(exc)
     else:
         raise AssertionError('expected ValueError')
+
+
+def test_build_request_falls_back_to_thesis_registry(monkeypatch) -> None:
+    monkeypatch.setattr('tradingagents_request_packet.load_json', lambda path, default=None: {
+        '/Users/leofitz/.openclaw/workspace/finance/state/thesis-research-packet.json': {'selected_opportunities': [], 'selected_theses': []},
+        '/Users/leofitz/.openclaw/workspace/finance/state/finance-decision-report-envelope.json': {'report_hash': 'sha256:report'},
+        '/Users/leofitz/.openclaw/workspace/finance/state/finance-decision-log-report.json': {'entry': {'decision_id': 'decision:123'}},
+        '/Users/leofitz/.openclaw/workspace/services/market-ingest/state/latest-context-packet.json': {'packet_id': 'packet:1', 'packet_hash': 'sha256:packet', 'instrument': 'SPY'},
+        '/Users/leofitz/.openclaw/workspace/finance/state/thesis-registry.json': {
+            'theses': [{'thesis_id': 'thesis:nvda', 'instrument': 'NVDA', 'status': 'active'}]
+        },
+    }.get(str(path), default))
+    request = build_request(mode='scheduled')
+    assert request['instrument'] == 'NVDA'
+    assert request['request_source'] == 'thesis_registry'
+    assert request['request_source_meta']['selected_thesis_id'] == 'thesis:nvda'
 
 
 def test_request_example_tracks_google_preview_resolution_contract() -> None:

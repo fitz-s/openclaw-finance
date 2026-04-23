@@ -26,10 +26,14 @@ from tradingagents_bridge_types import (
 )
 from tradingagents_model_resolution import resolve_tradingagents_role
 
+THESIS_REGISTRY = Path('/Users/leofitz/.openclaw/workspace/finance/state/thesis-registry.json')
+
 
 def _pick_target(
     manual_instrument: str | None,
     research_packet: dict[str, Any],
+    thesis_registry: dict[str, Any] | None = None,
+    packet: dict[str, Any] | None = None,
 ) -> tuple[str | None, str, dict[str, Any]]:
     if manual_instrument:
         instrument = clean_instrument(manual_instrument)
@@ -54,6 +58,29 @@ def _pick_target(
                     'selected_thesis_id': row.get('thesis_id'),
                 }
 
+    theses = thesis_registry.get('theses', []) if isinstance(thesis_registry, dict) and isinstance(thesis_registry.get('theses'), list) else []
+    ranked_theses = sorted(
+        [row for row in theses if isinstance(row, dict)],
+        key=lambda row: (
+            2 if row.get('status') == 'active' else 1 if row.get('status') == 'watch' else 0,
+            str(row.get('instrument') or ''),
+        ),
+        reverse=True,
+    )
+    for row in ranked_theses:
+        instrument = clean_instrument(row.get('instrument'))
+        if instrument:
+            return instrument, 'thesis_registry', {
+                'selected_thesis_id': row.get('thesis_id'),
+                'selected_thesis_status': row.get('status'),
+            }
+
+    packet_instrument = clean_instrument((packet or {}).get('instrument'))
+    if packet_instrument:
+        return packet_instrument, 'context_packet', {
+            'packet_id': (packet or {}).get('packet_id'),
+        }
+
     return None, 'no_target', {}
 
 
@@ -66,6 +93,7 @@ def build_request(
     report_envelope: dict[str, Any] | None = None,
     decision_log: dict[str, Any] | None = None,
     packet: dict[str, Any] | None = None,
+    thesis_registry: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     defaults = load_defaults()
     model_resolution = resolve_tradingagents_role(job_name='finance-tradingagents-sidecar')
@@ -75,8 +103,14 @@ def build_request(
     report_envelope = report_envelope if isinstance(report_envelope, dict) else (load_json(REPORT_ENVELOPE, {}) or {})
     decision_log = decision_log if isinstance(decision_log, dict) else (load_json(DECISION_LOG, {}) or {})
     packet = packet if isinstance(packet, dict) else (load_json(PACKET, {}) or {})
+    thesis_registry = thesis_registry if isinstance(thesis_registry, dict) else (load_json(THESIS_REGISTRY, {}) or {})
 
-    selected_instrument, request_source, source_meta = _pick_target(instrument, research_packet)
+    selected_instrument, request_source, source_meta = _pick_target(
+        instrument,
+        research_packet,
+        thesis_registry,
+        packet,
+    )
     if not selected_instrument:
         raise ValueError('no TradingAgents target instrument available')
 

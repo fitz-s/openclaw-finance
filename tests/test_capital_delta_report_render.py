@@ -63,8 +63,10 @@ def test_capital_delta_renders_agenda_section():
         watch_intent={}, thesis_registry={}, opportunity_queue={},
         invalidator_ledger={}, capital_agenda=_capital_agenda(),
         capital_graph=_capital_graph(), displacement_cases=_displacement_cases(),
+        tradingagents_digest={'instrument': 'NVDA', 'run_id': 'ta:test', 'safe_bullets': ['NVDA sidecar summary'], 'review_only': True, 'no_execution': True, 'candidate_contract_exclusion': True},
     )
     assert '## 资本议程' in md
+    assert '## TradingAgents 侧车研究' in md
     assert '## 替代分析' in md
     assert '## 护城河缺口' in md
     assert '资本竞争优先' in md
