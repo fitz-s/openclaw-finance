@@ -1,7 +1,36 @@
 {
-  "generated_at": "2026-04-23T13:58:19.748277+00:00",
+  "generated_at": "2026-04-23T16:50:30.577899+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "jobs": [
+    {
+      "id": "finance-immediate-alert-v1",
+      "name": "finance-immediate-alert",
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "25,55 9-15 * * 1-5",
+        "tz": "America/Chicago"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "delivery": {
+        "mode": "announce",
+        "channel": "discord",
+        "to": "channel:1479790104490016808"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "model": "google-gemini-cli/gemini-3-flash",
+        "timeoutSeconds": 420,
+        "lightContext": true,
+        "message": "【OpenClaw Finance Deterministic Report Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_discord_report_job.py --mode immediate-alert\n\nContract markers:\n- This is the TradingAgents-backed intraday alert lane.\n- It requires fresh TradingAgents sidecar context before delivery.\n- It must suppress duplicate primary markdown with NO_REPLY.\n- It uses the deterministic renderer/product-validator/decision-log/delivery-safety chain.\n- It does not mutate thresholds or perform broker actions.\n\nOutput discipline:\n- Return stdout exactly.\n- If stdout is NO_REPLY, return only NO_REPLY.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; OpenClaw delivery handles Discord.\n- Review-only; no execution."
+      },
+      "state": {
+        "lastDeliveryStatus": "not-delivered",
+        "lastDelivered": false,
+        "consecutiveErrors": 0
+      }
+    },
     {
       "id": "finance-midday-operator-review-v1",
       "name": "finance-midday-operator-review",
@@ -158,13 +187,13 @@
         "message": "【OpenClaw Finance Deterministic Scanner Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_scanner_job.py --mode market-hours-scan\n\nContract markers:\n- finance_scanner_job.py runs finance_llm_context_pack.py, query_pack_planner.py, finance_worker.py, finance_parent_market_ingest_cutover.py, and gate_evaluator.py.\n- Read-only scanner context is /Users/leofitz/.openclaw/workspace/finance/state/llm-job-context/scanner.json.\n- Context pack is a view cache and must have pack_is_not_authority=true.\n- QueryPack is not evidence; object_links and unknown_discovery_exhausted_reason remain required contract fields.\n- unknown_discovery cannot be satisfied by held/watchlist tickers.\n- unknown_discovery_minimum_attempts remains enforced by scanner.json/query_pack_planner.py.\n- 不得把已在 watchlist/held 的标的当作 unknown_discovery。\n\nOutput discipline:\n- Return stdout exactly.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; delivery.mode is none.\n- No execution; review-only."
       },
       "state": {
-        "lastRunAtMs": 1776951600022,
+        "lastRunAtMs": 1776962400028,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 138653,
+        "lastDurationMs": 66033,
         "lastDeliveryStatus": "not-delivered",
         "consecutiveErrors": 0,
-        "nextRunAtMs": 1776952800000,
+        "nextRunAtMs": 1776963600000,
         "lastDelivered": false
       }
     },
@@ -233,7 +262,7 @@
       "enabled": true,
       "schedule": {
         "kind": "cron",
-        "expr": "15 8-18 * * 1-5",
+        "expr": "15,45 8-16 * * 1-5",
         "tz": "America/Chicago"
       },
       "sessionTarget": "isolated",
@@ -252,8 +281,14 @@
       "state": {
         "lastDeliveryStatus": "not-delivered",
         "lastDelivered": false,
-        "consecutiveErrors": 0,
-        "nextRunAtMs": 1776953700000
+        "consecutiveErrors": 1,
+        "nextRunAtMs": 1776964500000,
+        "lastRunAtMs": 1776960900023,
+        "lastRunStatus": "error",
+        "lastStatus": "error",
+        "lastDurationMs": 624860,
+        "lastError": "⚠️ Agent couldn't generate a response. Please try again.",
+        "lastDeliveryError": "⚠️ Agent couldn't generate a response. Please try again."
       }
     },
     {

@@ -24,6 +24,7 @@ REVIEW_2026_04_18 = '/Users/leofitz/Downloads/review 2026-04-18.md'
 FINANCE_JOB_NAMES = {
     'finance-subagent-scanner',
     'finance-subagent-scanner-offhours',
+    'finance-immediate-alert',
     'finance-premarket-brief',
     'finance-premarket-delivery-watchdog',
     'finance-midday-operator-review',

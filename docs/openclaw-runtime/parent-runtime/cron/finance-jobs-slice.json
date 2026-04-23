@@ -1,7 +1,28 @@
 {
-  "generated_at": "2026-04-23T13:58:19.563379Z",
+  "generated_at": "2026-04-23T16:50:30.413399Z",
   "source_path": "/Users/leofitz/.openclaw/cron/jobs.json",
   "jobs": [
+    {
+      "id": "finance-immediate-alert-v1",
+      "name": "finance-immediate-alert",
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "25,55 9-15 * * 1-5",
+        "tz": "America/Chicago"
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "discord",
+        "to": "channel:1479790104490016808"
+      },
+      "sessionTarget": "isolated",
+      "payload": {
+        "kind": "agentTurn",
+        "model": "google-gemini-cli/gemini-3-flash",
+        "message": "【OpenClaw Finance Deterministic Report Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_discord_report_job.py --mode immediate-alert\n\nContract markers:\n- This is the TradingAgents-backed intraday alert lane.\n- It requires fresh TradingAgents sidecar context before delivery.\n- It must suppress duplicate primary markdown with NO_REPLY.\n- It uses the deterministic renderer/product-validator/decision-log/delivery-safety chain.\n- It does not mutate thresholds or perform broker actions.\n\nOutput discipline:\n- Return stdout exactly.\n- If stdout is NO_REPLY, return only NO_REPLY.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; OpenClaw delivery handles Discord.\n- Review-only; no execution."
+      }
+    },
     {
       "id": "finance-midday-operator-review-v1",
       "name": "finance-midday-operator-review",
@@ -111,7 +132,7 @@
       "enabled": true,
       "schedule": {
         "kind": "cron",
-        "expr": "15 8-18 * * 1-5",
+        "expr": "15,45 8-16 * * 1-5",
         "tz": "America/Chicago"
       },
       "delivery": {

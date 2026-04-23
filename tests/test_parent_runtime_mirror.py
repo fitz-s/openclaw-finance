@@ -36,6 +36,7 @@ def test_parent_runtime_mirror_manifest_and_cron_slice() -> None:
     assert manifest['status'] == 'pass'
     cron = json.loads((MIRROR / 'cron' / 'finance-jobs-slice.json').read_text(encoding='utf-8'))
     names = {job['name'] for job in cron['jobs']}
+    assert 'finance-immediate-alert' in names
     assert 'finance-premarket-brief' in names
     assert 'finance-subagent-scanner' in names
     assert 'finance-tradingagents-sidecar' in names

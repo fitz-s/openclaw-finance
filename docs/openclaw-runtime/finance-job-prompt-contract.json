@@ -1,8 +1,31 @@
 {
-  "generated_at": "2026-04-23T13:58:19.748446+00:00",
+  "generated_at": "2026-04-23T16:50:30.578055+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "note": "Prompt hashes let GitHub reviewers see live OpenClaw job prompt drift without exposing secrets.",
   "jobs": {
+    "finance-immediate-alert": {
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "25,55 9-15 * * 1-5",
+        "tz": "America/Chicago"
+      },
+      "delivery": {
+        "mode": "announce",
+        "channel": "discord",
+        "to": "channel:1479790104490016808"
+      },
+      "prompt_sha256": "sha256:26886e4c3f3e4357bfe8495ca5524324d1c1a4c61137de9c9c6e579db7e2814a",
+      "contains_deterministic_report_job": true,
+      "runs_finance_discord_report_job": true,
+      "forbids_progress_text": true,
+      "contains_context_pack": false,
+      "contains_non_authority_boundary": false,
+      "contains_candidate_path": false,
+      "contains_unknown_discovery_contract": false,
+      "contains_threshold_mutation_ban": false,
+      "message_preview": "【OpenClaw Finance Deterministic Report Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_discord_report_job.py --mode immediate-alert\n\nContract markers:\n- This is the TradingAgents-backed intraday alert lane"
+    },
     "finance-midday-operator-review": {
       "enabled": true,
       "schedule": {
@@ -161,7 +184,7 @@
       "enabled": true,
       "schedule": {
         "kind": "cron",
-        "expr": "15 8-18 * * 1-5",
+        "expr": "15,45 8-16 * * 1-5",
         "tz": "America/Chicago"
       },
       "delivery": {

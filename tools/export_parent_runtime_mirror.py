@@ -29,6 +29,7 @@ MIRROR_FILES = {
     'skills/finance-tradingagents-sidecar/_meta.json': WORKSPACE / 'skills' / 'finance-tradingagents-sidecar' / '_meta.json',
 }
 FINANCE_JOB_NAMES = {
+    'finance-immediate-alert',
     'finance-premarket-brief',
     'finance-subagent-scanner',
     'finance-subagent-scanner-offhours',
