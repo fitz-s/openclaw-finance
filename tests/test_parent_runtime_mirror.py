@@ -22,6 +22,7 @@ def test_parent_runtime_mirror_contains_cutover_source_files() -> None:
         MIRROR / 'services' / 'market-ingest' / 'packet_compiler' / 'compiler.py',
         MIRROR / 'services' / 'market-ingest' / 'wake_policy' / 'policy.py',
         MIRROR / 'systems' / 'tradingagents-bridge-contract.md',
+        MIRROR / 'systems' / 'openclaw-tradingagents-model-resolution-contract.md',
         MIRROR / 'skills' / 'finance-tradingagents-sidecar' / 'SKILL.md',
         MIRROR / 'skills' / 'finance-tradingagents-sidecar' / '_meta.json',
     ]

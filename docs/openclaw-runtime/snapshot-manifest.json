@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-23T08:45:21.767628+00:00",
+  "generated_at": "2026-04-23T10:55:08.613565+00:00",
   "subsystem": "finance",
   "openclaw_home": "/Users/leofitz/.openclaw",
   "finance_repo": "/Users/leofitz/.openclaw/workspace/finance",
@@ -208,6 +208,8 @@
     "docs/openclaw-runtime/contracts/judgment-contract.md",
     "docs/openclaw-runtime/contracts/wake-policy.md",
     "docs/openclaw-runtime/contracts/risk-gates.md",
+    "docs/openclaw-runtime/contracts/tradingagents-bridge-contract.md",
+    "docs/openclaw-runtime/contracts/openclaw-tradingagents-model-resolution-contract.md",
     "docs/openclaw-runtime/schemas/watch-intent.schema.json",
     "docs/openclaw-runtime/schemas/thesis-card.schema.json",
     "docs/openclaw-runtime/schemas/scenario-card.schema.json",

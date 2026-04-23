@@ -27,6 +27,10 @@ def test_build_request_prefers_manual_instrument() -> None:
     assert request['review_only'] is True
     assert request['no_execution'] is True
     assert 'no_execution' in request['forbidden_actions']
+    assert request['model_resolution']['role_name'] == 'finance-tradingagents'
+    assert request['config']['llm_provider'] == 'google'
+    assert request['config']['quick_think_llm'] == 'gemini-3-flash-preview'
+    assert request['config']['deep_think_llm'] == 'gemini-3.1-pro-preview'
 
 
 def test_build_request_falls_back_to_selected_opportunity() -> None:
@@ -47,6 +51,7 @@ def test_build_request_falls_back_to_selected_opportunity() -> None:
     assert request['request_source'] == 'selected_opportunity'
     assert request['request_source_meta']['selected_opportunity_id'] == 'opp:high'
     assert request['source_bindings']['report_envelope']['report_hash'] == 'sha256:report'
+    assert request['model_resolution']['auth_source'] == 'GOOGLE_API_KEY'
 
 
 def test_build_request_raises_when_no_target_exists() -> None:

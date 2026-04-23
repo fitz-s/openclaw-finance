@@ -47,6 +47,7 @@ CONTRACT_DOCS = [
     WORKSPACE / 'systems' / 'wake-policy.md',
     WORKSPACE / 'systems' / 'risk-gates.md',
     WORKSPACE / 'systems' / 'tradingagents-bridge-contract.md',
+    WORKSPACE / 'systems' / 'openclaw-tradingagents-model-resolution-contract.md',
 ]
 
 SCHEMA_DOCS = [

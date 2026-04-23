@@ -24,6 +24,7 @@ from tradingagents_bridge_types import (
     path_artifact,
     write_json,
 )
+from tradingagents_model_resolution import resolve_tradingagents_role
 
 
 def _pick_target(
@@ -67,6 +68,9 @@ def build_request(
     packet: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     defaults = load_defaults()
+    model_resolution = resolve_tradingagents_role(job_name='finance-tradingagents-sidecar')
+    if model_resolution.get('status') != 'supported':
+        raise ValueError(f"TradingAgents model resolution failed: {model_resolution.get('unsupported_reason')}")
     research_packet = research_packet if isinstance(research_packet, dict) else (load_json(THESIS_RESEARCH_PACKET, {}) or {})
     report_envelope = report_envelope if isinstance(report_envelope, dict) else (load_json(REPORT_ENVELOPE, {}) or {})
     decision_log = decision_log if isinstance(decision_log, dict) else (load_json(DECISION_LOG, {}) or {})
@@ -91,10 +95,10 @@ def build_request(
         'request_source_meta': source_meta,
         'selected_analysts': defaults.get('selected_analysts', ['market', 'social', 'news', 'fundamentals']),
         'config': {
-            'llm_provider': defaults.get('llm_provider', 'openai'),
-            'deep_think_llm': defaults.get('deep_think_llm', 'gpt-5.4'),
-            'quick_think_llm': defaults.get('quick_think_llm', 'gpt-5.4-mini'),
-            'backend_url': defaults.get('backend_url'),
+            'llm_provider': model_resolution['provider'],
+            'deep_think_llm': model_resolution['deep_model'],
+            'quick_think_llm': model_resolution['quick_model'],
+            'backend_url': model_resolution.get('base_url'),
             'output_language': defaults.get('output_language', 'English'),
             'max_debate_rounds': defaults.get('max_debate_rounds', 1),
             'max_risk_discuss_rounds': defaults.get('max_risk_discuss_rounds', 1),
@@ -102,7 +106,9 @@ def build_request(
             'timeout_seconds': defaults.get('timeout_seconds', 900),
             'data_vendors': defaults.get('data_vendors', {}),
             'tool_vendors': defaults.get('tool_vendors', {}),
+            **(model_resolution.get('provider_options', {}) if isinstance(model_resolution.get('provider_options'), dict) else {}),
         },
+        'model_resolution': model_resolution,
         'source_bindings': {
             'thesis_research_packet': path_artifact(THESIS_RESEARCH_PACKET),
             'report_envelope': {

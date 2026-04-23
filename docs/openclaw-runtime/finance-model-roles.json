@@ -7,13 +7,33 @@
     "finance-immediate-alert": "primary-sonnet",
     "finance-subagent-scanner": "finance-scanner",
     "finance-subagent-scanner-offhours": "finance-scanner",
-    "finance-weekly-learning-review": "primary"
+    "finance-weekly-learning-review": "primary",
+    "finance-tradingagents-sidecar": "finance-tradingagents"
   },
   "roles": {
     "finance-scanner": {
       "description": "Finance market-hours and off-hours scanner; strict-path OpenClaw cron lane",
       "model": "google-gemini-cli/gemini-3-flash",
       "cost_tier": "free_unlimited"
+    },
+    "finance-tradingagents": {
+      "description": "Finance TradingAgents sidecar; OpenClaw policy role for provider-native TradingAgents resolution",
+      "model": "google-gemini-cli/gemini-3-flash",
+      "cost_tier": "free_unlimited",
+      "integrations": {
+        "tradingagents": {
+          "enabled": true,
+          "provider": "google",
+          "quick_model": "gemini-3-flash-preview",
+          "deep_model": "gemini-3.1-pro-preview",
+          "base_url": null,
+          "auth_source": "GOOGLE_API_KEY",
+          "google_thinking_level": "high",
+          "openai_reasoning_effort": null,
+          "anthropic_effort": null,
+          "resolution_contract_version": "v1"
+        }
+      }
     },
     "primary": {
       "description": "High-quality output: reports, analysis, creative writing",

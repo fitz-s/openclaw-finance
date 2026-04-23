@@ -11,6 +11,7 @@ from typing import Any
 
 from atomic_io import atomic_write_json, load_json_safe
 from tradingagents_bridge_types import age_hours
+from tradingagents_model_resolution import resolve_tradingagents_role
 
 
 ROOT = Path('/Users/leofitz/.openclaw')
@@ -545,6 +546,7 @@ def build_packs() -> dict[str, dict[str, Any]]:
         'status_path': str(TRADINGAGENTS_STATUS),
         'defaults_path': str(TRADINGAGENTS_DEFAULTS),
         'lock_path': str(TRADINGAGENTS_LOCK),
+        'model_resolution': resolve_tradingagents_role(job_name='finance-tradingagents-sidecar'),
         'final_output_rule': 'No Discord/user output; write TradingAgents sidecar artifacts only.',
     })
 
