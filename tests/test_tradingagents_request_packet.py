@@ -29,8 +29,8 @@ def test_build_request_prefers_manual_instrument() -> None:
     assert 'no_execution' in request['forbidden_actions']
     assert request['model_resolution']['role_name'] == 'finance-tradingagents'
     assert request['config']['llm_provider'] == 'google'
-    assert request['config']['quick_think_llm'] == 'gemini-3-flash-preview'
-    assert request['config']['deep_think_llm'] == 'gemini-3.1-pro-preview'
+    assert request['config']['quick_think_llm'] == 'gemini-2.5-flash'
+    assert request['config']['deep_think_llm'] == 'gemini-2.5-pro'
 
 
 def test_build_request_falls_back_to_selected_opportunity() -> None:

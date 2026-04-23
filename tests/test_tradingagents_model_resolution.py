@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -16,10 +17,20 @@ def test_resolve_tradingagents_role_from_parent_policy() -> None:
     assert resolved['job_name'] == 'finance-tradingagents-sidecar'
     assert resolved['role_name'] == 'finance-tradingagents'
     assert resolved['provider'] == 'google'
-    assert resolved['quick_model'] == 'gemini-3-flash-preview'
-    assert resolved['deep_model'] == 'gemini-3.1-pro-preview'
+    assert resolved['quick_model'] == 'gemini-2.5-flash'
+    assert resolved['deep_model'] == 'gemini-2.5-pro'
     assert resolved['auth_source'] == 'GOOGLE_API_KEY'
-    assert resolved['openclaw_runtime_alias'].startswith('google-gemini-cli/')
+    assert resolved['openclaw_runtime_alias'] == 'google-gemini-cli/gemini-2.5-flash'
+
+
+def test_finance_model_roles_snapshot_matches_parent_policy_for_tradingagents() -> None:
+    parent_roles = json.loads((ROOT.parent / 'ops' / 'model-roles.json').read_text(encoding='utf-8'))
+    snapshot_roles = json.loads((ROOT / 'docs' / 'openclaw-runtime' / 'finance-model-roles.json').read_text(encoding='utf-8'))
+    parent_role = parent_roles['roles']['finance-tradingagents']
+    snapshot_role = snapshot_roles['roles']['finance-tradingagents']
+
+    assert snapshot_roles['job_assignments']['finance-tradingagents-sidecar'] == 'finance-tradingagents'
+    assert snapshot_role == parent_role
 
 
 def test_resolve_tradingagents_role_rejects_unsupported_family() -> None:
@@ -31,8 +42,8 @@ def test_resolve_tradingagents_role_rejects_unsupported_family() -> None:
                     'tradingagents': {
                         'enabled': True,
                         'provider': 'google',
-                        'quick_model': 'gemini-3-flash-preview',
-                        'deep_model': 'gemini-3.1-pro-preview',
+                        'quick_model': 'gemini-2.5-flash',
+                        'deep_model': 'gemini-2.5-pro',
                         'auth_source': 'GOOGLE_API_KEY',
                         'resolution_contract_version': 'v1',
                     }
@@ -52,7 +63,7 @@ def test_resolve_tradingagents_role_rejects_missing_integration_metadata() -> No
     payload = {
         'roles': {
             'bad-role': {
-                'model': 'google-gemini-cli/gemini-3-flash',
+                'model': 'google-gemini-cli/gemini-2.5-flash',
             }
         },
         'job_assignments': {
@@ -67,6 +78,6 @@ def test_resolve_tradingagents_role_rejects_missing_integration_metadata() -> No
 def test_resolved_tradingagents_config_returns_provider_native_shape() -> None:
     config = resolved_tradingagents_config()
     assert config['llm_provider'] == 'google'
-    assert config['quick_think_llm'] == 'gemini-3-flash-preview'
-    assert config['deep_think_llm'] == 'gemini-3.1-pro-preview'
+    assert config['quick_think_llm'] == 'gemini-2.5-flash'
+    assert config['deep_think_llm'] == 'gemini-2.5-pro'
     assert config['google_thinking_level'] == 'high'
