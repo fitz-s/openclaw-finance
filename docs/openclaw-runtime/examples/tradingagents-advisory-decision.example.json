@@ -1,0 +1,35 @@
+{
+  "generated_at": "2026-04-23T00:00:00Z",
+  "instrument": "NVDA",
+  "analysis_date": "2026-04-23",
+  "hypothetical_rating": "OVERWEIGHT",
+  "posture": "supportive_but_non_authoritative",
+  "summary_title_safe": "TradingAgents sidecar | NVDA",
+  "why_now_safe": [
+    "AI demand remains durable and still requires deterministic validation.",
+    "Recent commentary remains supportive for continued review."
+  ],
+  "why_not_now_safe": [
+    "This sidecar cannot change judgment or execution state directly."
+  ],
+  "invalidators_safe": [
+    "If deterministic source freshness or capital competition disagrees, deprioritize the sidecar."
+  ],
+  "required_confirmations_safe": [
+    "Validate source freshness before any review use.",
+    "Require thesis, invalidator, and capital graph confirmation before promotion."
+  ],
+  "source_gaps_safe": [
+    "No deterministic citation promotion exists in this phase."
+  ],
+  "risk_flags_safe": [
+    "Wait for valuation and liquidity confirmation."
+  ],
+  "execution_readiness": "disabled",
+  "review_only": true,
+  "no_execution": true,
+  "raw_refs": {
+    "run_artifact": "state/tradingagents/runs/ta:example/raw/run-artifact.json",
+    "final_state": "state/tradingagents/runs/ta:example/raw/redacted-final-state.json"
+  }
+}

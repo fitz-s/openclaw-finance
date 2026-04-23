@@ -102,6 +102,7 @@ Benchmarks are source material for local patterns, not product templates:
 - Magnifi-style linked-account investing is out of scope unless an approved advisory/execution surface exists.
 - OpenBB-style workspaces/widgets/apps are out of scope unless they remain outside user-visible delivery authority.
 - FinRobot-style multi-agent trading is out of scope for the hot path.
+- TradingAgents-style multi-agent research is allowed only as a bounded review-only sidecar; it must not become wake, judgment, delivery, or execution authority.
 - Fiscal.ai-style terminal/API/dashboard/notifications are out of scope unless reduced to OpenClaw-compatible evidence or alert inputs.
 - Chat/code-execution financial assistants are out of scope as a product template.
 

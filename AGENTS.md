@@ -55,6 +55,9 @@ finance/
 │   │
 │   └── # ── Research Sidecar ──
 │       ├── thesis_research_packet.py / thesis_research_sidecar.py
+│       ├── tradingagents_request_packet.py / tradingagents_sidecar_job.py
+│       ├── tradingagents_runner.py / tradingagents_advisory_translate.py
+│       ├── tradingagents_bridge_validator.py / tradingagents_surface_compiler.py
 │       └── custom_metric_compiler.py
 │
 ├── state/                           # Runtime state (not committed)
@@ -64,7 +67,8 @@ finance/
 │   ├── committee-memos/             # Role-decomposed assessments
 │   ├── announce-card.json           # Notification surface
 │   ├── report-reader/               # Exploration bundles
-│   └── llm-job-context/             # Non-authoritative view cache (5 roles)
+│   ├── llm-job-context/             # Non-authoritative view cache (5 roles)
+│   └── tradingagents/               # Review-only TradingAgents sidecar state
 │
 ├── tests/                           # pytest suite (84 tests)
 ├── tools/                           # Audit & snapshot export tools
@@ -158,6 +162,8 @@ watch_intent_compiler  (capital_bucket_hint)
 
 **Sidecar** (`finance-thesis-sidecar`): Stays disabled unless user requests. May run thesis spine compilers, capital compilers, and committee sidecar. Committee memos carry `no_execution`, `no_user_delivery`, `no_threshold_mutation`, `no_live_authority_change`. No Discord delivery.
 
+**TradingAgents Sidecar** (manual/local-only until a parent job is explicitly added): may compile request packets, run a review-only TradingAgents subprocess wrapper, translate raw outputs into advisory-only normalized artifacts, and publish only validator-gated reader/context sidecar surfaces under `state/tradingagents/**`. It must not write canonical evidence, mutate wake/thresholds, bypass delivery safety, or send user-visible messages directly.
+
 ## First Read
 
 For zero-context: `docs/mainline-closeout.md` → `docs/operating-model.md` → `docs/verification.md` → `docs/openclaw-runtime/snapshot-manifest.json`.
@@ -222,6 +228,23 @@ python3 scripts/capital_agenda_compiler.py
 # Output surfaces
 python3 scripts/announce_card_compiler.py
 python3 scripts/finance_report_reader_bundle.py
+
+# TradingAgents sidecar
+python3 tools/check_tradingagents_upstream_lock.py
+python3 tools/audit_tradingagents_upstream_authority.py
+python3 -m pytest -q \
+  tests/test_tradingagents_request_packet.py \
+  tests/test_tradingagents_runner_isolation.py \
+  tests/test_tradingagents_advisory_translate.py \
+  tests/test_tradingagents_bridge_validator.py \
+  tests/test_tradingagents_surface_compiler.py \
+  tests/test_tradingagents_sidecar_job.py \
+  tests/test_finance_llm_context_pack_tradingagents.py \
+  tests/test_finance_reader_bundle_tradingagents.py \
+  tests/test_followup_context_router_tradingagents.py \
+  tests/test_tradingagents_upstream_lock.py \
+  tests/test_tradingagents_upstream_authority.py \
+  tests/test_export_openclaw_runtime_snapshot_tradingagents.py
 ```
 
 After runtime changes, refresh snapshots:

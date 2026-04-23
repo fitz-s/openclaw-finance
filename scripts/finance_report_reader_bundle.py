@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from atomic_io import atomic_write_json, load_json_safe
+from tradingagents_bridge_types import age_hours
 
 
 FINANCE = Path('/Users/leofitz/.openclaw/workspace/finance')
@@ -36,6 +37,7 @@ OPTIONS_IV_SURFACE = STATE / 'options-iv-surface.json'
 DOSSIER_DIR = STATE / 'thesis-dossiers'
 CUSTOM_METRICS_DIR = STATE / 'custom-metrics'
 OUT_DIR = STATE / 'report-reader'
+TRADINGAGENTS_AUG = STATE / 'tradingagents' / 'latest-reader-augmentation.json'
 
 AGENDA_TYPE_LABELS = {
     'new_opportunity': '新机会',
@@ -785,6 +787,41 @@ def build_followup_digest(object_cards: list[dict[str, Any]], report_handle: str
     return digest[:8]
 
 
+def load_tradingagents_augmentation(report: dict[str, Any], path: Path | None = None) -> dict[str, Any] | None:
+    path = path or TRADINGAGENTS_AUG
+    payload = load_json_safe(path, {}) or {}
+    if not isinstance(payload, dict) or not payload:
+        return None
+    if payload.get('review_only') is not True or payload.get('no_execution') is not True:
+        return None
+    report_hash = str(report.get('report_hash') or '')
+    if report_hash and payload.get('report_hash') != report_hash:
+        return None
+    max_age = payload.get('max_age_hours')
+    current_age = age_hours(str(payload.get('generated_at') or ''))
+    if isinstance(max_age, (int, float)) and current_age is not None and current_age > float(max_age):
+        return None
+    return payload
+
+
+def merge_tradingagents_augmentation(bundle: dict[str, Any], augmentation: dict[str, Any] | None) -> dict[str, Any]:
+    if not augmentation:
+        return bundle
+    merged = dict(bundle)
+    merged['handles'] = dict(bundle.get('handles', {}))
+    merged['handles'].update(augmentation.get('handles', {}) if isinstance(augmentation.get('handles'), dict) else {})
+    merged['object_cards'] = list(bundle.get('object_cards', [])) + list(augmentation.get('object_cards', []))
+    merged['starter_questions'] = list(bundle.get('starter_questions', [])) + list(augmentation.get('starter_questions', []))
+    merged['starter_queries'] = list(dict.fromkeys(list(bundle.get('starter_queries', [])) + list(augmentation.get('starter_queries', []))))
+    merged['object_alias_map'] = dict(bundle.get('object_alias_map', {}))
+    merged['object_alias_map'].update(augmentation.get('object_alias_map', {}) if isinstance(augmentation.get('object_alias_map'), dict) else {})
+    merged['followup_digest'] = list(bundle.get('followup_digest', [])) + list(augmentation.get('followup_digest', []))
+    merged['followup_slice_index'] = dict(bundle.get('followup_slice_index', {}))
+    merged['followup_slice_index'].update(augmentation.get('followup_slice_index', {}) if isinstance(augmentation.get('followup_slice_index'), dict) else {})
+    merged['no_execution'] = True
+    return merged
+
+
 def compile_bundle(
     report: dict[str, Any],
     decision_log_entry: dict[str, Any],
@@ -805,6 +842,7 @@ def compile_bundle(
     context_gaps: dict[str, Any] | None = None,
     source_health: dict[str, Any] | None = None,
     options_iv_surface: dict[str, Any] | None = None,
+    tradingagents_aug: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Compile self-contained reader bundle."""
     decision_id = decision_log_entry.get('decision_id') or report.get('report_hash')
@@ -849,7 +887,7 @@ def compile_bundle(
         if isinstance(card, dict) and card.get('handle')
     }
 
-    return {
+    bundle = {
         'bundle_id': bundle_id,
         'decision_id': decision_id,
         'report_hash': report.get('report_hash'),
@@ -877,6 +915,7 @@ def compile_bundle(
         'options_iv_surface_summary': iv_card,
         'no_execution': True,
     }
+    return merge_tradingagents_augmentation(bundle, tradingagents_aug)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -904,6 +943,7 @@ def main(argv: list[str] | None = None) -> int:
     context_gaps = load_json_safe(CONTEXT_GAPS, {}) or {}
     source_health = load_json_safe(SOURCE_HEALTH, {}) or {}
     options_iv_surface = load_json_safe(OPTIONS_IV_SURFACE, {}) or {}
+    tradingagents_aug = load_tradingagents_augmentation(report)
 
     bundle = compile_bundle(
         report, entry, thesis_registry, watch_intent, scenario_cards_data,
@@ -914,6 +954,7 @@ def main(argv: list[str] | None = None) -> int:
         context_gaps=context_gaps,
         source_health=source_health,
         options_iv_surface=options_iv_surface,
+        tradingagents_aug=tradingagents_aug,
     )
 
     out_dir = Path(args.out_dir)

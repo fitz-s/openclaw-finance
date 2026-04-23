@@ -10,6 +10,7 @@ from pathlib import Path
 from typing import Any
 
 from atomic_io import atomic_write_json, load_json_safe
+from tradingagents_bridge_types import age_hours
 
 
 ROOT = Path('/Users/leofitz/.openclaw')
@@ -53,6 +54,7 @@ CAMPAIGN_CACHE = STATE / 'campaign-cache.json'
 QUERY_PACK_OUT = STATE / 'query-packs' / 'scanner-planned.jsonl'
 QUERY_PACK_REPORT = STATE / 'query-packs' / 'scanner-planned-report.json'
 QUERY_PACK_CONTRACT = FINANCE / 'docs' / 'openclaw-runtime' / 'contracts' / 'query-pack-contract.md'
+TRADINGAGENTS_CONTEXT_DIGEST = STATE / 'tradingagents' / 'latest-context-digest.json'
 
 
 def now_iso() -> str:
@@ -286,6 +288,43 @@ def validate_size(pack: dict[str, Any]) -> None:
         raise ValueError(f'{pack.get("pack_role")} pack too large: {len(encoded)} > {MAX_PACK_CHARS}')
 
 
+def load_tradingagents_digest(path: Path | None = None) -> dict[str, Any] | None:
+    path = path or TRADINGAGENTS_CONTEXT_DIGEST
+    payload = load_json_safe(path, {}) or {}
+    if not isinstance(payload, dict) or not payload:
+        return None
+    if payload.get('review_only') is not True or payload.get('no_execution') is not True:
+        return None
+    if payload.get('candidate_contract_exclusion') is not True:
+        return None
+    max_age = payload.get('max_age_hours')
+    current_age = age_hours(str(payload.get('generated_at') or ''))
+    if isinstance(max_age, (int, float)) and current_age is not None and current_age > float(max_age):
+        return None
+    return {
+        key: payload.get(key)
+        for key in [
+            'generated_at',
+            'run_id',
+            'instrument',
+            'analysis_date',
+            'report_hash',
+            'packet_hash',
+            'safe_bullets',
+            'invalidators_safe',
+            'required_confirmations_safe',
+            'source_gaps_safe',
+            'risk_flags_safe',
+            'authority_rule',
+            'candidate_contract_exclusion',
+            'validation_ref',
+            'review_only',
+            'no_execution',
+            'max_age_hours',
+        ]
+    }
+
+
 def build_packs() -> dict[str, dict[str, Any]]:
     packet = load_json_safe(PACKET, {}) or {}
     wake = load_json_safe(WAKE, {}) or {}
@@ -373,6 +412,9 @@ def build_packs() -> dict[str, dict[str, Any]]:
         'options_iv_surface_summary': options_iv_summary,
         'options_iv_authority_rule': 'source_context_only; excluded from candidate_contract.required_fields and JudgmentEnvelope evidence authority',
     })
+    ta_digest = load_tradingagents_digest()
+    if ta_digest:
+        report['tradingagents_sidecar'] = ta_digest
 
     scanner_sources = [artifact(WATCHLIST), artifact(PORTFOLIO), artifact(THESIS_REGISTRY), artifact(OPPORTUNITY_QUEUE), artifact(INVALIDATOR_LEDGER)]
     scanner = base_pack(

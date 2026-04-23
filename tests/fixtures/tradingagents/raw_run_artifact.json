@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-04-23T00:00:00Z",
+  "status": "pass",
+  "run_id": "ta:test",
+  "instrument": "NVDA",
+  "analysis_date": "2026-04-23",
+  "signal": "OVERWEIGHT",
+  "final_state_path": "tests/fixtures/tradingagents/final_state.json",
+  "redaction_report_path": "tests/fixtures/tradingagents/redaction-report.json",
+  "full_state_log_ref_path": null,
+  "runtime_notes": [
+    "review_only",
+    "no_execution"
+  ],
+  "review_only": true,
+  "no_execution": true
+}

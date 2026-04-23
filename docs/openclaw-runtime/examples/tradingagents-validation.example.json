@@ -1,0 +1,16 @@
+{
+  "generated_at": "2026-04-23T00:00:00Z",
+  "status": "pass",
+  "errors": [],
+  "warnings": [],
+  "surface_eligible": true,
+  "context_pack_eligible": true,
+  "reader_eligible": true,
+  "report_hash": "sha256:report",
+  "packet_hash": "sha256:packet",
+  "age_hours": 0.1,
+  "context_digest_max_age_hours": 24,
+  "reader_augmentation_max_age_hours": 72,
+  "review_only": true,
+  "no_execution": true
+}

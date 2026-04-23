@@ -1,0 +1,191 @@
+{
+  "generated_at": "2026-04-23T08:47:11.891495Z",
+  "contract": "tradingagents-upstream-authority-audit-v1",
+  "status": "pass",
+  "submodule_path": "/Users/leofitz/.openclaw/workspace/finance/third_party/tradingagents",
+  "locked_tag": "v0.2.3",
+  "locked_commit": "4641c03340c70e0e75e74234c998325164c72b36",
+  "scan_file_count": 67,
+  "dangerous_findings": [],
+  "review_language_findings": [
+    {
+      "code": "simulated_exchange",
+      "path": "README.md",
+      "line": 94,
+      "preview": "simulated exchange"
+    },
+    {
+      "code": "final_transaction_proposal",
+      "path": "tradingagents/agents/analysts/fundamentals_analyst.py",
+      "line": 43,
+      "preview": "FINAL TRANSACTION PROPOSAL"
+    },
+    {
+      "code": "final_transaction_proposal",
+      "path": "tradingagents/agents/analysts/fundamentals_analyst.py",
+      "line": 44,
+      "preview": "FINAL TRANSACTION PROPOSAL"
+    },
+    {
+      "code": "buy_hold_sell_rating",
+      "path": "tradingagents/agents/analysts/fundamentals_analyst.py",
+      "line": 43,
+      "preview": "BUY/HOLD/SELL"
+    },
+    {
+      "code": "buy_hold_sell_rating",
+      "path": "tradingagents/agents/analysts/fundamentals_analyst.py",
+      "line": 44,
+      "preview": "BUY/HOLD/SELL"
+    },
+    {
+      "code": "generic_execute_prompt",
+      "path": "tradingagents/agents/analysts/fundamentals_analyst.py",
+      "line": 42,
+      "preview": "Execute what you can to make progress"
+    },
+    {
+      "code": "final_transaction_proposal",
+      "path": "tradingagents/agents/analysts/market_analyst.py",
+      "line": 62,
+      "preview": "FINAL TRANSACTION PROPOSAL"
+    },
+    {
+      "code": "final_transaction_proposal",
+      "path": "tradingagents/agents/analysts/market_analyst.py",
+      "line": 63,
+      "preview": "FINAL TRANSACTION PROPOSAL"
+    },
+    {
+      "code": "buy_hold_sell_rating",
+      "path": "tradingagents/agents/analysts/market_analyst.py",
+      "line": 62,
+      "preview": "BUY/HOLD/SELL"
+    },
+    {
+      "code": "buy_hold_sell_rating",
+      "path": "tradingagents/agents/analysts/market_analyst.py",
+      "line": 63,
+      "preview": "BUY/HOLD/SELL"
+    },
+    {
+      "code": "generic_execute_prompt",
+      "path": "tradingagents/agents/analysts/market_analyst.py",
+      "line": 61,
+      "preview": "Execute what you can to make progress"
+    },
+    {
+      "code": "final_transaction_proposal",
+      "path": "tradingagents/agents/analysts/news_analyst.py",
+      "line": 37,
+      "preview": "FINAL TRANSACTION PROPOSAL"
+    },
+    {
+      "code": "final_transaction_proposal",
+      "path": "tradingagents/agents/analysts/news_analyst.py",
+      "line": 38,
+      "preview": "FINAL TRANSACTION PROPOSAL"
+    },
+    {
+      "code": "buy_hold_sell_rating",
+      "path": "tradingagents/agents/analysts/news_analyst.py",
+      "line": 37,
+      "preview": "BUY/HOLD/SELL"
+    },
+    {
+      "code": "buy_hold_sell_rating",
+      "path": "tradingagents/agents/analysts/news_analyst.py",
+      "line": 38,
+      "preview": "BUY/HOLD/SELL"
+    },
+    {
+      "code": "generic_execute_prompt",
+      "path": "tradingagents/agents/analysts/news_analyst.py",
+      "line": 36,
+      "preview": "Execute what you can to make progress"
+    },
+    {
+      "code": "final_transaction_proposal",
+      "path": "tradingagents/agents/analysts/social_media_analyst.py",
+      "line": 31,
+      "preview": "FINAL TRANSACTION PROPOSAL"
+    },
+    {
+      "code": "final_transaction_proposal",
+      "path": "tradingagents/agents/analysts/social_media_analyst.py",
+      "line": 32,
+      "preview": "FINAL TRANSACTION PROPOSAL"
+    },
+    {
+      "code": "buy_hold_sell_rating",
+      "path": "tradingagents/agents/analysts/social_media_analyst.py",
+      "line": 31,
+      "preview": "BUY/HOLD/SELL"
+    },
+    {
+      "code": "buy_hold_sell_rating",
+      "path": "tradingagents/agents/analysts/social_media_analyst.py",
+      "line": 32,
+      "preview": "BUY/HOLD/SELL"
+    },
+    {
+      "code": "generic_execute_prompt",
+      "path": "tradingagents/agents/analysts/social_media_analyst.py",
+      "line": 30,
+      "preview": "Execute what you can to make progress"
+    },
+    {
+      "code": "buy_hold_sell_rating",
+      "path": "tradingagents/agents/managers/portfolio_manager.py",
+      "line": 42,
+      "preview": "Buy / Overweight / Hold / Underweight / Sell"
+    },
+    {
+      "code": "buy_hold_sell_rating",
+      "path": "tradingagents/agents/managers/research_manager.py",
+      "line": 27,
+      "preview": "Buy, Sell"
+    },
+    {
+      "code": "final_transaction_proposal",
+      "path": "tradingagents/agents/trader/trader.py",
+      "line": 36,
+      "preview": "FINAL TRANSACTION PROPOSAL"
+    },
+    {
+      "code": "buy_hold_sell_rating",
+      "path": "tradingagents/agents/trader/trader.py",
+      "line": 36,
+      "preview": "buy, sell, or hold. End with a firm decision and always conclude your response with 'FINAL TRANSACTION PROPOSAL: **BUY/HOLD/SELL"
+    },
+    {
+      "code": "buy_hold_sell_rating",
+      "path": "tradingagents/graph/signal_processing.py",
+      "line": 21,
+      "preview": "BUY, OVERWEIGHT, HOLD, UNDERWEIGHT, or SELL"
+    },
+    {
+      "code": "buy_hold_sell_rating",
+      "path": "tradingagents/graph/signal_processing.py",
+      "line": 27,
+      "preview": "BUY, OVERWEIGHT, HOLD, UNDERWEIGHT, SELL"
+    }
+  ],
+  "containment_warnings": [
+    {
+      "code": "relative_results_dir",
+      "path": "tradingagents/default_config.py",
+      "line": 5,
+      "preview": "\"results_dir\": os.getenv(\"TRADINGAGENTS_RESULTS_DIR\", \"./results\""
+    }
+  ],
+  "errors": [],
+  "policy": {
+    "dangerous_broker_or_order_api_allowed": false,
+    "review_language_allowed_only_in_quarantined_raw_or_machine_fields": true,
+    "future_runner_must_override_results_and_cache_paths": true,
+    "runtime_import_allowed_in_p1": false,
+    "no_execution": true
+  },
+  "no_execution": true
+}

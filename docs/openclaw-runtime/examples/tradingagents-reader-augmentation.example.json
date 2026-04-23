@@ -1,0 +1,69 @@
+{
+  "generated_at": "2026-04-23T00:00:00Z",
+  "run_id": "ta:example",
+  "report_hash": "sha256:report",
+  "decision_id": "decision:123",
+  "handles": {
+    "TA1": {
+      "type": "tradingagents_research",
+      "ref": "ta:example",
+      "instrument": "NVDA",
+      "label": "TradingAgents sidecar | NVDA"
+    }
+  },
+  "object_cards": [
+    {
+      "handle": "TA1",
+      "type": "tradingagents_research",
+      "label": "TradingAgents sidecar | NVDA",
+      "instrument": "NVDA",
+      "run_id": "ta:example",
+      "summary": "AI demand remains durable and requires validation.",
+      "why_now": ["AI demand remains durable and requires validation."],
+      "why_not_now": ["This sidecar cannot change judgment or execution state."],
+      "invalidators": ["If deterministic source freshness disagrees, deprioritize the sidecar."],
+      "required_confirmations": ["Validate source freshness before review use."],
+      "source_gaps": ["No deterministic citation promotion exists in this phase."],
+      "risk_flags": ["Wait for valuation confirmation."],
+      "linked_claims": [],
+      "linked_atoms": [],
+      "linked_context_gaps": [],
+      "lane_coverage": {},
+      "source_health_summary": {},
+      "no_execution": true
+    }
+  ],
+  "starter_questions": [
+    {"verb": "why", "handle": "TA1", "question": "Why TA1?"}
+  ],
+  "starter_queries": ["why TA1", "challenge TA1", "sources TA1"],
+  "object_alias_map": {
+    "TA1": "TradingAgents sidecar | NVDA"
+  },
+  "followup_digest": [
+    "TA1: review-only TradingAgents sidecar summary; no execution."
+  ],
+  "followup_slice_index": {
+    "TA1": {
+      "why": {
+        "evidence_slice_id": "slice:ta:example:TA1:why",
+        "linked_claims": [],
+        "linked_atoms": [],
+        "linked_context_gaps": [],
+        "lane_coverage": {},
+        "source_health_summary": {},
+        "retrieval_score": 0.0,
+        "permission_metadata": {
+          "review_only": true,
+          "raw_thread_history_allowed": false,
+          "raw_source_dump_allowed": false
+        },
+        "content_hash": "sha256:example",
+        "no_execution": true
+      }
+    }
+  },
+  "review_only": true,
+  "no_execution": true,
+  "max_age_hours": 72
+}

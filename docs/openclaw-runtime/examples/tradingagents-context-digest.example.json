@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-04-23T00:00:00Z",
+  "run_id": "ta:example",
+  "instrument": "NVDA",
+  "analysis_date": "2026-04-23",
+  "report_hash": "sha256:report",
+  "packet_hash": "sha256:packet",
+  "safe_bullets": [
+    "AI demand remains durable and still requires deterministic validation."
+  ],
+  "invalidators_safe": [
+    "If deterministic source freshness disagrees, deprioritize the sidecar."
+  ],
+  "required_confirmations_safe": [
+    "Validate source freshness before review use."
+  ],
+  "source_gaps_safe": [
+    "No deterministic citation promotion exists in this phase."
+  ],
+  "risk_flags_safe": [
+    "Wait for valuation confirmation."
+  ],
+  "authority_rule": "non_authoritative_context_only_not_evidence_wake_threshold_or_execution",
+  "candidate_contract_exclusion": true,
+  "validation_ref": "state/tradingagents/runs/ta:example/validation.json",
+  "review_only": true,
+  "no_execution": true,
+  "max_age_hours": 24
+}

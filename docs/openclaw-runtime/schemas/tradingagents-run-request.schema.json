@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TradingAgentsRunRequest",
+  "type": "object",
+  "required": ["run_id", "job_id", "instrument", "analysis_date", "config", "source_bindings", "surface_policy", "forbidden_actions", "review_only", "no_execution"],
+  "properties": {
+    "run_id": {"type": "string"},
+    "job_id": {"type": "string"},
+    "instrument": {"type": "string"},
+    "analysis_date": {"type": "string"},
+    "config": {"type": "object"},
+    "source_bindings": {"type": "object"},
+    "surface_policy": {"type": "object"},
+    "forbidden_actions": {"type": "array", "items": {"type": "string"}},
+    "review_only": {"const": true},
+    "no_execution": {"const": true}
+  },
+  "additionalProperties": true
+}

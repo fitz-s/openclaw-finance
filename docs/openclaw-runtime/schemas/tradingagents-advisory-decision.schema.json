@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TradingAgentsAdvisoryDecision",
+  "type": "object",
+  "required": ["instrument", "analysis_date", "execution_readiness", "review_only", "no_execution"],
+  "properties": {
+    "instrument": {"type": "string"},
+    "analysis_date": {"type": "string"},
+    "hypothetical_rating": {"type": ["string", "null"]},
+    "why_now_safe": {"type": "array", "items": {"type": "string"}},
+    "why_not_now_safe": {"type": "array", "items": {"type": "string"}},
+    "invalidators_safe": {"type": "array", "items": {"type": "string"}},
+    "required_confirmations_safe": {"type": "array", "items": {"type": "string"}},
+    "source_gaps_safe": {"type": "array", "items": {"type": "string"}},
+    "risk_flags_safe": {"type": "array", "items": {"type": "string"}},
+    "execution_readiness": {"const": "disabled"},
+    "review_only": {"const": true},
+    "no_execution": {"const": true}
+  },
+  "additionalProperties": true
+}

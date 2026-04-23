@@ -78,6 +78,31 @@ def write_json(path: Path, payload: Any) -> None:
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
 
 
+def refresh_tradingagents_audits() -> None:
+    """Refresh reviewer-visible TradingAgents lock/audit outputs when the source lock exists."""
+    lock = FINANCE / 'ops' / 'tradingagents-upstream-lock.json'
+    submodule = FINANCE / 'third_party' / 'tradingagents'
+    if not lock.exists() or not submodule.exists():
+        return
+    tools = [
+        FINANCE / 'tools' / 'check_tradingagents_upstream_lock.py',
+        FINANCE / 'tools' / 'audit_tradingagents_upstream_authority.py',
+    ]
+    for tool in tools:
+        proc = subprocess.run(
+            ['python3', str(tool)],
+            cwd=str(FINANCE),
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        if proc.returncode != 0:
+            raise RuntimeError(
+                f'{tool.name} failed during snapshot export: '
+                f'{proc.stderr.strip() or proc.stdout.strip() or proc.returncode}'
+            )
+
+
 def finance_jobs() -> list[dict[str, Any]]:
     jobs = load_json(CRON_JOBS, {}).get('jobs', [])
     out = []
@@ -312,6 +337,7 @@ def copy_parent_runtime_mirror() -> list[str]:
 
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
+    refresh_tradingagents_audits()
     contracts = copy_contracts()
     schemas = copy_schemas()
     parent_runtime = copy_parent_runtime_mirror()
@@ -419,6 +445,22 @@ def main() -> int:
             'docs/openclaw-runtime/finance-crontab.txt',
             'docs/openclaw-runtime/finance-model-roles.json',
             'docs/openclaw-runtime/finance-job-prompt-contract.json',
+            'ops/tradingagents-upstream-lock.json',
+            'docs/openclaw-runtime/tradingagents-upstream-lock-check.json',
+            'docs/openclaw-runtime/tradingagents-upstream-authority-audit.json',
+            'docs/openclaw-runtime/contracts/tradingagents-bridge-contract.md',
+            'docs/openclaw-runtime/examples/tradingagents-run-request.example.json',
+            'docs/openclaw-runtime/examples/tradingagents-advisory-decision.example.json',
+            'docs/openclaw-runtime/examples/tradingagents-validation.example.json',
+            'docs/openclaw-runtime/examples/tradingagents-context-digest.example.json',
+            'docs/openclaw-runtime/examples/tradingagents-reader-augmentation.example.json',
+            'docs/openclaw-runtime/examples/tradingagents-bridge-record.example.json',
+            'docs/openclaw-runtime/schemas/tradingagents-run-request.schema.json',
+            'docs/openclaw-runtime/schemas/tradingagents-advisory-decision.schema.json',
+            'docs/openclaw-runtime/schemas/tradingagents-validation.schema.json',
+            'docs/openclaw-runtime/schemas/tradingagents-context-digest.schema.json',
+            'docs/openclaw-runtime/schemas/tradingagents-reader-augmentation.schema.json',
+            'docs/openclaw-runtime/schemas/tradingagents-bridge-record.schema.json',
             'docs/openclaw-runtime/operating-model-audit.json',
             'docs/openclaw-runtime/parent-dependency-inventory.json',
             'docs/openclaw-runtime/parent-dependency-drift.json',

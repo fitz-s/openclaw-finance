@@ -67,6 +67,26 @@ pytest -q tests/test_announce_card_compiler.py tests/test_report_reader_bundle.p
 pytest -q tests/test_discord_operator_surfaces.py tests/test_campaign_projection.py
 ```
 
+TradingAgents sidecar verification:
+
+```bash
+python3 tools/check_tradingagents_upstream_lock.py
+python3 tools/audit_tradingagents_upstream_authority.py
+pytest -q \
+  tests/test_tradingagents_request_packet.py \
+  tests/test_tradingagents_runner_isolation.py \
+  tests/test_tradingagents_advisory_translate.py \
+  tests/test_tradingagents_bridge_validator.py \
+  tests/test_tradingagents_surface_compiler.py \
+  tests/test_tradingagents_sidecar_job.py \
+  tests/test_finance_llm_context_pack_tradingagents.py \
+  tests/test_finance_reader_bundle_tradingagents.py \
+  tests/test_followup_context_router_tradingagents.py \
+  tests/test_tradingagents_upstream_lock.py \
+  tests/test_tradingagents_upstream_authority.py \
+  tests/test_export_openclaw_runtime_snapshot_tradingagents.py
+```
+
 Runtime integration verification from the parent OpenClaw workspace:
 
 ```bash

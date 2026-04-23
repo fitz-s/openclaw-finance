@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TradingAgentsReaderAugmentation",
+  "type": "object",
+  "required": ["handles", "object_cards", "starter_queries", "followup_slice_index", "review_only", "no_execution"],
+  "properties": {
+    "handles": {"type": "object"},
+    "object_cards": {"type": "array", "items": {"type": "object"}},
+    "starter_queries": {"type": "array", "items": {"type": "string"}},
+    "followup_slice_index": {"type": "object"},
+    "review_only": {"const": true},
+    "no_execution": {"const": true}
+  },
+  "additionalProperties": true
+}
