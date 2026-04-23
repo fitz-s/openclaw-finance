@@ -15,7 +15,7 @@ from finance_worker import compact_seen_ids
 def test_llm_context_packs_are_non_authoritative_and_provenance_bearing() -> None:
     packs = build_packs()
 
-    assert set(packs) == {'report-orchestrator', 'scanner', 'thesis-sidecar', 'weekly-learning', 'report-followup'}
+    assert set(packs) == {'report-orchestrator', 'scanner', 'thesis-sidecar', 'tradingagents-sidecar', 'weekly-learning', 'report-followup'}
     for pack in packs.values():
         encoded = json.dumps(pack, ensure_ascii=False, sort_keys=True)
         assert len(encoded) <= MAX_PACK_CHARS
@@ -68,10 +68,14 @@ def test_scanner_pack_is_query_planner_first_not_freeform_ingestion() -> None:
 def test_sidecar_and_weekly_packs_cannot_deliver_or_mutate_thresholds() -> None:
     packs = build_packs()
     sidecar = packs['thesis-sidecar']
+    tradingagents = packs['tradingagents-sidecar']
     weekly = packs['weekly-learning']
 
     assert 'discord' in sidecar['forbidden_actions']
     assert 'threshold_mutation' in sidecar['forbidden_actions']
+    assert 'discord' in tradingagents['forbidden_actions']
+    assert 'wake_mutation' in tradingagents['forbidden_actions']
+    assert 'evidence_promotion' in tradingagents['forbidden_actions']
     assert 'automatic_threshold_mutation' in weekly['forbidden_actions']
     assert 'model_routing' in weekly['recommendation_targets_allowed']
 

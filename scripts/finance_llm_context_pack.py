@@ -46,6 +46,7 @@ MAX_PACK_CHARS = 30000
 REPORT_PACK = OUT_DIR / 'report-orchestrator.json'
 SCANNER_PACK = OUT_DIR / 'scanner.json'
 SIDECAR_PACK = OUT_DIR / 'thesis-sidecar.json'
+TRADINGAGENTS_SIDECAR_PACK = OUT_DIR / 'tradingagents-sidecar.json'
 WEEKLY_PACK = OUT_DIR / 'weekly-learning.json'
 FOLLOWUP_PACK = OUT_DIR / 'report-followup.json'
 READER_BUNDLE_DIR = STATE / 'report-reader'
@@ -55,6 +56,9 @@ QUERY_PACK_OUT = STATE / 'query-packs' / 'scanner-planned.jsonl'
 QUERY_PACK_REPORT = STATE / 'query-packs' / 'scanner-planned-report.json'
 QUERY_PACK_CONTRACT = FINANCE / 'docs' / 'openclaw-runtime' / 'contracts' / 'query-pack-contract.md'
 TRADINGAGENTS_CONTEXT_DIGEST = STATE / 'tradingagents' / 'latest-context-digest.json'
+TRADINGAGENTS_STATUS = STATE / 'tradingagents' / 'status.json'
+TRADINGAGENTS_DEFAULTS = FINANCE / 'ops' / 'tradingagents-sidecar.defaults.json'
+TRADINGAGENTS_LOCK = FINANCE / 'ops' / 'tradingagents-upstream-lock.json'
 
 
 def now_iso() -> str:
@@ -505,6 +509,45 @@ def build_packs() -> dict[str, dict[str, Any]]:
         'final_output_rule': 'No Discord/user output; write artifacts only.',
     })
 
+    tradingagents_sources = [
+        artifact(OPPORTUNITY_QUEUE),
+        artifact(INVALIDATOR_LEDGER),
+        artifact(THESIS_REGISTRY),
+        artifact(STATE / 'thesis-research-packet.json'),
+        artifact(TRADINGAGENTS_STATUS),
+        artifact(TRADINGAGENTS_DEFAULTS),
+        artifact(TRADINGAGENTS_LOCK),
+    ]
+    tradingagents_sidecar = base_pack(
+        'tradingagents_sidecar',
+        tradingagents_sources,
+        job_goal='Run TradingAgents as a review-only research sidecar and publish only validator-gated advisory artifacts.',
+        allowed_outputs=[
+            'state/tradingagents/runs/**',
+            str(TRADINGAGENTS_CONTEXT_DIGEST),
+            'state/tradingagents/latest-reader-augmentation.json',
+            'machine summary only',
+        ],
+        forbidden_actions=['user_delivery', 'discord', 'execution', 'threshold_mutation', 'wake_mutation', 'canonical_report_write', 'evidence_promotion'],
+    )
+    tradingagents_sidecar.update({
+        'reuse_existing_scripts': [
+            str(FINANCE / 'scripts' / 'finance_llm_context_pack.py'),
+            str(FINANCE / 'scripts' / 'thesis_research_packet.py'),
+            str(FINANCE / 'scripts' / 'tradingagents_sidecar_job.py'),
+        ],
+        'required_commands': [
+            '/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py',
+            '/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/thesis_research_packet.py',
+            '/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/tradingagents_sidecar_job.py --mode offhours',
+        ],
+        'context_digest_path': str(TRADINGAGENTS_CONTEXT_DIGEST),
+        'status_path': str(TRADINGAGENTS_STATUS),
+        'defaults_path': str(TRADINGAGENTS_DEFAULTS),
+        'lock_path': str(TRADINGAGENTS_LOCK),
+        'final_output_rule': 'No Discord/user output; write TradingAgents sidecar artifacts only.',
+    })
+
     telemetry_keys = {
         'event_id', 'logged_at', 'wake_class', 'threshold_should_send', 'threshold_report_type',
         'execution_decision', 'operator_action', 'thesis_id', 'instrument', 'thesis_status',
@@ -583,6 +626,7 @@ def build_packs() -> dict[str, dict[str, Any]]:
         'report-orchestrator': report,
         'scanner': scanner,
         'thesis-sidecar': sidecar,
+        'tradingagents-sidecar': tradingagents_sidecar,
         'weekly-learning': weekly,
         'report-followup': followup,
     }
@@ -597,6 +641,7 @@ def write_packs(packs: dict[str, dict[str, Any]], out_dir: Path = OUT_DIR) -> di
         'report-orchestrator': out_dir / 'report-orchestrator.json',
         'scanner': out_dir / 'scanner.json',
         'thesis-sidecar': out_dir / 'thesis-sidecar.json',
+        'tradingagents-sidecar': out_dir / 'tradingagents-sidecar.json',
         'weekly-learning': out_dir / 'weekly-learning.json',
         'report-followup': out_dir / 'report-followup.json',
     }

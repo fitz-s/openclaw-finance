@@ -46,6 +46,7 @@ CONTRACT_DOCS = [
     WORKSPACE / 'systems' / 'judgment-contract.md',
     WORKSPACE / 'systems' / 'wake-policy.md',
     WORKSPACE / 'systems' / 'risk-gates.md',
+    WORKSPACE / 'systems' / 'tradingagents-bridge-contract.md',
 ]
 
 SCHEMA_DOCS = [

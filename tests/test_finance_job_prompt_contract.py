@@ -78,6 +78,7 @@ def test_tradingagents_sidecar_job_is_manual_disabled_and_has_no_delivery() -> N
     assert job.get('schedule', {}).get('kind') == 'manual'
     assert job.get('delivery', {}).get('mode') == 'none'
     assert 'finance_llm_context_pack.py' in text
+    assert 'llm-job-context/tradingagents-sidecar.json' in text
     assert 'thesis_research_packet.py' in text
     assert 'tradingagents_sidecar_job.py --mode offhours' in text
     assert 'view cache' in text or 'pack_is_not_authority' in text

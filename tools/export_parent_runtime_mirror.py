@@ -23,6 +23,9 @@ MIRROR_FILES = {
     'services/market-ingest/source_health/compiler.py': SERVICE / 'source_health' / 'compiler.py',
     'services/market-ingest/packet_compiler/compiler.py': SERVICE / 'packet_compiler' / 'compiler.py',
     'services/market-ingest/wake_policy/policy.py': SERVICE / 'wake_policy' / 'policy.py',
+    'systems/tradingagents-bridge-contract.md': WORKSPACE / 'systems' / 'tradingagents-bridge-contract.md',
+    'skills/finance-tradingagents-sidecar/SKILL.md': WORKSPACE / 'skills' / 'finance-tradingagents-sidecar' / 'SKILL.md',
+    'skills/finance-tradingagents-sidecar/_meta.json': WORKSPACE / 'skills' / 'finance-tradingagents-sidecar' / '_meta.json',
 }
 FINANCE_JOB_NAMES = {
     'finance-premarket-brief',
