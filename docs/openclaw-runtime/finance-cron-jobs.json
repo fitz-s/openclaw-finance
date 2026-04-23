@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-23T13:22:25.759521+00:00",
+  "generated_at": "2026-04-23T13:33:46.190439+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "jobs": [
     {
@@ -96,11 +96,11 @@
       "state": {
         "consecutiveErrors": 0,
         "lastDeliveryStatus": "not-delivered",
-        "nextRunAtMs": 1776950700000,
-        "lastRunAtMs": 1776864300006,
+        "nextRunAtMs": 1777037100000,
+        "lastRunAtMs": 1776950700023,
         "lastRunStatus": "ok",
         "lastStatus": "ok",
-        "lastDurationMs": 53281,
+        "lastDurationMs": 67418,
         "lastDelivered": false
       }
     },
@@ -242,7 +242,7 @@
       },
       "payload": {
         "kind": "agentTurn",
-        "model": "google-gemini-cli/gemini-2.5-flash",
+        "model": "google-gemini-cli/gemini-3-flash-preview",
         "timeoutSeconds": 900,
         "lightContext": true,
         "message": "【OpenClaw Finance TradingAgents Sidecar｜manual artifact-only】\n你是 finance TradingAgents sidecar。这个 job 是 manual/disabled artifact wrapper，不是报告 job。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 读取 /Users/leofitz/.openclaw/workspace/finance/state/llm-job-context/tradingagents-sidecar.json。\n- context pack 是 view cache，不是 canonical state。\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/thesis_research_packet.py\n\n执行：\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/tradingagents_sidecar_job.py --mode offhours\n\n允许写入：\n- finance/state/tradingagents/runs/**\n- finance/state/tradingagents/status.json\n- finance/state/tradingagents/latest.json\n- finance/state/tradingagents/latest-context-digest.json\n- finance/state/tradingagents/latest-reader-augmentation.json\n\n硬规则：\n- 禁止 Discord / no Discord。\n- 禁止自动改 thresholds。\n- 禁止 wake mutation。\n- 禁止 canonical report 写入。\n- 禁止 evidence promotion。\n- 禁止交易执行。\n- delivery.mode=none；最终回复为空字符串或一行机器摘要：tradingagents=ok|run_id=<id>。"

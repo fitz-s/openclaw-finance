@@ -100,10 +100,10 @@ The finance-side resolver should emit:
   "status": "supported|unsupported",
   "job_name": "finance-tradingagents-sidecar",
   "role_name": "finance-tradingagents",
-  "openclaw_runtime_alias": "google-gemini-cli/gemini-2.5-flash",
+  "openclaw_runtime_alias": "google-gemini-cli/gemini-3-flash-preview",
   "provider": "google",
-  "quick_model": "gemini-2.5-flash",
-  "deep_model": "gemini-2.5-pro",
+  "quick_model": "gemini-3-flash-preview",
+  "deep_model": "gemini-3.1-pro-preview",
   "base_url": null,
   "auth_source": "GOOGLE_API_KEY",
   "provider_options": {

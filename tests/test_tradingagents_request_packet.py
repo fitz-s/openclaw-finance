@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import sys
 from pathlib import Path
 
@@ -29,8 +30,8 @@ def test_build_request_prefers_manual_instrument() -> None:
     assert 'no_execution' in request['forbidden_actions']
     assert request['model_resolution']['role_name'] == 'finance-tradingagents'
     assert request['config']['llm_provider'] == 'google'
-    assert request['config']['quick_think_llm'] == 'gemini-2.5-flash'
-    assert request['config']['deep_think_llm'] == 'gemini-2.5-pro'
+    assert request['config']['quick_think_llm'] == 'gemini-3-flash-preview'
+    assert request['config']['deep_think_llm'] == 'gemini-3.1-pro-preview'
 
 
 def test_build_request_falls_back_to_selected_opportunity() -> None:
@@ -67,3 +68,16 @@ def test_build_request_raises_when_no_target_exists() -> None:
         assert 'no TradingAgents target instrument available' in str(exc)
     else:
         raise AssertionError('expected ValueError')
+
+
+def test_request_example_tracks_google_preview_resolution_contract() -> None:
+    example = json.loads(
+        (ROOT / 'docs' / 'openclaw-runtime' / 'examples' / 'tradingagents-run-request.example.json').read_text(encoding='utf-8')
+    )
+    assert example['config']['llm_provider'] == 'google'
+    assert example['config']['quick_think_llm'] == 'gemini-3-flash-preview'
+    assert example['config']['deep_think_llm'] == 'gemini-3.1-pro-preview'
+    assert example['config']['backend_url'] is None
+    assert example['model_resolution']['openclaw_runtime_alias'] == 'google-gemini-cli/gemini-3-flash-preview'
+    assert example['model_resolution']['quick_model'] == 'gemini-3-flash-preview'
+    assert example['model_resolution']['deep_model'] == 'gemini-3.1-pro-preview'

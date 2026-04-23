@@ -9,10 +9,11 @@
   "request_source_meta": {},
   "selected_analysts": ["market", "social", "news", "fundamentals"],
   "config": {
-    "llm_provider": "openai",
-    "deep_think_llm": "gpt-5.4",
-    "quick_think_llm": "gpt-5.4-mini",
-    "backend_url": "https://api.openai.com/v1",
+    "llm_provider": "google",
+    "deep_think_llm": "gemini-3.1-pro-preview",
+    "quick_think_llm": "gemini-3-flash-preview",
+    "backend_url": null,
+    "google_thinking_level": "high",
     "output_language": "English",
     "max_debate_rounds": 1,
     "max_risk_discuss_rounds": 1,
@@ -25,6 +26,22 @@
       "news_data": "yfinance"
     },
     "tool_vendors": {}
+  },
+  "model_resolution": {
+    "status": "supported",
+    "job_name": "finance-tradingagents-sidecar",
+    "role_name": "finance-tradingagents",
+    "openclaw_runtime_alias": "google-gemini-cli/gemini-3-flash-preview",
+    "provider": "google",
+    "quick_model": "gemini-3-flash-preview",
+    "deep_model": "gemini-3.1-pro-preview",
+    "base_url": null,
+    "auth_source": "GOOGLE_API_KEY",
+    "provider_options": {
+      "google_thinking_level": "high"
+    },
+    "unsupported_reason": null,
+    "resolution_contract_version": "v1"
   },
   "source_bindings": {
     "thesis_research_packet": {"path": "state/thesis-research-packet.json", "exists": true, "hash": "sha256:example", "required": false},
