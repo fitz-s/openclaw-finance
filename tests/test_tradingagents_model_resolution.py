@@ -21,6 +21,9 @@ def test_resolve_tradingagents_role_from_parent_policy() -> None:
     assert resolved['deep_model'] == 'gemini-3.1-pro-preview'
     assert resolved['auth_source'] == 'GOOGLE_API_KEY'
     assert resolved['openclaw_runtime_alias'] == 'google-gemini-cli/gemini-3-flash-preview'
+    assert resolved['provider_options']['google_use_application_default_credentials'] is True
+    assert resolved['provider_options']['google_vertexai'] is True
+    assert resolved['provider_options']['google_location'] == 'global'
 
 
 def test_finance_model_roles_snapshot_matches_parent_policy_for_tradingagents() -> None:
@@ -87,3 +90,6 @@ def test_resolved_tradingagents_config_returns_provider_native_shape() -> None:
     assert config['quick_think_llm'] == 'gemini-3-flash-preview'
     assert config['deep_think_llm'] == 'gemini-3.1-pro-preview'
     assert config['google_thinking_level'] == 'high'
+    assert config['google_use_application_default_credentials'] is True
+    assert config['google_vertexai'] is True
+    assert config['google_location'] == 'global'

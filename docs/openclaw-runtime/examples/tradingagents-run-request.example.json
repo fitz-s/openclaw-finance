@@ -14,6 +14,9 @@
     "quick_think_llm": "gemini-3-flash-preview",
     "backend_url": null,
     "google_thinking_level": "high",
+    "google_use_application_default_credentials": true,
+    "google_vertexai": true,
+    "google_location": "global",
     "output_language": "English",
     "max_debate_rounds": 1,
     "max_risk_discuss_rounds": 1,
@@ -38,7 +41,10 @@
     "base_url": null,
     "auth_source": "GOOGLE_API_KEY",
     "provider_options": {
-      "google_thinking_level": "high"
+      "google_thinking_level": "high",
+      "google_use_application_default_credentials": true,
+      "google_vertexai": true,
+      "google_location": "global"
     },
     "unsupported_reason": null,
     "resolution_contract_version": "v1"

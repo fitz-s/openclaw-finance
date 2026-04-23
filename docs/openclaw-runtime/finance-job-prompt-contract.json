@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-23T09:43:53.058305+00:00",
+  "generated_at": "2026-04-23T13:58:19.748446+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "note": "Prompt hashes let GitHub reviewers see live OpenClaw job prompt drift without exposing secrets.",
   "jobs": {
@@ -158,15 +158,17 @@
       "message_preview": "【OpenClaw Finance Thesis Sidecar｜manual artifact-only】\n你是 finance thesis sidecar。这个 job 是 manual/disabled artifact wrapper，不是报告 job。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 读取 "
     },
     "finance-tradingagents-sidecar": {
-      "enabled": false,
+      "enabled": true,
       "schedule": {
-        "kind": "manual"
+        "kind": "cron",
+        "expr": "15 8-18 * * 1-5",
+        "tz": "America/Chicago"
       },
       "delivery": {
         "mode": "none",
         "channel": "last"
       },
-      "prompt_sha256": "sha256:e7f2e79537d4e59744e25450b2ce5a0732cbd198b851d4a5c8a1fb3045551d60",
+      "prompt_sha256": "sha256:a6c8d3304a3074b303fd735d482e7c3cb9ea9f7c275d48506fc5b284e7663c3f",
       "contains_deterministic_report_job": false,
       "runs_finance_discord_report_job": false,
       "forbids_progress_text": false,
@@ -175,7 +177,7 @@
       "contains_candidate_path": false,
       "contains_unknown_discovery_contract": false,
       "contains_threshold_mutation_ban": true,
-      "message_preview": "【OpenClaw Finance TradingAgents Sidecar｜manual artifact-only】\n你是 finance TradingAgents sidecar。这个 job 是 manual/disabled artifact wrapper，不是报告 job。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context"
+      "message_preview": "【OpenClaw Finance TradingAgents Sidecar｜scheduled artifact-only】\n你是 finance TradingAgents sidecar。这个 job 是 cron artifact wrapper，不是报告 job。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py"
     },
     "finance-watcher-update": {
       "enabled": false,

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-23T13:33:45.969616Z",
+  "generated_at": "2026-04-23T13:58:19.564221Z",
   "contract": "parent-runtime-mirror-v1",
   "status": "pass",
   "purpose": "Reviewer-visible mirror of parent runtime files relevant to finance cutover.",
@@ -58,7 +58,7 @@
       "source_path": "/Users/leofitz/.openclaw/workspace/systems/openclaw-tradingagents-model-resolution-contract.md",
       "mirror_path": "docs/openclaw-runtime/parent-runtime/systems/openclaw-tradingagents-model-resolution-contract.md",
       "exists": true,
-      "sha256": "sha256:e3c1330cb1ddd0c5087f31835040ac3701883b70f5e439dd1daffde17f3b78e9"
+      "sha256": "sha256:ddb36670aeeb21cf206b295c536757a72064b69bc17baeb51dcb55f219b57b0c"
     },
     {
       "role": "skills/finance-tradingagents-sidecar/SKILL.md",

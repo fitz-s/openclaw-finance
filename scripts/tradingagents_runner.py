@@ -24,6 +24,7 @@ from tradingagents_bridge_types import (
     redact_payload,
     write_json,
 )
+from tradingagents_google_runtime import patch_google_runtime
 
 
 ALLOWED_ENV_KEYS = {
@@ -52,7 +53,9 @@ def import_ta() -> tuple[type[Any], dict[str, Any]]:
     if root not in sys.path:
         sys.path.insert(0, root)
     graph = importlib.import_module('tradingagents.graph.trading_graph')
+    google_client = importlib.import_module('tradingagents.llm_clients.google_client')
     config_mod = importlib.import_module('tradingagents.default_config')
+    patch_google_runtime(graph, google_client)
     return graph.TradingAgentsGraph, copy.deepcopy(config_mod.DEFAULT_CONFIG)
 
 
@@ -67,6 +70,43 @@ def build_runtime_config(request: dict[str, Any], raw_dir: Path) -> dict[str, An
     config['results_dir'] = str(TRADINGAGENTS_RUNTIME_LOGS)
     config['data_cache_dir'] = str(TRADINGAGENTS_RUNTIME_CACHE)
     return config
+
+
+def json_safe_payload(value: Any) -> Any:
+    """Convert LangChain/Pydantic/runtime objects into JSON-safe structures."""
+    if isinstance(value, dict):
+        return {str(key): json_safe_payload(item) for key, item in value.items()}
+    if isinstance(value, list):
+        return [json_safe_payload(item) for item in value]
+    if isinstance(value, tuple):
+        return [json_safe_payload(item) for item in value]
+    if isinstance(value, (str, int, float, bool)) or value is None:
+        return value
+
+    model_dump = getattr(value, 'model_dump', None)
+    if callable(model_dump):
+        try:
+            return json_safe_payload(model_dump())
+        except Exception:
+            pass
+
+    to_dict = getattr(value, 'dict', None)
+    if callable(to_dict):
+        try:
+            return json_safe_payload(to_dict())
+        except Exception:
+            pass
+
+    if hasattr(value, 'content') and hasattr(value, '__class__'):
+        try:
+            return {
+                'message_class': value.__class__.__name__,
+                'content': json_safe_payload(getattr(value, 'content')),
+            }
+        except Exception:
+            pass
+
+    return str(value)
 
 
 def _build_log_ref(raw_dir: Path, instrument: str, analysis_date: str) -> dict[str, Any] | None:
@@ -106,7 +146,8 @@ def run_request(request: dict[str, Any]) -> dict[str, Any]:
         finally:
             os.chdir(cwd)
 
-        redacted_state, redaction_report = redact_payload(final_state)
+        safe_state = json_safe_payload(final_state)
+        redacted_state, redaction_report = redact_payload(safe_state)
         redacted_state_path = raw_dir / 'redacted-final-state.json'
         redaction_report_path = raw_dir / 'redaction-report.json'
         write_json(redacted_state_path, redacted_state)

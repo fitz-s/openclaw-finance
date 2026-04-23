@@ -29,6 +29,9 @@
           "base_url": null,
           "auth_source": "GOOGLE_API_KEY",
           "google_thinking_level": "high",
+          "google_use_application_default_credentials": true,
+          "google_vertexai": true,
+          "google_location": "global",
           "openai_reasoning_effort": null,
           "anthropic_effort": null,
           "resolution_contract_version": "v1"

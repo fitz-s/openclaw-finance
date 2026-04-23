@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from tradingagents_bridge_types import TRADINGAGENTS_STATE, now_iso, write_json
+from tradingagents_google_runtime import detect_google_adc
 from tradingagents_model_resolution import resolve_tradingagents_role
 
 
@@ -59,14 +60,30 @@ def evaluate_runtime_readiness(job_name: str = 'finance-tradingagents-sidecar') 
         provider = str(resolved.get('provider') or '')
         auth_source = str(resolved.get('auth_source') or '')
         required_modules = list(COMMON_MODULES) + list(PROVIDER_MODULES.get(provider, []))
+    provider_options = resolved.get('provider_options', {}) if isinstance(resolved.get('provider_options'), dict) else {}
 
     missing_modules = [name for name in required_modules if not _module_available(name)]
     if missing_modules:
         errors.append('missing_modules:' + ','.join(missing_modules))
 
-    auth_present = bool(auth_source) and auth_source != 'none' and bool(os.environ.get(auth_source or ''))
+    adc = detect_google_adc() if provider == 'google' else {
+        'available': False,
+        'project': None,
+        'credential_type': None,
+        'error_class': None,
+        'error_message': None,
+    }
+    allow_google_adc = provider == 'google' and provider_options.get('google_use_application_default_credentials') is True
+    key_present = bool(auth_source) and auth_source != 'none' and bool(os.environ.get(auth_source or ''))
+    auth_present = key_present or (allow_google_adc and bool(adc.get('available')))
     if auth_source and auth_source != 'none' and not auth_present:
-        errors.append(f'missing_auth_source:{auth_source}')
+        reason = f'missing_auth_source:{auth_source}'
+        if allow_google_adc:
+            reason += ':or_google_adc'
+        errors.append(reason)
+
+    if allow_google_adc and not adc.get('available') and not key_present:
+        errors.append('google_adc_unavailable')
 
     py_version = platform.python_version()
     py_major = sys.version_info.major
@@ -82,6 +99,8 @@ def evaluate_runtime_readiness(job_name: str = 'finance-tradingagents-sidecar') 
         'provider': provider,
         'auth_source': auth_source,
         'auth_present': auth_present,
+        'auth_via_api_key': key_present,
+        'google_adc': adc if provider == 'google' else None,
         'python_version': py_version,
         'required_modules': required_modules,
         'missing_modules': missing_modules,

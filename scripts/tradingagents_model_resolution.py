@@ -30,6 +30,9 @@ ALLOWED_AUTH_SOURCES = {
 }
 PROVIDER_OPTION_KEYS = {
     'google_thinking_level',
+    'google_use_application_default_credentials',
+    'google_vertexai',
+    'google_location',
     'openai_reasoning_effort',
     'anthropic_effort',
 }

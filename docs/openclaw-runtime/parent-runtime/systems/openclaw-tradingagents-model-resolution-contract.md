@@ -55,6 +55,9 @@ TradingAgents remains the source of truth for:
           "base_url": null,
           "auth_source": "GOOGLE_API_KEY|OPENAI_API_KEY|ANTHROPIC_API_KEY|OPENROUTER_API_KEY|none",
           "google_thinking_level": null,
+          "google_use_application_default_credentials": false,
+          "google_vertexai": false,
+          "google_location": null,
           "openai_reasoning_effort": null,
           "anthropic_effort": null,
           "resolution_contract_version": "v1"
@@ -73,6 +76,7 @@ TradingAgents remains the source of truth for:
 4. The resolver must fail closed on unsupported aliases or missing required fields.
 5. The resolver must not read OpenClaw auth profiles or Codex auth files.
 6. Runtime/auth reuse is explicitly out of scope for this contract version.
+7. Google roles may enable Application Default Credentials through provider options without changing the runtime alias or report authority model.
 
 ## Alias Families
 
@@ -107,7 +111,10 @@ The finance-side resolver should emit:
   "base_url": null,
   "auth_source": "GOOGLE_API_KEY",
   "provider_options": {
-    "google_thinking_level": "high"
+    "google_thinking_level": "high",
+    "google_use_application_default_credentials": true,
+    "google_vertexai": true,
+    "google_location": "global"
   },
   "unsupported_reason": null,
   "resolution_contract_version": "v1"

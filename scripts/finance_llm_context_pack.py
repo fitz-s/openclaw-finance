@@ -542,7 +542,7 @@ def build_packs() -> dict[str, dict[str, Any]]:
         'required_commands': [
             '/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py',
             '/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/thesis_research_packet.py',
-            '/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/tradingagents_sidecar_job.py --mode offhours',
+            '/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/tradingagents_sidecar_job.py --mode scheduled',
         ],
         'context_digest_path': str(TRADINGAGENTS_CONTEXT_DIGEST),
         'status_path': str(TRADINGAGENTS_STATUS),

@@ -9,6 +9,7 @@ SCRIPTS = ROOT / 'scripts'
 sys.path.insert(0, str(SCRIPTS))
 
 import tradingagents_runner as runner
+from langchain_core.messages import HumanMessage
 
 
 def _request(tmp_path: Path) -> dict:
@@ -86,3 +87,41 @@ def test_run_request_handles_import_failure(tmp_path: Path, monkeypatch) -> None
     assert artifact['status'] == 'fail'
     assert artifact['error_class'] == 'ModuleNotFoundError'
     assert (Path(request['request_path']).parent / 'raw' / 'run-artifact.json').exists()
+
+
+def test_run_request_serializes_langchain_messages(tmp_path: Path, monkeypatch) -> None:
+    request = _request(tmp_path)
+    monkeypatch.setattr(runner, 'TRADINGAGENTS_RUNTIME_CACHE', tmp_path / 'runtime' / 'cache')
+    monkeypatch.setattr(runner, 'TRADINGAGENTS_RUNTIME_LOGS', tmp_path / 'runtime' / 'logs')
+
+    class FakeGraph:
+        def __init__(self, selected_analysts, debug, config):
+            self.config = config
+
+        def propagate(self, instrument, analysis_date):
+            log_dir = Path('eval_results') / instrument / 'TradingAgentsStrategy_logs'
+            log_dir.mkdir(parents=True, exist_ok=True)
+            (log_dir / f'full_states_log_{analysis_date}.json').write_text('{}', encoding='utf-8')
+            return ({
+                'company_of_interest': instrument,
+                'trade_date': analysis_date,
+                'messages': [HumanMessage(content='hello world')],
+                'market_report': 'Durable demand remains strong.',
+                'sentiment_report': 'Sentiment is positive but crowded.',
+                'news_report': 'Recent commentary remains supportive.',
+                'fundamentals_report': 'Margins remain resilient.',
+                'investment_debate_state': {'judge_decision': 'Research is supportive.', 'current_response': 'Research is supportive.'},
+                'investment_plan': 'Research supports the case.',
+                'trader_investment_plan': 'FINAL TRANSACTION PROPOSAL: BUY.',
+                'risk_debate_state': {'judge_decision': 'Wait for confirmation.'},
+                'final_trade_decision': 'Rating: Overweight. Wait for deterministic validation.'
+            }, 'OVERWEIGHT')
+
+    monkeypatch.setattr(runner, 'import_ta', lambda: (FakeGraph, {'project_dir': '.', 'results_dir': '.', 'data_cache_dir': '.'}))
+    artifact = runner.run_request(request)
+
+    raw_dir = Path(request['request_path']).parent / 'raw'
+    redacted = json.loads((raw_dir / 'redacted-final-state.json').read_text(encoding='utf-8'))
+    assert artifact['status'] == 'pass'
+    assert redacted['messages'][0]['type'] == 'human'
+    assert redacted['messages'][0]['content'] == 'hello world'

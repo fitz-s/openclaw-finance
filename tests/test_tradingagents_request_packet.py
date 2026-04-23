@@ -32,6 +32,9 @@ def test_build_request_prefers_manual_instrument() -> None:
     assert request['config']['llm_provider'] == 'google'
     assert request['config']['quick_think_llm'] == 'gemini-3-flash-preview'
     assert request['config']['deep_think_llm'] == 'gemini-3.1-pro-preview'
+    assert request['config']['google_use_application_default_credentials'] is True
+    assert request['config']['google_vertexai'] is True
+    assert request['config']['google_location'] == 'global'
 
 
 def test_build_request_falls_back_to_selected_opportunity() -> None:
@@ -78,6 +81,9 @@ def test_request_example_tracks_google_preview_resolution_contract() -> None:
     assert example['config']['quick_think_llm'] == 'gemini-3-flash-preview'
     assert example['config']['deep_think_llm'] == 'gemini-3.1-pro-preview'
     assert example['config']['backend_url'] is None
+    assert example['config']['google_use_application_default_credentials'] is True
+    assert example['config']['google_vertexai'] is True
+    assert example['config']['google_location'] == 'global'
     assert example['model_resolution']['openclaw_runtime_alias'] == 'google-gemini-cli/gemini-3-flash-preview'
     assert example['model_resolution']['quick_model'] == 'gemini-3-flash-preview'
     assert example['model_resolution']['deep_model'] == 'gemini-3.1-pro-preview'
