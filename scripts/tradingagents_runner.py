@@ -24,7 +24,7 @@ from tradingagents_bridge_types import (
     redact_payload,
     write_json,
 )
-from tradingagents_google_runtime import patch_google_runtime
+from tradingagents_google_runtime import patch_google_runtime, patch_yfinance_dataflow
 
 
 ALLOWED_ENV_KEYS = {
@@ -54,8 +54,10 @@ def import_ta() -> tuple[type[Any], dict[str, Any]]:
         sys.path.insert(0, root)
     graph = importlib.import_module('tradingagents.graph.trading_graph')
     google_client = importlib.import_module('tradingagents.llm_clients.google_client')
+    y_finance = importlib.import_module('tradingagents.dataflows.y_finance')
     config_mod = importlib.import_module('tradingagents.default_config')
     patch_google_runtime(graph, google_client)
+    patch_yfinance_dataflow(y_finance)
     return graph.TradingAgentsGraph, copy.deepcopy(config_mod.DEFAULT_CONFIG)
 
 

@@ -98,3 +98,11 @@ def patch_google_runtime(graph_mod: Any, google_client_mod: Any) -> None:
     google_client_mod.GoogleClient._finance_adc_patch_applied = True
     google_client_mod.GoogleClient._finance_original_get_llm = original_get_llm
 
+
+def patch_yfinance_dataflow(y_finance_mod: Any) -> None:
+    """Patch TradingAgents y_finance helpers for missing local imports."""
+    if getattr(y_finance_mod, '_finance_dataflow_patch_applied', False):
+        return
+    if not hasattr(y_finance_mod, 'pd'):
+        y_finance_mod.pd = importlib.import_module('pandas')
+    y_finance_mod._finance_dataflow_patch_applied = True
