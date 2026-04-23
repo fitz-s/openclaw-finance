@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-19T19:27:09.715569Z",
+  "generated_at": "2026-04-23T09:25:25.929115Z",
   "source_path": "/Users/leofitz/.openclaw/cron/jobs.json",
   "jobs": [
     {
@@ -103,6 +103,24 @@
         "kind": "agentTurn",
         "model": "google-gemini-cli/gemini-3-flash",
         "message": "【OpenClaw Finance Deterministic Scanner Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_scanner_job.py --mode offhours-scan\n\nContract markers:\n- finance_scanner_job.py runs finance_llm_context_pack.py, query_pack_planner.py, finance_worker.py, finance_parent_market_ingest_cutover.py, and gate_evaluator.py.\n- Read-only scanner context is /Users/leofitz/.openclaw/workspace/finance/state/llm-job-context/scanner.json.\n- Context pack is a view cache and must have pack_is_not_authority=true.\n- QueryPack is not evidence; object_links and unknown_discovery_exhausted_reason remain required contract fields.\n- unknown_discovery cannot be satisfied by held/watchlist tickers.\n- unknown_discovery_minimum_attempts remains enforced by scanner.json/query_pack_planner.py.\n- 不得把已在 watchlist/held 的标的当作 unknown_discovery。\n\nOutput discipline:\n- Return stdout exactly.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; delivery.mode is none.\n- No execution; review-only."
+      }
+    },
+    {
+      "id": "finance-tradingagents-sidecar-manual-v1",
+      "name": "finance-tradingagents-sidecar",
+      "enabled": false,
+      "schedule": {
+        "kind": "manual"
+      },
+      "delivery": {
+        "mode": "none",
+        "channel": "last"
+      },
+      "sessionTarget": "isolated",
+      "payload": {
+        "kind": "agentTurn",
+        "model": "google-gemini-cli/gemini-3-flash",
+        "message": "【OpenClaw Finance TradingAgents Sidecar｜manual artifact-only】\n你是 finance TradingAgents sidecar。这个 job 是 manual/disabled artifact wrapper，不是报告 job。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 读取 /Users/leofitz/.openclaw/workspace/finance/state/llm-job-context/thesis-sidecar.json。\n- context pack 是 view cache，不是 canonical state。\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/thesis_research_packet.py\n\n执行：\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/tradingagents_sidecar_job.py --mode offhours\n\n允许写入：\n- finance/state/tradingagents/runs/**\n- finance/state/tradingagents/status.json\n- finance/state/tradingagents/latest.json\n- finance/state/tradingagents/latest-context-digest.json\n- finance/state/tradingagents/latest-reader-augmentation.json\n\n硬规则：\n- 禁止 Discord / no Discord。\n- 禁止自动改 thresholds。\n- 禁止 wake mutation。\n- 禁止 canonical report 写入。\n- 禁止 evidence promotion。\n- 禁止交易执行。\n- delivery.mode=none；最终回复为空字符串或一行机器摘要：tradingagents=ok|run_id=<id>。"
       }
     }
   ],

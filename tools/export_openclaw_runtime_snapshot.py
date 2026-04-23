@@ -29,6 +29,7 @@ FINANCE_JOB_NAMES = {
     'finance-midday-operator-review',
     'finance-weekly-learning-review',
     'finance-thesis-sidecar',
+    'finance-tradingagents-sidecar',
     'finance-report-renderer',
     'finance-watcher-update',
 }

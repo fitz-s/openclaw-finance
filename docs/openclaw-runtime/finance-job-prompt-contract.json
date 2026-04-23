@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-22T21:15:01.108313+00:00",
+  "generated_at": "2026-04-23T09:25:26.281380+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "note": "Prompt hashes let GitHub reviewers see live OpenClaw job prompt drift without exposing secrets.",
   "jobs": {
@@ -156,6 +156,26 @@
       "contains_unknown_discovery_contract": false,
       "contains_threshold_mutation_ban": true,
       "message_preview": "【OpenClaw Finance Thesis Sidecar｜manual artifact-only】\n你是 finance thesis sidecar。这个 job 是 manual/disabled artifact wrapper，不是报告 job。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 读取 "
+    },
+    "finance-tradingagents-sidecar": {
+      "enabled": false,
+      "schedule": {
+        "kind": "manual"
+      },
+      "delivery": {
+        "mode": "none",
+        "channel": "last"
+      },
+      "prompt_sha256": "sha256:680df8c4b6c6c071006f72ab8e4bf71fb33e576a41456225ecb3cafe756073f1",
+      "contains_deterministic_report_job": false,
+      "runs_finance_discord_report_job": false,
+      "forbids_progress_text": false,
+      "contains_context_pack": true,
+      "contains_non_authority_boundary": true,
+      "contains_candidate_path": false,
+      "contains_unknown_discovery_contract": false,
+      "contains_threshold_mutation_ban": true,
+      "message_preview": "【OpenClaw Finance TradingAgents Sidecar｜manual artifact-only】\n你是 finance TradingAgents sidecar。这个 job 是 manual/disabled artifact wrapper，不是报告 job。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context"
     },
     "finance-watcher-update": {
       "enabled": false,

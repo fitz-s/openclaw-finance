@@ -34,6 +34,7 @@ def test_parent_runtime_mirror_manifest_and_cron_slice() -> None:
     names = {job['name'] for job in cron['jobs']}
     assert 'finance-premarket-brief' in names
     assert 'finance-subagent-scanner' in names
+    assert 'finance-tradingagents-sidecar' in names
     assert 'finance_parent_market_ingest_cutover.py' in json.dumps(cron, ensure_ascii=False)
 
 

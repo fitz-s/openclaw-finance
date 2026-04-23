@@ -70,6 +70,23 @@ def test_sidecar_job_is_manual_or_disabled_and_has_no_delivery() -> None:
     assert '禁止交易执行' in text
 
 
+def test_tradingagents_sidecar_job_is_manual_disabled_and_has_no_delivery() -> None:
+    job = jobs_by_name()['finance-tradingagents-sidecar']
+    text = message(job)
+
+    assert job.get('enabled') is False
+    assert job.get('schedule', {}).get('kind') == 'manual'
+    assert job.get('delivery', {}).get('mode') == 'none'
+    assert 'finance_llm_context_pack.py' in text
+    assert 'thesis_research_packet.py' in text
+    assert 'tradingagents_sidecar_job.py --mode offhours' in text
+    assert 'view cache' in text or 'pack_is_not_authority' in text
+    assert '禁止 Discord' in text or 'no Discord' in text
+    assert '禁止自动改 thresholds' in text
+    assert '禁止交易执行' in text
+    assert 'state/tradingagents/' in text
+
+
 def test_weekly_learning_prompt_uses_context_pack_and_forbids_threshold_mutation() -> None:
     job = jobs_by_name()['finance-weekly-learning-review']
     text = message(job)

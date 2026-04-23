@@ -30,6 +30,7 @@ FINANCE_JOB_NAMES = {
     'finance-subagent-scanner-offhours',
     'finance-premarket-delivery-watchdog',
     'finance-midday-operator-review',
+    'finance-tradingagents-sidecar',
 }
 
 

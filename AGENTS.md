@@ -153,6 +153,7 @@ watch_intent_compiler  (capital_bucket_hint)
 | `finance-subagent-scanner-offhours` | enabled | none |
 | `finance-weekly-learning-review` | enabled | Discord |
 | `finance-thesis-sidecar` | disabled/manual | none |
+| `finance-tradingagents-sidecar` | disabled/manual | none |
 
 ## Job Rules
 
