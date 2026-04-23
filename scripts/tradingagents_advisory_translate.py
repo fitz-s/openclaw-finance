@@ -19,19 +19,63 @@ from tradingagents_bridge_types import (
     write_json,
 )
 
+NOISE_PATTERNS = [
+    r'^\s*#+\s*',
+    r'^\s*\*+\s*',
+    r'^\s*date\s*:',
+    r'^\s*prepared by\s*:',
+    r'^\s*executive summary\s*:?',
+    r'^\s*market context\b',
+    r'macroeconomic outlook',
+    r'^\s*news analysis report\b',
+    r'^\s*fundamental analysis report\b',
+    r'weekly analysis report',
+    r'^\s*sector\s*:',
+    r'^\s*industry\s*:',
+]
+
+EXECUTIONISH_PATTERNS = [
+    r'entry strategy',
+    r'position sizing',
+    r'stop-loss',
+    r'liquidate',
+    r'protective puts',
+    r'short positions?',
+    r'profit target',
+    r'trail stops?',
+    r'portfolio manager',
+    r'short to medium-term',
+    r'gradually increase exposure',
+    r'staged entries',
+]
+
+
+def _clean_candidate_line(value: str) -> str:
+    line = ' '.join(str(value or '').split())
+    line = line.lstrip('#* ').strip()
+    line = line.replace('**', '').replace('__', '').strip()
+    return normalize_line(line, 220)
+
 
 def _safe_lines(value: Any, *, limit: int = 4) -> list[str]:
     out: list[str] = []
     for line in split_text_lines(value):
-        lowered = line.lower()
+        cleaned = _clean_candidate_line(line)
+        lowered = cleaned.lower()
+        if not cleaned:
+            continue
         if matches_any(lowered, ENGLISH_EXECUTION_PATTERNS):
             continue
-        if matches_any(line, CHINESE_EXECUTION_PATTERNS):
+        if matches_any(lowered, EXECUTIONISH_PATTERNS):
             continue
-        if len(line) < 18:
+        if matches_any(cleaned, CHINESE_EXECUTION_PATTERNS):
             continue
-        if line not in out:
-            out.append(normalize_line(line, 220))
+        if matches_any(lowered, NOISE_PATTERNS):
+            continue
+        if len(cleaned) < 28:
+            continue
+        if cleaned not in out:
+            out.append(cleaned)
         if len(out) >= limit:
             break
     return out
