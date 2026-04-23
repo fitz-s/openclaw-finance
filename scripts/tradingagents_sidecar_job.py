@@ -21,6 +21,7 @@ from tradingagents_bridge_types import (
 from tradingagents_request_packet import build_request
 from tradingagents_advisory_translate import translate_run
 from tradingagents_bridge_validator import validate_run
+from tradingagents_runtime_readiness import evaluate_runtime_readiness
 from tradingagents_runner import sanitize_environment
 from tradingagents_surface_compiler import compile_surfaces
 
@@ -35,6 +36,29 @@ def run_job(mode: str, instrument: str | None = None) -> dict[str, Any]:
     request_path = Path(request['request_path'])
     write_json(request_path, request)
     steps.append({'step': 'request', 'status': 'pass', 'path': str(request_path)})
+
+    readiness = evaluate_runtime_readiness()
+    write_json(TRADINGAGENTS_STATE / 'runtime-readiness.json', readiness)
+    steps.append({
+        'step': 'runtime_readiness',
+        'status': readiness['status'],
+        'errors': readiness['errors'],
+        'warnings': readiness['warnings'],
+    })
+    if readiness['status'] != 'pass':
+        report = {
+            'generated_at': now_iso(),
+            'status': 'fail',
+            'job_id': request['job_id'],
+            'run_id': request['run_id'],
+            'steps': steps,
+            'runtime_readiness_path': str(TRADINGAGENTS_STATE / 'runtime-readiness.json'),
+            'forbidden_actions': DEFAULT_FORBIDDEN_ACTIONS,
+            'review_only': True,
+            'no_execution': True,
+        }
+        write_json(TRADINGAGENTS_STATE / 'job-reports' / f"{request['run_id']}.json", report)
+        return report
 
     env = sanitize_environment()
     runner = subprocess.run(
@@ -81,6 +105,7 @@ def run_job(mode: str, instrument: str | None = None) -> dict[str, Any]:
         'job_id': request['job_id'],
         'run_id': request['run_id'],
         'steps': steps,
+        'runtime_readiness_path': str(TRADINGAGENTS_STATE / 'runtime-readiness.json'),
         'latest_context_digest': str(TRADINGAGENTS_CONTEXT_DIGEST) if Path(TRADINGAGENTS_CONTEXT_DIGEST).exists() else None,
         'latest_reader_augmentation': str(TRADINGAGENTS_READER_AUGMENTATION) if Path(TRADINGAGENTS_READER_AUGMENTATION).exists() else None,
         'forbidden_actions': DEFAULT_FORBIDDEN_ACTIONS,

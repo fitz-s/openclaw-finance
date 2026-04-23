@@ -70,6 +70,7 @@ pytest -q tests/test_discord_operator_surfaces.py tests/test_campaign_projection
 TradingAgents sidecar verification:
 
 ```bash
+python3 scripts/tradingagents_runtime_readiness.py
 python3 tools/check_tradingagents_upstream_lock.py
 python3 tools/audit_tradingagents_upstream_authority.py
 pytest -q \

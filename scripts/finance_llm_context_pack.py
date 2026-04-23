@@ -58,6 +58,7 @@ QUERY_PACK_REPORT = STATE / 'query-packs' / 'scanner-planned-report.json'
 QUERY_PACK_CONTRACT = FINANCE / 'docs' / 'openclaw-runtime' / 'contracts' / 'query-pack-contract.md'
 TRADINGAGENTS_CONTEXT_DIGEST = STATE / 'tradingagents' / 'latest-context-digest.json'
 TRADINGAGENTS_STATUS = STATE / 'tradingagents' / 'status.json'
+TRADINGAGENTS_RUNTIME_READINESS = STATE / 'tradingagents' / 'runtime-readiness.json'
 TRADINGAGENTS_DEFAULTS = FINANCE / 'ops' / 'tradingagents-sidecar.defaults.json'
 TRADINGAGENTS_LOCK = FINANCE / 'ops' / 'tradingagents-upstream-lock.json'
 
@@ -516,6 +517,7 @@ def build_packs() -> dict[str, dict[str, Any]]:
         artifact(THESIS_REGISTRY),
         artifact(STATE / 'thesis-research-packet.json'),
         artifact(TRADINGAGENTS_STATUS),
+        artifact(TRADINGAGENTS_RUNTIME_READINESS),
         artifact(TRADINGAGENTS_DEFAULTS),
         artifact(TRADINGAGENTS_LOCK),
     ]
@@ -544,9 +546,11 @@ def build_packs() -> dict[str, dict[str, Any]]:
         ],
         'context_digest_path': str(TRADINGAGENTS_CONTEXT_DIGEST),
         'status_path': str(TRADINGAGENTS_STATUS),
+        'runtime_readiness_path': str(TRADINGAGENTS_RUNTIME_READINESS),
         'defaults_path': str(TRADINGAGENTS_DEFAULTS),
         'lock_path': str(TRADINGAGENTS_LOCK),
         'model_resolution': resolve_tradingagents_role(job_name='finance-tradingagents-sidecar'),
+        'runtime_readiness': load_json_safe(TRADINGAGENTS_RUNTIME_READINESS, {}) or {},
         'final_output_rule': 'No Discord/user output; write TradingAgents sidecar artifacts only.',
     })
 

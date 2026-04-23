@@ -78,6 +78,7 @@ def test_sidecar_and_weekly_packs_cannot_deliver_or_mutate_thresholds() -> None:
     assert 'evidence_promotion' in tradingagents['forbidden_actions']
     assert tradingagents['model_resolution']['status'] == 'supported'
     assert tradingagents['model_resolution']['provider'] == 'google'
+    assert tradingagents['runtime_readiness_path'].endswith('state/tradingagents/runtime-readiness.json')
     assert 'automatic_threshold_mutation' in weekly['forbidden_actions']
     assert 'model_routing' in weekly['recommendation_targets_allowed']
 
