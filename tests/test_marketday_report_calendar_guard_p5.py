@@ -26,7 +26,7 @@ def test_regular_trading_day_premarket_runs_chain(monkeypatch, capsys, tmp_path:
     calls = []
     monkeypatch.setattr(job, 'REPORT_CALENDAR_GUARD', tmp_path / 'guard.json')
     monkeypatch.setattr(job, 'today_ct', lambda: job.datetime(2026, 4, 20, 8, 10, tzinfo=job.CT))
-    monkeypatch.setattr(job, 'run_chain', lambda *, fast_core=False: calls.append(fast_core) or 'REPORT\n')
+    monkeypatch.setattr(job, 'run_chain', lambda *, mode, fast_core=False: calls.append(fast_core) or 'REPORT\n')
     assert job.main(['--mode', 'marketday-review']) == 0
     assert capsys.readouterr().out == 'REPORT\n'
     assert calls == [True]
@@ -73,7 +73,7 @@ def test_regular_rth_core_review_runs_fast_chain(monkeypatch, capsys, tmp_path: 
     calls = []
     monkeypatch.setattr(job, 'REPORT_CALENDAR_GUARD', tmp_path / 'guard.json')
     monkeypatch.setattr(job, 'today_ct', lambda: job.datetime(2026, 4, 20, 13, 15, tzinfo=job.CT))
-    monkeypatch.setattr(job, 'run_chain', lambda *, fast_core=False: calls.append(fast_core) or 'CORE\n')
+    monkeypatch.setattr(job, 'run_chain', lambda *, mode, fast_core=False: calls.append(fast_core) or 'CORE\n')
     assert job.main(['--mode', 'marketday-core-review']) == 0
     assert capsys.readouterr().out == 'CORE\n'
     assert calls == [True]

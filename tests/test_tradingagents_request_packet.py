@@ -67,6 +67,7 @@ def test_build_request_raises_when_no_target_exists() -> None:
             decision_log={},
             packet={},
             thesis_registry={'theses': []},
+            capital_agenda={'agenda_items': []},
         )
     except ValueError as exc:
         assert 'no TradingAgents target instrument available' in str(exc)
@@ -80,6 +81,7 @@ def test_build_request_falls_back_to_thesis_registry(monkeypatch) -> None:
         '/Users/leofitz/.openclaw/workspace/finance/state/finance-decision-report-envelope.json': {'report_hash': 'sha256:report'},
         '/Users/leofitz/.openclaw/workspace/finance/state/finance-decision-log-report.json': {'entry': {'decision_id': 'decision:123'}},
         '/Users/leofitz/.openclaw/workspace/services/market-ingest/state/latest-context-packet.json': {'packet_id': 'packet:1', 'packet_hash': 'sha256:packet', 'instrument': 'SPY'},
+        '/Users/leofitz/.openclaw/workspace/finance/state/capital-agenda.json': {'agenda_items': []},
         '/Users/leofitz/.openclaw/workspace/finance/state/thesis-registry.json': {
             'theses': [{'thesis_id': 'thesis:nvda', 'instrument': 'NVDA', 'status': 'active'}]
         },
@@ -88,6 +90,28 @@ def test_build_request_falls_back_to_thesis_registry(monkeypatch) -> None:
     assert request['instrument'] == 'NVDA'
     assert request['request_source'] == 'thesis_registry'
     assert request['request_source_meta']['selected_thesis_id'] == 'thesis:nvda'
+
+
+def test_build_request_prefers_capital_agenda_linked_thesis(monkeypatch) -> None:
+    monkeypatch.setattr('tradingagents_request_packet.load_json', lambda path, default=None: {
+        '/Users/leofitz/.openclaw/workspace/finance/state/thesis-research-packet.json': {'selected_opportunities': [], 'selected_theses': []},
+        '/Users/leofitz/.openclaw/workspace/finance/state/finance-decision-report-envelope.json': {'report_hash': 'sha256:report'},
+        '/Users/leofitz/.openclaw/workspace/finance/state/finance-decision-log-report.json': {'entry': {'decision_id': 'decision:123'}},
+        '/Users/leofitz/.openclaw/workspace/services/market-ingest/state/latest-context-packet.json': {'packet_id': 'packet:1', 'packet_hash': 'sha256:packet', 'instrument': 'SPY'},
+        '/Users/leofitz/.openclaw/workspace/finance/state/capital-agenda.json': {
+            'agenda_items': [{'agenda_id': 'agenda:1', 'agenda_type': 'existing_thesis_review', 'linked_thesis_ids': ['thesis:tsla']}]
+        },
+        '/Users/leofitz/.openclaw/workspace/finance/state/thesis-registry.json': {
+            'theses': [
+                {'thesis_id': 'thesis:aapl', 'instrument': 'AAPL', 'status': 'active'},
+                {'thesis_id': 'thesis:tsla', 'instrument': 'TSLA', 'status': 'watch'},
+            ]
+        },
+    }.get(str(path), default))
+    request = build_request(mode='scheduled')
+    assert request['instrument'] == 'TSLA'
+    assert request['request_source'] == 'capital_agenda'
+    assert request['request_source_meta']['agenda_id'] == 'agenda:1'
 
 
 def test_request_example_tracks_google_preview_resolution_contract() -> None:

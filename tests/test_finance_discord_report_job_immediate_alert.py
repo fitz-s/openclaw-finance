@@ -27,7 +27,7 @@ def test_immediate_alert_delivers_when_tradingagents_context_is_present(monkeypa
     monkeypatch.setattr(job, 'CONTEXT_PACK', context_pack)
     monkeypatch.setattr(job, 'IMMEDIATE_ALERT_STATE', alert_state)
     monkeypatch.setattr(job, 'today_ct', lambda: datetime(2026, 4, 23, 11, 55, tzinfo=CT))
-    monkeypatch.setattr(job, 'run_chain', lambda *, fast_core=False: 'ALERT REPORT\n')
+    monkeypatch.setattr(job, 'run_chain', lambda *, mode, fast_core=False: 'ALERT REPORT\n')
     monkeypatch.setattr(job, 'ENVELOPE', tmp_path / 'envelope.json')
     _write_json(tmp_path / 'envelope.json', {'report_hash': 'sha256:report'})
     _write_json(context_pack, {
@@ -49,7 +49,7 @@ def test_immediate_alert_suppresses_without_tradingagents_context(monkeypatch, c
     monkeypatch.setattr(job, 'CONTEXT_PACK', tmp_path / 'report-orchestrator.json')
     monkeypatch.setattr(job, 'IMMEDIATE_ALERT_STATE', tmp_path / 'finance-immediate-alert-state.json')
     monkeypatch.setattr(job, 'today_ct', lambda: datetime(2026, 4, 23, 11, 55, tzinfo=CT))
-    monkeypatch.setattr(job, 'run_chain', lambda *, fast_core=False: 'ALERT REPORT\n')
+    monkeypatch.setattr(job, 'run_chain', lambda *, mode, fast_core=False: 'ALERT REPORT\n')
     monkeypatch.setattr(job, 'ENVELOPE', tmp_path / 'envelope.json')
     _write_json(tmp_path / 'envelope.json', {'report_hash': 'sha256:report'})
     _write_json(tmp_path / 'report-orchestrator.json', {})
@@ -66,7 +66,7 @@ def test_immediate_alert_suppresses_duplicate_primary_markdown(monkeypatch, caps
     monkeypatch.setattr(job, 'CONTEXT_PACK', tmp_path / 'report-orchestrator.json')
     monkeypatch.setattr(job, 'IMMEDIATE_ALERT_STATE', tmp_path / 'finance-immediate-alert-state.json')
     monkeypatch.setattr(job, 'today_ct', lambda: datetime(2026, 4, 23, 11, 55, tzinfo=CT))
-    monkeypatch.setattr(job, 'run_chain', lambda *, fast_core=False: 'ALERT REPORT\n')
+    monkeypatch.setattr(job, 'run_chain', lambda *, mode, fast_core=False: 'ALERT REPORT\n')
     monkeypatch.setattr(job, 'ENVELOPE', tmp_path / 'envelope.json')
     _write_json(tmp_path / 'envelope.json', {'report_hash': 'sha256:report'})
     _write_json(tmp_path / 'report-orchestrator.json', {

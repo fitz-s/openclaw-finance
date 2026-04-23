@@ -32,7 +32,7 @@ def _patch_common(monkeypatch, tmp_path: Path, *, delivered: bool, registry_acti
         'latest_updated_at': '2026-04-20T08:15:00-05:00' if registry_activity else None,
         'warning': job.FOLLOWUP_REGISTRY_WARNING if registry_activity else None,
     })
-    monkeypatch.setattr(job, 'run_chain', lambda *, fast_core=False: calls.append(fast_core) or 'WATCHDOG REPORT\n')
+    monkeypatch.setattr(job, 'run_chain', lambda *, mode, fast_core=False: calls.append(fast_core) or 'WATCHDOG REPORT\n')
     return calls
 
 

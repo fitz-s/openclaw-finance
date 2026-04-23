@@ -26,6 +26,7 @@ from tradingagents_bridge_types import (
 )
 from tradingagents_model_resolution import resolve_tradingagents_role
 
+CAPITAL_AGENDA = Path('/Users/leofitz/.openclaw/workspace/finance/state/capital-agenda.json')
 THESIS_REGISTRY = Path('/Users/leofitz/.openclaw/workspace/finance/state/thesis-registry.json')
 
 
@@ -33,6 +34,7 @@ def _pick_target(
     manual_instrument: str | None,
     research_packet: dict[str, Any],
     thesis_registry: dict[str, Any] | None = None,
+    capital_agenda: dict[str, Any] | None = None,
     packet: dict[str, Any] | None = None,
 ) -> tuple[str | None, str, dict[str, Any]]:
     if manual_instrument:
@@ -58,11 +60,26 @@ def _pick_target(
                     'selected_thesis_id': row.get('thesis_id'),
                 }
 
-    theses = thesis_registry.get('theses', []) if isinstance(thesis_registry, dict) and isinstance(thesis_registry.get('theses'), list) else []
+    thesis_rows = thesis_registry.get('theses', []) if isinstance(thesis_registry, dict) and isinstance(thesis_registry.get('theses'), list) else []
+    theses = [row for row in thesis_rows if isinstance(row, dict)]
+    thesis_by_id = {str(row.get('thesis_id')): row for row in theses if row.get('thesis_id')}
+    agenda_rows = capital_agenda.get('agenda_items', []) if isinstance(capital_agenda, dict) and isinstance(capital_agenda.get('agenda_items'), list) else []
+    for agenda in [row for row in agenda_rows if isinstance(row, dict)]:
+        for thesis_id in agenda.get('linked_thesis_ids', []) if isinstance(agenda.get('linked_thesis_ids'), list) else []:
+            row = thesis_by_id.get(str(thesis_id))
+            instrument = clean_instrument((row or {}).get('instrument'))
+            if instrument:
+                return instrument, 'capital_agenda', {
+                    'agenda_id': agenda.get('agenda_id'),
+                    'selected_thesis_id': thesis_id,
+                    'agenda_type': agenda.get('agenda_type'),
+                }
+
     ranked_theses = sorted(
-        [row for row in theses if isinstance(row, dict)],
+        theses,
         key=lambda row: (
             2 if row.get('status') == 'active' else 1 if row.get('status') == 'watch' else 0,
+            str(row.get('last_meaningful_change_at') or ''),
             str(row.get('instrument') or ''),
         ),
         reverse=True,
@@ -94,6 +111,7 @@ def build_request(
     decision_log: dict[str, Any] | None = None,
     packet: dict[str, Any] | None = None,
     thesis_registry: dict[str, Any] | None = None,
+    capital_agenda: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     defaults = load_defaults()
     model_resolution = resolve_tradingagents_role(job_name='finance-tradingagents-sidecar')
@@ -104,11 +122,13 @@ def build_request(
     decision_log = decision_log if isinstance(decision_log, dict) else (load_json(DECISION_LOG, {}) or {})
     packet = packet if isinstance(packet, dict) else (load_json(PACKET, {}) or {})
     thesis_registry = thesis_registry if isinstance(thesis_registry, dict) else (load_json(THESIS_REGISTRY, {}) or {})
+    capital_agenda = capital_agenda if isinstance(capital_agenda, dict) else (load_json(CAPITAL_AGENDA, {}) or {})
 
     selected_instrument, request_source, source_meta = _pick_target(
         instrument,
         research_packet,
         thesis_registry,
+        capital_agenda,
         packet,
     )
     if not selected_instrument:

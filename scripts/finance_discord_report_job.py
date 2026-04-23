@@ -40,6 +40,7 @@ CT = ZoneInfo('America/Chicago')
 FOLLOWUP_REGISTRY_WARNING = (
     'followup_registry_updated_after_cutoff_is_warning_only_not_delivery_proof'
 )
+TRADINGAGENTS_REFRESH_MODES = {'marketday-review', 'marketday-core-review', 'immediate-alert'}
 
 
 def run(args: list[str], *, stdout_path: Path | None = None) -> None:
@@ -132,6 +133,13 @@ def has_report_since_today(hour: int, minute: int) -> bool:
     return bool(activity.get('observed_since_cutoff'))
 
 
+def refresh_tradingagents_sidecar(mode: str) -> None:
+    if mode not in TRADINGAGENTS_REFRESH_MODES:
+        return
+    run_optional([str(PYTHON), 'scripts/thesis_research_packet.py'])
+    run_optional([str(PYTHON), 'scripts/tradingagents_sidecar_job.py', '--mode', 'report-sync'])
+
+
 def immediate_alert_decision(primary_markdown: str, *, now: datetime | None = None) -> dict[str, object]:
     now_value = now or today_ct()
     context_pack = load_json(CONTEXT_PACK)
@@ -199,7 +207,7 @@ def report_calendar_guard(now: datetime, mode: str) -> dict:
     return guard
 
 
-def run_chain(*, fast_core: bool = False) -> str:
+def run_chain(*, mode: str, fast_core: bool = False) -> str:
     # Core reports must refresh the macro triad before rendering so Gold / Bitcoin / SPX
     # direction is present or explicitly unavailable in the operator surface.
     run([str(PYTHON), 'scripts/price_fetcher.py'])
@@ -225,6 +233,7 @@ def run_chain(*, fast_core: bool = False) -> str:
         })
     else:
         run([str(PYTHON), 'scripts/finance_parent_market_ingest_cutover.py'])
+    refresh_tradingagents_sidecar(mode)
     run([str(PYTHON), 'scripts/finance_llm_context_pack.py'])
     run([
         str(PYTHON), 'scripts/judgment_envelope_gate.py',
@@ -288,7 +297,7 @@ def main(argv: list[str] | None = None) -> int:
         if observed_delivered_since(audit, hour=7, minute=30, now=now):
             print('NO_REPLY')
             return 0
-    primary = run_chain(fast_core=args.mode in {'morning-watchdog', 'marketday-review', 'marketday-core-review', 'immediate-alert'})
+    primary = run_chain(mode=args.mode, fast_core=args.mode in {'morning-watchdog', 'marketday-review', 'marketday-core-review', 'immediate-alert'})
     if args.mode == 'immediate-alert':
         decision = immediate_alert_decision(primary, now=now)
         atomic_write_json(IMMEDIATE_ALERT_STATE, decision)
