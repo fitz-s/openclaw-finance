@@ -1,46 +1,14 @@
 {
-  "generated_at": "2026-04-22T21:15:01.557300Z",
+  "generated_at": "2026-04-27T22:14:25.738507Z",
   "contract": "finance-reviewer-report-packet-index-v1",
-  "packet_count": 5,
+  "packet_count": 1,
   "reports": [
     {
-      "report_id": "R8733",
-      "file": "R8733.json",
+      "report_id": "R1413",
+      "file": "R1413.json",
       "operator_surface_available": true,
-      "object_card_count": 73,
-      "campaign_count": 12,
-      "exact_replay_available": true
-    },
-    {
-      "report_id": "R48AB",
-      "file": "R48AB.json",
-      "operator_surface_available": true,
-      "object_card_count": 75,
-      "campaign_count": 14,
-      "exact_replay_available": true
-    },
-    {
-      "report_id": "RE33F",
-      "file": "RE33F.json",
-      "operator_surface_available": true,
-      "object_card_count": 70,
-      "campaign_count": 9,
-      "exact_replay_available": true
-    },
-    {
-      "report_id": "R019B",
-      "file": "R019B.json",
-      "operator_surface_available": true,
-      "object_card_count": 73,
-      "campaign_count": 12,
-      "exact_replay_available": true
-    },
-    {
-      "report_id": "RC4D6",
-      "file": "RC4D6.json",
-      "operator_surface_available": true,
-      "object_card_count": 70,
-      "campaign_count": 9,
+      "object_card_count": 1,
+      "campaign_count": 0,
       "exact_replay_available": true
     }
   ],
@@ -51,10 +19,6 @@
     "account_ids_included": false
   },
   "written_files": [
-    "docs/openclaw-runtime/reviewer-packets/R8733.json",
-    "docs/openclaw-runtime/reviewer-packets/R48AB.json",
-    "docs/openclaw-runtime/reviewer-packets/RE33F.json",
-    "docs/openclaw-runtime/reviewer-packets/R019B.json",
-    "docs/openclaw-runtime/reviewer-packets/RC4D6.json"
+    "docs/openclaw-runtime/reviewer-packets/R1413.json"
   ]
 }

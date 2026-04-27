@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-04-23T08:47:11.891495Z",
+  "generated_at": "2026-04-27T22:14:25.553671Z",
   "contract": "tradingagents-upstream-authority-audit-v1",
   "status": "pass",
   "submodule_path": "/Users/leofitz/.openclaw/workspace/finance/third_party/tradingagents",
   "locked_tag": "v0.2.3",
   "locked_commit": "4641c03340c70e0e75e74234c998325164c72b36",
-  "scan_file_count": 67,
+  "scan_file_count": 72,
   "dangerous_findings": [],
   "review_language_findings": [
     {
@@ -184,7 +184,8 @@
     "dangerous_broker_or_order_api_allowed": false,
     "review_language_allowed_only_in_quarantined_raw_or_machine_fields": true,
     "future_runner_must_override_results_and_cache_paths": true,
-    "runtime_import_allowed_in_p1": false,
+    "runtime_import_allowed_in_p1": true,
+    "runtime_import_boundary": "review_only_wrapper_without_broker_or_order_api",
     "no_execution": true
   },
   "no_execution": true

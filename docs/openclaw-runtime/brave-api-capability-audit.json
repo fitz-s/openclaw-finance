@@ -1,12 +1,12 @@
 {
-  "generated_at": "2026-04-17T21:00:19.067309Z",
+  "generated_at": "2026-04-24T02:57:10.531785Z",
   "contract": "brave-api-capability-audit-v1",
   "phase": "ingestion_fabric_phase_02",
   "reviewed_external_docs_at": "2026-04-17",
   "external_scout_used": true,
   "configured_provider": "brave",
   "configured_mode": "llm-context",
-  "installed_openclaw_provider_dist": "/Users/leofitz/.npm-global/lib/node_modules/openclaw/dist/brave-web-search-provider.runtime-CXY3p9_i.js",
+  "installed_openclaw_provider_dist": "/Users/leofitz/.npm-global/lib/node_modules/openclaw/dist/brave-web-search-provider.runtime-BuaOt4Et.js",
   "implemented_endpoints": [
     "brave/web/search",
     "brave/llm/context"
@@ -139,104 +139,104 @@
   },
   "quota_failures": [
     {
-      "line_time": "2026-04-17T08:20:47.733-0",
+      "line_time": "2026-04-19T07:03:29.061-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "oil price today April 17 2026 Hormuz strait Iran US blockade"
+      "query": "arxiv multi-agent LLM systems coordination 2026"
     },
     {
-      "line_time": "2026-04-17T08:20:47.822-0",
+      "line_time": "2026-04-19T07:03:29.077-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "AMD options flow April 17 2026 market direction"
+      "query": "arxiv AI safety alignment verification language models 2026"
     },
     {
-      "line_time": "2026-04-17T08:41:03.286-0",
+      "line_time": "2026-04-19T07:03:29.086-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "oil price BNO Brent Hormuz strait April 2026"
+      "query": "arxiv reinforcement learning LLM reasoning tool use 2026"
     },
     {
-      "line_time": "2026-04-17T08:41:03.374-0",
+      "line_time": "2026-04-20T07:04:53.176-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "AMD options flow implied volatility April 17 2026"
+      "query": "site:arxiv.org LLM agent reinforcement learning reasoning tool use 2026"
     },
     {
-      "line_time": "2026-04-17T08:41:03.375-0",
+      "line_time": "2026-04-20T07:04:53.985-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "SMR NuScale small modular reactor stock April 2026"
+      "query": "site:arxiv.org prediction markets AI information aggregation 2026"
     },
     {
-      "line_time": "2026-04-17T10:23:10.705-0",
+      "line_time": "2026-04-20T07:04:57.338-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "RGTI Rigetti Computing stock IV options April 2026"
+      "query": "site:arxiv.org multi-agent LLM coordination 2026"
     },
     {
-      "line_time": "2026-04-17T10:23:10.727-0",
+      "line_time": "2026-04-21T07:04:54.858-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "oil price Hormuz Strait Iran April 2026 supply disruption"
+      "query": "arxiv LLM agent reinforcement learning tool use reasoning"
     },
     {
-      "line_time": "2026-04-17T10:23:10.734-0",
+      "line_time": "2026-04-21T07:04:54.868-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "TSLA stock news April 17 2026"
+      "query": "arxiv multi-agent LLM coordination planning"
     },
     {
-      "line_time": "2026-04-17T10:41:10.275-0",
+      "line_time": "2026-04-21T07:04:54.888-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "BNO crude oil tariff impact supply chain April 2026"
+      "query": "arxiv AI safety alignment multi-agent 2026"
     },
     {
-      "line_time": "2026-04-17T10:41:10.285-0",
+      "line_time": "2026-04-22T07:03:01.933-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "small cap energy stock watchlist IV elevated volume April 2026"
+      "query": "site:arxiv.org prediction market AI information aggregation 2026"
     },
     {
-      "line_time": "2026-04-17T10:41:10.321-0",
+      "line_time": "2026-04-22T07:03:01.937-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "oil price Hormuz Strait Iran blockade April 2026"
+      "query": "site:arxiv.org LLM agent safety alignment reinforcement learning 2026"
     },
     {
-      "line_time": "2026-04-17T11:04:38.711-0",
+      "line_time": "2026-04-22T07:03:01.953-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "oil price crude WTI Brent April 17 2026 Hormuz Iran supply"
+      "query": "site:arxiv.org multi-agent LLM tool use 2026"
     },
     {
-      "line_time": "2026-04-17T12:02:59.438-0",
+      "line_time": "2026-04-23T07:03:52.342-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "oil price crash April 17 2026 Iran nuclear talks OPEC supply"
+      "query": "site:arxiv.org AI safety agent reliability failure 2026"
     },
     {
-      "line_time": "2026-04-17T12:02:59.461-0",
+      "line_time": "2026-04-23T07:03:52.349-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "USO oil ETF capitulation extreme selloff commodity April 2026"
+      "query": "site:arxiv.org tool use function calling agent LLM 2026"
     },
     {
-      "line_time": "2026-04-17T12:02:59.496-0",
+      "line_time": "2026-04-23T07:03:52.351-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "Goldman Sachs oil price 2026 Hormuz supply two-way risk outlook"
+      "query": "site:arxiv.org retrieval augmented generation RAG benchmark 2026"
     },
     {
-      "line_time": "2026-04-17T13:03:37.876-0",
+      "line_time": "2026-04-23T07:03:52.354-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "TSLA stock news April 17 2026"
+      "query": "site:arxiv.org LLM multi-agent planning 2026"
     },
     {
-      "line_time": "2026-04-17T13:03:37.885-0",
+      "line_time": "2026-04-23T07:03:52.364-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "oil price WTI Brent April 17 2026 Hormuz Iran supply"
+      "query": "site:arxiv.org RLHF reward modeling reasoning alignment 2026"
     },
     {
-      "line_time": "2026-04-17T13:21:00.216-0",
+      "line_time": "2026-04-23T07:03:52.435-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "SPY S&P 500 market direction conflict sector rotation options chain April 2026"
+      "query": "site:arxiv.org prediction markets information aggregation AI agents 2026"
     },
     {
-      "line_time": "2026-04-17T13:21:00.224-0",
+      "line_time": "2026-04-23T17:36:20.759-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "oil price crude commodity April 17 2026 Hormuz strait tanker supply disruption"
+      "query": "site:moltbook.forum \"Built an email-to-podcast skill today\""
     },
     {
-      "line_time": "2026-04-17T13:21:00.287-0",
+      "line_time": "2026-04-23T17:36:20.814-0",
       "error": "USAGE_LIMIT_EXCEEDED",
-      "query": "USO oil ETF collapse capitulation historical extreme 2026"
+      "query": "site:moltbook.forum \"The supply chain attack nobody is talking about: skill.md is an unsigned binary\""
     }
   ],
   "pricing_and_rate_limit_boundary": {

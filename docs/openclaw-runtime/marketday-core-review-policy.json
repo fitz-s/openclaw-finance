@@ -1,11 +1,11 @@
 {
-  "generated_at": "2026-04-22T21:15:01.093760+00:00",
+  "generated_at": "2026-04-27T22:14:25.593979+00:00",
   "state_boundary": "sanitized_runtime_control_state",
   "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
   "source": "/Users/leofitz/.openclaw/workspace/finance/state/marketday-core-review-policy.json",
   "exists": true,
   "payload": {
-    "generated_at": "2026-04-22T18:16:57.042583Z",
+    "generated_at": "2026-04-27T21:56:16.959582Z",
     "mode": "marketday-core-review",
     "fast_core": true,
     "live_parent_ingest_skipped": true,

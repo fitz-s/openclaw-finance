@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-23T08:47:11.729081Z",
+  "generated_at": "2026-04-27T22:14:25.452019Z",
   "contract": "tradingagents-upstream-lock-check-v1",
   "status": "pass",
   "lock_path": "/Users/leofitz/.openclaw/workspace/finance/ops/tradingagents-upstream-lock.json",
@@ -29,7 +29,8 @@
     "signal:SELL": true,
     "trader:transaction_proposal_language": true,
     "policy:no_execution": true,
-    "policy:no_runtime_import": true
+    "policy:review_only_runtime_import": true,
+    "policy:no_cli_integration": true
   },
   "errors": [],
   "warnings": [],

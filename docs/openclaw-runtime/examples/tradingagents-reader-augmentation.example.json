@@ -20,7 +20,7 @@
       "run_id": "ta:example",
       "summary": "AI demand remains durable and requires validation.",
       "why_now": ["AI demand remains durable and requires validation."],
-      "why_not_now": ["This sidecar cannot change judgment or execution state."],
+      "why_not_now": ["This sidecar cannot change judgment or broker action state."],
       "invalidators": ["If deterministic source freshness disagrees, deprioritize the sidecar."],
       "required_confirmations": ["Validate source freshness before review use."],
       "source_gaps": ["No deterministic citation promotion exists in this phase."],

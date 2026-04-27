@@ -22,6 +22,7 @@
     "max_risk_discuss_rounds": 1,
     "max_recur_limit": 100,
     "timeout_seconds": 900,
+    "disable_order_agent": true,
     "data_vendors": {
       "core_stock_apis": "yfinance",
       "technical_indicators": "yfinance",

@@ -20,6 +20,9 @@ This skill is manual-only. It does not deliver Discord messages and it does not 
    - `state/tradingagents/status.json`
    - `state/tradingagents/latest-context-digest.json`
    - `state/tradingagents/latest-reader-augmentation.json`
+   - `state/tradingagents/latest-primary-decision.json`
+   - `state/tradingagents/primary-validation.json`
+   - `state/tradingagents/primary-runtime-status.json`
 
 ## Forbidden
 

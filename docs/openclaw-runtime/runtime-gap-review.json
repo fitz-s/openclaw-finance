@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-22T21:15:02.275445+00:00",
+  "generated_at": "2026-04-27T22:14:25.993514+00:00",
   "status": "reviewed",
   "unresolved_gaps": [
     "ibkr_client_portal_watchlist_sync_not_fresh",
@@ -18,7 +18,7 @@
     "review": "IBKR Client Portal watchlist sync is best-effort and currently depends on local Client Portal authentication. Flex holdings and local pinned symbols keep the universe usable when IBKR watchlist fetch is unavailable."
   },
   "report_usefulness": {
-    "delivered_count_in_recent_window": 3,
+    "delivered_count_in_recent_window": 5,
     "reviewed_recent_delivered_runs": [
       {
         "runAtMs": 1776701949649,
@@ -61,17 +61,45 @@
           "has_holding_section": false,
           "noise_tokens": []
         }
+      },
+      {
+        "runAtMs": 1776950004278,
+        "status": "ok",
+        "deliveryStatus": "delivered",
+        "durationMs": 129029,
+        "quality": {
+          "line_count": 25,
+          "char_count": 564,
+          "has_opportunity_first_contract": false,
+          "has_unknown_discovery_section": false,
+          "has_holding_section": false,
+          "noise_tokens": []
+        }
+      },
+      {
+        "runAtMs": 1777295427303,
+        "status": "ok",
+        "deliveryStatus": "delivered",
+        "durationMs": 305852,
+        "quality": {
+          "line_count": 26,
+          "char_count": 691,
+          "has_opportunity_first_contract": false,
+          "has_unknown_discovery_section": false,
+          "has_holding_section": false,
+          "noise_tokens": []
+        }
       }
     ],
     "latest_product_report": {
-      "generated_at": "2026-04-22T18:16:57.399327Z",
-      "report_hash": "sha256:fc71db699908acb8daef70e3c8acb78339486a1d8728ce3ae0bc02e6c5b181a1",
+      "generated_at": "2026-04-27T22:09:20.620088Z",
+      "report_hash": "sha256:3eb5183fd43acdcc368aac06f7f407d27957e4bc7c15094b22990c99d6d84f81",
       "quality": {
-        "line_count": 55,
-        "char_count": 1927,
-        "has_opportunity_first_contract": true,
-        "has_unknown_discovery_section": true,
-        "has_holding_section": true,
+        "line_count": 39,
+        "char_count": 3251,
+        "has_opportunity_first_contract": false,
+        "has_unknown_discovery_section": false,
+        "has_holding_section": false,
         "noise_tokens": []
       }
     },
@@ -79,20 +107,20 @@
   },
   "wake_threshold_bridge": {
     "current_gate": {
-      "evaluatedAt": "2026-04-22T20:40:52.774657+00:00",
-      "window": "post",
-      "shouldSend": false,
-      "recommendedReportType": "hold",
-      "decisionReason_sanitized": "present"
+      "evaluatedAt": null,
+      "window": null,
+      "shouldSend": null,
+      "recommendedReportType": null,
+      "decisionReason_sanitized": null
     },
     "current_wake": {
-      "wake_class": "PACKET_UPDATE_ONLY",
-      "wake_reason": "context-only evidence updated packet"
+      "wake_class": null,
+      "wake_reason": null
     },
     "current_dispatch": {
-      "action": "persist_only",
-      "dispatched": false,
-      "status": "pass"
+      "action": null,
+      "dispatched": null,
+      "status": null
     },
     "legacy_threshold_bridge_current": {
       "present": false,
@@ -101,9 +129,9 @@
       "dispatched": null
     },
     "telemetry_files": {
-      "dispatch_attribution_exists": true,
-      "thesis_outcomes_exists": true,
-      "report_usefulness_history_exists": true
+      "dispatch_attribution_exists": false,
+      "thesis_outcomes_exists": false,
+      "report_usefulness_history_exists": false
     },
     "measurement_gap": "Telemetry is now persisted locally when the Package 7 writers run. Historical records before these writers were introduced remain incomplete."
   },

@@ -1,11 +1,12 @@
 {
-  "generated_at": "2026-04-23T10:55:08.613565+00:00",
+  "generated_at": "2026-04-27T22:14:25.608280+00:00",
   "subsystem": "finance",
   "openclaw_home": "/Users/leofitz/.openclaw",
   "finance_repo": "/Users/leofitz/.openclaw/workspace/finance",
   "snapshot_files": [
     "docs/openclaw-runtime/information-dominance-stack-plan.md",
     "docs/openclaw-runtime/information-dominance-stack-map.json",
+    "docs/openclaw-runtime/ralplan/tradingagents-runtime-primary-cutover-ralplan.md",
     "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-00-review2-intake-ralplan.md",
     "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-01-contracts-ralplan.md",
     "docs/openclaw-runtime/ralplan/ingestion-fabric-phase-02-brave-api-audit-ralplan.md",
@@ -94,6 +95,9 @@
     "ops/tradingagents-upstream-lock.json",
     "docs/openclaw-runtime/tradingagents-upstream-lock-check.json",
     "docs/openclaw-runtime/tradingagents-upstream-authority-audit.json",
+    "docs/openclaw-runtime/tradingagents-phase0-runtime-proof.json",
+    "docs/openclaw-runtime/tradingagents-phase1-primary-artifact-proof.json",
+    "docs/openclaw-runtime/tradingagents-phase3-parent-cutover-proof.json",
     "docs/openclaw-runtime/contracts/tradingagents-bridge-contract.md",
     "docs/openclaw-runtime/examples/tradingagents-run-request.example.json",
     "docs/openclaw-runtime/examples/tradingagents-advisory-decision.example.json",

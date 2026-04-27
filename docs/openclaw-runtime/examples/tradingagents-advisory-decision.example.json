@@ -10,7 +10,7 @@
     "Recent commentary remains supportive for continued review."
   ],
   "why_not_now_safe": [
-    "This sidecar cannot change judgment or execution state directly."
+    "This sidecar cannot change judgment or broker action state directly."
   ],
   "invalidators_safe": [
     "If deterministic source freshness or capital competition disagrees, deprioritize the sidecar."

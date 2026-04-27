@@ -1,0 +1,77 @@
+{
+  "generated_at": "2026-04-27T06:08:30Z",
+  "status": "pass",
+  "phase": "tradingagents-runtime-primary-cutover-phase3",
+  "proof_type": "parent_runtime_live_cutover_lane",
+  "observed": {
+    "parent_job_id": "finance-tradingagents-primary-review-v1",
+    "parent_job_name": "finance-tradingagents-primary-review",
+    "enabled": true,
+    "schedule": "35 8 * * 1-5",
+    "timezone": "America/Chicago",
+    "delivery_mode": "announce",
+    "delivery_channel": "discord",
+    "stdout_contract": "finance_discord_report_job.py --mode marketday-review",
+    "primary_runtime_enabled_switch": "OPENCLAW_TRADINGAGENTS_PRIMARY_RUNTIME_ENABLED=1",
+    "primary_render_enabled_switch": "OPENCLAW_TRADINGAGENTS_PRIMARY_RENDER_ENABLED=1",
+    "primary_required_switch": "OPENCLAW_TRADINGAGENTS_PRIMARY_REQUIRED=1",
+    "rollback_switch": "disable_job_or_remove_OPENCLAW_TRADINGAGENTS_PRIMARY_env_vars",
+    "direct_tradingagents_delivery": false,
+    "review_only": true,
+    "no_execution": true
+  },
+  "observed_successful_run": {
+    "run_id": "ta:4fa352333c80a37d",
+    "job_id": "finance-tradingagents-sidecar:report-sync",
+    "primary_signal": "AAPL cautious_review",
+    "context_packet_hash": "sha256:1b9187b16255b136fcd32f68588f17758f4f8147639ec9f2e39130ac9f36ecf1",
+    "report_hash": "sha256:0854f01a34f2257c0ba6fb019015c6eb0d0c294ae6d79aa0d7adb0e54853e93a",
+    "primary_surface_title": "TradingAgents｜TradingAgents Primary",
+    "tradingagents_primary_gate_status": "pass",
+    "tradingagents_primary_decision_enabled": true,
+    "finance_validation": "downgraded_by_deterministic_gate",
+    "product_validator_status": "pass",
+    "delivery_safety_status": "pass",
+    "delivery_safety_blocking_reasons": []
+  },
+  "order_agent_control": {
+    "status": "pass",
+    "default_config": "disable_order_agent=true",
+    "runner_patch": "upstream Trader node replaced by ORDER_AGENT_DISABLED_REVIEW_HYPOTHESIS passthrough; final Portfolio Manager/action node replaced by ORDER_AGENT_DISABLED_FINAL_REVIEW passthrough",
+    "runtime_override": "OPENCLAW_TRADINGAGENTS_DISABLE_ORDER_AGENT=0",
+    "production_override_allowed": false,
+    "primary_artifact_field": "decision_trace.order_agent_disabled=true and decision_trace.final_action_manager_disabled=true"
+  },
+  "finance_downgrade": {
+    "status": "pass",
+    "finance_role": "safety_shell_only_packet_binding_deterministic_gate_decision_log_delivery_safety",
+    "tradingagents_surface_fields": [
+      "analyst_readout",
+      "research_debate",
+      "advisor_summary",
+      "bull_case",
+      "bear_case",
+      "risk_discussion",
+      "required_confirmations",
+      "source_gaps",
+      "final_review_boundary"
+    ],
+    "blocked_near_action_language": [
+      "reallocate/proceeds",
+      "hold-through timing",
+      "entry/exit zones",
+      "price/upside/downside targets",
+      "explicit execution timing"
+    ],
+    "action_language_scan": "no matches for final-action marker or known action-plan terms",
+    "targeted_regression": "38 passed"
+  },
+  "artifact_paths": {
+    "parent_cron_source": "/Users/leofitz/.openclaw/cron/jobs.json",
+    "parent_cron_mirror": "docs/openclaw-runtime/parent-runtime/cron/finance-jobs-slice.json",
+    "contract": "docs/openclaw-runtime/contracts/tradingagents-bridge-contract.md"
+  },
+  "acceptance_claim": "The parent runtime now has an enabled TradingAgents-primary review lane with OpenClaw-managed Discord delivery, explicit primary-required fail-closed switches, same-run current-packet binding, and rollback by disabling the job or removing the primary runtime environment switches.",
+  "review_only": true,
+  "no_execution": true
+}
