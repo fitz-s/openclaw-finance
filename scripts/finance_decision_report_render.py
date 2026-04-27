@@ -13,6 +13,7 @@ from typing import Any
 from zoneinfo import ZoneInfo
 
 from atomic_io import atomic_write_json, load_json_safe
+from tradingagents_bridge_types import age_hours
 
 
 ROOT = Path('/Users/leofitz/.openclaw')
@@ -43,6 +44,7 @@ CAPITAL_AGENDA = FINANCE / 'state' / 'capital-agenda.json'
 CAPITAL_GRAPH = FINANCE / 'state' / 'capital-graph.json'
 DISPLACEMENT_CASES_PATH = FINANCE / 'state' / 'displacement-cases.json'
 CAMPAIGN_BOARD = FINANCE / 'state' / 'campaign-board.json'
+TRADINGAGENTS_CONTEXT_DIGEST = FINANCE / 'state' / 'tradingagents' / 'latest-context-digest.json'
 POLICY_VERSION = 'finance-decision-report-v1'
 SYMBOL_STOPWORDS = {
     'AI', 'API', 'CEO', 'CFO', 'CIO', 'COO', 'CPI', 'ETF', 'ET',
@@ -117,6 +119,55 @@ def options_iv_context_summary(surface: dict[str, Any]) -> dict[str, Any]:
     }
 
 
+def load_tradingagents_digest(path: Path | None = None) -> dict[str, Any] | None:
+    payload = load_json_safe(path or TRADINGAGENTS_CONTEXT_DIGEST, {}) or {}
+    if not isinstance(payload, dict) or not payload:
+        return None
+    if payload.get('review_only') is not True or payload.get('no_execution') is not True:
+        return None
+    if payload.get('candidate_contract_exclusion') is not True:
+        return None
+    max_age = payload.get('max_age_hours')
+    current_age = age_hours(str(payload.get('generated_at') or ''))
+    if isinstance(max_age, (int, float)) and current_age is not None and current_age > float(max_age):
+        return None
+    return payload
+
+
+def tradingagents_section_lines(digest: dict[str, Any] | None) -> list[str]:
+    if not isinstance(digest, dict):
+        return ['- 当前没有可用的 TradingAgents 侧车研究。']
+    lines = [
+        (
+            f"- 侧车对象：{digest.get('instrument') or 'unknown'}；run_id={digest.get('run_id') or 'unknown'}；"
+            "仅作研究层 context，不构成 evidence / wake / execution authority。"
+        ),
+    ]
+    safe_bullets = [short(item, 140) for item in (digest.get('safe_bullets') or []) if item][:2]
+    risk_flags = [short(item, 120) for item in (digest.get('risk_flags_safe') or []) if item][:2]
+    confirmations = [short(item, 100) for item in (digest.get('required_confirmations_safe') or []) if item][:2]
+    source_gaps = [short(item, 100) for item in (digest.get('source_gaps_safe') or []) if item][:1]
+    for item in safe_bullets:
+        lines.append(f'- 摘要：{item}')
+    for item in risk_flags[:1]:
+        lines.append(f'- 风险：{item}')
+    if confirmations:
+        lines.append(f"- 侧车要求确认：{'; '.join(confirmations)}")
+    if source_gaps:
+        lines.append(f'- 来源缺口：{source_gaps[0]}')
+    return lines
+
+
+def tradingagents_fact_line(digest: dict[str, Any] | None) -> str | None:
+    if not isinstance(digest, dict):
+        return None
+    instrument = str(digest.get('instrument') or '').strip() or 'unknown'
+    bullets = [short(item, 110) for item in (digest.get('safe_bullets') or []) if item]
+    if not bullets:
+        return f'- TradingAgents 侧车当前覆盖 {instrument}，但没有生成可复述的 safe summary。'
+    return f'- TradingAgents 侧车当前覆盖 {instrument}：{bullets[0]}'
+
+
 def report_short_id(report_hash: Any, judgment_id: Any) -> str:
     value = str(report_hash or '')
     if value.startswith('sha256:'):
@@ -142,6 +193,13 @@ def humanize_invalidator_desc(value: Any) -> str:
     text = str(value or '').strip()
     if not text:
         return '反证'
+    exact = {
+        'source outage': '数据源中断',
+        'official correction': '官方更正',
+        'packet staleness': '数据包过旧',
+    }
+    if text in exact:
+        return exact[text]
     if text.startswith('price_vs_negative_upstream:'):
         return f"{text.split(':', 1)[1].upper()} 负面上游反证"
     if text.startswith('direction_conflict:theme:'):
@@ -962,6 +1020,7 @@ def render_delta_markdown(
     thesis_registry: dict[str, Any],
     opportunity_queue: dict[str, Any],
     invalidator_ledger: dict[str, Any],
+    tradingagents_digest: dict[str, Any] | None = None,
     shadow: bool = False,
 ) -> str:
     digest = packet.get('layer_digest') if isinstance(packet.get('layer_digest'), dict) else {}
@@ -1006,6 +1065,9 @@ def render_delta_markdown(
         '## 期权与风险雷达',
         *option_risk_lines(option_risk)[:2],
         *options_flow_lines(options_flow, limit=1),
+        '',
+        '## TradingAgents 侧车研究',
+        *tradingagents_section_lines(tradingagents_digest),
         '',
         '## 分层证据',
         f"- 证据分布：{layer_counts}；本 shadow report 只渲染 thesis delta，不展开证据流水。",
@@ -1100,6 +1162,7 @@ def render_capital_delta_markdown(
     capital_agenda: dict[str, Any],
     capital_graph: dict[str, Any],
     displacement_cases: dict[str, Any],
+    tradingagents_digest: dict[str, Any] | None = None,
 ) -> str:
     digest = packet.get('layer_digest') if isinstance(packet.get('layer_digest'), dict) else {}
     layer_counts = ', '.join(f'{layer}={len(digest.get(layer, []))}' for layer in ['L0', 'L1', 'L2', 'L3', 'L4'])
@@ -1139,6 +1202,9 @@ def render_capital_delta_markdown(
         '## 期权与风险雷达',
         *option_risk_lines(option_risk)[:2],
         *options_flow_lines(options_flow, limit=1),
+        '',
+        '## TradingAgents 侧车研究',
+        *tradingagents_section_lines(tradingagents_digest),
         '',
         '## 分层证据',
         f"- 证据分布：{layer_counts}；本 capital delta report 只渲染资本竞争面，不展开证据流水。",
@@ -1485,6 +1551,7 @@ def build_operator_markdown(
     opportunity_queue: dict[str, Any],
     invalidator_ledger: dict[str, Any],
     capital_agenda: dict[str, Any],
+    tradingagents_digest: dict[str, Any] | None = None,
     prices: dict[str, Any] | None = None,
     broad_market: dict[str, Any] | None = None,
 ) -> tuple[str, str, dict[str, str], list[str]]:
@@ -1530,6 +1597,9 @@ def build_operator_markdown(
     if invalidators:
         top_inv = invalidators[0]
         fact_lines.append(f"- I1 {humanize_invalidator_desc(top_inv.get('description'))}；命中 {top_inv.get('hit_count')} 次。")
+    ta_fact = tradingagents_fact_line(tradingagents_digest)
+    if ta_fact:
+        fact_lines.insert(min(2, len(fact_lines)), ta_fact)
     macro_line = macro_triad_operator_line(prices, broad_market)
     if macro_line not in fact_lines:
         fact_lines.insert(min(2, len(fact_lines)), macro_line)
@@ -1547,6 +1617,8 @@ def build_operator_markdown(
         interpretation_lines.append('- 这是新机会候选，不是现有持仓的强制替代。')
     else:
         interpretation_lines.append('- 当前更像结构复核，而不是新判断或执行动作。')
+    if tradingagents_digest:
+        interpretation_lines.append('- TradingAgents 只提供研究层补充，不直接改 JudgmentEnvelope；但它应该改变你优先想追问什么。')
 
     verify_lines = []
     if agenda_items and agenda_is_unknown_discovery(agenda_items[0]):
@@ -1627,6 +1699,7 @@ def build_report(
     displacement_cases: dict[str, Any] | None = None,
     campaign_board: dict[str, Any] | None = None,
     options_iv_surface: dict[str, Any] | None = None,
+    tradingagents_digest: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     has_valid_capital_graph = bool(capital_graph and capital_graph.get('graph_hash'))
     if report_mode == 'capital_delta' and has_valid_capital_graph:
@@ -1687,6 +1760,7 @@ def build_report(
             capital_agenda=capital_agenda or {},
             capital_graph=capital_graph or {},
             displacement_cases=displacement_cases or {},
+            tradingagents_digest=tradingagents_digest,
         )
     elif effective_mode in {'thesis_delta', 'thesis_delta_shadow'}:
         envelope['renderer_id'] = 'thesis-delta-shadow-deterministic-v1' if effective_mode == 'thesis_delta_shadow' else 'thesis-delta-deterministic-v1'
@@ -1705,6 +1779,7 @@ def build_report(
             thesis_registry=thesis_registry or {},
             opportunity_queue=opportunity_queue or {},
             invalidator_ledger=invalidator_ledger or {},
+            tradingagents_digest=tradingagents_digest,
             shadow=effective_mode == 'thesis_delta_shadow',
         )
     else:
@@ -1732,6 +1807,7 @@ def build_report(
         opportunity_queue=opportunity_queue or {},
         invalidator_ledger=invalidator_ledger or {},
         capital_agenda=capital_agenda or {},
+        tradingagents_digest=tradingagents_digest,
         prices=prices or {},
         broad_market=broad_market or {},
     )
@@ -1750,6 +1826,21 @@ def build_report(
     envelope['object_alias_map'] = object_alias_map
     envelope['starter_queries'] = starter_queries
     envelope['followup_bundle_path'] = str(FINANCE / 'state' / 'report-reader' / f'{report_id}.json')
+    if tradingagents_digest:
+        envelope['tradingagents_sidecar'] = {
+            key: tradingagents_digest.get(key)
+            for key in [
+                'generated_at',
+                'run_id',
+                'instrument',
+                'analysis_date',
+                'authority_rule',
+                'candidate_contract_exclusion',
+                'validation_ref',
+                'review_only',
+                'no_execution',
+            ]
+        }
     envelope['report_hash'] = hash_payload(envelope)
     return envelope
 
@@ -1811,6 +1902,7 @@ def main(argv: list[str] | None = None) -> int:
         capital_graph=load_json_safe(CAPITAL_GRAPH, {}) or {},
         displacement_cases=load_json_safe(DISPLACEMENT_CASES_PATH, {}) or {},
         campaign_board=load_json_safe(Path(args.campaign_board), {}) or {},
+        tradingagents_digest=load_tradingagents_digest(),
     )
     atomic_write_json(out_path, report)
     if markdown_out:

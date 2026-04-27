@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TradingAgentsValidation",
+  "type": "object",
+  "required": ["status", "errors", "surface_eligible", "context_pack_eligible", "reader_eligible", "review_only", "no_execution"],
+  "properties": {
+    "status": {"enum": ["pass", "fail"]},
+    "errors": {"type": "array", "items": {"type": "string"}},
+    "warnings": {"type": "array", "items": {"type": "string"}},
+    "surface_eligible": {"type": "boolean"},
+    "context_pack_eligible": {"type": "boolean"},
+    "reader_eligible": {"type": "boolean"},
+    "review_only": {"const": true},
+    "no_execution": {"const": true}
+  },
+  "additionalProperties": true
+}

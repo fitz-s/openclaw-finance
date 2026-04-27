@@ -1,11 +1,37 @@
 {
-  "generated_at": "2026-04-19T19:27:09.756993+00:00",
+  "generated_at": "2026-04-27T22:14:25.597610+00:00",
   "source": "/Users/leofitz/.openclaw/cron/jobs.json",
   "jobs": [
     {
+      "id": "finance-immediate-alert-v1",
+      "name": "finance-immediate-alert",
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "25,55 9-15 * * 1-5",
+        "tz": "America/Chicago"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "timeout": null,
+      "delivery": {
+        "mode": "announce",
+        "channel": "discord",
+        "to": "channel:1479790104490016808"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "model": "google-gemini-cli/gemini-3-flash",
+        "timeoutSeconds": 600,
+        "lightContext": true,
+        "message": "【OpenClaw Finance Deterministic Report Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_discord_report_job.py --mode immediate-alert\n\nContract markers:\n- This is the TradingAgents-backed intraday alert lane.\n- It requires fresh TradingAgents sidecar context before delivery.\n- It must suppress duplicate primary markdown with NO_REPLY.\n- It uses the deterministic renderer/product-validator/decision-log/delivery-safety chain.\n- It does not mutate thresholds or perform broker actions.\n\nOutput discipline:\n- Return stdout exactly.\n- If stdout is NO_REPLY, return only NO_REPLY.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; OpenClaw delivery handles Discord.\n- Review-only; no execution."
+      },
+      "state": {}
+    },
+    {
       "id": "finance-midday-operator-review-v1",
       "name": "finance-midday-operator-review",
-      "enabled": true,
+      "enabled": false,
       "schedule": {
         "kind": "cron",
         "expr": "15 13 * * 1-5",
@@ -13,6 +39,7 @@
       },
       "sessionTarget": "isolated",
       "wakeMode": "now",
+      "timeout": 420,
       "delivery": {
         "mode": "announce",
         "channel": "discord",
@@ -21,26 +48,16 @@
       "payload": {
         "kind": "agentTurn",
         "model": "minimax-portal/MiniMax-M2.7",
-        "timeoutSeconds": 420,
+        "timeoutSeconds": 600,
         "lightContext": true,
         "message": "【OpenClaw Finance Deterministic Report Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_discord_report_job.py --mode marketday-core-review\n\nContract markers:\n- This is the fixed second marketday core review attempt.\n- It complements threshold wake reports; it does not replace wake policy.\n- It uses the deterministic renderer/product-validator/decision-log/delivery-safety chain.\n- It does not perform broker actions and does not mutate thresholds.\n\nOutput discipline:\n- Return stdout exactly.\n- If stdout is NO_REPLY, return only NO_REPLY.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; OpenClaw delivery handles Discord.\n- Review-only; no execution."
       },
-      "state": {
-        "consecutiveErrors": 1,
-        "lastDeliveryStatus": "unknown",
-        "nextRunAtMs": 1776702600000,
-        "lastError": "cron: job execution timed out",
-        "lastRunAtMs": 1776444382205,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 900104,
-        "lastErrorReason": "timeout"
-      }
+      "state": {}
     },
     {
       "id": "b2c3d4e5-f6a7-8901-bcde-f01234567890",
       "name": "finance-premarket-brief",
-      "enabled": true,
+      "enabled": false,
       "schedule": {
         "kind": "cron",
         "expr": "10 8 * * 1-5",
@@ -48,6 +65,7 @@
       },
       "sessionTarget": "isolated",
       "wakeMode": "now",
+      "timeout": 420,
       "delivery": {
         "mode": "announce",
         "channel": "discord",
@@ -60,21 +78,12 @@
         "lightContext": true,
         "message": "【OpenClaw Finance Deterministic Report Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_discord_report_job.py --mode marketday-review\n\nOutput discipline:\n- Return stdout exactly.\n- If stdout is NO_REPLY, return only NO_REPLY.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; OpenClaw delivery handles Discord.\n- Review-only; no execution."
       },
-      "state": {
-        "consecutiveErrors": 0,
-        "lastDeliveryStatus": "not-delivered",
-        "lastRunAtMs": 1776609074032,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 88050,
-        "lastDelivered": false,
-        "nextRunAtMs": 1776690600000
-      }
+      "state": {}
     },
     {
       "id": "finance-premarket-delivery-watchdog-v1",
       "name": "finance-premarket-delivery-watchdog",
-      "enabled": true,
+      "enabled": false,
       "schedule": {
         "kind": "cron",
         "expr": "25 8 * * 1-5",
@@ -82,6 +91,7 @@
       },
       "sessionTarget": "isolated",
       "wakeMode": "now",
+      "timeout": 420,
       "delivery": {
         "mode": "announce",
         "channel": "discord",
@@ -94,16 +104,7 @@
         "lightContext": true,
         "message": "【OpenClaw Finance Deterministic Report Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_discord_report_job.py --mode morning-watchdog\n\nOutput discipline:\n- Return stdout exactly.\n- If stdout is NO_REPLY, return only NO_REPLY.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; OpenClaw delivery handles Discord.\n- Review-only; no execution."
       },
-      "state": {
-        "consecutiveErrors": 0,
-        "lastDelivered": false,
-        "lastDeliveryStatus": "not-delivered",
-        "nextRunAtMs": 1776691500000,
-        "lastRunAtMs": 1776432300023,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 17545
-      }
+      "state": {}
     },
     {
       "id": "c3d4e5f6-a7b8-9012-cdef-finance-renderer",
@@ -114,6 +115,7 @@
       },
       "sessionTarget": "isolated",
       "wakeMode": "now",
+      "timeout": null,
       "delivery": {
         "mode": "none",
         "channel": "discord",
@@ -126,20 +128,12 @@
         "lightContext": null,
         "message": "[DEPRECATED/MANUAL-ONLY] Old finance judgment-shadow renderer. This job must never deliver user-visible messages. Do not enable unless migrated to systems/finance-openclaw-runtime-contract.md and the finance-report-envelope validator path. Active user-visible delivery is the report orchestrator job b2c3d4e5-f6a7-8901-bcde-f01234567890."
       },
-      "state": {
-        "lastRunAtMs": 1776110104845,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 38268,
-        "lastDeliveryStatus": "not-delivered",
-        "consecutiveErrors": 0,
-        "lastDelivered": false
-      }
+      "state": {}
     },
     {
       "id": "c031f32c-0392-45bb-ae1a-ad7e7aec6938",
       "name": "finance-subagent-scanner",
-      "enabled": true,
+      "enabled": false,
       "schedule": {
         "kind": "cron",
         "expr": "*/20 8-16 * * 1-5",
@@ -147,33 +141,24 @@
       },
       "sessionTarget": "isolated",
       "wakeMode": "now",
+      "timeout": 300,
       "delivery": {
         "mode": "none",
         "channel": "last"
       },
       "payload": {
         "kind": "agentTurn",
-        "model": "google-gemini-cli/gemini-3-flash",
+        "model": "minimax-portal/MiniMax-M2.7",
         "timeoutSeconds": 300,
         "lightContext": true,
         "message": "【OpenClaw Finance Deterministic Scanner Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_scanner_job.py --mode market-hours-scan\n\nContract markers:\n- finance_scanner_job.py runs finance_llm_context_pack.py, query_pack_planner.py, finance_worker.py, finance_parent_market_ingest_cutover.py, and gate_evaluator.py.\n- Read-only scanner context is /Users/leofitz/.openclaw/workspace/finance/state/llm-job-context/scanner.json.\n- Context pack is a view cache and must have pack_is_not_authority=true.\n- QueryPack is not evidence; object_links and unknown_discovery_exhausted_reason remain required contract fields.\n- unknown_discovery cannot be satisfied by held/watchlist tickers.\n- unknown_discovery_minimum_attempts remains enforced by scanner.json/query_pack_planner.py.\n- 不得把已在 watchlist/held 的标的当作 unknown_discovery。\n\nOutput discipline:\n- Return stdout exactly.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; delivery.mode is none.\n- No execution; review-only."
       },
-      "state": {
-        "lastRunAtMs": 1776464940078,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 419994,
-        "lastDeliveryStatus": "not-requested",
-        "consecutiveErrors": 6,
-        "nextRunAtMs": 1776690000000,
-        "lastErrorReason": "timeout",
-        "lastError": "cron: job execution timed out"
-      }
+      "state": {}
     },
     {
       "id": "f57c165f-7683-4816-ab2c-10abda099b9f",
       "name": "finance-subagent-scanner-offhours",
-      "enabled": true,
+      "enabled": false,
       "schedule": {
         "kind": "cron",
         "expr": "0 0,4,7,17,20 * * *",
@@ -181,28 +166,19 @@
       },
       "sessionTarget": "isolated",
       "wakeMode": "now",
+      "timeout": 300,
       "delivery": {
         "mode": "none",
         "channel": "last"
       },
       "payload": {
         "kind": "agentTurn",
-        "model": "google-gemini-cli/gemini-3-flash",
+        "model": "minimax-portal/MiniMax-M2.7",
         "timeoutSeconds": 300,
         "lightContext": true,
         "message": "【OpenClaw Finance Deterministic Scanner Job】\nRun exactly:\n/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_scanner_job.py --mode offhours-scan\n\nContract markers:\n- finance_scanner_job.py runs finance_llm_context_pack.py, query_pack_planner.py, finance_worker.py, finance_parent_market_ingest_cutover.py, and gate_evaluator.py.\n- Read-only scanner context is /Users/leofitz/.openclaw/workspace/finance/state/llm-job-context/scanner.json.\n- Context pack is a view cache and must have pack_is_not_authority=true.\n- QueryPack is not evidence; object_links and unknown_discovery_exhausted_reason remain required contract fields.\n- unknown_discovery cannot be satisfied by held/watchlist tickers.\n- unknown_discovery_minimum_attempts remains enforced by scanner.json/query_pack_planner.py.\n- 不得把已在 watchlist/held 的标的当作 unknown_discovery。\n\nOutput discipline:\n- Return stdout exactly.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; delivery.mode is none.\n- No execution; review-only."
       },
-      "state": {
-        "lastRunAtMs": 1776474000032,
-        "lastRunStatus": "error",
-        "lastStatus": "error",
-        "lastDurationMs": 420021,
-        "lastDeliveryStatus": "not-requested",
-        "consecutiveErrors": 1,
-        "nextRunAtMs": 1776661200000,
-        "lastError": "cron: job execution timed out",
-        "lastErrorReason": "timeout"
-      }
+      "state": {}
     },
     {
       "id": "finance-thesis-sidecar-manual-v1",
@@ -213,6 +189,7 @@
       },
       "sessionTarget": "isolated",
       "wakeMode": "now",
+      "timeout": null,
       "delivery": {
         "mode": "none",
         "channel": "last"
@@ -224,11 +201,58 @@
         "lightContext": true,
         "message": "【OpenClaw Finance Thesis Sidecar｜manual artifact-only】\n你是 finance thesis sidecar。这个 job 是 manual/disabled artifact wrapper，不是报告 job。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 读取 /Users/leofitz/.openclaw/workspace/finance/state/llm-job-context/thesis-sidecar.json。\n- context pack 是 view cache，不是 canonical state。\n\n执行：\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/thesis_research_sidecar.py\n\n允许写入：\n- finance/state/thesis-research-packet.json\n- finance/state/custom-metrics/*.json\n- finance/state/scenario-cards.json\n- finance/state/thesis-dossiers/*.json\n- finance/state/thesis-research-sidecar-report.json\n\n硬规则：\n- 禁止 Discord / no Discord。\n- 禁止自动改 thresholds。\n- 禁止交易执行。\n- 禁止 final market recommendation。\n- delivery.mode=none；最终回复为空字符串或一行机器摘要：sidecar=ok|dossiers=N。"
       },
-      "state": {
-        "lastDeliveryStatus": "not-delivered",
-        "lastDelivered": false,
-        "consecutiveErrors": 0
-      }
+      "state": {}
+    },
+    {
+      "id": "finance-tradingagents-primary-review-v1",
+      "name": "finance-tradingagents-primary-review",
+      "enabled": true,
+      "schedule": {
+        "kind": "cron",
+        "expr": "35 8 * * 1-5",
+        "tz": "America/Chicago"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "timeout": 1800,
+      "delivery": {
+        "mode": "announce",
+        "channel": "discord",
+        "to": "channel:1479790104490016808"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "model": "google-gemini-cli/gemini-3-flash",
+        "timeoutSeconds": 1800,
+        "lightContext": true,
+        "message": "【OpenClaw Finance TradingAgents Primary Review｜live cutover lane】\nRun exactly:\nOPENCLAW_TRADINGAGENTS_PRIMARY_RUNTIME_ENABLED=1 OPENCLAW_TRADINGAGENTS_PRIMARY_RENDER_ENABLED=1 OPENCLAW_TRADINGAGENTS_PRIMARY_REQUIRED=1 /opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_discord_report_job.py --mode marketday-review\n\nContract markers:\n- This is the TradingAgents-primary live cutover lane.\n- TradingAgents owns primary advisory cognition only when the env switches are present.\n- Finance remains deterministic guardrail, product renderer, decision log, delivery safety, and review-only boundary.\n- Missing or unbound TradingAgents primary artifacts must return health-only output, not a finance-only authoritative report.\n- Rollback: disable this job or remove the three OPENCLAW_TRADINGAGENTS_PRIMARY_* env vars.\n- No broker execution, no threshold mutation, no wake mutation, no live authority change.\n\nOutput discipline:\n- Return stdout exactly.\n- If stdout is NO_REPLY, return only NO_REPLY.\n- Do not summarize.\n- Do not emit progress text.\n- Do not send messages yourself; OpenClaw delivery handles Discord.\n- Review-only; no execution."
+      },
+      "state": {}
+    },
+    {
+      "id": "finance-tradingagents-sidecar-manual-v1",
+      "name": "finance-tradingagents-sidecar",
+      "enabled": false,
+      "schedule": {
+        "kind": "cron",
+        "expr": "15,45 8-16 * * 1-5",
+        "tz": "America/Chicago"
+      },
+      "sessionTarget": "isolated",
+      "wakeMode": "now",
+      "timeout": null,
+      "delivery": {
+        "mode": "none",
+        "channel": "last"
+      },
+      "payload": {
+        "kind": "agentTurn",
+        "model": "google-gemini-cli/gemini-3-flash-preview",
+        "timeoutSeconds": 900,
+        "lightContext": true,
+        "message": "【OpenClaw Finance TradingAgents Sidecar｜scheduled artifact-only】\n你是 finance TradingAgents sidecar。这个 job 是 cron artifact wrapper，不是报告 job。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 读取 /Users/leofitz/.openclaw/workspace/finance/state/llm-job-context/tradingagents-sidecar.json。\n- context pack 是 view cache，不是 canonical state。\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/thesis_research_packet.py\n\n执行：\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/tradingagents_sidecar_job.py --mode scheduled\n\n允许写入：\n- finance/state/tradingagents/runs/**\n- finance/state/tradingagents/status.json\n- finance/state/tradingagents/latest.json\n- finance/state/tradingagents/latest-context-digest.json\n- finance/state/tradingagents/latest-reader-augmentation.json\n\n硬规则：\n- 禁止 Discord / no Discord。\n- 禁止自动改 thresholds。\n- 禁止 wake mutation。\n- 禁止 canonical report 写入。\n- 禁止 evidence promotion。\n- 禁止交易执行。\n- delivery.mode=none；最终回复为空字符串或一行机器摘要：tradingagents=ok|run_id=<id>。"
+      },
+      "state": {}
     },
     {
       "id": "c4d5e6f7-a8b9-0123-cdef-watcher-renderer",
@@ -239,6 +263,7 @@
       },
       "sessionTarget": "isolated",
       "wakeMode": "now",
+      "timeout": null,
       "delivery": {
         "mode": "announce",
         "channel": "discord",
@@ -251,21 +276,12 @@
         "lightContext": null,
         "message": "[MANUAL-ONLY] Finance watcher update helper. Not part of primary scanner/report pipeline. Keep disabled unless a human explicitly requests watcher review. Must not bypass finance report packet/envelope/validator delivery path."
       },
-      "state": {
-        "scheduleErrorCount": 3,
-        "lastRunAtMs": 1775495208949,
-        "lastRunStatus": "ok",
-        "lastStatus": "ok",
-        "lastDurationMs": 23399,
-        "lastDelivered": true,
-        "lastDeliveryStatus": "delivered",
-        "consecutiveErrors": 0
-      }
+      "state": {}
     },
     {
       "id": "18c6ef32-719f-47cf-a4be-c9b72f4674e5",
       "name": "finance-weekly-learning-review",
-      "enabled": true,
+      "enabled": false,
       "schedule": {
         "kind": "cron",
         "expr": "20 22 * * 0",
@@ -273,6 +289,7 @@
       },
       "sessionTarget": "isolated",
       "wakeMode": "now",
+      "timeout": null,
       "delivery": {
         "mode": "announce",
         "channel": "discord",
@@ -285,9 +302,7 @@
         "lightContext": true,
         "message": "【OpenClaw Finance Weekly Learning Review｜context-pack-first】\n你是 finance learning reviewer。你不是 scanner，不输出市场建议，不改阈值。\n\nPreflight:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py\n- 读取 /Users/leofitz/.openclaw/workspace/finance/state/llm-job-context/weekly-learning.json。\n- context pack 是 view cache，不是 canonical state。\n\nDeterministic inputs:\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/signal_learner.py\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/calibration_loop.py\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/ops/scripts/finance_report_delivery_audit.py\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/replay/live_replay.py --export /Users/leofitz/.openclaw/workspace/replay/state/live-finance-replay-case.json --report /Users/leofitz/.openclaw/workspace/replay/state/live-finance-replay-report.json\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_learning_review_packet.py\n- 运行：/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_learning_review_packet_audit.py --markdown > /Users/leofitz/.openclaw/workspace/finance/state/finance-learning-review-packet-audit.md\n\nReview focus:\n- 使用 weekly-learning.json 中的 dispatch-attribution / thesis-outcomes / report-usefulness-history 摘要。\n- 区分 wake usefulness、report usefulness、operator load、thesis outcome。\n- Recommendation 只能指向 policy / schema / tests / prompt / model_routing。\n- 禁止自动改 thresholds，禁止交易执行，禁止市场建议。\n\n输出：\n- 中文周度学习复盘，分为 Fact / Interpretation / Recommendation。\n- 完整 JSON 写入 /Users/leofitz/.openclaw/workspace/finance/state/finance-weekly-learning-review.json，字段包含 generated_at, status, facts[], interpretations[], recommendations[], source_packet_path。\n\n硬规则：不写 MEMORY，不读取 raw Flex XML，不输出 account identifiers。"
       },
-      "state": {
-        "nextRunAtMs": 1776655200000
-      }
+      "state": {}
     }
   ]
 }

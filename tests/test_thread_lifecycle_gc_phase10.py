@@ -21,7 +21,7 @@ def test_thread_lifecycle_gc_prunes_inactive_registry_record(tmp_path) -> None:
                 'account_id': 'default',
             },
             'new': {
-                'updated_at': '2026-04-13T00:00:00Z',
+                'updated_at': '2026-04-16T00:00:00Z',
                 'last_user_message_at': '2026-04-16T23:00:00Z',
                 'followup_bundle_path': str(bundle),
                 'account_id': 'default',
@@ -36,6 +36,7 @@ def test_thread_lifecycle_gc_prunes_inactive_registry_record(tmp_path) -> None:
             '--inactive-hours', '72',
             '--ttl-days', '30',
             '--max-records', '10',
+            '--now', '2026-04-17T00:00:00Z',
         ],
         capture_output=True,
         text=True,

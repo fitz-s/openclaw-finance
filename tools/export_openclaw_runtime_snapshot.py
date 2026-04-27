@@ -24,11 +24,13 @@ REVIEW_2026_04_18 = '/Users/leofitz/Downloads/review 2026-04-18.md'
 FINANCE_JOB_NAMES = {
     'finance-subagent-scanner',
     'finance-subagent-scanner-offhours',
+    'finance-immediate-alert',
     'finance-premarket-brief',
     'finance-premarket-delivery-watchdog',
     'finance-midday-operator-review',
     'finance-weekly-learning-review',
     'finance-thesis-sidecar',
+    'finance-tradingagents-sidecar',
     'finance-report-renderer',
     'finance-watcher-update',
 }
@@ -45,6 +47,8 @@ CONTRACT_DOCS = [
     WORKSPACE / 'systems' / 'judgment-contract.md',
     WORKSPACE / 'systems' / 'wake-policy.md',
     WORKSPACE / 'systems' / 'risk-gates.md',
+    WORKSPACE / 'systems' / 'tradingagents-bridge-contract.md',
+    WORKSPACE / 'systems' / 'openclaw-tradingagents-model-resolution-contract.md',
 ]
 
 SCHEMA_DOCS = [
@@ -76,6 +80,31 @@ def load_json(path: Path, default: Any = None) -> Any:
 def write_json(path: Path, payload: Any) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
+
+
+def refresh_tradingagents_audits() -> None:
+    """Refresh reviewer-visible TradingAgents lock/audit outputs when the source lock exists."""
+    lock = FINANCE / 'ops' / 'tradingagents-upstream-lock.json'
+    submodule = FINANCE / 'third_party' / 'tradingagents'
+    if not lock.exists() or not submodule.exists():
+        return
+    tools = [
+        FINANCE / 'tools' / 'check_tradingagents_upstream_lock.py',
+        FINANCE / 'tools' / 'audit_tradingagents_upstream_authority.py',
+    ]
+    for tool in tools:
+        proc = subprocess.run(
+            ['python3', str(tool)],
+            cwd=str(FINANCE),
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        if proc.returncode != 0:
+            raise RuntimeError(
+                f'{tool.name} failed during snapshot export: '
+                f'{proc.stderr.strip() or proc.stdout.strip() or proc.returncode}'
+            )
 
 
 def finance_jobs() -> list[dict[str, Any]]:
@@ -312,6 +341,7 @@ def copy_parent_runtime_mirror() -> list[str]:
 
 def main() -> int:
     OUT.mkdir(parents=True, exist_ok=True)
+    refresh_tradingagents_audits()
     contracts = copy_contracts()
     schemas = copy_schemas()
     parent_runtime = copy_parent_runtime_mirror()
@@ -391,6 +421,7 @@ def main() -> int:
             'docs/openclaw-runtime/ralplan/marketday-report-calendar-p5-ralplan.md',
             'docs/openclaw-runtime/ralplan/exchange-calendar-provider-p6-ralplan.md',
             'docs/openclaw-runtime/ralplan/delivery-observed-audit-p7-ralplan.md',
+            'docs/openclaw-runtime/ralplan/watchdog-delivery-proof-hardening-p7-followup-ralplan.md',
             'docs/openclaw-runtime/ralplan/brave-source-recovery-p8-ralplan.md',
             'docs/openclaw-runtime/ralplan/sec-fallback-activation-p9-ralplan.md',
             'docs/openclaw-runtime/scouts/offhours-intelligence-p1-internal-explorer.md',
@@ -418,6 +449,22 @@ def main() -> int:
             'docs/openclaw-runtime/finance-crontab.txt',
             'docs/openclaw-runtime/finance-model-roles.json',
             'docs/openclaw-runtime/finance-job-prompt-contract.json',
+            'ops/tradingagents-upstream-lock.json',
+            'docs/openclaw-runtime/tradingagents-upstream-lock-check.json',
+            'docs/openclaw-runtime/tradingagents-upstream-authority-audit.json',
+            'docs/openclaw-runtime/contracts/tradingagents-bridge-contract.md',
+            'docs/openclaw-runtime/examples/tradingagents-run-request.example.json',
+            'docs/openclaw-runtime/examples/tradingagents-advisory-decision.example.json',
+            'docs/openclaw-runtime/examples/tradingagents-validation.example.json',
+            'docs/openclaw-runtime/examples/tradingagents-context-digest.example.json',
+            'docs/openclaw-runtime/examples/tradingagents-reader-augmentation.example.json',
+            'docs/openclaw-runtime/examples/tradingagents-bridge-record.example.json',
+            'docs/openclaw-runtime/schemas/tradingagents-run-request.schema.json',
+            'docs/openclaw-runtime/schemas/tradingagents-advisory-decision.schema.json',
+            'docs/openclaw-runtime/schemas/tradingagents-validation.schema.json',
+            'docs/openclaw-runtime/schemas/tradingagents-context-digest.schema.json',
+            'docs/openclaw-runtime/schemas/tradingagents-reader-augmentation.schema.json',
+            'docs/openclaw-runtime/schemas/tradingagents-bridge-record.schema.json',
             'docs/openclaw-runtime/operating-model-audit.json',
             'docs/openclaw-runtime/parent-dependency-inventory.json',
             'docs/openclaw-runtime/parent-dependency-drift.json',
@@ -487,6 +534,7 @@ def main() -> int:
             'docs/openclaw-runtime/critics/marketday-report-calendar-p5-implementation-critic.md',
             'docs/openclaw-runtime/critics/exchange-calendar-provider-p6-implementation-critic.md',
             'docs/openclaw-runtime/critics/delivery-observed-audit-p7-implementation-critic.md',
+            'docs/openclaw-runtime/critics/watchdog-delivery-proof-hardening-p7-followup-critic.md',
             'docs/openclaw-runtime/critics/brave-source-recovery-p8-implementation-critic.md',
             'docs/openclaw-runtime/critics/sec-fallback-activation-p9-implementation-critic.md',
             'docs/openclaw-runtime/cleanup/offhours-intelligence-p0-20260419.md',

@@ -10,7 +10,7 @@ import argparse
 import json
 from pathlib import Path
 
-from finance_followup_thread_registry_repair import DEFAULT_INACTIVE_HOURS, DEFAULT_MAX_RECORDS, DEFAULT_TTL_DAYS, REGISTRY, repair_registry
+from finance_followup_thread_registry_repair import DEFAULT_INACTIVE_HOURS, DEFAULT_MAX_RECORDS, DEFAULT_TTL_DAYS, REGISTRY, parse_iso, repair_registry
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -20,6 +20,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument('--ttl-days', type=int, default=DEFAULT_TTL_DAYS)
     parser.add_argument('--max-records', type=int, default=DEFAULT_MAX_RECORDS)
     parser.add_argument('--keep-missing-bundles', action='store_true')
+    parser.add_argument('--now', default=None, help='ISO timestamp for deterministic tests/audits')
     args = parser.parse_args(argv)
     report = repair_registry(
         Path(args.registry),
@@ -27,6 +28,7 @@ def main(argv: list[str] | None = None) -> int:
         max_records=args.max_records,
         inactive_after_hours=args.inactive_hours,
         prune_missing_bundle=not args.keep_missing_bundles,
+        now=parse_iso(args.now) if args.now else None,
     )
     report['operation'] = 'finance_thread_lifecycle_gc'
     report['discord_thread_delete_attempted'] = False

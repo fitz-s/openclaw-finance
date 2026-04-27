@@ -55,6 +55,9 @@ finance/
 │   │
 │   └── # ── Research Sidecar ──
 │       ├── thesis_research_packet.py / thesis_research_sidecar.py
+│       ├── tradingagents_request_packet.py / tradingagents_sidecar_job.py
+│       ├── tradingagents_runner.py / tradingagents_advisory_translate.py
+│       ├── tradingagents_bridge_validator.py / tradingagents_surface_compiler.py
 │       └── custom_metric_compiler.py
 │
 ├── state/                           # Runtime state (not committed)
@@ -64,7 +67,8 @@ finance/
 │   ├── committee-memos/             # Role-decomposed assessments
 │   ├── announce-card.json           # Notification surface
 │   ├── report-reader/               # Exploration bundles
-│   └── llm-job-context/             # Non-authoritative view cache (5 roles)
+│   ├── llm-job-context/             # Non-authoritative view cache (5 roles)
+│   └── tradingagents/               # Review-only TradingAgents sidecar state
 │
 ├── tests/                           # pytest suite (84 tests)
 ├── tools/                           # Audit & snapshot export tools
@@ -149,6 +153,7 @@ watch_intent_compiler  (capital_bucket_hint)
 | `finance-subagent-scanner-offhours` | enabled | none |
 | `finance-weekly-learning-review` | enabled | Discord |
 | `finance-thesis-sidecar` | disabled/manual | none |
+| `finance-tradingagents-sidecar` | disabled/manual | none |
 
 ## Job Rules
 
@@ -157,6 +162,8 @@ watch_intent_compiler  (capital_bucket_hint)
 **Report Orchestrator** (`finance-premarket-brief`): Run `finance_llm_context_pack.py`. LLM writes only `judgment-envelope-candidate.json`. Context pack includes `capital_agenda_items`, `displacement_cases`, `capital_graph_summary`. Do not bypass the deterministic renderer.
 
 **Sidecar** (`finance-thesis-sidecar`): Stays disabled unless user requests. May run thesis spine compilers, capital compilers, and committee sidecar. Committee memos carry `no_execution`, `no_user_delivery`, `no_threshold_mutation`, `no_live_authority_change`. No Discord delivery.
+
+**TradingAgents Sidecar** (manual/local-only until a parent job is explicitly added): may compile request packets, run a review-only TradingAgents subprocess wrapper, translate raw outputs into advisory-only normalized artifacts, and publish only validator-gated reader/context sidecar surfaces under `state/tradingagents/**`. It must not write canonical evidence, mutate wake/thresholds, bypass delivery safety, or send user-visible messages directly.
 
 ## First Read
 
@@ -185,6 +192,17 @@ Whenever a task changes parent workspace files that affect finance behavior, the
 - Run the relevant audits (`audit_operating_model.py`, `audit_parent_dependency_drift.py`) when parent dependencies or contracts changed.
 - Commit the mirror/snapshot diffs in this repo with the implementation. Do not leave parent-only finance behavior changes invisible to remote reviewers.
 
+## AI Handoff Exoskeleton
+
+This repo includes an AI handoff layer for medium/large future work. It is an exoskeleton, not a replacement for this OpenClaw Finance contract.
+
+- Read `START_HERE.md`, `docs/01_reality_check.md`, and `docs/02_end_to_end_workflow.md` before using the handoff workflow.
+- Treat `templates/PROJECT_BRIEF.md`, `templates/PRD.md`, `templates/ARCHITECTURE.md`, `templates/IMPLEMENTATION_PLAN.md`, `templates/VERIFICATION_PLAN.md`, `templates/DECISIONS.md`, `templates/NOT_NOW.md`, `OPEN_QUESTIONS.md`, and `RISKS.md` as the current handoff truth surfaces.
+- Use `prompts/01_claude_code_requirements.txt` for requirement-tribunal work and `prompts/02_chatgpt_pro_finalize.txt` for final requirements/architecture lock.
+- Use `scripts/build_handoff_zip.py` only to package the guidance/docs/prompts layer. It is not a full source snapshot and must not include raw `state/`, secrets, raw Flex XML, broker account identifiers, or raw licensed/vendor payloads.
+- The copied starter-kit `AGENTS.md` is stored at `docs/ai-handoff-starter-AGENTS.md` for reference only. This root `AGENTS.md` remains authoritative.
+- Repo-specific integration notes live in `docs/ai-handoff-current-repo-config.md`.
+
 ## Verification
 
 ```bash
@@ -211,6 +229,23 @@ python3 scripts/capital_agenda_compiler.py
 # Output surfaces
 python3 scripts/announce_card_compiler.py
 python3 scripts/finance_report_reader_bundle.py
+
+# TradingAgents sidecar
+python3 tools/check_tradingagents_upstream_lock.py
+python3 tools/audit_tradingagents_upstream_authority.py
+python3 -m pytest -q \
+  tests/test_tradingagents_request_packet.py \
+  tests/test_tradingagents_runner_isolation.py \
+  tests/test_tradingagents_advisory_translate.py \
+  tests/test_tradingagents_bridge_validator.py \
+  tests/test_tradingagents_surface_compiler.py \
+  tests/test_tradingagents_sidecar_job.py \
+  tests/test_finance_llm_context_pack_tradingagents.py \
+  tests/test_finance_reader_bundle_tradingagents.py \
+  tests/test_followup_context_router_tradingagents.py \
+  tests/test_tradingagents_upstream_lock.py \
+  tests/test_tradingagents_upstream_authority.py \
+  tests/test_export_openclaw_runtime_snapshot_tradingagents.py
 ```
 
 After runtime changes, refresh snapshots:

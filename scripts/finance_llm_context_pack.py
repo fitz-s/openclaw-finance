@@ -10,6 +10,8 @@ from pathlib import Path
 from typing import Any
 
 from atomic_io import atomic_write_json, load_json_safe
+from tradingagents_bridge_types import age_hours
+from tradingagents_model_resolution import resolve_tradingagents_role
 
 
 ROOT = Path('/Users/leofitz/.openclaw')
@@ -45,6 +47,7 @@ MAX_PACK_CHARS = 30000
 REPORT_PACK = OUT_DIR / 'report-orchestrator.json'
 SCANNER_PACK = OUT_DIR / 'scanner.json'
 SIDECAR_PACK = OUT_DIR / 'thesis-sidecar.json'
+TRADINGAGENTS_SIDECAR_PACK = OUT_DIR / 'tradingagents-sidecar.json'
 WEEKLY_PACK = OUT_DIR / 'weekly-learning.json'
 FOLLOWUP_PACK = OUT_DIR / 'report-followup.json'
 READER_BUNDLE_DIR = STATE / 'report-reader'
@@ -53,6 +56,11 @@ CAMPAIGN_CACHE = STATE / 'campaign-cache.json'
 QUERY_PACK_OUT = STATE / 'query-packs' / 'scanner-planned.jsonl'
 QUERY_PACK_REPORT = STATE / 'query-packs' / 'scanner-planned-report.json'
 QUERY_PACK_CONTRACT = FINANCE / 'docs' / 'openclaw-runtime' / 'contracts' / 'query-pack-contract.md'
+TRADINGAGENTS_CONTEXT_DIGEST = STATE / 'tradingagents' / 'latest-context-digest.json'
+TRADINGAGENTS_STATUS = STATE / 'tradingagents' / 'status.json'
+TRADINGAGENTS_RUNTIME_READINESS = STATE / 'tradingagents' / 'runtime-readiness.json'
+TRADINGAGENTS_DEFAULTS = FINANCE / 'ops' / 'tradingagents-sidecar.defaults.json'
+TRADINGAGENTS_LOCK = FINANCE / 'ops' / 'tradingagents-upstream-lock.json'
 
 
 def now_iso() -> str:
@@ -286,6 +294,43 @@ def validate_size(pack: dict[str, Any]) -> None:
         raise ValueError(f'{pack.get("pack_role")} pack too large: {len(encoded)} > {MAX_PACK_CHARS}')
 
 
+def load_tradingagents_digest(path: Path | None = None) -> dict[str, Any] | None:
+    path = path or TRADINGAGENTS_CONTEXT_DIGEST
+    payload = load_json_safe(path, {}) or {}
+    if not isinstance(payload, dict) or not payload:
+        return None
+    if payload.get('review_only') is not True or payload.get('no_execution') is not True:
+        return None
+    if payload.get('candidate_contract_exclusion') is not True:
+        return None
+    max_age = payload.get('max_age_hours')
+    current_age = age_hours(str(payload.get('generated_at') or ''))
+    if isinstance(max_age, (int, float)) and current_age is not None and current_age > float(max_age):
+        return None
+    return {
+        key: payload.get(key)
+        for key in [
+            'generated_at',
+            'run_id',
+            'instrument',
+            'analysis_date',
+            'report_hash',
+            'packet_hash',
+            'safe_bullets',
+            'invalidators_safe',
+            'required_confirmations_safe',
+            'source_gaps_safe',
+            'risk_flags_safe',
+            'authority_rule',
+            'candidate_contract_exclusion',
+            'validation_ref',
+            'review_only',
+            'no_execution',
+            'max_age_hours',
+        ]
+    }
+
+
 def build_packs() -> dict[str, dict[str, Any]]:
     packet = load_json_safe(PACKET, {}) or {}
     wake = load_json_safe(WAKE, {}) or {}
@@ -373,6 +418,9 @@ def build_packs() -> dict[str, dict[str, Any]]:
         'options_iv_surface_summary': options_iv_summary,
         'options_iv_authority_rule': 'source_context_only; excluded from candidate_contract.required_fields and JudgmentEnvelope evidence authority',
     })
+    ta_digest = load_tradingagents_digest()
+    if ta_digest:
+        report['tradingagents_sidecar'] = ta_digest
 
     scanner_sources = [artifact(WATCHLIST), artifact(PORTFOLIO), artifact(THESIS_REGISTRY), artifact(OPPORTUNITY_QUEUE), artifact(INVALIDATOR_LEDGER)]
     scanner = base_pack(
@@ -463,6 +511,49 @@ def build_packs() -> dict[str, dict[str, Any]]:
         'final_output_rule': 'No Discord/user output; write artifacts only.',
     })
 
+    tradingagents_sources = [
+        artifact(OPPORTUNITY_QUEUE),
+        artifact(INVALIDATOR_LEDGER),
+        artifact(THESIS_REGISTRY),
+        artifact(STATE / 'thesis-research-packet.json'),
+        artifact(TRADINGAGENTS_STATUS),
+        artifact(TRADINGAGENTS_RUNTIME_READINESS),
+        artifact(TRADINGAGENTS_DEFAULTS),
+        artifact(TRADINGAGENTS_LOCK),
+    ]
+    tradingagents_sidecar = base_pack(
+        'tradingagents_sidecar',
+        tradingagents_sources,
+        job_goal='Run TradingAgents as a review-only research sidecar and publish only validator-gated advisory artifacts.',
+        allowed_outputs=[
+            'state/tradingagents/runs/**',
+            str(TRADINGAGENTS_CONTEXT_DIGEST),
+            'state/tradingagents/latest-reader-augmentation.json',
+            'machine summary only',
+        ],
+        forbidden_actions=['user_delivery', 'discord', 'execution', 'threshold_mutation', 'wake_mutation', 'canonical_report_write', 'evidence_promotion'],
+    )
+    tradingagents_sidecar.update({
+        'reuse_existing_scripts': [
+            str(FINANCE / 'scripts' / 'finance_llm_context_pack.py'),
+            str(FINANCE / 'scripts' / 'thesis_research_packet.py'),
+            str(FINANCE / 'scripts' / 'tradingagents_sidecar_job.py'),
+        ],
+        'required_commands': [
+            '/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/finance_llm_context_pack.py',
+            '/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/thesis_research_packet.py',
+            '/opt/homebrew/bin/python3 /Users/leofitz/.openclaw/workspace/finance/scripts/tradingagents_sidecar_job.py --mode scheduled',
+        ],
+        'context_digest_path': str(TRADINGAGENTS_CONTEXT_DIGEST),
+        'status_path': str(TRADINGAGENTS_STATUS),
+        'runtime_readiness_path': str(TRADINGAGENTS_RUNTIME_READINESS),
+        'defaults_path': str(TRADINGAGENTS_DEFAULTS),
+        'lock_path': str(TRADINGAGENTS_LOCK),
+        'model_resolution': resolve_tradingagents_role(job_name='finance-tradingagents-sidecar'),
+        'runtime_readiness': load_json_safe(TRADINGAGENTS_RUNTIME_READINESS, {}) or {},
+        'final_output_rule': 'No Discord/user output; write TradingAgents sidecar artifacts only.',
+    })
+
     telemetry_keys = {
         'event_id', 'logged_at', 'wake_class', 'threshold_should_send', 'threshold_report_type',
         'execution_decision', 'operator_action', 'thesis_id', 'instrument', 'thesis_status',
@@ -541,6 +632,7 @@ def build_packs() -> dict[str, dict[str, Any]]:
         'report-orchestrator': report,
         'scanner': scanner,
         'thesis-sidecar': sidecar,
+        'tradingagents-sidecar': tradingagents_sidecar,
         'weekly-learning': weekly,
         'report-followup': followup,
     }
@@ -555,6 +647,7 @@ def write_packs(packs: dict[str, dict[str, Any]], out_dir: Path = OUT_DIR) -> di
         'report-orchestrator': out_dir / 'report-orchestrator.json',
         'scanner': out_dir / 'scanner.json',
         'thesis-sidecar': out_dir / 'thesis-sidecar.json',
+        'tradingagents-sidecar': out_dir / 'tradingagents-sidecar.json',
         'weekly-learning': out_dir / 'weekly-learning.json',
         'report-followup': out_dir / 'report-followup.json',
     }

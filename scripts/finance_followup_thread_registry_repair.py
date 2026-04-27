@@ -256,6 +256,7 @@ def repair_registry(
     max_records: int = DEFAULT_MAX_RECORDS,
     inactive_after_hours: int = DEFAULT_INACTIVE_HOURS,
     prune_missing_bundle: bool = True,
+    now: datetime | None = None,
 ) -> dict[str, Any]:
     payload = load_json_safe(path, {}) or {}
     threads = payload.get('threads') if isinstance(payload.get('threads'), dict) else {}
@@ -275,6 +276,7 @@ def repair_registry(
         max_records=max_records,
         inactive_after_hours=inactive_after_hours,
         prune_missing_bundle=prune_missing_bundle,
+        now=now,
     )
     result = {
         'generated_at': now_iso(),

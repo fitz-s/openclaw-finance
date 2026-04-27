@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TradingAgentsContextDigest",
+  "type": "object",
+  "required": ["run_id", "instrument", "safe_bullets", "authority_rule", "candidate_contract_exclusion", "review_only", "no_execution"],
+  "properties": {
+    "run_id": {"type": "string"},
+    "instrument": {"type": "string"},
+    "safe_bullets": {"type": "array", "items": {"type": "string"}},
+    "authority_rule": {"type": "string"},
+    "candidate_contract_exclusion": {"const": true},
+    "review_only": {"const": true},
+    "no_execution": {"const": true}
+  },
+  "additionalProperties": true
+}

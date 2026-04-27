@@ -1,0 +1,29 @@
+{
+  "generated_at": "2026-04-24T03:46:21Z",
+  "status": "pass",
+  "phase": "tradingagents-runtime-primary-cutover-phase1",
+  "proof_type": "primary_advisory_artifact_publication",
+  "observed": {
+    "run_id": "ta:dac71e7c0f5436c5",
+    "latest_primary_decision_status": "published",
+    "primary_validation_status": "pass",
+    "primary_runtime_status": "pass",
+    "primary_signal": "supportive_review",
+    "raw_buy_sell_signal_excluded": true,
+    "candidate_contract_exclusion": true,
+    "review_only": true,
+    "no_execution": true,
+    "latest_report_refresh_preserved": true
+  },
+  "artifact_paths": {
+    "latest_primary_decision": "state/tradingagents/latest-primary-decision.json",
+    "primary_validation": "state/tradingagents/primary-validation.json",
+    "primary_runtime_status": "state/tradingagents/primary-runtime-status.json",
+    "run_primary_decision": "state/tradingagents/runs/ta:dac71e7c0f5436c5/surface/primary-decision.json",
+    "run_primary_validation": "state/tradingagents/runs/ta:dac71e7c0f5436c5/primary-validation.json",
+    "latest_status": "state/tradingagents/status.json"
+  },
+  "acceptance_claim": "A validated TradingAgents advisory run now publishes primary advisory candidate artifacts without changing the default finance report authority chain. Renderer consumption remains disabled by default behind OPENCLAW_TRADINGAGENTS_PRIMARY_RENDER_ENABLED=1.",
+  "review_only": true,
+  "no_execution": true
+}

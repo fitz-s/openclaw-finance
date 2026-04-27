@@ -21,3 +21,6 @@ reports/v0-archive/*
 *.token
 ibkr-flex-config.json
 .omx/
+
+# Generated handoff bundles.
+dist/

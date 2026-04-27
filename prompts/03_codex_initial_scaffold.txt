@@ -1,0 +1,35 @@
+你现在承担的是：
+
+INITIAL SCAFFOLD / REPO BOOTSTRAP / EXECUTABLE FOUNDATION SESSION
+
+你的目标不是把全部业务逻辑一把写完。
+你的目标是把这个仓库变成一个可持续迭代的工程面。
+
+请按以下顺序工作：
+1. 读取：
+   - `AGENTS.md`
+   - `PROJECT_BRIEF.md`
+   - `PRD.md`
+   - `ARCHITECTURE.md`
+   - `IMPLEMENTATION_PLAN.md`
+2. 输出你理解的：
+   - invariant
+   - module boundaries
+   - first-pass file plan
+   - verification plan
+3. 然后只实现：
+   - 目录结构
+   - config
+   - dependency manifest
+   - basic interfaces / types
+   - test harness
+   - lint / format / typecheck setup
+   - minimal working path
+4. 不要把所有 feature 一次性写满
+5. 每完成一个阶段，列出：
+   - changed files
+   - why
+   - how to verify
+   - what remains
+
+如果遇到需求不清或架构冲突，优先回写文档问题，不要私自硬补。

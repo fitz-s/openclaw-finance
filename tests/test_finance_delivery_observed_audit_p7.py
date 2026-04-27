@@ -44,3 +44,26 @@ def test_audit_does_not_treat_ok_not_delivered_as_observed(tmp_path: Path) -> No
     latest = audit['jobs']['finance-premarket-brief']['latest']
     assert latest['status'] == 'ok'
     assert latest['deliveryStatus'] == 'not-delivered'
+
+
+def test_audit_keeps_latest_delivery_when_recent_rows_span_multiple_jobs(tmp_path: Path) -> None:
+    runs = tmp_path / 'runs'
+    premarket_ts = datetime(2026, 4, 20, 8, 10, tzinfo=CT)
+    _write_run(runs / 'b2c3d4e5-f6a7-8901-bcde-f01234567890.jsonl', [
+        {'ts': _ms(premarket_ts), 'jobId': 'premarket', 'action': 'finished', 'status': 'ok', 'delivered': True, 'deliveryStatus': 'delivered'},
+    ])
+    _write_run(runs / 'finance-premarket-delivery-watchdog-v1.jsonl', [
+        {'ts': _ms(datetime(2026, 4, 18, hour, 0, tzinfo=CT)), 'jobId': 'watchdog', 'action': 'finished', 'status': 'ok', 'delivered': True, 'deliveryStatus': 'delivered'}
+        for hour in range(8, 13)
+    ])
+    _write_run(runs / 'finance-midday-operator-review-v1.jsonl', [
+        {'ts': _ms(datetime(2026, 4, 17, hour, 0, tzinfo=CT)), 'jobId': 'midday', 'action': 'finished', 'status': 'ok', 'delivered': True, 'deliveryStatus': 'delivered'}
+        for hour in range(8, 13)
+    ])
+
+    audit = build_audit(runs_dir=runs, now=datetime(2026, 4, 20, 8, 30, tzinfo=CT))
+
+    assert audit['delivered_count'] == 11
+    assert len(audit['delivered_recent']) == 10
+    assert audit['delivered_recent'][-1]['ts'] == premarket_ts.isoformat()
+    assert observed_delivered_since(audit, hour=7, minute=30, now=datetime(2026, 4, 20, 8, 30, tzinfo=CT)) is True

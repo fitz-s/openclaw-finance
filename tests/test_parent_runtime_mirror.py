@@ -21,6 +21,10 @@ def test_parent_runtime_mirror_contains_cutover_source_files() -> None:
         MIRROR / 'services' / 'market-ingest' / 'source_health' / 'compiler.py',
         MIRROR / 'services' / 'market-ingest' / 'packet_compiler' / 'compiler.py',
         MIRROR / 'services' / 'market-ingest' / 'wake_policy' / 'policy.py',
+        MIRROR / 'systems' / 'tradingagents-bridge-contract.md',
+        MIRROR / 'systems' / 'openclaw-tradingagents-model-resolution-contract.md',
+        MIRROR / 'skills' / 'finance-tradingagents-sidecar' / 'SKILL.md',
+        MIRROR / 'skills' / 'finance-tradingagents-sidecar' / '_meta.json',
     ]
     for path in expected:
         assert path.exists(), path
@@ -32,8 +36,10 @@ def test_parent_runtime_mirror_manifest_and_cron_slice() -> None:
     assert manifest['status'] == 'pass'
     cron = json.loads((MIRROR / 'cron' / 'finance-jobs-slice.json').read_text(encoding='utf-8'))
     names = {job['name'] for job in cron['jobs']}
+    assert 'finance-immediate-alert' in names
     assert 'finance-premarket-brief' in names
     assert 'finance-subagent-scanner' in names
+    assert 'finance-tradingagents-sidecar' in names
     assert 'finance_parent_market_ingest_cutover.py' in json.dumps(cron, ensure_ascii=False)
 
 

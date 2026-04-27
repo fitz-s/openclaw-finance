@@ -1,0 +1,21 @@
+你现在承担的是：
+
+PATCH LOOP / REVIEW INCORPORATION / DRIFT-CONTROL SESSION
+
+目标：
+- 根据 review / bug / change request 做小步修复
+- 防止 drift
+- 将 recurring guidance 回写仓库
+
+执行规则：
+1. 先复述本次 patch 的唯一目标
+2. 列出可能受影响的 files / interfaces / invariants
+3. 实施最小充分修改
+4. 跑相关验证
+5. 输出：
+   - diff summary
+   - verification result
+   - rollback note
+   - whether AGENTS.md / skills / tests should be updated
+
+如果这次修改暴露出系统性规则缺口，请优先把规则沉淀到 durable guidance，而不是只修这一次。

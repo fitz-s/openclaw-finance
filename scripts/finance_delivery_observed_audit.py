@@ -86,6 +86,16 @@ def is_delivered(row: dict[str, Any]) -> bool:
     return row.get('delivered') is True or row.get('deliveryStatus') == 'delivered'
 
 
+def sort_rows_by_time(rows: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    fallback = datetime(1970, 1, 1, tzinfo=timezone.utc).astimezone(CT)
+
+    def key(row: dict[str, Any]) -> tuple[bool, datetime]:
+        ts = row_time(row)
+        return (ts is not None, ts or fallback)
+
+    return sorted(rows, key=key)
+
+
 def build_audit(*, runs_dir: Path = RUNS_DIR, now: datetime | None = None, lookback_rows: int = 50) -> dict[str, Any]:
     now_value = now or now_ct()
     jobs: dict[str, Any] = {}
@@ -105,7 +115,8 @@ def build_audit(*, runs_dir: Path = RUNS_DIR, now: datetime | None = None, lookb
             'latest': latest,
             'recent': compact[-5:],
         }
-    delivered_compact = [compact_row(row) for row in delivered_rows]
+    delivered_rows_sorted = sort_rows_by_time(delivered_rows)
+    delivered_compact = [compact_row(row) for row in delivered_rows_sorted]
     return {
         'generated_at': now_value.astimezone(timezone.utc).isoformat().replace('+00:00', 'Z'),
         'contract': CONTRACT,

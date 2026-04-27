@@ -1,45 +1,26 @@
 {
-  "generated_at": "2026-04-19T19:27:09.756476+00:00",
+  "generated_at": "2026-04-27T22:14:25.596811+00:00",
   "state_boundary": "sanitized_runtime_control_state",
   "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",
   "source": "/Users/leofitz/.openclaw/workspace/finance/state/sec-fallback-activation-report.json",
   "exists": true,
   "payload": {
     "contract": "sec-fallback-activation-v1",
-    "status": "pass",
-    "reason": "forced",
-    "force": true,
+    "status": "skipped",
+    "reason": "brave_recovery_breaker_closed",
+    "force": false,
     "recovery_policy": {
       "breaker_open": false,
       "reason": "clear",
       "breaker_until": null
     },
-    "steps": [
-      {
-        "name": "sec_discovery_fetcher",
-        "ok": true,
-        "returncode": 0,
-        "stdout_tail": [
-          "{\"status\": \"pass\", \"discovery_count\": 1, \"fetch_errors\": 0, \"out\": \"/Users/leofitz/.openclaw/workspace/finance/state/sec-discovery.json\"}"
-        ],
-        "stderr_tail": []
-      },
-      {
-        "name": "sec_filing_semantics",
-        "ok": true,
-        "returncode": 0,
-        "stdout_tail": [
-          "{\"status\": \"pass\", \"semantic_count\": 1, \"wake_candidate_count\": 0, \"out\": \"/Users/leofitz/.openclaw/workspace/finance/state/sec-filing-semantics.json\"}"
-        ],
-        "stderr_tail": []
-      }
-    ],
+    "steps": [],
     "discovery_path": "/Users/leofitz/.openclaw/workspace/finance/state/sec-discovery.json",
     "semantics_path": "/Users/leofitz/.openclaw/workspace/finance/state/sec-filing-semantics.json",
-    "discovery_count": 1,
-    "semantic_count": 1,
+    "discovery_count": 20,
+    "semantic_count": 20,
     "wake_candidate_count": 0,
-    "support_only_count": 1,
+    "support_only_count": 20,
     "records_are_not_evidence": true,
     "fallback_lane": "sec_current_filings_metadata_only",
     "review_source": "/Users/leofitz/Downloads/review 2026-04-18.md",

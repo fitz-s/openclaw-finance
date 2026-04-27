@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TradingAgentsBridgeRecord",
+  "type": "object",
+  "required": ["run_id", "request_path", "validation_path", "status", "review_only", "no_execution"],
+  "properties": {
+    "run_id": {"type": "string"},
+    "request_path": {"type": "string"},
+    "validation_path": {"type": "string"},
+    "status": {"enum": ["pass", "fail"]},
+    "review_only": {"const": true},
+    "no_execution": {"const": true}
+  },
+  "additionalProperties": true
+}

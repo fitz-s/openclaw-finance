@@ -8,6 +8,7 @@ prints either NO_REPLY, health-only markdown, or discord_primary_markdown.
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import subprocess
 import sys
@@ -34,7 +35,12 @@ BOARD_DELIVERY_REPORT = STATE / 'discord-campaign-board-delivery-report.json'
 MARKETDAY_CORE_POLICY = STATE / 'marketday-core-review-policy.json'
 REPORT_CALENDAR_GUARD = STATE / 'marketday-report-calendar-guard.json'
 DELIVERY_OBSERVED_AUDIT = STATE / 'finance-delivery-observed-audit.json'
+IMMEDIATE_ALERT_STATE = STATE / 'finance-immediate-alert-state.json'
 CT = ZoneInfo('America/Chicago')
+FOLLOWUP_REGISTRY_WARNING = (
+    'followup_registry_updated_after_cutoff_is_warning_only_not_delivery_proof'
+)
+TRADINGAGENTS_REFRESH_MODES = {'marketday-review', 'marketday-core-review', 'immediate-alert'}
 
 
 def run(args: list[str], *, stdout_path: Path | None = None) -> None:
@@ -55,6 +61,18 @@ def write_json(path: Path, payload: dict) -> None:
     tmp = path.with_name(f'{path.name}.tmp')
     tmp.write_text(json.dumps(payload, indent=2, ensure_ascii=False) + '\n', encoding='utf-8')
     tmp.replace(path)
+
+
+def text_sha256(text: str) -> str:
+    return 'sha256:' + hashlib.sha256(text.strip().encode('utf-8')).hexdigest()
+
+
+def load_json(path: Path) -> dict:
+    try:
+        payload = json.loads(path.read_text(encoding='utf-8'))
+        return payload if isinstance(payload, dict) else {}
+    except (FileNotFoundError, json.JSONDecodeError):
+        return {}
 
 
 def board_runtime_enabled() -> bool:
@@ -78,20 +96,89 @@ def parse_iso(value: str) -> datetime | None:
         return None
 
 
-def has_report_since_today(hour: int, minute: int) -> bool:
-    now = today_ct()
-    cutoff = datetime.combine(now.date(), time(hour, minute), tzinfo=CT)
+def followup_registry_activity_since_today(
+    hour: int, minute: int, *, now: datetime | None = None
+) -> dict[str, object]:
+    now_value = now or today_ct()
+    cutoff = datetime.combine(now_value.date(), time(hour, minute), tzinfo=CT)
+    latest_updated: datetime | None = None
+    matching_thread_count = 0
     try:
         data = json.loads(REGISTRY.read_text(encoding='utf-8'))
     except (FileNotFoundError, json.JSONDecodeError):
-        return False
+        data = {}
     for record in (data.get('threads') or {}).values():
         if not isinstance(record, dict):
             continue
         updated = parse_iso(str(record.get('updated_at') or ''))
-        if updated and updated >= cutoff:
-            return True
-    return False
+        if not updated or updated < cutoff:
+            continue
+        matching_thread_count += 1
+        if latest_updated is None or updated > latest_updated:
+            latest_updated = updated
+    observed_since_cutoff = matching_thread_count > 0
+    return {
+        'boundary': 'followup_thread_registry',
+        'authoritative_delivery_proof': False,
+        'observed_since_cutoff': observed_since_cutoff,
+        'cutoff': cutoff.isoformat(),
+        'matching_thread_count': matching_thread_count,
+        'latest_updated_at': latest_updated.isoformat() if latest_updated else None,
+        'warning': FOLLOWUP_REGISTRY_WARNING if observed_since_cutoff else None,
+    }
+
+
+def has_report_since_today(hour: int, minute: int) -> bool:
+    activity = followup_registry_activity_since_today(hour, minute)
+    return bool(activity.get('observed_since_cutoff'))
+
+
+def refresh_tradingagents_sidecar(mode: str) -> None:
+    if mode not in TRADINGAGENTS_REFRESH_MODES:
+        return
+    run_optional([str(PYTHON), 'scripts/thesis_research_packet.py'])
+    run_optional([str(PYTHON), 'scripts/tradingagents_sidecar_job.py', '--mode', 'report-sync'])
+
+
+def immediate_alert_decision(primary_markdown: str, *, now: datetime | None = None) -> dict[str, object]:
+    now_value = now or today_ct()
+    context_pack = load_json(CONTEXT_PACK)
+    tradingagents = context_pack.get('tradingagents_sidecar') if isinstance(context_pack.get('tradingagents_sidecar'), dict) else None
+    previous = load_json(IMMEDIATE_ALERT_STATE)
+    primary_hash = text_sha256(primary_markdown)
+
+    decision: dict[str, object] = {
+        'generated_at': datetime.now(timezone.utc).isoformat().replace('+00:00', 'Z'),
+        'mode': 'immediate-alert',
+        'should_deliver': True,
+        'suppressed_reason': None,
+        'primary_markdown_sha256': primary_hash,
+        'tradingagents_required': True,
+        'tradingagents_present': bool(tradingagents),
+        'tradingagents_run_id': tradingagents.get('run_id') if tradingagents else None,
+        'tradingagents_generated_at': tradingagents.get('generated_at') if tradingagents else None,
+        'report_hash': load_json(ENVELOPE).get('report_hash'),
+        'last_delivered_primary_sha256': previous.get('last_delivered_primary_sha256'),
+        'last_delivered_at': previous.get('last_delivered_at'),
+        'last_tradingagents_run_id': previous.get('last_tradingagents_run_id'),
+        'as_of_chicago': now_value.isoformat(),
+        'review_only': True,
+        'no_execution': True,
+    }
+
+    if not tradingagents:
+        decision['should_deliver'] = False
+        decision['suppressed_reason'] = 'missing_tradingagents_sidecar_context'
+    elif previous.get('last_delivered_primary_sha256') == primary_hash:
+        decision['should_deliver'] = False
+        decision['suppressed_reason'] = 'duplicate_primary_markdown'
+
+    if decision['should_deliver'] is True:
+        decision['last_delivered_primary_sha256'] = primary_hash
+        decision['last_delivered_at'] = decision['generated_at']
+        decision['last_tradingagents_run_id'] = decision['tradingagents_run_id']
+
+    return decision
 
 
 def report_calendar_guard(now: datetime, mode: str) -> dict:
@@ -120,7 +207,7 @@ def report_calendar_guard(now: datetime, mode: str) -> dict:
     return guard
 
 
-def run_chain(*, fast_core: bool = False) -> str:
+def run_chain(*, mode: str, fast_core: bool = False) -> str:
     # Core reports must refresh the macro triad before rendering so Gold / Bitcoin / SPX
     # direction is present or explicitly unavailable in the operator surface.
     run([str(PYTHON), 'scripts/price_fetcher.py'])
@@ -146,6 +233,7 @@ def run_chain(*, fast_core: bool = False) -> str:
         })
     else:
         run([str(PYTHON), 'scripts/finance_parent_market_ingest_cutover.py'])
+    refresh_tradingagents_sidecar(mode)
     run([str(PYTHON), 'scripts/finance_llm_context_pack.py'])
     run([
         str(PYTHON), 'scripts/judgment_envelope_gate.py',
@@ -184,7 +272,7 @@ def run_chain(*, fast_core: bool = False) -> str:
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument('--mode', choices=['morning-watchdog', 'marketday-review', 'marketday-core-review'], required=True)
+    parser.add_argument('--mode', choices=['morning-watchdog', 'marketday-review', 'marketday-core-review', 'immediate-alert'], required=True)
     args = parser.parse_args(argv)
 
     now = today_ct()
@@ -195,11 +283,28 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if args.mode == 'morning-watchdog':
         audit = build_delivery_audit(now=now)
+        followup_registry_activity = followup_registry_activity_since_today(7, 30, now=now)
+        audit['watchdog_duplicate_suppression_boundary'] = 'observed_parent_delivery_only'
+        audit['followup_registry_activity'] = followup_registry_activity
+        if followup_registry_activity.get('observed_since_cutoff'):
+            warnings = audit.get('warnings')
+            if not isinstance(warnings, list):
+                warnings = []
+            if FOLLOWUP_REGISTRY_WARNING not in warnings:
+                warnings.append(FOLLOWUP_REGISTRY_WARNING)
+            audit['warnings'] = warnings
         atomic_write_json(DELIVERY_OBSERVED_AUDIT, audit)
-        if has_report_since_today(7, 30) or observed_delivered_since(audit, hour=7, minute=30, now=now):
+        if observed_delivered_since(audit, hour=7, minute=30, now=now):
             print('NO_REPLY')
             return 0
-    sys.stdout.write(run_chain(fast_core=args.mode == 'marketday-core-review'))
+    primary = run_chain(mode=args.mode, fast_core=args.mode in {'morning-watchdog', 'marketday-review', 'marketday-core-review', 'immediate-alert'})
+    if args.mode == 'immediate-alert':
+        decision = immediate_alert_decision(primary, now=now)
+        atomic_write_json(IMMEDIATE_ALERT_STATE, decision)
+        if decision.get('should_deliver') is not True:
+            print('NO_REPLY')
+            return 0
+    sys.stdout.write(primary)
     return 0
 
 

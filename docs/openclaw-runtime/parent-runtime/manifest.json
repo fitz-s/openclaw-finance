@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-04-19T19:27:09.715886Z",
+  "generated_at": "2026-04-27T22:13:01.757460Z",
   "contract": "parent-runtime-mirror-v1",
   "status": "pass",
   "purpose": "Reviewer-visible mirror of parent runtime files relevant to finance cutover.",
@@ -45,6 +45,34 @@
       "mirror_path": "docs/openclaw-runtime/parent-runtime/services/market-ingest/wake_policy/policy.py",
       "exists": true,
       "sha256": "sha256:ed279fac5da76e4c88ec0352a47e36905f60c83d30947b5bff823afed5d0ace6"
+    },
+    {
+      "role": "systems/tradingagents-bridge-contract.md",
+      "source_path": "/Users/leofitz/.openclaw/workspace/systems/tradingagents-bridge-contract.md",
+      "mirror_path": "docs/openclaw-runtime/parent-runtime/systems/tradingagents-bridge-contract.md",
+      "exists": true,
+      "sha256": "sha256:f3a79c9507623390793007db593d22aab7bf0acd07bbc402062ab180799be7ca"
+    },
+    {
+      "role": "systems/openclaw-tradingagents-model-resolution-contract.md",
+      "source_path": "/Users/leofitz/.openclaw/workspace/systems/openclaw-tradingagents-model-resolution-contract.md",
+      "mirror_path": "docs/openclaw-runtime/parent-runtime/systems/openclaw-tradingagents-model-resolution-contract.md",
+      "exists": true,
+      "sha256": "sha256:ddb36670aeeb21cf206b295c536757a72064b69bc17baeb51dcb55f219b57b0c"
+    },
+    {
+      "role": "skills/finance-tradingagents-sidecar/SKILL.md",
+      "source_path": "/Users/leofitz/.openclaw/workspace/skills/finance-tradingagents-sidecar/SKILL.md",
+      "mirror_path": "docs/openclaw-runtime/parent-runtime/skills/finance-tradingagents-sidecar/SKILL.md",
+      "exists": true,
+      "sha256": "sha256:5a1d389968765ebe8b5f3aaa0636d293cb590371a4866a039c94ff13a0f53e6e"
+    },
+    {
+      "role": "skills/finance-tradingagents-sidecar/_meta.json",
+      "source_path": "/Users/leofitz/.openclaw/workspace/skills/finance-tradingagents-sidecar/_meta.json",
+      "mirror_path": "docs/openclaw-runtime/parent-runtime/skills/finance-tradingagents-sidecar/_meta.json",
+      "exists": true,
+      "sha256": "sha256:8efeab139f904b4b5dcaa345c2ecb010c9322c66ef6d8c7f6393c442626f8888"
     }
   ],
   "cron_slice": "docs/openclaw-runtime/parent-runtime/cron/finance-jobs-slice.json",

@@ -1,0 +1,14 @@
+{
+  "generated_at": "2026-04-23T00:00:00Z",
+  "run_id": "ta:example",
+  "request_path": "state/tradingagents/runs/ta:example/request.json",
+  "advisory_path": "state/tradingagents/runs/ta:example/normalized/advisory-decision.json",
+  "validation_path": "state/tradingagents/runs/ta:example/validation.json",
+  "context_digest_path": "state/tradingagents/runs/ta:example/surface/context-digest.json",
+  "reader_augmentation_path": "state/tradingagents/runs/ta:example/surface/reader-augmentation.json",
+  "status": "pass",
+  "report_hash": "sha256:report",
+  "packet_hash": "sha256:packet",
+  "review_only": true,
+  "no_execution": true
+}

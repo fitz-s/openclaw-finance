@@ -1,0 +1,425 @@
+{
+  "generated_at": "2026-04-27T22:14:25.735132Z",
+  "contract": "finance-reviewer-report-packet-v1",
+  "report_id": "R1413",
+  "source_file": "<finance>/state/report-reader/R1413.json",
+  "sanitization": {
+    "discord_conversation_included": false,
+    "discord_thread_ids_included": false,
+    "account_ids_included": false,
+    "portfolio_raw_state_included": false,
+    "raw_licensed_snippets_included": false
+  },
+  "report_time_replay": {
+    "exact_replay_available": true,
+    "archive_manifest_available": true,
+    "archive_contract": "report-time-archive-v1",
+    "missing_required_artifacts": [],
+    "artifact_availability": {
+      "envelope": true,
+      "reader_bundle": true,
+      "source_atoms": true,
+      "claim_graph": true,
+      "context_gaps": true,
+      "source_health": true,
+      "campaign_board": true,
+      "options_iv_surface": true,
+      "line_to_claim_refs": true
+    },
+    "line_to_claim_refs": {
+      "available": true,
+      "line_count": 77,
+      "matched_line_count": 0,
+      "match_method": "heuristic_subject_match"
+    }
+  },
+  "operator_surface": {
+    "operator_surface_available": true,
+    "surface_source": "state/finance-decision-report-envelope.json",
+    "discord_primary_markdown": "TradingAgents｜Decision Review | 18:09 ET | R1413\n\nDecision\n- TA1 SPY supportive_review / 正向深挖：把 SPY 保留为 TA1 正向深挖对象；不晋升为执行事项，先等来源新鲜度、thesis、capital graph 三重确认。\n\nFact\n- Analyst: SPY Technical Analysis Report: April 27, 2026\n- Bull: SPY Technical Analysis Report: April 27, 2026；As of the last trading session on April 24, 2026, the SPY (S&P 500 ETF Trust) is exhibiting a strong bullish trend…\n- Bear/Risk: Aggressive Analyst: Selling 50% to 75% of our SPY position right now isn't \"risk management\"—it’s a surrender of o…\n\nInterpretation\n- Review decision: 把 SPY 保留为 TA1 正向深挖对象；不晋升为执行事项，先等来源新鲜度、thesis、capital graph 三重确认。\n- Output safety: packet binding and delivery safety passed through the finance shell; final state remains review-only/no execution/不下单.\n- Finance 不再混入旧 scanner/thesis/capital 主叙事，只保留 Discord 输出安全外壳。\n\nTo Verify\n- Validate source freshness and rights before promoting any claim.\n- Require independent thesis, invalidator, and capital graph confirmation before using this in review.\n\n对象\n- TA1 TradingAgents Primary｜SPY supportive_review\n\n追问：why TA1 / challenge TA1 / sources TA1 / risk TA1 / expand R1413",
+    "discord_thread_seed_markdown": "R1413｜深挖入口\n\n对象卡\n- TA1 TradingAgents Primary｜SPY supportive_review\n  作用：TradingAgents 主审阅认知；finance 只做 Discord 输出安全外壳\n\n可直接追问\n- why TA1\n- challenge TA1\n- sources TA1\n- risk TA1\n- expand R1413",
+    "discord_live_board_markdown": "Finance｜Live Board\n\n当前没有必须打断你的 live campaign。\n\nMacro triad：Gold -0.65%(down/risk-off) / Bitcoin -2.32%(down/risk-off) / SPX +0.12%(flat)。",
+    "discord_scout_board_markdown": "Finance｜Peacetime Board\n\n当前没有 scout campaign。\n\nMacro triad：Gold -0.65%(down/risk-off) / Bitcoin -2.32%(down/risk-off) / SPX +0.12%(flat)。",
+    "discord_risk_board_markdown": "Finance｜Risk / Undercurrent Board\n\n当前没有 risk campaign。\n\nMacro triad：Gold -0.65%(down/risk-off) / Bitcoin -2.32%(down/risk-off) / SPX +0.12%(flat)。"
+  },
+  "bundle_summary": {
+    "bundle_id": "rb:R1413",
+    "generated_at": "2026-04-27T22:09:20.816776Z",
+    "report_hash_present": true,
+    "object_card_count": 1,
+    "campaign_count": 0,
+    "starter_queries": [
+      "why TA1",
+      "challenge TA1",
+      "sources TA1",
+      "risk TA1",
+      "expand R1413"
+    ],
+    "followup_digest": [
+      "TA1: review-only TradingAgents sidecar summary; no execution.",
+      "SPY Technical Analysis Report: April 27, 2026",
+      "As of the last trading session on April 24, 2026, the SPY (S&P 500 ETF Trust) is exhibiting a strong bullish trend following a significant recovery from a late-March correction."
+    ],
+    "object_alias_map_sample": {
+      "TA1": "TradingAgents Primary｜SPY supportive_review"
+    }
+  },
+  "decision_log_summary": {
+    "available": true,
+    "created_at": "2026-04-27T22:09:20.716584Z",
+    "decision_id": "decision:1cbae235872ef3a78a37",
+    "report_id": "R1413",
+    "operator_action": "logged_no_trade",
+    "execution_decision": "none",
+    "judgment_id": "judgment:packet:market-ingest:SPY:2026-04-27T18:01:09.611400Z:no-trade",
+    "policy_version": "finance-semantic-v1",
+    "wake_class": null,
+    "wake_dispatch_action": null,
+    "ref_counts": {
+      "thesis_refs": 20,
+      "scenario_refs": 8,
+      "opportunity_candidate_refs": 0,
+      "invalidator_refs": 7,
+      "capital_agenda_refs": 0,
+      "displacement_case_refs": 0
+    },
+    "hashes_present": {
+      "discord_primary_hash": true,
+      "thread_seed_hash": true,
+      "campaign_live_board_hash": true,
+      "campaign_scout_board_hash": true,
+      "campaign_risk_board_hash": true
+    }
+  },
+  "top_object_cards": [
+    {
+      "instrument": "SPY",
+      "handle": "TA1",
+      "type": "tradingagents_research",
+      "label": "TradingAgents Primary｜SPY supportive_review",
+      "required_confirmations": [
+        "Validate source freshness and rights before promoting any claim.",
+        "Require independent thesis, invalidator, and capital graph confirmation before using this in review."
+      ],
+      "summary_preview": "SPY Technical Analysis Report: April 27, 2026"
+    }
+  ],
+  "top_campaigns": [],
+  "information_acquisition_snapshot": {
+    "generated_at": "2026-04-27T22:14:25.734873Z",
+    "scope": "exact report-time archive snapshot",
+    "source_health": {
+      "available": true,
+      "generated_at": "2026-04-27T18:00:54.290160Z",
+      "status": "pass",
+      "source_count": 16,
+      "summary": {
+        "freshness": {
+          "fresh": 8,
+          "aging": 0,
+          "stale": 0,
+          "unknown": 8
+        },
+        "latency": {
+          "ok": 1,
+          "degraded": 1,
+          "breached": 1,
+          "unknown": 13
+        },
+        "rights": {
+          "ok": 3,
+          "restricted": 12,
+          "expired": 0,
+          "unknown": 1
+        }
+      },
+      "sources": [
+        {
+          "source_id": "source:reuters",
+          "freshness_status": "unknown",
+          "latency_status": "unknown",
+          "schema_status": "ok",
+          "validation_status": "pass",
+          "rights_status": "restricted",
+          "coverage_status": "ok",
+          "breach_reasons": [
+            "freshness:unknown",
+            "rights:restricted"
+          ],
+          "last_seen_at_present": false,
+          "last_success_at_present": false
+        },
+        {
+          "source_id": "source:bloomberg",
+          "freshness_status": "unknown",
+          "latency_status": "unknown",
+          "schema_status": "ok",
+          "validation_status": "pass",
+          "rights_status": "restricted",
+          "coverage_status": "ok",
+          "breach_reasons": [
+            "freshness:unknown",
+            "rights:restricted"
+          ],
+          "last_seen_at_present": false,
+          "last_success_at_present": false
+        },
+        {
+          "source_id": "source:sec_edgar",
+          "freshness_status": "fresh",
+          "latency_status": "degraded",
+          "schema_status": "ok",
+          "validation_status": "pass",
+          "rights_status": "ok",
+          "coverage_status": "ok",
+          "breach_reasons": [],
+          "last_seen_at_present": true,
+          "last_success_at_present": true
+        },
+        {
+          "source_id": "source:issuer_press_release",
+          "freshness_status": "unknown",
+          "latency_status": "unknown",
+          "schema_status": "ok",
+          "validation_status": "pass",
+          "rights_status": "restricted",
+          "coverage_status": "ok",
+          "breach_reasons": [
+            "freshness:unknown",
+            "rights:restricted"
+          ],
+          "last_seen_at_present": false,
+          "last_success_at_present": false
+        },
+        {
+          "source_id": "source:portfolio_flex",
+          "freshness_status": "fresh",
+          "latency_status": "breached",
+          "schema_status": "ok",
+          "validation_status": "pass",
+          "rights_status": "restricted",
+          "coverage_status": "ok",
+          "breach_reasons": [
+            "latency:breached",
+            "rights:restricted"
+          ],
+          "last_seen_at_present": true,
+          "last_success_at_present": true
+        },
+        {
+          "source_id": "source:yfinance",
+          "freshness_status": "fresh",
+          "latency_status": "ok",
+          "schema_status": "ok",
+          "validation_status": "pass",
+          "rights_status": "restricted",
+          "coverage_status": "ok",
+          "breach_reasons": [
+            "rights:restricted"
+          ],
+          "last_seen_at_present": true,
+          "last_success_at_present": true
+        },
+        {
+          "source_id": "source:low_quality_blocked",
+          "freshness_status": "unknown",
+          "latency_status": "unknown",
+          "schema_status": "ok",
+          "validation_status": "warn",
+          "rights_status": "restricted",
+          "coverage_status": "ok",
+          "breach_reasons": [
+            "freshness:unknown",
+            "rights:restricted"
+          ],
+          "last_seen_at_present": false,
+          "last_success_at_present": false
+        },
+        {
+          "source_id": "source:unknown_web",
+          "freshness_status": "unknown",
+          "latency_status": "unknown",
+          "schema_status": "ok",
+          "validation_status": "pass",
+          "rights_status": "unknown",
+          "coverage_status": "ok",
+          "breach_reasons": [
+            "freshness:unknown",
+            "rights:unknown"
+          ],
+          "last_seen_at_present": false,
+          "last_success_at_present": false
+        },
+        {
+          "source_id": "source:brave_answers",
+          "freshness_status": "unknown",
+          "latency_status": "unknown",
+          "schema_status": "ok",
+          "validation_status": "warn",
+          "rights_status": "restricted",
+          "coverage_status": "unknown",
+          "breach_reasons": [
+            "dry_run_no_live_fetch"
+          ],
+          "last_seen_at_present": true,
+          "last_success_at_present": false
+        },
+        {
+          "source_id": "source:brave_llm_context",
+          "freshness_status": "unknown",
+          "latency_status": "unknown",
+          "schema_status": "ok",
+          "validation_status": "warn",
+          "rights_status": "restricted",
+          "coverage_status": "unavailable",
+          "breach_reasons": [
+            "brave_audit_usage_limit_exceeded",
+            "dry_run_no_live_fetch",
+            "finance_quota_degraded"
+          ],
+          "last_seen_at_present": true,
+          "last_success_at_present": false
+        },
+        {
+          "source_id": "source:brave_news",
+          "freshness_status": "fresh",
+          "latency_status": "unknown",
+          "schema_status": "ok",
+          "validation_status": "warn",
+          "rights_status": "restricted",
+          "coverage_status": "unavailable",
+          "breach_reasons": [
+            "dry_run_no_live_fetch",
+            "quota_or_rate_limited",
+            "finance_quota_degraded"
+          ],
+          "last_seen_at_present": true,
+          "last_success_at_present": false
+        },
+        {
+          "source_id": "source:finance_worker_reducer",
+          "freshness_status": "unknown",
+          "latency_status": "unknown",
+          "schema_status": "ok",
+          "validation_status": "pass",
+          "rights_status": "ok",
+          "coverage_status": "ok",
+          "breach_reasons": [
+            "no_source_atoms_in_reducer"
+          ],
+          "last_seen_at_present": true,
+          "last_success_at_present": true
+        },
+        {
+          "source_id": "source:ibkr_options_iv",
+          "freshness_status": "fresh",
+          "latency_status": "unknown",
+          "schema_status": "ok",
+          "validation_status": "warn",
+          "rights_status": "ok",
+          "coverage_status": "unavailable",
+          "breach_reasons": [
+            "broker_session_unavailable"
+          ],
+          "last_seen_at_present": true,
+          "last_success_at_present": false
+        },
+        {
+          "source_id": "source:polygon_options_iv",
+          "freshness_status": "fresh",
+          "latency_status": "unknown",
+          "schema_status": "ok",
+          "validation_status": "warn",
+          "rights_status": "restricted",
+          "coverage_status": "unavailable",
+          "breach_reasons": [
+            "missing_api_key"
+          ],
+          "last_seen_at_present": true,
+          "last_success_at_present": false
+        },
+        {
+          "source_id": "source:thetadata_options_iv",
+          "freshness_status": "fresh",
+          "latency_status": "unknown",
+          "schema_status": "ok",
+          "validation_status": "warn",
+          "rights_status": "restricted",
+          "coverage_status": "unavailable",
+          "breach_reasons": [
+            "network_fetch_failed"
+          ],
+          "last_seen_at_present": true,
+          "last_success_at_present": false
+        },
+        {
+          "source_id": "source:tradier_options_iv",
+          "freshness_status": "fresh",
+          "latency_status": "unknown",
+          "schema_status": "ok",
+          "validation_status": "warn",
+          "rights_status": "restricted",
+          "coverage_status": "unavailable",
+          "breach_reasons": [
+            "missing_api_key"
+          ],
+          "last_seen_at_present": true,
+          "last_success_at_present": false
+        }
+      ]
+    },
+    "source_atom_summary": {
+      "available": true,
+      "generated_at": "2026-04-27T21:56:16.853713Z",
+      "status": "pass",
+      "atom_count": 0,
+      "by_source_lane": {},
+      "by_compliance_class": {},
+      "by_candidate_type": {},
+      "atoms": []
+    },
+    "claim_graph_summary": {
+      "available": true,
+      "generated_at": "2026-04-27T21:56:16.903167Z",
+      "status": "pass",
+      "claim_count": 0,
+      "by_direction": {},
+      "by_source_lane": {},
+      "claims": []
+    },
+    "context_gap_summary": {
+      "available": true,
+      "generated_at": "2026-04-27T21:56:16.953071Z",
+      "status": "pass",
+      "gap_count": 0,
+      "by_missing_lane": {},
+      "gaps": []
+    },
+    "known_limitations": [
+      "Snapshot came from local report-time archive when available.",
+      "Raw snippets and Discord conversation remain excluded from reviewer packet.",
+      "Line-to-claim refs are heuristic until renderer emits explicit bindings."
+    ],
+    "options_iv_surface_summary": {
+      "available": true,
+      "generated_at": "2026-04-27T21:56:16.754506Z",
+      "status": "degraded",
+      "summary": {
+        "symbol_count": 0,
+        "missing_iv_count": 0,
+        "stale_or_unknown_chain_count": 0,
+        "proxy_only_count": 0,
+        "provider_backed_count": 0,
+        "primary_source_status": "degraded",
+        "min_provider_confidence": null,
+        "max_provider_confidence": null
+      }
+    }
+  },
+  "reviewer_notes": [
+    "This packet is for report quality review, not for trading or execution.",
+    "Uses report-time archive when available; otherwise falls back to current sanitized finance/OpenClaw source state.",
+    "Raw Discord user messages and thread registry are intentionally excluded."
+  ],
+  "no_execution": true
+}

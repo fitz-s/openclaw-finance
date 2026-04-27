@@ -99,6 +99,21 @@ def test_shadow_delta_report_passes_product_validator() -> None:
                 'human_title': 'ABC campaign',
             }],
         },
+        tradingagents_digest={
+            'generated_at': '2099-04-23T00:00:00Z',
+            'run_id': 'ta:test',
+            'instrument': 'NVDA',
+            'analysis_date': '2099-04-23',
+            'safe_bullets': ['NVDA sidecar sees a high-quality AI demand continuation setup.'],
+            'risk_flags_safe': ['Protective put structure is preferred if concentration remains high.'],
+            'required_confirmations_safe': ['Validate deterministic source freshness before promotion.'],
+            'source_gaps_safe': ['No deterministic citation promotion is implemented in this phase.'],
+            'authority_rule': 'non_authoritative_context_only_not_evidence_wake_threshold_or_execution',
+            'candidate_contract_exclusion': True,
+            'validation_ref': '/tmp/validation.json',
+            'review_only': True,
+            'no_execution': True,
+        },
         shadow_delta=True,
     )
 
@@ -106,8 +121,11 @@ def test_shadow_delta_report_passes_product_validator() -> None:
 
     assert report['renderer_id'] == 'thesis-delta-shadow-deterministic-v1'
     assert 'ABC: new demand inflection' in report['markdown']
+    assert '## TradingAgents 侧车研究' in report['markdown']
+    assert 'NVDA sidecar sees a high-quality AI demand continuation setup.' in report['markdown']
     assert 'shadow' in report['markdown'].lower()
     assert 'discord_primary_markdown' in report
+    assert 'TradingAgents 侧车当前覆盖 NVDA' in report['discord_primary_markdown']
     assert 'discord_thread_seed_markdown' in report
     assert report['object_alias_map']['T1'].startswith('现有 Thesis')
     assert report['object_alias_map']['campaign:abc'] == 'ABC campaign'
@@ -116,5 +134,6 @@ def test_shadow_delta_report_passes_product_validator() -> None:
     assert report['followup_bundle_path'].endswith('.json')
     assert report['options_iv_surface_summary']['authority'] == 'source_context_only_not_judgment_wake_threshold_or_execution'
     assert report['options_iv_authority'] == 'source_context_only_not_judgment_wake_threshold_or_execution'
+    assert report['tradingagents_sidecar']['run_id'] == 'ta:test'
     assert not errors
     assert not warnings

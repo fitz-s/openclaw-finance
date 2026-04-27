@@ -39,6 +39,22 @@ def test_premarket_report_job_is_deterministic_stdout_only() -> None:
     assert "Now I'll" not in text
 
 
+def test_immediate_alert_job_is_tradingagents_gated_stdout_only() -> None:
+    job = jobs_by_name()['finance-immediate-alert']
+    text = message(job)
+
+    assert job['enabled'] is True
+    assert job['delivery']['mode'] == 'announce'
+    assert job['sessionTarget'] == 'isolated'
+    assert 'OpenClaw Finance Deterministic Report Job' in text
+    assert 'finance_discord_report_job.py --mode immediate-alert' in text
+    assert 'TradingAgents-backed intraday alert lane' in text
+    assert 'fresh TradingAgents sidecar context' in text
+    assert 'If stdout is NO_REPLY, return only NO_REPLY' in text
+    assert 'Do not emit progress text' in text
+    assert 'Do not send messages yourself' in text
+
+
 def test_scanner_prompts_have_object_link_and_unknown_discovery_contract() -> None:
     jobs = jobs_by_name()
     for name in ['finance-subagent-scanner', 'finance-subagent-scanner-offhours']:
@@ -68,6 +84,26 @@ def test_sidecar_job_is_manual_or_disabled_and_has_no_delivery() -> None:
     assert '禁止 Discord' in text or 'no Discord' in text
     assert '禁止自动改 thresholds' in text
     assert '禁止交易执行' in text
+
+
+def test_tradingagents_sidecar_job_is_enabled_cron_and_has_no_delivery() -> None:
+    job = jobs_by_name()['finance-tradingagents-sidecar']
+    text = message(job)
+
+    assert job.get('enabled') is True
+    assert job.get('schedule', {}).get('kind') == 'cron'
+    assert job.get('schedule', {}).get('expr') == '15,45 8-16 * * 1-5'
+    assert job.get('schedule', {}).get('tz') == 'America/Chicago'
+    assert job.get('delivery', {}).get('mode') == 'none'
+    assert 'finance_llm_context_pack.py' in text
+    assert 'llm-job-context/tradingagents-sidecar.json' in text
+    assert 'thesis_research_packet.py' in text
+    assert 'tradingagents_sidecar_job.py --mode scheduled' in text
+    assert 'view cache' in text or 'pack_is_not_authority' in text
+    assert '禁止 Discord' in text or 'no Discord' in text
+    assert '禁止自动改 thresholds' in text
+    assert '禁止交易执行' in text
+    assert 'state/tradingagents/' in text
 
 
 def test_weekly_learning_prompt_uses_context_pack_and_forbids_threshold_mutation() -> None:

@@ -1,0 +1,69 @@
+{
+  "generated_at": "2026-04-23T00:00:00Z",
+  "run_id": "ta:example",
+  "job_id": "finance-tradingagents-sidecar:manual",
+  "mode": "manual",
+  "instrument": "NVDA",
+  "analysis_date": "2026-04-23",
+  "request_source": "manual_instrument",
+  "request_source_meta": {},
+  "selected_analysts": ["market", "social", "news", "fundamentals"],
+  "config": {
+    "llm_provider": "google",
+    "deep_think_llm": "gemini-3.1-pro-preview",
+    "quick_think_llm": "gemini-3-flash-preview",
+    "backend_url": null,
+    "google_thinking_level": "high",
+    "google_use_application_default_credentials": true,
+    "google_vertexai": true,
+    "google_location": "global",
+    "output_language": "English",
+    "max_debate_rounds": 1,
+    "max_risk_discuss_rounds": 1,
+    "max_recur_limit": 100,
+    "timeout_seconds": 900,
+    "disable_order_agent": true,
+    "data_vendors": {
+      "core_stock_apis": "yfinance",
+      "technical_indicators": "yfinance",
+      "fundamental_data": "yfinance",
+      "news_data": "yfinance"
+    },
+    "tool_vendors": {}
+  },
+  "model_resolution": {
+    "status": "supported",
+    "job_name": "finance-tradingagents-sidecar",
+    "role_name": "finance-tradingagents",
+    "openclaw_runtime_alias": "google-gemini-cli/gemini-3-flash-preview",
+    "provider": "google",
+    "quick_model": "gemini-3-flash-preview",
+    "deep_model": "gemini-3.1-pro-preview",
+    "base_url": null,
+    "auth_source": "GOOGLE_API_KEY",
+    "provider_options": {
+      "google_thinking_level": "high",
+      "google_use_application_default_credentials": true,
+      "google_vertexai": true,
+      "google_location": "global"
+    },
+    "unsupported_reason": null,
+    "resolution_contract_version": "v1"
+  },
+  "source_bindings": {
+    "thesis_research_packet": {"path": "state/thesis-research-packet.json", "exists": true, "hash": "sha256:example", "required": false},
+    "report_envelope": {"path": "state/finance-decision-report-envelope.json", "exists": true, "hash": "sha256:example", "required": false, "report_hash": "sha256:report", "packet_hash": "sha256:packet"},
+    "decision_log": {"path": "state/finance-decision-log-report.json", "exists": true, "hash": "sha256:example", "required": false, "decision_id": "decision:123"},
+    "context_packet": {"path": "services/market-ingest/state/latest-context-packet.json", "exists": true, "hash": "sha256:example", "required": false, "packet_id": "packet:1", "packet_hash": "sha256:packet"}
+  },
+  "surface_policy": {
+    "context_digest_max_age_hours": 24,
+    "reader_augmentation_max_age_hours": 72,
+    "candidate_contract_exclusion": true,
+    "announce_card_input": false
+  },
+  "forbidden_actions": ["no_user_delivery", "no_execution", "no_threshold_mutation", "no_live_authority_change"],
+  "review_only": true,
+  "no_execution": true,
+  "request_path": "state/tradingagents/runs/ta:example/request.json"
+}

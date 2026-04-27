@@ -1,0 +1,8 @@
+@codex review this change for:
+- hidden requirement drift
+- interface breakage
+- missing verification
+- rollback / blast-radius concerns
+- stale docs vs code mismatch
+
+Also note any recurring review feedback that should be codified into `AGENTS.md`.

@@ -1,0 +1,82 @@
+{
+  "contract": "tradingagents-upstream-lock-v1",
+  "generated_at": "2026-04-23T00:00:00Z",
+  "repo_url": "https://github.com/TauricResearch/TradingAgents.git",
+  "submodule_path": "third_party/tradingagents",
+  "selected_ref_type": "tag",
+  "locked_tag": "v0.2.3",
+  "locked_commit": "4641c03340c70e0e75e74234c998325164c72b36",
+  "observed_main_commit": "fa4d01c23acef4882fd74dd5be75dd3c7a4bc5f7",
+  "selected_ref_rationale": "Use the latest stable tag observed during P0 instead of the moving main branch. P1 is source-lock and audit only; no runtime import is authorized.",
+  "expected_python_entrypoint": {
+    "module": "tradingagents.graph.trading_graph",
+    "class": "TradingAgentsGraph",
+    "method": "propagate"
+  },
+  "expected_cli_entrypoint": {
+    "pyproject_table": "project.scripts",
+    "script_name": "tradingagents",
+    "target": "cli.main:app",
+    "allowed_for_openclaw_integration": false
+  },
+  "expected_project": {
+    "name": "tradingagents",
+    "version": "0.2.3",
+    "requires_python": ">=3.10"
+  },
+  "expected_config_keys": [
+    "project_dir",
+    "results_dir",
+    "data_cache_dir",
+    "llm_provider",
+    "deep_think_llm",
+    "quick_think_llm",
+    "backend_url",
+    "output_language",
+    "max_debate_rounds",
+    "max_risk_discuss_rounds",
+    "max_recur_limit",
+    "data_vendors",
+    "tool_vendors"
+  ],
+  "expected_env_keys": [
+    "TRADINGAGENTS_RESULTS_DIR"
+  ],
+  "expected_signal_values": [
+    "BUY",
+    "OVERWEIGHT",
+    "HOLD",
+    "UNDERWEIGHT",
+    "SELL"
+  ],
+  "known_review_only_risks": [
+    "Upstream trader prompt requires FINAL TRANSACTION PROPOSAL language.",
+    "Upstream signal processor extracts BUY/OVERWEIGHT/HOLD/UNDERWEIGHT/SELL labels.",
+    "Upstream README describes simulated exchange execution.",
+    "Upstream default data_cache_dir is package-local and must be overridden by any future OpenClaw runner config."
+  ],
+  "expected_absent_execution_symbols": [
+    "place_order",
+    "submit_order",
+    "market_order",
+    "limit_order",
+    "execution_adapter",
+    "paper_trade"
+  ],
+  "expected_absent_broker_imports": [
+    "ibapi",
+    "ib_insync",
+    "alpaca",
+    "ccxt",
+    "interactivebrokers"
+  ],
+  "openclaw_policy": {
+    "phase": "P1",
+    "runtime_import_allowed": false,
+    "cli_integration_allowed": false,
+    "parent_cron_change_allowed": false,
+    "report_path_change_allowed": false,
+    "execution_allowed": false,
+    "no_execution": true
+  }
+}

@@ -60,6 +60,7 @@ def test_activation_falls_back_from_news_no_results_to_web(monkeypatch, tmp_path
     monkeypatch.setattr(activation, 'safe_state_path', lambda path: True)
     monkeypatch.setattr(activation, 'default_out', fake_default_out)
     monkeypatch.setattr(activation, 'fetch_from_pack', fake_fetch)
+    monkeypatch.setattr(activation, 'build_recovery_policy', lambda: {'breaker_open': False, 'reason': 'clear'})
 
     result = activation.run_activation(
         query_packs_path=packs,
@@ -105,6 +106,7 @@ def test_activation_does_not_fallback_on_missing_credentials(monkeypatch, tmp_pa
     monkeypatch.setattr(activation, 'safe_state_path', lambda path: True)
     monkeypatch.setattr(activation, 'default_out', lambda endpoint: news_out)
     monkeypatch.setattr(activation, 'fetch_from_pack', fake_fetch)
+    monkeypatch.setattr(activation, 'build_recovery_policy', lambda: {'breaker_open': False, 'reason': 'clear'})
 
     result = activation.run_activation(
         query_packs_path=packs,
@@ -136,6 +138,7 @@ def test_activation_respects_query_registry_cooldown(monkeypatch, tmp_path: Path
     monkeypatch.setattr(activation, 'safe_state_path', lambda path: True)
     monkeypatch.setattr(activation, 'should_skip_query', lambda pack, recent: True)
     monkeypatch.setattr(activation, 'fetch_from_pack', fake_fetch)
+    monkeypatch.setattr(activation, 'build_recovery_policy', lambda: {'breaker_open': False, 'reason': 'clear'})
 
     result = activation.run_activation(
         query_packs_path=packs,

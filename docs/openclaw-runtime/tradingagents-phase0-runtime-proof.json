@@ -1,0 +1,41 @@
+{
+  "generated_at": "2026-04-24T03:22:53Z",
+  "status": "pass",
+  "phase": "tradingagents-runtime-primary-cutover-phase0",
+  "proof_type": "manual_dry_run_runtime_reexec",
+  "invocation": {
+    "command": "/opt/homebrew/bin/python3 - <<'PY' ... finance_discord_report_job.refresh_tradingagents_sidecar('immediate-alert'); finance_llm_context_pack.py; immediate_alert_decision('PHASE0 PROOF ONLY') ... PY",
+    "invocation_python": "/opt/homebrew/bin/python3"
+  },
+  "observed": {
+    "run_id": "ta:dac71e7c0f5436c5",
+    "job_id": "finance-tradingagents-sidecar:report-sync",
+    "refresh_mode": "immediate-alert",
+    "refresh_required": true,
+    "refresh_status": "pass",
+    "refresh_run_id": "ta:dac71e7c0f5436c5",
+    "context_pack_run_id": "ta:dac71e7c0f5436c5",
+    "same_run_context": true,
+    "immediate_alert_decision_should_deliver": true,
+    "immediate_alert_decision_suppressed_reason": null,
+    "sidecar_job_python": "/Users/leofitz/miniconda3/bin/python3",
+    "runner_python_executable": "/Users/leofitz/miniconda3/bin/python3",
+    "runtime_readiness_python_executable": "/Users/leofitz/miniconda3/bin/python3",
+    "runtime_readiness_status": "pass",
+    "runner_status": "pass",
+    "translate_status": "pass",
+    "validate_status": "pass",
+    "surface_status": "pass"
+  },
+  "artifact_paths": {
+    "job_report": "state/tradingagents/job-reports/ta:dac71e7c0f5436c5.json",
+    "run_artifact": "state/tradingagents/runs/ta:dac71e7c0f5436c5/raw/run-artifact.json",
+    "runtime_readiness": "state/tradingagents/runtime-readiness.json",
+    "report_refresh_status": "state/tradingagents/report-refresh-status.json",
+    "latest_status": "state/tradingagents/status.json",
+    "report_orchestrator_context_pack": "state/llm-job-context/report-orchestrator.json"
+  },
+  "acceptance_claim": "A required immediate-alert refresh invoked through Homebrew Python re-executed into the configured TradingAgents runtime, emitted a bound run_id/job_id, regenerated the report-orchestrator context pack with the same run id, and completed readiness, runner, translation, validation, and surface publication under conda Python.",
+  "review_only": true,
+  "no_execution": true
+}
